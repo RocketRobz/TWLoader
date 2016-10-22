@@ -7,7 +7,7 @@ BasicInfo:
 
 RomFs:
   # Specifies the root path of the file system to include in the ROM.
-  # HostRoot                : "$(ROMFS_ROOT)"
+  HostRoot                : "$(ROMFS_ROOT)"
 
 
 TitleInfo:
