@@ -3,10 +3,11 @@
 #include <string.h>
 #include <3ds.h>
 #include <malloc.h>
+#include <3ds/services/hid.h>
 
 #include "inifile.h"
 
-
+u32 kDown = hidKeysDown();
 
 int main()
 {
@@ -24,7 +25,7 @@ int main()
 	while(aptMainLoop())
 	{
 		// Scan hid shared memory for input events
-		//hidScanInput();
+		hidScanInput();
 
 		if(1) // If the A button got pressed, start the app launch
 		{
@@ -98,9 +99,12 @@ int main()
 					consoleClear();
 					cursorPosition--;
 					break;
+				} else if (hDown & KEY_START) {
+				return 0;
+
 				}
-			}
-			
+	}
+
 		}
 	
 
@@ -127,9 +131,13 @@ int main()
 		gfxSwapBuffers();
 		gspWaitForVBlank();
 	}
-
-
+	
+	hidExit();
+	srvExit();
+	romfsExit();
+	sdmcExit();
+	aptExit();
 	gfxExit();
 
-	return 0;
+    return 0;
 }

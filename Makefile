@@ -32,10 +32,10 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-ROMFS		:=	romfs
+ROMFS		:=	"../romfs"
 APP_AUTHOR	:=	Robz8
 APP_DESCRIPTION :=  CTR mode .nds ROM loader
-ICON		:=	app/icon48x48.png
+ICON		:=	app/icon.png
 BNR_IMAGE	:=  app/banner.png
 BNR_AUDIO	:=	app/BannerAudio.bcwav
 RSF_FILE	:=	app/build-cia.rsf
@@ -164,35 +164,16 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(OUTPUT).cia $(OUTPUT).3dsx
-
-3dsx: $(OUTPUT).3dsx
-
-cia: $(OUTPUT).cia
-
-ifeq ($(strip $(NO_SMDH)),)
-$(OUTPUT).3dsx	:	$(OUTPUT).elf $(OUTPUT).smdh
-$(OUTPUT).smdh : $(TOPDIR)/Makefile
-else
-$(OUTPUT).3dsx	:	$(OUTPUT).elf
-endif
+all: $(OUTPUT).cia $(OUTPUT).elf
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).smdh	:	$(APP_ICON)
-	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)"  -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
-	@echo "built ... $(notdir $@)"
+$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
+	../tools/bannertool makebanner -i "../app/banner.png" -ca "../app/BannerAudio.bcwav" -o "../app/banner.bin"
 
-$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh $(TARGET).bnr
-	@makerom	-f cia -target t -exefslogo -o $@ \
-				-elf $(OUTPUT).elf -rsf $(TOPDIR)/$(RSF_FILE) \
-				-banner $(TARGET).bnr \
-				-icon $(OUTPUT).smdh
-	@echo "built ... $(notdir $@)"
+	../tools/bannertool makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-$(TARGET).bnr	:	$(TOPDIR)/$(BNR_IMAGE) $(TOPDIR)/$(BNR_AUDIO)
-	@bannertool	makebanner -o $@ -i $(TOPDIR)/$(BNR_IMAGE) -ca $(TOPDIR)/$(BNR_AUDIO)
-	@echo "built ... $@"
+	../tools/makerom -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -major 1 -minor 1
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
