@@ -32,7 +32,7 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-ROMFS		:=	"../romfs"
+ROMFS		:=	romfs
 APP_AUTHOR	:=	Robz8
 APP_DESCRIPTION :=  CTR mode .nds ROM loader
 ICON		:=	app/icon.png
@@ -56,13 +56,13 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fpermissive -std=c++11 -std=gnu
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lctru -lm -lstdc++
+LIBS	:= -lsfil -lsftd -lfreetype -lpng -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CTRULIB)
+LIBDIRS	:= $(CTRULIB) $(PORTLIBS) $(DEVKITPRO)/citrus
 
 
 #---------------------------------------------------------------------------------
@@ -164,16 +164,16 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(OUTPUT).cia $(OUTPUT).elf
+all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
 
 $(OUTPUT).elf	:	$(OFILES)
 
 $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
-	../tools/bannertool makebanner -i "../app/banner.png" -ca "../app/BannerAudio.bcwav" -o "../app/banner.bin"
+	../tools/bannertool makebanner -i "../app/banner.png" -ca "../app/BannerAudio.wav" -o "../app/banner.bin"
 
 	../tools/bannertool makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-	../tools/makerom -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -major 1 -minor 1
+	../tools/makerom -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major 1 -minor 1
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data

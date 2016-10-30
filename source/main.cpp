@@ -4,6 +4,7 @@
 #include <3ds.h>
 #include <malloc.h>
 #include <sys/stat.h>
+#include <citrus/app.hpp>
 
 #include "inifile.h"
 
@@ -14,6 +15,7 @@ int main()
 	// I think you must init the services you want to use, before using them
 	// TO DO: CORRECT GFXINIT
 	aptInit();
+	amInit();
 	sdmcInit();
 	romfsInit();
 	srvInit();
@@ -21,6 +23,7 @@ int main()
 
 	// making nds folder if it doesn't exist
 	mkdir("sdmc:/nds", 0777);
+	mkdir("sdmc:/_nds/twloader", 0777);
 	std::string	bootstrapPath = "";
 
 	gfxInitDefault(); // Init graphic stuff
@@ -31,14 +34,13 @@ int main()
 	// Clear both buffers
 	memset(param, 0, sizeof(param));
 	memset(hmac, 0, sizeof(hmac));
-			
 
 	// Loop as long as the status is not exit
 	while(aptMainLoop()) {
 		// Scan hid shared memory for input events
 		hidScanInput();
 
-		if(kDown & KEY_A) { // If the A button got pressed, start the app launch 
+			{ // If the A button got pressed, start the app launch 
 			
 			consoleInit(GFX_BOTTOM, NULL);
 			
@@ -105,8 +107,20 @@ int main()
 						consoleClear();
 						cursorPosition--;
 						break;
+					} else if(hDown & KEY_X) {
+						// Prepare for the slot-1 launch throung NTR Launcher
+						APT_PrepareToDoApplicationJump(0, 0x000480154B4B4750, 0); // ntr_launcher title ID
+						// Tell APT to trigger the app launch and set the status of this app to exit
+						APT_DoApplicationJump(param, sizeof(param), hmac);
+						break;
 					} else if (hDown & KEY_START) {
 						//WARNING! BEFORE RETURNING TO THE HOME, YOU MUST CLOSE ALL THE OPEN SERVICES!
+						hidExit();
+						srvExit();
+						romfsExit();
+						sdmcExit();
+						aptExit();
+						gfxExit();
 						return 0;
 					}
 				}
@@ -120,14 +134,14 @@ int main()
 			APT_PrepareToDoApplicationJump(0, 0x000480054B425345LL, 0); // bootstrap title ID
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
-			}
+		}
 
 		// Flush + swap framebuffers and wait for VBlank. Not really needed in this example
 		gfxFlushBuffers();
 		gfxSwapBuffers();
 		gspWaitForVBlank();
 	}
-	
+
 	
 	hidExit();
 	srvExit();
