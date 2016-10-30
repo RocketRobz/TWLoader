@@ -12,12 +12,9 @@
 
 #include "inifile.h"
 
-<<<<<<< HEAD
 #include "top_png.h"
 #include "topbg_png.h"
 
-=======
->>>>>>> origin/master
 u32 kDown;
 
 int main()
@@ -30,16 +27,11 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> origin/master
 	// making nds folder if it doesn't exist
 	mkdir("sdmc:/nds", 0777);
 	mkdir("sdmc:/_nds/twloader/tmp", 0777);
 	// We need a way to install the SRL CIAs from romfs
-<<<<<<< HEAD
 	//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480054B425345LL-bootstrap-loader.cia", 0, u64 size);
 	//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480154B4B4750-ntr-launcher.cia", 0, u64 size);
 	std::string	bootstrapPath = "";
@@ -52,14 +44,6 @@ int main()
 	sf2d_texture tex1 = sfil_load_PNG_buffer(topbg_png, SF2D_PLACE_RAM);
 	sf2d_texture tex2 = sfil_load_PNG_buffer(top_png, SF2D_PLACE_RAM);
 
-=======
-//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480054B425345LL-bootstrap-loader.cia", 0, u64 size);
-//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480154B4B4750-ntr-launcher.cia", 0, u64 size);
-	std::string	bootstrapPath = "";
-
-	gfxInitDefault(); // Init graphic stuff
-
->>>>>>> origin/master
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
 	u8 hmac[0x20];
@@ -75,7 +59,6 @@ int main()
 			{ // If the A button got pressed, start the app launch 
 			
 			consoleInit(GFX_BOTTOM, NULL);
-<<<<<<< HEAD
 
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);
 				//Draws a 100x100 yellow rectangle (255, 255, 00, 255) at (150, 70)
@@ -90,11 +73,6 @@ int main()
 			
 			CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );	
 
-=======
-			
-			CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );	
-
->>>>>>> origin/master
 			std::vector<std::string> files = {};
 		
 			std::string extension = ".nds";
@@ -169,12 +147,9 @@ int main()
 						romfsExit();
 						sdmcExit();
 						aptExit();
-<<<<<<< HEAD
 						sf2d_free_texture(tex1);
 						sf2d_free_texture(tex2);
 						sf2d_fini();
-=======
->>>>>>> origin/master
 						gfxExit();
 						return 0;
 					}
@@ -203,12 +178,9 @@ int main()
 	romfsExit();
 	sdmcExit();
 	aptExit();
-<<<<<<< HEAD
 	sf2d_free_texture(tex1);
 	sf2d_free_texture(tex2);
     sf2d_fini();
-=======
->>>>>>> origin/master
 	gfxExit();
 
     return 0;
