@@ -5,6 +5,8 @@
 #include <malloc.h>
 #include <sys/stat.h>
 #include <citrus/app.hpp>
+#include <citrus/core.hpp>
+#include <citrus/fs.hpp>
 
 #include "inifile.h"
 
@@ -20,10 +22,13 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
-
+	
 	// making nds folder if it doesn't exist
 	mkdir("sdmc:/nds", 0777);
-	mkdir("sdmc:/_nds/twloader", 0777);
+	mkdir("sdmc:/_nds/twloader/tmp", 0777);
+	// We need a way to install the SRL CIAs from romfs
+//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480054B425345LL-bootstrap-loader.cia", 0, u64 size);
+//	ctr::app::install(ctr::fs::NAND, "romfs:/0x000480154B4B4750-ntr-launcher.cia", 0, u64 size);
 	std::string	bootstrapPath = "";
 
 	gfxInitDefault(); // Init graphic stuff
