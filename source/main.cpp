@@ -13,10 +13,6 @@
 
 #include "inifile.h"
 
-//#include "topbg_png.h"
-//#include "top_png.h"
-//#include "battery_charging_png.h"
-
 u32 kDown;
 
 int main()
