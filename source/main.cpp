@@ -13,9 +13,9 @@
 
 #include "inifile.h"
 
-#include "topbg_png.h"
-#include "top_png.h"
-#include "battery_charging_png.h"
+//#include "topbg_png.h"
+//#include "top_png.h"
+//#include "battery_charging_png.h"
 
 u32 kDown;
 
@@ -43,9 +43,9 @@ int main()
     sf2d_init();
     sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 
-	sf2d_texture *topbgtex = sfil_load_PNG_buffer(topbg_png, SF2D_PLACE_RAM);
-	sf2d_texture *toptex = sfil_load_PNG_buffer(top_png, SF2D_PLACE_RAM);
-	sf2d_texture *batterychrgtex = sfil_load_PNG_buffer(battery_charging_png, SF2D_PLACE_RAM);
+	sf2d_texture *topbgtex = sfil_load_PNG_file("romfs:/assets/topbg.png", SF2D_PLACE_RAM);
+	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM);
+	sf2d_texture *batterychrgtex = sfil_load_PNG_file("romfs:/assets/battery_charging.png", SF2D_PLACE_RAM);
 
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
