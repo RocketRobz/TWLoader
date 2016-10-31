@@ -7,13 +7,15 @@
 #include <malloc.h>
 #include <sys/stat.h>
 #include <citrus/app.hpp>
+#include <citrus/battery.hpp>
 #include <citrus/core.hpp>
 #include <citrus/fs.hpp>
 
 #include "inifile.h"
 
-#include "top_png.h"
 #include "topbg_png.h"
+#include "top_png.h"
+#include "battery_charging_png.h"
 
 u32 kDown;
 
@@ -41,8 +43,9 @@ int main()
     sf2d_init();
     sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 
-	sf2d_texture tex1 = sfil_load_PNG_buffer(topbg_png, SF2D_PLACE_RAM);
-	sf2d_texture tex2 = sfil_load_PNG_buffer(top_png, SF2D_PLACE_RAM);
+	sf2d_texture *topbgtex = sfil_load_PNG_buffer(topbg_png, SF2D_PLACE_RAM);
+	sf2d_texture *toptex = sfil_load_PNG_buffer(top_png, SF2D_PLACE_RAM);
+	sf2d_texture *batterychrgtex = sfil_load_PNG_buffer(battery_charging_png, SF2D_PLACE_RAM);
 
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
@@ -59,17 +62,6 @@ int main()
 			{ // If the A button got pressed, start the app launch 
 			
 			consoleInit(GFX_BOTTOM, NULL);
-
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
-				//Draws a 100x100 yellow rectangle (255, 255, 00, 255) at (150, 70)
-				sf2d_draw_rectangle(150, 70, 100, 100, RGBA8(0xFF, 0xFF, 0x00, 0xFF));
-
-				sf2d_draw_texture(tex1, 400/2 - tex1->width/2, 240/2 - tex1->height/2);
-				sf2d_draw_texture(tex2, 400/2 - tex2->width/2, 240/2 - tex2->height/2);
-
-			sf2d_end_frame();
-					
-			sf2d_swapbuffers();
 			
 			CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );	
 
@@ -118,6 +110,20 @@ int main()
 				while(true){
 					hidScanInput();
 					
+					sf2d_start_frame(GFX_TOP, GFX_LEFT);
+					//Draws a 100x100 yellow rectangle (255, 255, 00, 255) at (150, 70)
+					//sf2d_draw_rectangle(150, 70, 100, 100, RGBA8(0xFF, 0xFF, 0x00, 0xFF));
+
+					sf2d_draw_texture(topbgtex, 400/2 - topbgtex->width/2, 240/2 - topbgtex->height/2);
+					sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
+
+					if (ctr::battery::charging) {
+						sf2d_draw_texture(batterychrgtex, 370, 2);
+					}
+					sf2d_end_frame();
+					
+					sf2d_swapbuffers();
+					
 					u32 hDown = hidKeysDown();
 					
 					if(hDown & KEY_A){
@@ -147,8 +153,9 @@ int main()
 						romfsExit();
 						sdmcExit();
 						aptExit();
-						sf2d_free_texture(tex1);
-						sf2d_free_texture(tex2);
+						sf2d_free_texture(topbgtex);
+						sf2d_free_texture(toptex);
+						sf2d_free_texture(batterychrgtex);
 						sf2d_fini();
 						gfxExit();
 						return 0;
@@ -178,8 +185,9 @@ int main()
 	romfsExit();
 	sdmcExit();
 	aptExit();
-	sf2d_free_texture(tex1);
-	sf2d_free_texture(tex2);
+	sf2d_free_texture(topbgtex);
+	sf2d_free_texture(toptex);
+	sf2d_free_texture(batterychrgtex);
     sf2d_fini();
 	gfxExit();
 
