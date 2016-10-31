@@ -4,6 +4,7 @@
 #include <3ds.h>
 #include <sf2d.h>
 #include <sfil.h>
+#include <sftd.h>
 #include <malloc.h>
 #include <sys/stat.h>
 #include <citrus/app.hpp>
@@ -38,6 +39,10 @@ int main()
 	
     sf2d_init();
     sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
+	
+	// Font loading
+	sftd_init();
+	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
 
 	sf2d_texture *topbgtex = sfil_load_PNG_file("romfs:/assets/topbg.png", SF2D_PLACE_RAM);
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM);
@@ -57,7 +62,7 @@ int main()
 
 			{ // If the A button got pressed, start the app launch 
 			
-			consoleInit(GFX_BOTTOM, NULL);
+			//consoleInit(GFX_BOTTOM, NULL);
 			
 			CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );	
 
@@ -85,23 +90,51 @@ int main()
 			char* rom = (char*)malloc(256);
 			
 			bool whileloop = true;
+			
+			int filenameYpos;
 		
+			//while(whileloop){
+				//if(files.size() >= 29) {
+					//for(i = 0; i < 30; i++){
+						//if(cursorPosition == i)
+							//printf("--> %s\n", files.at(i).c_str());
+						//else 
+							//printf("%s\n", files.at(i).c_str());
+					//}
+				//} else {
+					//for(i = 0; i < files.size(); i++){
+						//if(cursorPosition == i)
+							//printf("--> %s\n", files.at(i).c_str());
+						//else 
+							//printf("%s\n", files.at(i).c_str());
+					//}
+				//}
+				
 			while(whileloop){
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				filenameYpos = 0;
 				if(files.size() >= 29) {
 					for(i = 0; i < 30; i++){
-						if(cursorPosition == i)
-							printf("--> %s\n", files.at(i).c_str());
-						else 
-							printf("%s\n", files.at(i).c_str());
+						if(cursorPosition == i) {
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 255, 255), 12, files.at(i).c_str());
+							filenameYpos += 12;
+						} else {
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(255, 255, 255, 255), 12, files.at(i).c_str());
+							filenameYpos += 12;
+						}
 					}
 				} else {
 					for(i = 0; i < files.size(); i++){
-						if(cursorPosition == i)
-							printf("--> %s\n", files.at(i).c_str());
-						else 
-							printf("%s\n", files.at(i).c_str());
+						if(cursorPosition == i) {
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 255, 255), 12, files.at(i).c_str());
+							filenameYpos += 12;
+						} else {
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(255, 255, 255, 255), 12, files.at(i).c_str());
+							filenameYpos += 12;
+						}
 					}
 				}
+				sf2d_end_frame();
 					
 				while(true){
 					hidScanInput();
@@ -124,19 +157,25 @@ int main()
 					
 					if(hDown & KEY_A){
 						rom = (char*)(files.at(cursorPosition)).c_str();
-						consoleClear();
+						//consoleClear();
 						whileloop = false;
-						//break;
+						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
 						break;
 					} else if((hDown & KEY_DOWN) && cursorPosition != 29){
-						consoleClear();
+						//consoleClear();
 						cursorPosition++;
 						break;
 					} else if((hDown & KEY_UP) && cursorPosition != 0){
-						consoleClear();
+						//consoleClear();
 						cursorPosition--;
 						break;
 					} else if(hDown & KEY_X) {
+						whileloop = false;
+						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
 						// Prepare for the slot-1 launch throung NTR Launcher
 						APT_PrepareToDoApplicationJump(0, 0x000480154B4B4750, 0); // ntr_launcher title ID
 						// Tell APT to trigger the app launch and set the status of this app to exit
@@ -158,7 +197,6 @@ int main()
 					}
 				}
 			}
-		
 
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH",fat+rom);
 			bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
