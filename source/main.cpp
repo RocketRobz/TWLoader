@@ -47,6 +47,7 @@ int main()
 	sf2d_texture *topbgtex = sfil_load_PNG_file("romfs:/assets/topbg.png", SF2D_PLACE_RAM);
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM);
 	sf2d_texture *batterychrgtex = sfil_load_PNG_file("romfs:/assets/battery_charging.png", SF2D_PLACE_RAM);
+	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/assets/bottom.png", SF2D_PLACE_RAM);
 
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
@@ -112,6 +113,7 @@ int main()
 				
 			while(whileloop){
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 				filenameYpos = 0;
 				if(files.size() >= 29) {
 					for(i = 0; i < 30; i++){
@@ -119,7 +121,7 @@ int main()
 							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 255, 255), 12, files.at(i).c_str());
 							filenameYpos += 12;
 						} else {
-							sftd_draw_textf(font, 10, filenameYpos, RGBA8(255, 255, 255, 255), 12, files.at(i).c_str());
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 0, 255), 12, files.at(i).c_str());
 							filenameYpos += 12;
 						}
 					}
@@ -129,7 +131,7 @@ int main()
 							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 255, 255), 12, files.at(i).c_str());
 							filenameYpos += 12;
 						} else {
-							sftd_draw_textf(font, 10, filenameYpos, RGBA8(255, 255, 255, 255), 12, files.at(i).c_str());
+							sftd_draw_textf(font, 10, filenameYpos, RGBA8(0, 0, 0, 255), 12, files.at(i).c_str());
 							filenameYpos += 12;
 						}
 					}
@@ -191,6 +193,7 @@ int main()
 						sf2d_free_texture(topbgtex);
 						sf2d_free_texture(toptex);
 						sf2d_free_texture(batterychrgtex);
+						sf2d_free_texture(bottomtex);
 						sf2d_fini();
 						gfxExit();
 						return 0;
@@ -222,6 +225,7 @@ int main()
 	sf2d_free_texture(topbgtex);
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(batterychrgtex);
+	sf2d_free_texture(bottomtex);
     sf2d_fini();
 	gfxExit();
 
