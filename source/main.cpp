@@ -50,7 +50,7 @@ int main()
 	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
 
 	sf2d_texture *topbgtex = sfil_load_PNG_file("romfs:/assets/topbg.png", SF2D_PLACE_RAM);
-	sf2d_texture *boxarttex = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
+	//sf2d_texture *boxarttex = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM);
 	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/assets/volume0.png", SF2D_PLACE_RAM);
 	//sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/assets/volume1.png", SF2D_PLACE_RAM);
@@ -128,7 +128,7 @@ int main()
 			
 			bool whileloop = true;
 			
-			char* nickname = "Nickname";
+			//char* nickname = "Nickname";
 			
 			// Settings text
 			char* settingstext = "Settings";
@@ -294,9 +294,9 @@ int main()
 					//sf2d_draw_rectangle(150, 70, 100, 100, RGBA8(0xFF, 0xFF, 0x00, 0xFF));
 
 					sf2d_draw_texture(topbgtex, 400/2 - topbgtex->width/2, 240/2 - topbgtex->height/2);
-					sf2d_draw_texture(boxarttex, 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
+					//sf2d_draw_texture(boxarttex, 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
 					sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
-					sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
+					//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 					if(hHeld & KEY_L){
 						sf2d_draw_texture(shoulderLtex, 0, 223);
 					} else {
@@ -315,9 +315,9 @@ int main()
 					
 					sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 					sf2d_draw_texture(topbgtex, 430/2 - topbgtex->width/2, 240/2 - topbgtex->height/2);
-					sf2d_draw_texture(boxarttex, 408/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
+					//sf2d_draw_texture(boxarttex, 408/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
 					sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
-					sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
+					//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 					if(hHeld & KEY_L){
 						sf2d_draw_texture(shoulderLtex, -1, 223);
 					} else {
@@ -332,28 +332,26 @@ int main()
 					
 					sf2d_swapbuffers();
 					
-					if (hDown & KEY_START) {
-						//WARNING! BEFORE RETURNING TO THE HOME, YOU MUST CLOSE ALL THE OPEN SERVICES!
-						hidExit();
-						srvExit();
-						romfsExit();
-						sdmcExit();
-						aptExit();
-						sf2d_free_texture(topbgtex);
-						sf2d_free_texture(boxarttex);
-						sf2d_free_texture(toptex);
-						sf2d_free_texture(shoulderLtex);
-						sf2d_free_texture(shoulderRtex);
-						sf2d_free_texture(batterychrgtex);
-						sf2d_free_texture(bottomtex);
-						sf2d_free_texture(bottomsettingstex);
-						sf2d_fini();
-						gfxExit();
-						return 0;
-					}
-					
 					if (screenmode == 0) {
-						if(hDown & KEY_A){
+						if (hDown & KEY_START) {
+							//WARNING! BEFORE RETURNING TO THE HOME, YOU MUST CLOSE ALL THE OPEN SERVICES!
+							hidExit();
+							srvExit();
+							romfsExit();
+							sdmcExit();
+							aptExit();
+							sf2d_free_texture(topbgtex);
+							//sf2d_free_texture(boxarttex);
+							sf2d_free_texture(toptex);
+							sf2d_free_texture(shoulderLtex);
+							sf2d_free_texture(shoulderRtex);
+							sf2d_free_texture(batterychrgtex);
+							sf2d_free_texture(bottomtex);
+							sf2d_free_texture(bottomsettingstex);
+							sf2d_fini();
+							gfxExit();
+							return 0;
+						} else if(hDown & KEY_A){
 							rom = (char*)(files.at(cursorPosition)).c_str();
 							//consoleClear();
 							whileloop = false;
@@ -506,7 +504,7 @@ int main()
 	sdmcExit();
 	aptExit();
 	sf2d_free_texture(topbgtex);
-	sf2d_free_texture(boxarttex);
+	//sf2d_free_texture(boxarttex);
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
