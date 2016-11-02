@@ -1,0 +1,9 @@
+*.cia
+*.nds
+*.elf
+build/
+arm9/source/version.h
+arm9/data/load.bin
+NTR_Launcher.arm9
+NTR_Launcher.arm7
+BootLoader/load.bin
