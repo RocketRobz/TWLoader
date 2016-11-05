@@ -77,6 +77,7 @@ char* twlsettings_consolevaluetext;
 int twlsettings_cpuspeedvalue;
 int twlsettings_bootscreenvalue;
 int twlsettings_healthsafetyvalue;
+int twlsettings_launchslot1value;
 int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
 
@@ -272,6 +273,7 @@ void SaveTWLSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, twlsettings_bootscreenvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
 
 	if (twlsettings_consolevalue == 2) {
@@ -286,6 +288,20 @@ void SaveTWLSettings() {
 }
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
+
+void screenoff()
+{
+    gspLcdInit();\
+    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdExit();
+}
+
+void screenon()
+{
+    gspLcdInit();\
+    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdExit();
+}
 
 int main()
 {
@@ -337,6 +353,8 @@ int main()
 	//sf2d_texture *battery4tex = sfil_load_PNG_file("romfs:/assets/battery4.png", SF2D_PLACE_RAM);
 	//sf2d_texture *battery5tex = sfil_load_PNG_file("romfs:/assets/battery5.png", SF2D_PLACE_RAM);
 	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/assets/bottom.png", SF2D_PLACE_RAM);
+	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/assets/bottom_logo.png", SF2D_PLACE_RAM);
+	sf2d_texture *bottomcovertex = sfil_load_PNG_file("romfs:/assets/bottom_cover.png", SF2D_PLACE_RAM);
 	sf2d_texture *startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM);
 	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/assets/cart.png", SF2D_PLACE_RAM);
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/assets/box_full.png", SF2D_PLACE_RAM);
@@ -373,6 +391,7 @@ int main()
 	char* boxartpath = malloc(256);
 		
 	bool updatebotscreen = true;
+	bool applaunchprep = false;
 	bool applaunchon = false;
 			
 	float offset3d_topbg = 0.0f;
@@ -390,9 +409,13 @@ int main()
 	int cartXpos = 64;
 	int titleboxXpos;
 	int titleboxXmovepos = 0;
-	//int titleboxXmovetimer = 0;
-	//bool titleboxXmovelefton = false;
-	//bool titleboxXmoverighton = false;
+	int titleboxXmovetimer = 0;
+	bool titleboxXmoveleft = false;
+	bool titleboxXmoveright = false;
+	int titleboxYmovepos = 120;
+	
+	int startbordermovepos;
+	float startborderscalesize;
 			
 	int screenmode = 0;
 	// 0: ROM select
@@ -483,6 +506,43 @@ int main()
 			if (RshoulderYpos != 220)
 			{RshoulderYpos -= 1;}
 		}
+		
+		if(titleboxXmoveleft == true) {
+			titleboxXmovetimer += 1;
+			if (titleboxXmovetimer == 9) {
+				titleboxXmovetimer = 0;
+				titleboxXmoveleft = false;
+			} else if (titleboxXmovetimer == 8) {
+				titleboxXmovepos += 8;
+				startbordermovepos = 1;
+				startborderscalesize = 0.97;
+				cursorPosition--;
+			} else {
+				titleboxXmovepos += 8;
+			}
+		} else if(titleboxXmoveright == true) {
+			titleboxXmovetimer += 1;
+			if (titleboxXmovetimer == 9) {
+				titleboxXmovetimer = 0;
+				titleboxXmoveright = false;
+			} else if (titleboxXmovetimer == 8) {
+				titleboxXmovepos -= 8;
+				startbordermovepos = 1;
+				startborderscalesize = 0.97;
+				cursorPosition++;
+			} else {
+				titleboxXmovepos -= 8;
+			}
+		}
+		if(applaunchprep == true) {
+			titleboxYmovepos -= 6;
+			if (titleboxYmovepos == -240) {
+				screenoff();
+				SaveSettings();
+				SaveTWLSettings();
+				applaunchon = true;
+			}
+		}
 
 		if(updatebotscreen == true){
 			if (screenmode == 0) {
@@ -526,7 +586,11 @@ int main()
 						}
 					}
 				} else {
-					sf2d_draw_texture(bubbletex, 0, 0);
+					if (titleboxXmovetimer == 0) {
+						sf2d_draw_texture(bubbletex, 0, 0);
+					} else {
+						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
+					}
 					sftd_draw_textf(font, 74, 220, RGBA8(0, 0, 0, 255), 13, "HOME: Return to HOME Menu");
 					sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
 
@@ -534,10 +598,12 @@ int main()
 					titleboxXpos = 128;
 					if(files.size() >= 29) {
 						for(i = 0; i < 30; i++){
-							if (cursorPosition == -1) {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
-							} else {
-								sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+							if (titleboxXmovetimer == 0) {
+								if (cursorPosition == -1) {
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+								} else {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+								}
 							}
 							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 							titleboxXpos += 64;
@@ -545,18 +611,33 @@ int main()
 						}
 					} else {
 						for(i = 0; i < files.size(); i++){
-							if (cursorPosition == -1) {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
-							} else {
-								sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+							if (titleboxXmovetimer == 0) {
+								if (cursorPosition == -1) {
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+								} else {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+								}
 							}
 							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 							titleboxXpos += 64;
 							filenameYpos += 240;
 						}
 					}
-					sf2d_draw_texture(startbordertex, 128, 116);
-					sftd_draw_textf(font, 141, 176, RGBA8(255, 255, 255, 255), 12, "START");
+					if (applaunchprep == false) {
+						if (titleboxXmovetimer == 0) {
+							startbordermovepos = 0;
+							startborderscalesize = 1.0;
+						}
+						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
+						sftd_draw_textf(font, 141, 176, RGBA8(255, 255, 255, 255), 12, "START");
+					} else {
+						sf2d_draw_texture(bottomcovertex, 128, 116);
+						if (cursorPosition == -1) {
+							sf2d_draw_texture(carttex, 128, titleboxYmovepos);
+						} else {
+							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos);
+						}
+					}
 				}
 			} else if(screenmode == 1) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -701,8 +782,10 @@ int main()
 		}
 		
 		sf2d_swapbuffers();
-					
-		updatebotscreen = false;
+		
+		if (titleboxXmovetimer == 0) {
+			updatebotscreen = false;
+		}
 		if (screenmode == 0) {
 			Lshouldertext = "???";
 			if (romselect_layout == 0) {
@@ -717,12 +800,12 @@ int main()
 					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 					updatebotscreen = true;
 				} else if(hDown & KEY_A){
+					twlsettings_launchslot1value = 0;
+					screenoff();
 					SaveSettings();
 					SaveTWLSettings();
 					rom = (char*)(files.at(cursorPosition)).c_str();
 					applaunchon = true;
-					settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 					updatebotscreen = true;
 				} else if((hDown & KEY_DOWN) && cursorPosition != 29){
 					titleboxXmovepos -= 64;
@@ -733,9 +816,11 @@ int main()
 					cursorPosition--;
 					updatebotscreen = true;
 				} else if(hDown & KEY_X) {
+					twlsettings_launchslot1value = 1;
+					screenoff();
+					SaveSettings();
+					SaveTWLSettings();
 					applaunchon = true;
-					settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, 1);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
 					screenmode = 1;
@@ -743,36 +828,48 @@ int main()
 				}
 			} else {
 				Rshouldertext = "Filenames";
-				if(hDown & KEY_R) {
-					romselect_layout = 0;
-					settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
-					updatebotscreen = true;
-				} else if(hDown & KEY_A){
-					SaveSettings();
-					SaveTWLSettings();
-					if(cursorPosition == -1) {
-						applaunchon = true;
-						settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, 1);
-						settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
-					} else {
-						rom = (char*)(files.at(cursorPosition)).c_str();
-						applaunchon = true;
-						settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0);
-						settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
+				startbordermovepos = 0;
+				startborderscalesize = 1.0;
+				if(applaunchprep == false) {
+					if(hDown & KEY_R) {
+						if (titleboxXmovetimer == 0) {
+							romselect_layout = 0;
+							settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
+							settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
+						}
+						updatebotscreen = true;
+					} else if(hDown & KEY_A){
+						if (titleboxXmovetimer == 0) {
+							if(cursorPosition == -1) {
+								titleboxXmovetimer = 1;
+								twlsettings_launchslot1value = 1;
+								applaunchprep = true;
+							} else {
+								titleboxXmovetimer = 1;
+								rom = (char*)(files.at(cursorPosition)).c_str();
+								twlsettings_launchslot1value = 0;
+								applaunchprep = true;
+							}
+						}
+						updatebotscreen = true;
+					} else if((hHeld & KEY_RIGHT) && cursorPosition != 29){
+						//titleboxXmovepos -= 64;
+						if (titleboxXmoveleft == false) {
+							titleboxXmoveright = true;
+						}
+						//cursorPosition++;
+						updatebotscreen = true;
+					} else if((hHeld & KEY_LEFT) && cursorPosition != -1){
+						//titleboxXmovepos += 64;
+						if (titleboxXmoveright == false) {
+							titleboxXmoveleft = true;
+						}
+						//cursorPosition--;
+						updatebotscreen = true;
+					} else if (hDown & KEY_SELECT) {
+						screenmode = 1;
+						updatebotscreen = true;
 					}
-					updatebotscreen = true;
-				} else if((hDown & KEY_RIGHT) && cursorPosition != 29){
-					titleboxXmovepos -= 64;
-					cursorPosition++;
-					updatebotscreen = true;
-				} else if((hDown & KEY_LEFT) && cursorPosition != -1){
-					titleboxXmovepos += 64;
-					cursorPosition--;
-					updatebotscreen = true;
-				} else if (hDown & KEY_SELECT) {
-					screenmode = 1;
-					updatebotscreen = true;
 				}
 			}
 		} else if (screenmode == 1) {
@@ -873,8 +970,10 @@ int main()
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
-	sf2d_free_texture(batterychrgtex);
+	//sf2d_free_texture(batterychrgtex);
 	sf2d_free_texture(bottomtex);
+	sf2d_free_texture(bottomlogotex);
+	sf2d_free_texture(bottomcovertex);
 	sf2d_free_texture(bubbletex);
 	sf2d_free_texture(carttex);
 	sf2d_free_texture(boxfulltex);
