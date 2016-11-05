@@ -336,15 +336,15 @@ int main()
 	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
 
 	//sf2d_texture *boxarttex = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
-	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM);
+	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	LoadColor();
-	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM);
+	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/assets/volume0.png", SF2D_PLACE_RAM);
 	//sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/assets/volume1.png", SF2D_PLACE_RAM);
 	//sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/assets/volume2.png", SF2D_PLACE_RAM);
 	//sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/assets/volume3.png", SF2D_PLACE_RAM);
-	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/assets/shoulder_L.png", SF2D_PLACE_RAM);
-	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/assets/shoulder_R.png", SF2D_PLACE_RAM);
+	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/assets/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
+	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/assets/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
 	//sf2d_texture *batterychrgtex = sfil_load_PNG_file("romfs:/assets/battery_charging.png", SF2D_PLACE_RAM);
 	//sf2d_texture *battery0tex = sfil_load_PNG_file("romfs:/assets/battery0.png", SF2D_PLACE_RAM);
 	//sf2d_texture *battery1tex = sfil_load_PNG_file("romfs:/assets/battery1.png", SF2D_PLACE_RAM);
@@ -352,14 +352,15 @@ int main()
 	//sf2d_texture *battery3tex = sfil_load_PNG_file("romfs:/assets/battery3.png", SF2D_PLACE_RAM);
 	//sf2d_texture *battery4tex = sfil_load_PNG_file("romfs:/assets/battery4.png", SF2D_PLACE_RAM);
 	//sf2d_texture *battery5tex = sfil_load_PNG_file("romfs:/assets/battery5.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/assets/bottom.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/assets/bottom_logo.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomcovertex = sfil_load_PNG_file("romfs:/assets/bottom_cover.png", SF2D_PLACE_RAM);
-	sf2d_texture *startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM);
-	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/assets/cart.png", SF2D_PLACE_RAM);
-	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/assets/box_full.png", SF2D_PLACE_RAM);
-	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/assets/bubble.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomsettingstex = sfil_load_PNG_file("romfs:/assets/bottom_settings.png", SF2D_PLACE_RAM);
+	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/assets/bottom.png", SF2D_PLACE_RAM); // Bottom of menu
+	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/assets/homeicon.png", SF2D_PLACE_RAM); // HOME icon
+	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/assets/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
+	sf2d_texture *bottomcovertex = sfil_load_PNG_file("romfs:/assets/bottom_cover.png", SF2D_PLACE_RAM); // Image to cover selected game/app
+	sf2d_texture *startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
+	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/assets/cart.png", SF2D_PLACE_RAM); // Cartridge on bottom screen
+	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/assets/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
+	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/assets/bubble.png", SF2D_PLACE_RAM); // Text bubble
+	sf2d_texture *bottomsettingstex = sfil_load_PNG_file("romfs:/assets/bottom_settings.png", SF2D_PLACE_RAM); // Bottom of settings screen
 
 	LoadSettings();
 	LoadTWLSettings();
@@ -385,6 +386,8 @@ int main()
 		
 	u32 cursorPosition = 0, i = 0;
 	u32 settingscursorPosition = 0, twlsettingscursorPosition = 0;
+	
+	bool cursorPositionset = false;
 			
 	char* rom = (char*)malloc(256);
 			
@@ -509,29 +512,48 @@ int main()
 		
 		if(titleboxXmoveleft == true) {
 			titleboxXmovetimer += 1;
-			if (titleboxXmovetimer == 9) {
+			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
 				titleboxXmoveleft = false;
+			} else if (titleboxXmovetimer == 9) {
+				// Delay a frame
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
 				startbordermovepos = 1;
 				startborderscalesize = 0.97;
-				cursorPosition--;
+				cursorPositionset = false;
 			} else {
+				if (cursorPositionset == false) {
+					cursorPosition--;
+					cursorPositionset = true;
+				}
 				titleboxXmovepos += 8;
 			}
 		} else if(titleboxXmoveright == true) {
 			titleboxXmovetimer += 1;
-			if (titleboxXmovetimer == 9) {
+			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
 				titleboxXmoveright = false;
+			} else if (titleboxXmovetimer == 9) {
+				// Delay a frame
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos -= 8;
 				startbordermovepos = 1;
 				startborderscalesize = 0.97;
-				cursorPosition++;
+				cursorPositionset = false;
 			} else {
-				titleboxXmovepos -= 8;
+				if (cursorPositionset == false) {
+					cursorPosition++;
+					cursorPositionset = true;
+				}
+				if (cursorPosition != i) {
+					titleboxXmovepos -= 8;
+				} else {
+					titleboxXmovetimer = 0;
+					titleboxXmoveright = false;
+					cursorPositionset = false;
+					cursorPosition--;
+				}
 			}
 		}
 		if(applaunchprep == true) {
@@ -591,7 +613,8 @@ int main()
 					} else {
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
-					sftd_draw_textf(font, 74, 220, RGBA8(0, 0, 0, 255), 13, "HOME: Return to HOME Menu");
+					sf2d_draw_texture(homeicontex, 75, 220); // Draw HOME icon
+					sftd_draw_textf(font, 92, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
 					sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
 
 					filenameYpos = 0;
@@ -631,11 +654,11 @@ int main()
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 						sftd_draw_textf(font, 141, 176, RGBA8(255, 255, 255, 255), 12, "START");
 					} else {
-						sf2d_draw_texture(bottomcovertex, 128, 116);
+						sf2d_draw_texture(bottomcovertex, 128, 116);  // Cover selected game/app
 						if (cursorPosition == -1) {
-							sf2d_draw_texture(carttex, 128, titleboxYmovepos);
+							sf2d_draw_texture(carttex, 128, titleboxYmovepos); // Draw selected Slot-1 game that moves up
 						} else {
-							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos);
+							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 						}
 					}
 				}
@@ -793,6 +816,7 @@ int main()
 				if(cursorPosition == -1) {
 					titleboxXmovepos -= 64;
 					cursorPosition = 0;
+					updatebotscreen = true;
 				}
 				if(hDown & KEY_R) {
 					romselect_layout = 1;
@@ -807,9 +831,13 @@ int main()
 					rom = (char*)(files.at(cursorPosition)).c_str();
 					applaunchon = true;
 					updatebotscreen = true;
-				} else if((hDown & KEY_DOWN) && cursorPosition != 29){
+				} else if((hDown & KEY_DOWN) && cursorPosition != i){
 					titleboxXmovepos -= 64;
 					cursorPosition++;
+					if (cursorPosition == i) {
+						titleboxXmovepos += 64;
+						cursorPosition--;
+					}
 					updatebotscreen = true;
 				} else if((hDown & KEY_UP) && cursorPosition != 0){
 					titleboxXmovepos += 64;
@@ -852,19 +880,17 @@ int main()
 							}
 						}
 						updatebotscreen = true;
-					} else if((hHeld & KEY_RIGHT) && cursorPosition != 29){
+					} else if((hHeld & KEY_RIGHT) && cursorPosition != i){
 						//titleboxXmovepos -= 64;
 						if (titleboxXmoveleft == false) {
 							titleboxXmoveright = true;
 						}
-						//cursorPosition++;
 						updatebotscreen = true;
 					} else if((hHeld & KEY_LEFT) && cursorPosition != -1){
 						//titleboxXmovepos += 64;
 						if (titleboxXmoveright == false) {
 							titleboxXmoveleft = true;
 						}
-						//cursorPosition--;
 						updatebotscreen = true;
 					} else if (hDown & KEY_SELECT) {
 						screenmode = 1;
@@ -972,6 +998,7 @@ int main()
 	sf2d_free_texture(shoulderRtex);
 	//sf2d_free_texture(batterychrgtex);
 	sf2d_free_texture(bottomtex);
+	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bottomcovertex);
 	sf2d_free_texture(bubbletex);
