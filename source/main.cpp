@@ -335,7 +335,6 @@ int main()
 	sftd_init();
 	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
 
-	//sf2d_texture *boxarttex = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/assets/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	LoadColor();
 	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
@@ -361,6 +360,9 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/assets/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/assets/bubble.png", SF2D_PLACE_RAM); // Text bubble
 	sf2d_texture *bottomsettingstex = sfil_load_PNG_file("romfs:/assets/bottom_settings.png", SF2D_PLACE_RAM); // Bottom of settings screen
+	//sf2d_texture *boxartshadowtex = sfil_load_PNG_file("romfs:/assets/boxart_shadow.png", SF2D_PLACE_RAM); // Box art's shadow
+	sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM); // Unknown box art
+	sf2d_texture *boxarttex2 = sfil_load_PNG_file("romfs:/assets/boxart_unknown2.png", SF2D_PLACE_RAM); // Unknown box art
 
 	LoadSettings();
 	LoadTWLSettings();
@@ -392,6 +394,12 @@ int main()
 	char* rom = (char*)malloc(256);
 			
 	char* boxartpath = malloc(256);
+	
+	int fadealpha = 255;
+	bool fadein = true;
+	
+	sf2d_texture* boxarttex = boxarttex1;
+	bool boxartload = true;
 		
 	bool updatebotscreen = true;
 	bool applaunchprep = false;
@@ -412,7 +420,7 @@ int main()
 	int cartXpos = 64;
 	int titleboxXpos;
 	int titleboxXmovepos = 0;
-	int titleboxXmovetimer = 0;
+	int titleboxXmovetimer = 1; // Set to 1 for fade-in effect to run
 	bool titleboxXmoveleft = false;
 	bool titleboxXmoveright = false;
 	int titleboxYmovepos = 120;
@@ -458,18 +466,48 @@ int main()
 		offset3d_topbg = CONFIG_3D_SLIDERSTATE * 24.0f;
 		offset3d_boxart = CONFIG_3D_SLIDERSTATE * 10.0f;
 		
+		// Box art loading code (doesn't work)
+		if(boxartload == true) {
+			//boxartpath = malloc(256);
+				
+			//strcat(boxartpath, "sdmc:/_nds/twloader/boxart/");
+			//strcat(boxartpath, rom);
+			//strcat(boxartpath, ".png");
+			
+			//if (fopen(boxartpath, "r")) {
+				//if (boxarttex == boxarttex1) {
+					//sf2d_texture *boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM);
+				//} else if (boxarttex == boxarttex2) {
+					//sf2d_texture *boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM);
+				//}
+			//} else {
+				//if (boxarttex == boxarttex1) {
+					//sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
+					//sf2d_free_texture(boxarttex2);
+				//} else if (boxarttex == boxarttex2) {
+					//sf2d_texture *boxarttex2 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
+					//sf2d_free_texture(boxarttex1);
+				//}
+			//}
+			boxartload = false;
+		}
+
 		sf2d_start_frame(GFX_TOP, GFX_LEFT);
 		//Draws a 100x100 yellow rectangle (255, 255, 00, 255) at (150, 70)
 		//sf2d_draw_rectangle(150, 70, 100, 100, RGBA8(0xFF, 0xFF, 0x00, 0xFF));
 
 		sf2d_draw_texture(topbgtex, 400/2 - topbgtex->width/2, 240/2 - topbgtex->height/2);
-		//sf2d_draw_texture(boxarttex, 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
+		sf2d_draw_texture(boxarttex, 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2); // Draw box art
+		sf2d_draw_texture_scale_blend(boxarttex, 400/2 - boxarttex->width/2, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xB0)); // Draw box art's reflection
+		//sf2d_draw_texture(boxartshadowtex, 0, 256); // image won't draw for some reason
 		sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
 		//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 336, RshoulderYpos);
 		sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 		sftd_draw_textf(font, 340, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+
+		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 
 		//if (ctr::battery::charging == true) {
 		//	sf2d_draw_texture(batterychrgtex, 370, 2);
@@ -480,13 +518,17 @@ int main()
 			
 		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 		sf2d_draw_texture(topbgtex, offset3d_topbg + 400/2 - topbgtex->width/2, 240/2 - topbgtex->height/2);
-		//sf2d_draw_texture(boxarttex, offset3d_boxart + 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2);
+		sf2d_draw_texture(boxarttex, offset3d_boxart + 400/2 - boxarttex->width/2, 240/2 - boxarttex->height/2); // Draw box art
+		sf2d_draw_texture_scale_blend(boxarttex, offset3d_boxart + 400/2 - boxarttex->width/2, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xB0)); // Draw box art's reflection
+		//sf2d_draw_texture(boxartshadowtex, offset3d_boxart + 0, 256); // image won't draw for some reason
 		sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
 		//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 		sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 335, RshoulderYpos);
 		sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 		sftd_draw_textf(font, 339, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+		
+		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		
 		//if (ctr::battery::charging == true) {
 		//	sf2d_draw_texture(batterychrgtex, 370, 2);
@@ -510,10 +552,25 @@ int main()
 			{RshoulderYpos -= 1;}
 		}
 		
+		if (fadein == true) {
+			fadealpha -= 31;
+			if (fadealpha < 0) {
+				fadealpha = 0;
+				fadein = false;
+				titleboxXmovetimer = 0;
+			}
+		}
+
 		if(titleboxXmoveleft == true) {
 			titleboxXmovetimer += 1;
 			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
+				if (boxarttex == boxarttex1) {
+					boxarttex = boxarttex2;
+				} else if (boxarttex == boxarttex2) {
+					boxarttex = boxarttex1;
+				}
+				boxartload = true;
 				titleboxXmoveleft = false;
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
@@ -533,6 +590,12 @@ int main()
 			titleboxXmovetimer += 1;
 			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
+				if (boxarttex == boxarttex1) {
+					boxarttex = boxarttex2;
+				} else if (boxarttex == boxarttex2) {
+					boxarttex = boxarttex1;
+				}
+				boxartload = true;
 				titleboxXmoveright = false;
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
@@ -564,6 +627,10 @@ int main()
 				SaveTWLSettings();
 				applaunchon = true;
 			}
+			fadealpha += 7;
+			if (fadealpha > 255) {
+				fadealpha = 255;
+			}
 		}
 
 		if(updatebotscreen == true){
@@ -572,19 +639,6 @@ int main()
 				sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 				
 				if (romselect_layout == 0) {
-					// Box art loading code (doesn't work)
-					//boxartpath = malloc(256);
-					//	
-					//strcat(boxartpath, "sdmc:/_nds/twloader/boxart/");
-					//strcat(boxartpath, rom);
-					//strcat(boxartpath, ".png");
-					//
-					//if (fopen(boxartpath, "r")) {
-					//	sf2d_texture *boxarttex = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM);
-					//} else {
-					//	sf2d_texture *boxarttex = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM);
-					//}
-					
 					filenameYpos = 0;
 					if(files.size() >= 29) {
 						for(i = 0; i < 30; i++){
@@ -801,6 +855,8 @@ int main()
 					}
 				}
 			}
+		sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+
 		sf2d_end_frame();
 		}
 		
@@ -838,10 +894,22 @@ int main()
 						titleboxXmovepos += 64;
 						cursorPosition--;
 					}
+					if (boxarttex == boxarttex1) {
+						boxarttex = boxarttex2;
+					} else if (boxarttex == boxarttex2) {
+						boxarttex = boxarttex1;
+					}
+					boxartload = true;
 					updatebotscreen = true;
 				} else if((hDown & KEY_UP) && cursorPosition != 0){
 					titleboxXmovepos += 64;
 					cursorPosition--;
+					if (boxarttex == boxarttex1) {
+						boxarttex = boxarttex2;
+					} else if (boxarttex == boxarttex2) {
+						boxarttex = boxarttex1;
+					}
+					boxartload = true;
 					updatebotscreen = true;
 				} else if(hDown & KEY_X) {
 					twlsettings_launchslot1value = 1;
@@ -992,7 +1060,6 @@ int main()
 	sdmcExit();
 	aptExit();
 	sf2d_free_texture(topbgtex);
-	//sf2d_free_texture(boxarttex);
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
@@ -1006,6 +1073,9 @@ int main()
 	sf2d_free_texture(boxfulltex);
 	sf2d_free_texture(startbordertex);
 	sf2d_free_texture(bottomsettingstex);
+	//sf2d_free_texture(boxartshadowtex);
+	sf2d_free_texture(boxarttex1);
+	sf2d_free_texture(boxarttex2);
     sf2d_fini();
 
     return 0;
