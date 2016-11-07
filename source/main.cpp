@@ -293,12 +293,12 @@ void SaveTWLSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
 
-	if (twlsettings_consolevalue == 2) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
+	if (twlsettings_consolevalue == 0) {
+		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
 	} else if (twlsettings_consolevalue == 1) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0);
-	} else {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
+	} else if (twlsettings_consolevalue == 2) {
+		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 	}
 	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
