@@ -18,16 +18,17 @@ u32 kDown;
 u32 kHeld;
 
 CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );	
+CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 
 int color_Rvalue;
 int color_Gvalue;
 int color_Bvalue;
 	
 char* topbgloc;
-//char* boxartpath;
-//char* boxartfile;
-//char* boxartfile_fullpath;
-//int boxartnum = 0;
+char* boxartpath;
+char* boxartfile;
+char* boxartfile_fullpath;
+int boxartnum = 0;
 char* startborderloc;
 	
 // Settings .ini file
@@ -46,7 +47,6 @@ char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";
 char* settingsini_twl_resetslot1 = "RESET_SLOT1";
 // End
 
-CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 
 // Bootstrap .ini file
 char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
@@ -66,6 +66,14 @@ char* settings_topbordervaluetext;
 
 int settings_colorvalue;
 int settings_topbordervalue;
+
+int romselect_toplayout;
+int romselect_layout;
+// 0: File browser (Text only)
+// 1: DSi Menu
+
+char* rom = (char*)malloc(256);
+std::string fat = "fat:/nds/";
 
 // NTR/TWL-mode Settings text
 char* twlsettingstext = "NTR/TWL-mode Settings";
@@ -203,18 +211,26 @@ void LoadColor() {
 	}
 }
 
-/* void LoadBoxArtFile() {
+void LoadBoxArtFile() {
 	char* boxartfile_fullpath = malloc(256);
 	strcat(boxartfile_fullpath, "sdmc:/_nds/twloader/boxart/");
 	strcat(boxartfile_fullpath, boxartfile);
 
-	if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
-		boxartpath = boxartfile_fullpath+3;
+	if (boxartnum == 0) {
+		if (fopen (boxartfile_fullpath, "rb") != NULL) {
+			boxartpath = boxartfile_fullpath;
+		} else {
+			boxartpath = "romfs:/assets/boxart_unknown.png";
+		} fclose (fopen (boxartfile_fullpath, "rb"));
 	} else {
-		boxartpath = "romfs:/assets/boxart_unknown.png";
-	} fclose (fopen (boxartfile_fullpath+3, "rb"));
+		if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
+			boxartpath = boxartfile_fullpath+3;
+		} else {
+			boxartpath = "romfs:/assets/boxart_unknown.png";
+		} fclose (fopen (boxartfile_fullpath+3, "rb"));
+	}
 	boxartnum++;
-} */
+}
 
 void LoadSettings() {
 	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0) == 17) {
@@ -259,15 +275,16 @@ void LoadSettings() {
 	} else {
 		settings_topbordervalue = 0;
 	}
-}
-
-void SaveSettings() {
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings_colorvalue);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
-	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
-}
-
-void LoadTWLSettings() {
+	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0) == 1) {
+		romselect_toplayout = 1;
+	} else {
+		romselect_toplayout = 0;
+	}
+	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0) == 1) {
+		romselect_layout = 1;
+	} else {
+		romselect_layout = 0;
+	}
 	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0) == 1) {
 		twlsettings_cpuspeedvalue = 1;
 	} else {
@@ -297,13 +314,21 @@ void LoadTWLSettings() {
 	}
 }
 
-void SaveTWLSettings() {
+void SaveSettings() {
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings_colorvalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, twlsettings_bootscreenvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
-
+	// Set ROM path if ROM is selected
+	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
+		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
+	}
+	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	if (twlsettings_consolevalue == 0) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
 	} else if (twlsettings_consolevalue == 1) {
@@ -311,7 +336,6 @@ void SaveTWLSettings() {
 	} else if (twlsettings_consolevalue == 2) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 	}
-	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
 }
 
@@ -389,10 +413,9 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/assets/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/assets/bubble.png", SF2D_PLACE_RAM); // Text bubble
 	sf2d_texture *bottomsettingstex = sfil_load_PNG_file("romfs:/assets/bottom_settings.png", SF2D_PLACE_RAM); // Bottom of settings screen
-	sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
+	//sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
 
 	LoadSettings();
-	LoadTWLSettings();
 
 	std::vector<std::string> files = {};
 	std::vector<std::string> boxartfiles = {};
@@ -406,14 +429,12 @@ int main()
 	std::string extension_oddnds5 = ".nDS";
 	std::string extension_oddnds6 = ".NdS";
 	std::string extension_png = ".png";
-	
-	std::string fat = "fat:/nds/";
-	
+		
 	DIR *dir;
 	DIR *boxartdir;
 	struct dirent *ent;
 	
-	/* if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
+	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
 		while ((ent = readdir (boxartdir)) != NULL) {
 			std::string bafname = (ent->d_name);
 			if(bafname.find(extension_png, (bafname.length() - extension_png.length())) != std::string::npos)
@@ -422,18 +443,18 @@ int main()
 		closedir (boxartdir);
 	}
 
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	//char* boxartfile = "sdmc:/_nds/twloader/boxart/(Demo) Mario Kart DS (U).nds.png";
-	
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	LoadBoxArtFile();
@@ -451,7 +472,7 @@ int main()
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 
-	boxartnum = 0; */
+	boxartnum = 0;
 	sf2d_texture* boxarttexnum = boxarttex1;
 
 	if ((dir = opendir ("sdmc:/nds/")) != NULL) {
@@ -482,9 +503,7 @@ int main()
 	int settingscursorPosition = 0, twlsettingscursorPosition = 0;
 	
 	bool cursorPositionset = false;
-		
-	char* rom = (char*)malloc(256);
-		
+	
 	int fadealpha = 255;
 	bool fadein = true;
 		
@@ -498,6 +517,9 @@ int main()
 	float offset3dr_boxart = 0.0f;
 
 	//char* nickname = "Nickname";
+	
+	int boxartXpos;
+	int boxartXmovepos = 0;
 			
 	char* Lshouldertext;
 	char* Rshouldertext;
@@ -522,21 +544,7 @@ int main()
 	int screenmode = 0;
 	// 0: ROM select
 	// 1: Settings
-		
-	int romselect_toplayout;
-	int romselect_layout;
-	// 0: File browser (Text only)
-	// 1: DSi Menu
-	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0) == 1) {
-		romselect_toplayout = 1;
-	} else {
-		romselect_toplayout = 0;
-	}
-	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0) == 1) {
-		romselect_layout = 1;
-	} else {
-		romselect_layout = 0;
-	}
+	
 	int settings_subscreenmode = 0;
 	// 0: Frontend settings
 	// 1: NTR/TWL-mode settings
@@ -565,39 +573,77 @@ int main()
 		offset3dl_boxart = CONFIG_3D_SLIDERSTATE * -5.0f;
 		offset3dr_boxart = CONFIG_3D_SLIDERSTATE * 5.0f;
 		
-	/* if (boxartnum == -1) {
-		boxartnum = 9;
-		boxarttexnum = boxarttex10;
-	} else if (boxartnum == 0) {
-		boxarttexnum = boxarttex1;
-	} else if (boxartnum == 1) {
-		boxarttexnum = boxarttex2;
-	} else if (boxartnum == 2) {
-		boxarttexnum = boxarttex3;
-	} else if (boxartnum == 3) {
-		boxarttexnum = boxarttex4;
-	} else if (boxartnum == 4) {
-		boxarttexnum = boxarttex5;
-	} else if (boxartnum == 5) {
-		boxarttexnum = boxarttex6;
-	} else if (boxartnum == 6) {
-		boxarttexnum = boxarttex7;
-	} else if (boxartnum == 7) {
-		boxarttexnum = boxarttex8;
-	} else if (boxartnum == 8) {
-		boxarttexnum = boxarttex9;
-	} else if (boxartnum == 9) {
-		boxarttexnum = boxarttex10;
-	} else if (boxartnum == 10) {
-		boxartnum = 0;
-		boxarttexnum = boxarttex1;
-	} */
-
 		sf2d_start_frame(GFX_TOP, GFX_LEFT);
 		sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
 		if (romselect_toplayout == 0) {
-			sf2d_draw_texture(boxarttexnum, offset3dl_boxart + 400/2 - boxarttexnum->width/2, 240/2 - boxarttexnum->height/2); // Draw box art
-			sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart + 400/2 - boxarttexnum->width/2, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xB0)); // Draw box art's reflection
+			boxartXpos = 136;
+			if(boxartfiles.size() >= 9) {
+				for(boxartnum = 0; boxartnum < 10; boxartnum++){
+					if (boxartnum == -1) {
+						boxartnum = 9;
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 0) {
+						boxarttexnum = boxarttex1;
+					} else if (boxartnum == 1) {
+						boxarttexnum = boxarttex2;
+					} else if (boxartnum == 2) {
+						boxarttexnum = boxarttex3;
+					} else if (boxartnum == 3) {
+						boxarttexnum = boxarttex4;
+					} else if (boxartnum == 4) {
+						boxarttexnum = boxarttex5;
+					} else if (boxartnum == 5) {
+						boxarttexnum = boxarttex6;
+					} else if (boxartnum == 6) {
+						boxarttexnum = boxarttex7;
+					} else if (boxartnum == 7) {
+						boxarttexnum = boxarttex8;
+					} else if (boxartnum == 8) {
+						boxarttexnum = boxarttex9;
+					} else if (boxartnum == 9) {
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 10) {
+						boxartnum = 0;
+						boxarttexnum = boxarttex1;
+					}
+					sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+					sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
+					boxartXpos += 144;
+				}
+			} else {
+				for(boxartnum = 0; boxartnum < boxartfiles.size(); boxartnum++) {
+					if (boxartnum == -1) {
+						boxartnum = 9;
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 0) {
+						boxarttexnum = boxarttex1;
+					} else if (boxartnum == 1) {
+						boxarttexnum = boxarttex2;
+					} else if (boxartnum == 2) {
+						boxarttexnum = boxarttex3;
+					} else if (boxartnum == 3) {
+						boxarttexnum = boxarttex4;
+					} else if (boxartnum == 4) {
+						boxarttexnum = boxarttex5;
+					} else if (boxartnum == 5) {
+						boxarttexnum = boxarttex6;
+					} else if (boxartnum == 6) {
+						boxarttexnum = boxarttex7;
+					} else if (boxartnum == 7) {
+						boxarttexnum = boxarttex8;
+					} else if (boxartnum == 8) {
+						boxarttexnum = boxarttex9;
+					} else if (boxartnum == 9) {
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 10) {
+						boxartnum = 0;
+						boxarttexnum = boxarttex1;
+					}
+					sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+					sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
+					boxartXpos += 144;
+				}
+			}
 		}
 		if (settings_topbordervalue == 1) {
 			sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
@@ -621,8 +667,74 @@ int main()
 		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 		sf2d_draw_texture_scale(topbgtex, offset3dr_topbg + -12, 0, 1.32, 1);
 		if (romselect_toplayout == 0) {
-			sf2d_draw_texture(boxarttexnum, offset3dr_boxart + 400/2 - boxarttexnum->width/2, 240/2 - boxarttexnum->height/2); // Draw box art
-			sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart + 400/2 - boxarttexnum->width/2, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xB0)); // Draw box art's reflection
+			boxartXpos = 136;
+			if(boxartfiles.size() >= 9) {
+				for(boxartnum = 0; boxartnum < 10; boxartnum++){
+					if (boxartnum == -1) {
+						boxartnum = 9;
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 0) {
+						boxarttexnum = boxarttex1;
+					} else if (boxartnum == 1) {
+						boxarttexnum = boxarttex2;
+					} else if (boxartnum == 2) {
+						boxarttexnum = boxarttex3;
+					} else if (boxartnum == 3) {
+						boxarttexnum = boxarttex4;
+					} else if (boxartnum == 4) {
+						boxarttexnum = boxarttex5;
+					} else if (boxartnum == 5) {
+						boxarttexnum = boxarttex6;
+					} else if (boxartnum == 6) {
+						boxarttexnum = boxarttex7;
+					} else if (boxartnum == 7) {
+						boxarttexnum = boxarttex8;
+					} else if (boxartnum == 8) {
+						boxarttexnum = boxarttex9;
+					} else if (boxartnum == 9) {
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 10) {
+						boxartnum = 0;
+						boxarttexnum = boxarttex1;
+					}
+					sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+					sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
+					boxartXpos += 144;
+				}
+			} else {
+				for(boxartnum = 0; boxartnum < boxartfiles.size(); boxartnum++) {
+					if (boxartnum == -1) {
+						boxartnum = 9;
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 0) {
+						boxarttexnum = boxarttex1;
+					} else if (boxartnum == 1) {
+						boxarttexnum = boxarttex2;
+					} else if (boxartnum == 2) {
+						boxarttexnum = boxarttex3;
+					} else if (boxartnum == 3) {
+						boxarttexnum = boxarttex4;
+					} else if (boxartnum == 4) {
+						boxarttexnum = boxarttex5;
+					} else if (boxartnum == 5) {
+						boxarttexnum = boxarttex6;
+					} else if (boxartnum == 6) {
+						boxarttexnum = boxarttex7;
+					} else if (boxartnum == 7) {
+						boxarttexnum = boxarttex8;
+					} else if (boxartnum == 8) {
+						boxarttexnum = boxarttex9;
+					} else if (boxartnum == 9) {
+						boxarttexnum = boxarttex10;
+					} else if (boxartnum == 10) {
+						boxartnum = 0;
+						boxarttexnum = boxarttex1;
+					}
+					sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+					sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
+					boxartXpos += 144;
+				}
+			}
 		}
 		if (settings_topbordervalue == 1) {
 			sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
@@ -677,6 +789,7 @@ int main()
 				// Delay a frame
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
+				boxartXmovepos += 18;
 				startbordermovepos = 1;
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
@@ -686,6 +799,7 @@ int main()
 					cursorPositionset = true;
 				}
 				titleboxXmovepos += 8;
+				boxartXmovepos += 18;
 			}
 		} else if(titleboxXmoveright == true) {
 			titleboxXmovetimer += 1;
@@ -697,6 +811,7 @@ int main()
 				// Delay a frame
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos -= 8;
+				boxartXmovepos -= 18;
 				startbordermovepos = 1;
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
@@ -707,6 +822,7 @@ int main()
 				}
 				if (cursorPosition != i) {
 					titleboxXmovepos -= 8;
+					boxartXmovepos -= 18;
 				} else {
 					titleboxXmovetimer = 0;
 					titleboxXmoveright = false;
@@ -720,8 +836,8 @@ int main()
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
 				screenoff();
+				rom = (char*)(files.at(cursorPosition)).c_str();
 				SaveSettings();
-				SaveTWLSettings();
 				applaunchon = true;
 			}
 			fadealpha += 6;
@@ -988,40 +1104,36 @@ int main()
 			if(hDown & KEY_L) {
 				if (romselect_toplayout == 1) {
 					romselect_toplayout = 0;
-					settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 				} else {
 					romselect_toplayout = 1;
-					settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 				}
 			}
 			if (romselect_layout == 0) {
 				Rshouldertext = "DSi-Menu";
 				if(cursorPosition == -1) {
 					titleboxXmovepos -= 64;
+					boxartXmovepos -= 18*8;
 					cursorPosition = 0;
 					updatebotscreen = true;
 				}
 				if(hDown & KEY_R) {
 					romselect_layout = 1;
-					settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
-					settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 					updatebotscreen = true;
 				} else if(hDown & KEY_A){
 					twlsettings_launchslot1value = 0;
 					screenoff();
-					SaveSettings();
-					SaveTWLSettings();
 					rom = (char*)(files.at(cursorPosition)).c_str();
+					SaveSettings();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if((hDown & KEY_DOWN) && cursorPosition != i){
 					titleboxXmovepos -= 64;
+					boxartXmovepos -= 18*8;
 					cursorPosition++;
 					//boxartnum++;
 					if (cursorPosition == i) {
 						titleboxXmovepos += 64;
+						boxartXmovepos += 18*8;
 						cursorPosition--;
 						//boxartnum--;
 					}
@@ -1029,6 +1141,7 @@ int main()
 					updatebotscreen = true;
 				} else if((hDown & KEY_UP) && cursorPosition != 0){
 					titleboxXmovepos += 64;
+					boxartXmovepos += 18*8;
 					cursorPosition--;
 					//boxartnum--;
 					//boxartload = true;
@@ -1036,8 +1149,8 @@ int main()
 				} else if(hDown & KEY_X) {
 					twlsettings_launchslot1value = 1;
 					screenoff();
+					rom = (char*)(files.at(cursorPosition)).c_str();
 					SaveSettings();
-					SaveTWLSettings();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
@@ -1052,8 +1165,6 @@ int main()
 					if(hDown & KEY_R) {
 						if (titleboxXmovetimer == 0) {
 							romselect_layout = 0;
-							settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
-							settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 						}
 						updatebotscreen = true;
 					} else if(hDown & KEY_A){
@@ -1064,7 +1175,6 @@ int main()
 								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
-								rom = (char*)(files.at(cursorPosition)).c_str();
 								twlsettings_launchslot1value = 0;
 								applaunchprep = true;
 							}
@@ -1172,11 +1282,6 @@ int main()
 		}
 
 		while(applaunchon){
-			// Set ROM path if ROM is selected
-			if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
-				bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
-			}
 			// Prepare for the app launch
 			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44LL, 0); // TWL app's title ID
 			// Tell APT to trigger the app launch and set the status of this app to exit
@@ -1186,7 +1291,6 @@ int main()
 
 	
 	SaveSettings();
-	SaveTWLSettings();
 	hidExit();
 	srvExit();
 	romfsExit();
