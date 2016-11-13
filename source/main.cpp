@@ -51,7 +51,9 @@ char* settingsini_twl_resetslot1 = "RESET_SLOT1";
 // Bootstrap .ini file
 char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
 char* bootstrapini_ndspath = "NDS_PATH";
+char* bootstrapini_boostcpu = "BOOST_CPU";
 char* bootstrapini_debug = "DEBUG";
+char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 // End
 
 // Frontend Settings text
@@ -83,12 +85,14 @@ char* twlsettings_bootscreentext = "DS/DSi Boot Screen";
 char* twlsettings_healthsafetytext = "Health and Safety message";
 char* twlsettings_resetslot1text = "Reset Slot-1";
 char* twlsettings_consoletext = "Console output";
+char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
 	
 char* twlsettings_cpuspeedvaluetext;
 char* twlsettings_bootscreenvaluetext;
 char* twlsettings_healthsafetyvaluetext;
 char* twlsettings_resetslot1valuetext;
 char* twlsettings_consolevaluetext;
+char* twlsettings_lockarm9scfgextvaluetext;
 // End
 	
 int twlsettings_cpuspeedvalue;
@@ -97,6 +101,7 @@ int twlsettings_healthsafetyvalue;
 int twlsettings_launchslot1value;
 int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
+int twlsettings_lockarm9scfgextvalue;
 
 
 void LoadColor() {
@@ -312,6 +317,11 @@ void LoadSettings() {
 	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == -1) {
 		twlsettings_consolevalue = 0;
 	}
+	if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0) == 1) {
+		twlsettings_lockarm9scfgextvalue = 1;
+	} else {
+		twlsettings_lockarm9scfgextvalue = 0;
+	}
 }
 
 void SaveSettings() {
@@ -329,6 +339,7 @@ void SaveSettings() {
 		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
 	}
 	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
 	if (twlsettings_consolevalue == 0) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
 	} else if (twlsettings_consolevalue == 1) {
@@ -336,6 +347,7 @@ void SaveSettings() {
 	} else if (twlsettings_consolevalue == 2) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 	}
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, twlsettings_lockarm9scfgextvalue);
 	bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
 }
 
@@ -428,7 +440,8 @@ int main()
 	std::string extension_oddnds4 = ".NDs";
 	std::string extension_oddnds5 = ".nDS";
 	std::string extension_oddnds6 = ".NdS";
-	std::string extension_png = ".png";
+	std::string extension_UCpng = ".PNG";
+	std::string extension_LCpng = ".png";
 		
 	DIR *dir;
 	DIR *boxartdir;
@@ -437,7 +450,9 @@ int main()
 	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
 		while ((ent = readdir (boxartdir)) != NULL) {
 			std::string bafname = (ent->d_name);
-			if(bafname.find(extension_png, (bafname.length() - extension_png.length())) != std::string::npos)
+			if(bafname.find(extension_UCpng, (bafname.length() - extension_UCpng.length())) != std::string::npos)
+				boxartfiles.push_back(ent->d_name);
+			if(bafname.find(extension_LCpng, (bafname.length() - extension_LCpng.length())) != std::string::npos)
 				boxartfiles.push_back(ent->d_name);
 		}
 		closedir (boxartdir);
@@ -457,18 +472,25 @@ int main()
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
 	sf2d_texture *boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 
@@ -1031,6 +1053,11 @@ int main()
 					} else {
 						twlsettings_consolevaluetext = "Off";
 					}
+					if (twlsettings_lockarm9scfgextvalue == 1) {
+						twlsettings_lockarm9scfgextvaluetext = "On";
+					} else {
+						twlsettings_lockarm9scfgextvaluetext = "Off";
+					}
 					
 					settingsYpos = 64;
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 16, twlsettingstext);
@@ -1085,6 +1112,17 @@ int main()
 					} else {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_consoletext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_consolevaluetext);
+						settingsYpos += 12;
+					}
+					if(twlsettingscursorPosition == 5) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgexttext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgextvaluetext);
+						settingsYpos += 12;
+						sftd_draw_textf(font, 8, 200, RGBA8(255, 255, 255, 255), 13, "Locks the ARM9 SCFG_EXT,");
+						sftd_draw_textf(font, 8, 214, RGBA8(255, 255, 255, 255), 13, "avoiding conflict with recent libnds.");
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_lockarm9scfgexttext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_lockarm9scfgextvaluetext);
 						settingsYpos += 12;
 					}
 				}
@@ -1228,9 +1266,14 @@ int main()
 						if(twlsettings_consolevalue == 3) {
 							twlsettings_consolevalue = 0;
 						}
+					} else if (twlsettingscursorPosition == 5) {
+						twlsettings_lockarm9scfgextvalue++; // Lock ARM9 SCFG_EXT
+						if(twlsettings_lockarm9scfgextvalue == 2) {
+							twlsettings_lockarm9scfgextvalue = 0;
+						}
 					}
 					updatebotscreen = true;
-				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 4){
+				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 5){
 					twlsettingscursorPosition++;
 					updatebotscreen = true;
 				} else if((hDown & KEY_UP) && twlsettingscursorPosition != 0){
@@ -1311,9 +1354,8 @@ int main()
 	sf2d_free_texture(boxfulltex);
 	sf2d_free_texture(startbordertex);
 	sf2d_free_texture(bottomsettingstex);
-	//sf2d_free_texture(boxartshadowtex);
 	sf2d_free_texture(boxarttex1);
-	/* sf2d_free_texture(boxarttex2);
+	sf2d_free_texture(boxarttex2);
 	sf2d_free_texture(boxarttex3);
 	sf2d_free_texture(boxarttex4);
 	sf2d_free_texture(boxarttex5);
@@ -1321,7 +1363,7 @@ int main()
 	sf2d_free_texture(boxarttex7);
 	sf2d_free_texture(boxarttex8);
 	sf2d_free_texture(boxarttex9);
-	sf2d_free_texture(boxarttex10); */
+	sf2d_free_texture(boxarttex10);
     sf2d_fini();
 
     return 0;
