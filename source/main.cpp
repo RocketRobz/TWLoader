@@ -858,7 +858,6 @@ int main()
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
 				screenoff();
-				rom = (char*)(files.at(cursorPosition)).c_str();
 				SaveSettings();
 				applaunchon = true;
 			}
@@ -1187,7 +1186,6 @@ int main()
 				} else if(hDown & KEY_X) {
 					twlsettings_launchslot1value = 1;
 					screenoff();
-					rom = (char*)(files.at(cursorPosition)).c_str();
 					SaveSettings();
 					applaunchon = true;
 					updatebotscreen = true;
@@ -1214,6 +1212,7 @@ int main()
 							} else {
 								titleboxXmovetimer = 1;
 								twlsettings_launchslot1value = 0;
+								rom = (char*)(files.at(cursorPosition)).c_str();
 								applaunchprep = true;
 							}
 						}
