@@ -144,12 +144,6 @@ int main(int argc, char **argv) {
 		}
 		
 		if(hbmenuini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			if(REG_SCFG_MC == 0x11) { 
-				consoleDemoInit();
-				printf("Please insert a cartridge...\n");
-				do { swiWaitForVBlank(); } 
-				while (REG_SCFG_MC == 0x11);
-			}
 			fifoSendValue32(FIFO_USER_02, 1);
 		}
 
@@ -222,7 +216,7 @@ int main(int argc, char **argv) {
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
 		
-		iprintf ("bootstrap not found.");
+		iprintf ("bootstrap not found.\n");
 		doPause();
 		
 		TriggerExit = true;
