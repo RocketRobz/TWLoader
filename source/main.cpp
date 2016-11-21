@@ -13,6 +13,7 @@
 //#include <citrus/fs.hpp>
 
 #include "inifile.h"
+#include "date.h"
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 #define CONFIG_BATTERY_LEDSTATE (*(int *)0x1FF81085)
@@ -64,7 +65,7 @@ char* noromtext1 = "No ROMs found!";
 char* noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
 
 // Settings text
-char* settings_vertext = "Ver. 1.3";
+char* settings_vertext = "Ver. ?.?.?";
 
 char* settingstext_bot;
 
@@ -696,6 +697,9 @@ int main()
 			}
 			if (settings_topbordervalue == 1) {
 				sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
+				sftd_draw_text(font, 328, 2, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
+			} else {
+				sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartfile_fullpath); // Debug text
@@ -797,6 +801,9 @@ int main()
 			}
 			if (settings_topbordervalue == 1) {
 				sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
+				sftd_draw_text(font, 328, 2, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
+			} else {
+				sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartfile_fullpath); // Debug text
@@ -842,7 +849,8 @@ int main()
 				}
 			}
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 16, "Settings");
-			sftd_draw_textf(font, 336, 2, RGBA8(255, 255, 255, 255), 12, settings_vertext);
+			sftd_draw_textf(font, 336, 200, RGBA8(255, 255, 255, 255), 12, settings_vertext);
+			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 			sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -873,7 +881,8 @@ int main()
 				}
 			}
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 16, "Settings");
-			sftd_draw_textf(font, 336, 2, RGBA8(255, 255, 255, 255), 12, settings_vertext);
+			sftd_draw_textf(font, 336, 200, RGBA8(255, 255, 255, 255), 12, settings_vertext);
+			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
 			sf2d_draw_texture(shoulderRtex, 327, RshoulderYpos);
 			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
