@@ -66,7 +66,7 @@ char* noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
 char* batterytext;
 
 // Settings text
-char* settings_vertext = "Ver. 1.3.1";
+char* settings_vertext = "Ver. 1.3.2";
 
 char* settingstext_bot;
 
@@ -545,6 +545,7 @@ int main()
 	}
 		
 	int cursorPosition = 0, i = 0;
+	bool noromsfound = false;
 	int settingscursorPosition = 0, twlsettingscursorPosition = 0;
 	
 	bool cursorPositionset = false;
@@ -1369,9 +1370,12 @@ int main()
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
 				if(applaunchprep == false) {
-					if (i == 0) {	// If no ROMs are found
-						titleboxXmovepos = +64;
-						cursorPosition = -1;
+					if (noromsfound == false) {
+						if (i == 0) {	// If no ROMs are found
+							noromsfound = true;
+							titleboxXmovepos += 64;
+							cursorPosition = -1;
+						}
 					}
 					/* if(hDown & KEY_R) {
 						if (titleboxXmovetimer == 0) {
