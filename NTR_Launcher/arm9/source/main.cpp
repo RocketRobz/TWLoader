@@ -56,6 +56,12 @@ int main(int argc, const char* argv[]) {
 	if (fatInitDefault()) {
 		CIniFile ntrlauncher_config( "sd:/_nds/twloader/settings.ini" );
 		
+		if(ntrlauncher_config.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+			EnableSD = true;
+			// Tell Arm7 to use alternate SCFG_EXT values.
+			fifoSendValue32(FIFO_USER_05, 1);
+		}
+		
 	}
 
 	// Tell Arm7 it's ready for card reset (if card reset is nessecery)

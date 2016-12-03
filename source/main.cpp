@@ -29,27 +29,36 @@ int color_Gvalue;
 int color_Bvalue;
 	
 char* topbgloc;
+//bool useboxart = true;
 char* boxartpath;
 char* boxartfile;
 char* boxartfile_fullpath;
 int boxartnum = 0;
 char* startborderloc;
+
+
+char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
+char* fcrompathini_rompath = "NDS_PATH";
 	
+
 // Settings .ini file
 char* settingsini_frontend = "FRONTEND";
 //char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
 char* settingsini_frontend_color = "COLOR";
 char* settingsini_frontend_topborder = "TOP_BORDER";
 char* settingsini_frontend_toplayout = "TOP_LAYOUT";
-char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
+//char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
 char* settingsini_twlmode = "TWL-MODE";
 char* settingsini_twl_clock = "TWL_CLOCK";
 char* settingsini_twl_bootani = "BOOT_ANIMATION";
 char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
-char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";
+char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
 char* settingsini_twl_resetslot1 = "RESET_SLOT1";
+char* settingsini_twl_forwarder = "FORWARDER";
+char* settingsini_twl_flashcard = "FLASHCARD";
 // End
+
 
 
 // Bootstrap .ini file
@@ -60,13 +69,13 @@ char* bootstrapini_debug = "DEBUG";
 char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 // End
 
-char* noromtext1 = "No ROMs found!";
-char* noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
+char* noromtext1;
+char* noromtext2;
 
 char* batterytext;
 
 // Settings text
-char* settings_vertext = "Ver. 1.3.2";
+char* settings_vertext = "Ver. 1.4";
 
 char* settingstext_bot;
 
@@ -87,9 +96,12 @@ int romselect_toplayout;
 
 char* rom = (char*)malloc(256);
 std::string fat = "fat:/nds/";
+std::string dstwofat = "fat1:/";
+std::string flashcardfolder = "sdmc:/nds/flashcard/";
 
 // NTR/TWL-mode Settings text
 char* twlsettings_cpuspeedtext = "ARM9 CPU Speed";
+char* twlsettings_flashcardtext = "Flashcard(s) select";
 char* twlsettings_bootscreentext = "DS/DSi Boot Screen";
 char* twlsettings_healthsafetytext = "Health and Safety message";
 char* twlsettings_resetslot1text = "Reset Slot-1";
@@ -97,6 +109,12 @@ char* twlsettings_consoletext = "Console output";
 char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
 	
 char* twlsettings_cpuspeedvaluetext;
+char* twlsettings_flashcardvaluetext1;
+char* twlsettings_flashcardvaluetext2;
+char* twlsettings_flashcardvaluetext3;
+char* twlsettings_flashcardvaluetext4;
+char* twlsettings_flashcardvaluetext5;
+char* twlsettings_flashcardvaluetext6;
 char* twlsettings_bootscreenvaluetext;
 char* twlsettings_healthsafetyvaluetext;
 char* twlsettings_resetslot1valuetext;
@@ -105,6 +123,17 @@ char* twlsettings_lockarm9scfgextvaluetext;
 // End
 	
 int twlsettings_cpuspeedvalue;
+int twlsettings_forwardervalue;
+int twlsettings_flashcardvalue;
+/* Flashcard value
+	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+	1: R4DS (Original Non-SDHC version)/ M3 Simply
+	2: R4iDSN/R4i Gold RTS
+	3: Acekard 2(i)/M3DS Real/R4i-SDHC v1.4.x
+	4: Acekard RPG
+	5: Ace 3DS+/Gateway Blue Card/R4iTT
+	6: SuperCard DSTWO
+*/
 int twlsettings_bootscreenvalue;
 int twlsettings_healthsafetyvalue;
 int twlsettings_launchslot1value;
@@ -319,6 +348,26 @@ void LoadSettings() {
 	} else {
 		twlsettings_resetslot1value = 0;
 	}
+	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_forwarder, 0) == 1) {
+		twlsettings_forwardervalue = 1;
+	} else {
+		twlsettings_forwardervalue = 0;
+	}
+	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 6) {
+		twlsettings_flashcardvalue = 6;
+	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 5) {
+		twlsettings_flashcardvalue = 5;
+	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 4) {
+		twlsettings_flashcardvalue = 4;
+	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 3) {
+		twlsettings_flashcardvalue = 3;
+	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 2) {
+		twlsettings_flashcardvalue = 2;
+	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0) == 1) {
+		twlsettings_flashcardvalue = 1;
+	} else {
+		twlsettings_flashcardvalue = 0;
+	}
 	if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 1) {
 		twlsettings_consolevalue = 2;
 	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 0) {
@@ -343,6 +392,8 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
 	// Set ROM path if ROM is selected
 	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
 		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
@@ -385,7 +436,8 @@ int main()
 
 	// making nds folder if it doesn't exist
 	mkdir("sdmc:/nds", 0777);
-	mkdir("sdmc:/_nds/twloader/tmp", 0777);
+	mkdir("sdmc:/_dstwofwd", 0777);
+	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	//if (bootstrapini.GetInt(settingsini_frontend, settingsini_frontend_twlappinstalled, 0) == 0) {
 	//	ctr::app::install(ctr::fs::NAND, "sdmc:/_nds/twloader/cia/twlapp.cia", 0, 1287328);
@@ -453,6 +505,7 @@ int main()
 	//sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
 
 	std::vector<std::string> files = {};
+	std::vector<std::string> fcfiles = {};
 	std::vector<std::string> boxartfiles = {};
 	
 	std::string extension_UCnds = ".NDS";
@@ -463,10 +516,19 @@ int main()
 	std::string extension_oddnds4 = ".NDs";
 	std::string extension_oddnds5 = ".nDS";
 	std::string extension_oddnds6 = ".NdS";
+	std::string extension_UCini = ".INI";
+	std::string extension_LCini = ".ini";
+	std::string extension_oddini1 = ".Ini";
+	std::string extension_oddini2 = ".iNi";
+	std::string extension_oddini3 = ".inI";
+	std::string extension_oddini4 = ".INi";
+	std::string extension_oddini5 = ".iNi";
+	std::string extension_oddini6 = ".InI";
 	std::string extension_UCpng = ".PNG";
 	std::string extension_LCpng = ".png";
 		
 	DIR *dir;
+	DIR *flashcarddir;
 	DIR *boxartdir;
 	struct dirent *ent;
 	
@@ -542,6 +604,30 @@ int main()
 				files.push_back(ent->d_name);
 		}
 		closedir (dir);
+	}
+	
+	if ((flashcarddir = opendir ("sdmc:/nds/flashcard/")) != NULL) {
+	/* print all the files and directories within directory */
+		while ((ent = readdir (flashcarddir)) != NULL) {
+			std::string fcfname = (ent->d_name);
+			if(fcfname.find(extension_UCini, (fcfname.length() - extension_UCini.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_LCini, (fcfname.length() - extension_LCini.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini1, (fcfname.length() - extension_oddini1.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini2, (fcfname.length() - extension_oddini2.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini3, (fcfname.length() - extension_oddini3.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini4, (fcfname.length() - extension_oddini4.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini5, (fcfname.length() - extension_oddini5.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+			if(fcfname.find(extension_oddini6, (fcfname.length() - extension_oddini6.length())) != std::string::npos)
+				fcfiles.push_back(ent->d_name);
+		}
+		closedir (flashcarddir);
 	}
 		
 	int cursorPosition = 0, i = 0;
@@ -635,6 +721,13 @@ int main()
 		u8 batteryLevel = 0;
 		
 		if(screenmode == 0) {
+			if (twlsettings_forwardervalue == 1) {
+				noromtext1 = "No INIs found!";
+				noromtext2 = "Put .ini files in 'sdmc:/nds/flashcard'.";
+			} else {
+				noromtext1 = "No ROMs found!";
+				noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
+			}
 			if (colortexloaded == false) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
@@ -1067,27 +1160,53 @@ int main()
 							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 						}
 					}
-					if(files.size() >= 49) {
-						for(i = 0; i < 50; i++){
-							if (titleboxXmovetimer == 0) {
-								sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+					if (twlsettings_forwardervalue == 1) {
+						if(fcfiles.size() >= 49) {
+							for(i = 0; i < 50; i++){
+								if (titleboxXmovetimer == 0) {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
+								}
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+								filenameYpos += 240;
 							}
-							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-							sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
-							titleboxXpos += 64;
-							ndsiconXpos += 64;
-							filenameYpos += 240;
+						} else {
+							for(i = 0; i < fcfiles.size(); i++){
+								if (titleboxXmovetimer == 0) {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
+								}
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+								filenameYpos += 240;
+							}
 						}
 					} else {
-						for(i = 0; i < files.size(); i++){
-							if (titleboxXmovetimer == 0) {
-								sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+						if(files.size() >= 49) {
+							for(i = 0; i < 50; i++){
+								if (titleboxXmovetimer == 0) {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+								}
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+								filenameYpos += 240;
 							}
-							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-							sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
-							titleboxXpos += 64;
-							ndsiconXpos += 64;
-							filenameYpos += 240;
+						} else {
+							for(i = 0; i < files.size(); i++){
+								if (titleboxXmovetimer == 0) {
+									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
+								}
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+								filenameYpos += 240;
+							}
 						}
 					}
 					if (applaunchprep == false) {
@@ -1115,11 +1234,11 @@ int main()
 				sf2d_draw_texture(settingstex, 0, 0);
 				sf2d_draw_texture(whomeicontex, 79, 220); // Draw HOME icon
 				sftd_draw_textf(font, 96, 220, RGBA8(255, 255, 255, 255), 14, ": Return to HOME Menu");
-				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-				sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-				sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-				sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 				if (settings_subscreenmode == 0) {
+					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+					sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+					sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 					if (settings_colorvalue == 0) {
 						settings_colorvaluetext = "Gray";
 					} else if (settings_colorvalue == 1) {
@@ -1184,6 +1303,10 @@ int main()
 						settingsYpos += 12;
 					}
 				} else if (settings_subscreenmode == 1) {
+					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+					sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+					sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 					if (twlsettings_cpuspeedvalue == 1) {
 						twlsettings_cpuspeedvaluetext = "133mhz (TWL)";
 					} else {
@@ -1219,6 +1342,15 @@ int main()
 					settingstext_bot = "Settings: NTR/TWL-mode";
 					settingsYpos = 40;
 					if(twlsettingscursorPosition == 0) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardtext);
+						settingsYpos += 12;
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Pick a flashcard to use to");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "run ROMs from it.");
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_flashcardtext);
+						settingsYpos += 12;
+					}
+					if(twlsettingscursorPosition == 1) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_cpuspeedtext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_cpuspeedvaluetext);
 						settingsYpos += 12;
@@ -1228,7 +1360,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_cpuspeedvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 1) {
+					if(twlsettingscursorPosition == 2) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreentext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
@@ -1239,7 +1371,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 2) {
+					if(twlsettingscursorPosition == 3) {
 						sftd_draw_textf(font, settingsXpos+16, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetytext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
@@ -1250,7 +1382,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 3) {
+					if(twlsettingscursorPosition == 4) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1text);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
@@ -1261,7 +1393,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 4) {
+					if(twlsettingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consoletext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
@@ -1271,7 +1403,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 5) {
+					if(twlsettingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgexttext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgextvaluetext);
 						settingsYpos += 12;
@@ -1282,6 +1414,72 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_lockarm9scfgextvaluetext);
 						settingsYpos += 12;
 					}
+				} else if (settings_subscreenmode == 2) {
+					if (twlsettings_flashcardvalue == 0) {
+						twlsettings_flashcardvaluetext1 = "DSTT";
+						twlsettings_flashcardvaluetext2 = "R4i Gold";
+						twlsettings_flashcardvaluetext3 = "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)";
+						twlsettings_flashcardvaluetext4 = "R4 SDHC Dual-Core";
+						twlsettings_flashcardvaluetext5 = "R4 SDHC Upgrade";
+						twlsettings_flashcardvaluetext6 = "SuperCard DSONE";
+					} else if (twlsettings_flashcardvalue == 1) {
+						twlsettings_flashcardvaluetext1 = "Original R4";
+						twlsettings_flashcardvaluetext2 = "M3 Simply";
+						twlsettings_flashcardvaluetext3 = " ";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					} else if (twlsettings_flashcardvalue == 2) {
+						twlsettings_flashcardvaluetext1 = "R4iDSN";
+						twlsettings_flashcardvaluetext2 = "R4i Gold RTS";
+						twlsettings_flashcardvaluetext3 = " ";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					} else if (twlsettings_flashcardvalue == 3) {
+						twlsettings_flashcardvaluetext1 = "Acekard 2(i)";
+						twlsettings_flashcardvaluetext2 = "M3DS Real";
+						twlsettings_flashcardvaluetext3 = "R4i-SDHC v1.4.x (www.r4i-sdhc.com)";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					} else if (twlsettings_flashcardvalue == 4) {
+						twlsettings_flashcardvaluetext1 = "Acekard RPG";
+						twlsettings_flashcardvaluetext2 = " ";
+						twlsettings_flashcardvaluetext3 = " ";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					} else if (twlsettings_flashcardvalue == 5) {
+						twlsettings_flashcardvaluetext1 = "Ace 3DS+";
+						twlsettings_flashcardvaluetext2 = "Gateway Blue Card";
+						twlsettings_flashcardvaluetext3 = "R4iTT";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					} else if (twlsettings_flashcardvalue == 6) {
+						twlsettings_flashcardvaluetext1 = "SuperCard DSTWO";
+						twlsettings_flashcardvaluetext2 = " ";
+						twlsettings_flashcardvaluetext3 = " ";
+						twlsettings_flashcardvaluetext4 = " ";
+						twlsettings_flashcardvaluetext5 = " ";
+						twlsettings_flashcardvaluetext6 = " ";
+					}
+					settingstext_bot = twlsettings_flashcardtext;
+					settingsYpos = 40;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext1);
+					settingsYpos += 12;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext2);
+					settingsYpos += 12;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext3);
+					settingsYpos += 12;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext4);
+					settingsYpos += 12;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext5);
+					settingsYpos += 12;
+					sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_flashcardvaluetext6);
+					sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Left/Right: Pick");
+					sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "A/B: Save and Return");
 				}
 				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 16, settingstext_bot);
 			}
@@ -1297,6 +1495,11 @@ int main()
 		}
 		if (screenmode == 0) {
 			Lshouldertext = "Layout";
+			if (twlsettings_forwardervalue == 1) {
+				Rshouldertext = "SD Card";
+			} else {
+				Rshouldertext = "Flashcard";
+			}
 			/* if (i == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
@@ -1366,22 +1569,29 @@ int main()
 					updatebotscreen = true;
 				}
 			} else { */
-				Rshouldertext = "???";
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
 				if(applaunchprep == false) {
+					if(hDown & KEY_R) {
+						cursorPosition = 0;
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						noromsfound = false;
+						if (twlsettings_forwardervalue == 1) {
+							twlsettings_forwardervalue = 0;
+						} else {
+							twlsettings_forwardervalue = 1;
+						}
+						updatebotscreen = true;
+					}
 					if (noromsfound == false) {
 						if (i == 0) {	// If no ROMs are found
 							noromsfound = true;
-							titleboxXmovepos += 64;
+							titleboxXmovepos = +64;
 							cursorPosition = -1;
+							updatebotscreen = true;
 						}
 					}
-					/* if(hDown & KEY_R) {
-						if (titleboxXmovetimer == 0) {
-							romselect_layout = 0;
-						}
-						updatebotscreen = true; */
 					if(hDown & KEY_A){
 						if (titleboxXmovetimer == 0) {
 							if(cursorPosition == -2) {
@@ -1394,8 +1604,20 @@ int main()
 								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
-								twlsettings_launchslot1value = 0;
-								rom = (char*)(files.at(cursorPosition)).c_str();
+								if (twlsettings_forwardervalue == 1) {
+									twlsettings_launchslot1value = 1;
+									rom = (char*)(fcfiles.at(cursorPosition)).c_str();
+									CIniFile setfcrompathini( flashcardfolder+rom );
+									if (twlsettings_flashcardvalue == 6) {
+										CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+										std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+										fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
+										fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+									}
+								} else {
+									twlsettings_launchslot1value = 0;
+									rom = (char*)(files.at(cursorPosition)).c_str();
+								}
 								applaunchprep = true;
 							}
 						}
@@ -1422,45 +1644,58 @@ int main()
 			Lshouldertext = "GUI";
 			Rshouldertext = "NTR/TWL";
 			updatebotscreen = true;
-			if (settings_subscreenmode == 1) {
+			if (settings_subscreenmode == 2) {
+				if(hDown & KEY_LEFT && twlsettings_flashcardvalue != 0){
+					twlsettings_flashcardvalue--; // Flashcard
+				} else if(hDown & KEY_RIGHT && twlsettings_flashcardvalue != 6){
+					twlsettings_flashcardvalue++; // Flashcard
+				} else if(hDown & KEY_A || hDown & KEY_B){
+					settings_subscreenmode = 1;
+				}
+			} else if (settings_subscreenmode == 1) {
 				if(hDown & KEY_A){
 					if (twlsettingscursorPosition == 0) {
+						settings_subscreenmode = 2;
+					} else if (twlsettingscursorPosition == 1) {
 						twlsettings_cpuspeedvalue++; // CPU speed
 						if(twlsettings_cpuspeedvalue == 2) {
 							twlsettings_cpuspeedvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 1) {
+					} else if (twlsettingscursorPosition == 2) {
 						twlsettings_bootscreenvalue++; // Boot screen
 						if(twlsettings_bootscreenvalue == 2) {
 							twlsettings_bootscreenvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 2) {
+					} else if (twlsettingscursorPosition == 3) {
 						twlsettings_healthsafetyvalue++; // H&S message
 						if(twlsettings_healthsafetyvalue == 2) {
 							twlsettings_healthsafetyvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 3) {
+					} else if (twlsettingscursorPosition == 4) {
 						twlsettings_resetslot1value++; // Reset Slot-1
 						if(twlsettings_resetslot1value == 2) {
 							twlsettings_resetslot1value = 0;
 						}
-					} else if (twlsettingscursorPosition == 4) {
+					} else if (twlsettingscursorPosition == 5) {
 						twlsettings_consolevalue++; // Console output
 						if(twlsettings_consolevalue == 3) {
 							twlsettings_consolevalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 5) {
+					} else if (twlsettingscursorPosition == 6) {
 						twlsettings_lockarm9scfgextvalue++; // Lock ARM9 SCFG_EXT
 						if(twlsettings_lockarm9scfgextvalue == 2) {
 							twlsettings_lockarm9scfgextvalue = 0;
 						}
 					}
-				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 5){
+				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 6){
 					twlsettingscursorPosition++;
 				} else if((hDown & KEY_UP) && twlsettingscursorPosition != 0){
 					twlsettingscursorPosition--;
 				} else if(hDown & KEY_L){
 					settings_subscreenmode = 0;
+				} else if(hDown & KEY_B){
+					titleboxXmovetimer = 1;
+					fadeout = true;
 				}
 			} else {
 				if(hDown & KEY_A || hDown & KEY_RIGHT){
@@ -1490,11 +1725,10 @@ int main()
 					settingscursorPosition--;
 				} else if(hDown & KEY_R){
 					settings_subscreenmode = 1;
-				} 
-			}
-			if(hDown & KEY_B){
-				titleboxXmovetimer = 1;
-				fadeout = true;
+				} else if(hDown & KEY_B){
+					titleboxXmovetimer = 1;
+					fadeout = true;
+				}
 			}
 		}
 
