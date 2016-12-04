@@ -121,19 +121,19 @@ int main(int argc, char **argv) {
 	int pressed = keysDown();
 
 	if (fatInitDefault()) {
-		CIniFile hbmenuini( "sd:/_nds/twloader/settings.ini" );
+		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
-		bootstrapPath = hbmenuini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");	
+		bootstrapPath = twloaderini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");	
 				
-		if(hbmenuini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
-		if(hbmenuini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
-		if(hbmenuini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
+		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
 			REG_SCFG_CLK = 0x80;
 			fifoSendValue32(FIFO_USER_04, 1);
 		}
 
-		if(hbmenuini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
-			if(hbmenuini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
+			if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 				if(REG_SCFG_MC == 0x11) { 
 					consoleDemoInit();
 					printf("Please insert a cartridge...\n");
@@ -143,8 +143,14 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(hbmenuini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			fifoSendValue32(FIFO_USER_02, 1);
+		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 0) {
+					fifoSendValue32(FIFO_USER_02, 1);
+				}
+			} else {
+				fifoSendValue32(FIFO_USER_02, 1);
+			}
 		}
 
 		fifoSendValue32(FIFO_USER_01, 1);
@@ -153,11 +159,11 @@ int main(int argc, char **argv) {
 		// Only time SCFG should be locked is for compatiblity with NTR retail stuff.
 		// So NTR SCFG values (that preserve SD access) are always used when locking.
 		// Locking Arm9 SCFG kills SD access. So that will not occur here.
-		if(hbmenuini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
 			fifoSendValue32(FIFO_USER_05, 1);
 			REG_SCFG_EXT = 0x83000000;
 		} else {
-			if(hbmenuini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
 				fifoSendValue32(FIFO_USER_06, 1);
 				REG_SCFG_EXT = 0x8307F100;
 			} else {
@@ -169,7 +175,13 @@ int main(int argc, char **argv) {
 
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 		
-		if(hbmenuini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0) {
+				runFile("sd:/_dsttfwd/loadcard.nds");
+			}
+		}
+		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
 		}
 	}

@@ -29,7 +29,16 @@ int color_Gvalue;
 int color_Bvalue;
 	
 char* topbgloc;
-//bool useboxart = true;
+sf2d_texture *boxarttex1;
+sf2d_texture *boxarttex2;
+sf2d_texture *boxarttex3;
+sf2d_texture *boxarttex4;
+sf2d_texture *boxarttex5;
+sf2d_texture *boxarttex6;
+sf2d_texture *boxarttex7;
+sf2d_texture *boxarttex8;
+sf2d_texture *boxarttex9;
+sf2d_texture *boxarttex10;
 char* boxartpath;
 char* boxartfile;
 char* boxartfile_fullpath;
@@ -96,6 +105,7 @@ int romselect_toplayout;
 
 char* rom = (char*)malloc(256);
 std::string fat = "fat:/nds/";
+std::string slashchar = "/";
 std::string dstwofat = "fat1:/";
 std::string flashcardfolder = "sdmc:/nds/flashcard/";
 
@@ -259,19 +269,19 @@ void LoadBoxArtFile() {
 	strcat(boxartfile_fullpath, "sdmc:/_nds/twloader/boxart/");
 	strcat(boxartfile_fullpath, boxartfile);
 
-	/* if (boxartnum == 0) {
+	if (boxartnum == 2) {
 		if (fopen (boxartfile_fullpath, "rb") != NULL) {
 			boxartpath = boxartfile_fullpath;
 		} else {
 			boxartpath = "romfs:/assets/boxart_unknown.png";
 		} fclose (fopen (boxartfile_fullpath, "rb"));
-	} else { */
+	} else {
 		if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
 			boxartpath = boxartfile_fullpath+3;
 		} else {
 			boxartpath = "romfs:/assets/boxart_unknown.png";
 		} fclose (fopen (boxartfile_fullpath+3, "rb"));
-	// }
+	}
 	boxartnum++;
 }
 
@@ -436,6 +446,7 @@ int main()
 
 	// making nds folder if it doesn't exist
 	mkdir("sdmc:/nds", 0777);
+	mkdir("sdmc:/_dsttfwd", 0777);
 	mkdir("sdmc:/_dstwofwd", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
@@ -550,34 +561,34 @@ int main()
 
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 	boxartfile = boxartfiles.at(boxartnum).c_str();
 	LoadBoxArtFile();
-	sf2d_texture *boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
 
 	boxartnum = 0;
 	sf2d_texture* boxarttexnum = boxarttex1;
@@ -1100,6 +1111,18 @@ int main()
 					applaunchprep = false;
 				} else {
 					screenoff();
+					CIniFile setfcrompathini( flashcardfolder+rom );
+					if (twlsettings_flashcardvalue == 0) {
+						CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+						fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+						fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+					} else if (twlsettings_flashcardvalue == 6) {
+						CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+						fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
+						fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+					}
 					SaveSettings();
 					applaunchon = true;
 				}
@@ -1607,13 +1630,6 @@ int main()
 								if (twlsettings_forwardervalue == 1) {
 									twlsettings_launchslot1value = 1;
 									rom = (char*)(fcfiles.at(cursorPosition)).c_str();
-									CIniFile setfcrompathini( flashcardfolder+rom );
-									if (twlsettings_flashcardvalue == 6) {
-										CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
-										std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-										fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-										fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
-									}
 								} else {
 									twlsettings_launchslot1value = 0;
 									rom = (char*)(files.at(cursorPosition)).c_str();
