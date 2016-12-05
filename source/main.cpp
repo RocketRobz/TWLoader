@@ -28,71 +28,64 @@ int color_Rvalue;
 int color_Gvalue;
 int color_Bvalue;
 	
-char* topbgloc;
-sf2d_texture *boxarttex1;
-sf2d_texture *boxarttex2;
-sf2d_texture *boxarttex3;
-sf2d_texture *boxarttex4;
-sf2d_texture *boxarttex5;
-sf2d_texture *boxarttex6;
-sf2d_texture *boxarttex7;
-sf2d_texture *boxarttex8;
-sf2d_texture *boxarttex9;
-sf2d_texture *boxarttex10;
-char* boxartpath;
-char* boxartfile;
-char* boxartfile_fullpath;
+sf2d_texture *boxarttexnum;
+#include "boxart.h"
 int boxartnum = 0;
-char* startborderloc;
+const char* boxartpath;
+const char* boxartfile;
+const char* boxartfile_fullpath;
+const char* topbgloc;
+const char* startborderloc;
 
 
-char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
-char* fcrompathini_rompath = "NDS_PATH";
+const char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
+const char* fcrompathini_rompath = "NDS_PATH";
 	
 
 // Settings .ini file
-char* settingsini_frontend = "FRONTEND";
+const char* settingsini_frontend = "FRONTEND";
 //char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
-char* settingsini_frontend_color = "COLOR";
-char* settingsini_frontend_topborder = "TOP_BORDER";
-char* settingsini_frontend_toplayout = "TOP_LAYOUT";
+const char* settingsini_frontend_color = "COLOR";
+const char* settingsini_frontend_topborder = "TOP_BORDER";
+const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 //char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
-char* settingsini_twlmode = "TWL-MODE";
-char* settingsini_twl_clock = "TWL_CLOCK";
-char* settingsini_twl_bootani = "BOOT_ANIMATION";
-char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
-char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
-char* settingsini_twl_resetslot1 = "RESET_SLOT1";
-char* settingsini_twl_forwarder = "FORWARDER";
-char* settingsini_twl_flashcard = "FLASHCARD";
+const char* settingsini_twlmode = "TWL-MODE";
+const char* settingsini_twl_rainbowled = "RAINBOW_LED";
+const char* settingsini_twl_clock = "TWL_CLOCK";
+const char* settingsini_twl_bootani = "BOOT_ANIMATION";
+const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
+const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
+const char* settingsini_twl_resetslot1 = "RESET_SLOT1";
+const char* settingsini_twl_forwarder = "FORWARDER";
+const char* settingsini_twl_flashcard = "FLASHCARD";
 // End
 
 
 
 // Bootstrap .ini file
-char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
-char* bootstrapini_ndspath = "NDS_PATH";
-char* bootstrapini_boostcpu = "BOOST_CPU";
-char* bootstrapini_debug = "DEBUG";
-char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
+const char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
+const char* bootstrapini_ndspath = "NDS_PATH";
+const char* bootstrapini_boostcpu = "BOOST_CPU";
+const char* bootstrapini_debug = "DEBUG";
+const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 // End
 
-char* noromtext1;
-char* noromtext2;
+const char* noromtext1;
+const char* noromtext2;
 
-char* batterytext;
+const char* batterytext;
 
 // Settings text
-char* settings_vertext = "Ver. 1.4";
+const char* settings_vertext = "Ver. 1.4.2";
 
-char* settingstext_bot;
+const char* settingstext_bot;
 
-char* settings_colortext = "Color";
-char* settings_topbordertext = "Top border";
+const char* settings_colortext = "Color";
+const char* settings_topbordertext = "Top border";
 
-char* settings_colorvaluetext;
-char* settings_topbordervaluetext;
+const char* settings_colorvaluetext;
+const char* settings_topbordervaluetext;
 // End
 
 int settings_colorvalue;
@@ -106,32 +99,38 @@ int romselect_toplayout;
 char* rom = (char*)malloc(256);
 std::string fat = "fat:/nds/";
 std::string slashchar = "/";
+std::string woodfat = "fat0:/";
 std::string dstwofat = "fat1:/";
 std::string flashcardfolder = "sdmc:/nds/flashcard/";
+const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
+const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
 
 // NTR/TWL-mode Settings text
-char* twlsettings_cpuspeedtext = "ARM9 CPU Speed";
-char* twlsettings_flashcardtext = "Flashcard(s) select";
-char* twlsettings_bootscreentext = "DS/DSi Boot Screen";
-char* twlsettings_healthsafetytext = "Health and Safety message";
-char* twlsettings_resetslot1text = "Reset Slot-1";
-char* twlsettings_consoletext = "Console output";
-char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
+const char* twlsettings_flashcardtext = "Flashcard(s) select";
+const char* twlsettings_rainbowledtext = "Rainbow LED";
+const char* twlsettings_cpuspeedtext = "ARM9 CPU Speed";
+const char* twlsettings_bootscreentext = "DS/DSi Boot Screen";
+const char* twlsettings_healthsafetytext = "Health and Safety message";
+const char* twlsettings_resetslot1text = "Reset Slot-1";
+const char* twlsettings_consoletext = "Console output";
+const char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
 	
-char* twlsettings_cpuspeedvaluetext;
-char* twlsettings_flashcardvaluetext1;
-char* twlsettings_flashcardvaluetext2;
-char* twlsettings_flashcardvaluetext3;
-char* twlsettings_flashcardvaluetext4;
-char* twlsettings_flashcardvaluetext5;
-char* twlsettings_flashcardvaluetext6;
-char* twlsettings_bootscreenvaluetext;
-char* twlsettings_healthsafetyvaluetext;
-char* twlsettings_resetslot1valuetext;
-char* twlsettings_consolevaluetext;
-char* twlsettings_lockarm9scfgextvaluetext;
+const char* twlsettings_rainbowledvaluetext;
+const char* twlsettings_cpuspeedvaluetext;
+const char* twlsettings_flashcardvaluetext1;
+const char* twlsettings_flashcardvaluetext2;
+const char* twlsettings_flashcardvaluetext3;
+const char* twlsettings_flashcardvaluetext4;
+const char* twlsettings_flashcardvaluetext5;
+const char* twlsettings_flashcardvaluetext6;
+const char* twlsettings_bootscreenvaluetext;
+const char* twlsettings_healthsafetyvaluetext;
+const char* twlsettings_resetslot1valuetext;
+const char* twlsettings_consolevaluetext;
+const char* twlsettings_lockarm9scfgextvaluetext;
 // End
 	
+int twlsettings_rainbowledvalue;
 int twlsettings_cpuspeedvalue;
 int twlsettings_forwardervalue;
 int twlsettings_flashcardvalue;
@@ -151,6 +150,147 @@ int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
 int twlsettings_lockarm9scfgextvalue;
 
+
+Handle ptmsysmHandle = 0;
+
+Result ptmsysmInit()
+{
+    return srvGetServiceHandle(&ptmsysmHandle, "ptm:sysm");
+}
+
+Result ptmsysmExit()
+{
+    return svcCloseHandle(ptmsysmHandle);
+}
+
+typedef struct
+{
+    u32 ani;
+    u8 r[32];
+    u8 g[32];
+    u8 b[32];
+} RGBLedPattern;
+
+Result ptmsysmSetInfoLedPattern(RGBLedPattern pattern)
+{
+    u32* ipc = getThreadCommandBuffer();
+    ipc[0] = 0x8010640;
+    memcpy(&ipc[1], &pattern, 0x64);
+    Result ret = svcSendSyncRequest(ptmsysmHandle);
+    if(ret < 0) return ret;
+    return ipc[1];
+}
+
+void RainbowLED() {
+	RGBLedPattern pat;
+    memset(&pat, 0, sizeof(pat));
+    
+    //marcus@Werkstaetiun:/media/marcus/WESTERNDIGI/dev_threedee/MCU_examples/RGB_rave$ lua assets/colorgen.lua
+    pat.r[0] = 128;
+    pat.r[1] = 103;
+    pat.r[2] = 79;
+    pat.r[3] = 57;
+    pat.r[4] = 38;
+    pat.r[5] = 22;
+    pat.r[6] = 11;
+    pat.r[7] = 3;
+    pat.r[8] = 1;
+    pat.r[9] = 3;
+    pat.r[10] = 11;
+    pat.r[11] = 22;
+    pat.r[12] = 38;
+    pat.r[13] = 57;
+    pat.r[14] = 79;
+    pat.r[15] = 103;
+    pat.r[16] = 128;
+    pat.r[17] = 153;
+    pat.r[18] = 177;
+    pat.r[19] = 199;
+    pat.r[20] = 218;
+    pat.r[21] = 234;
+    pat.r[22] = 245;
+    pat.r[23] = 253;
+    pat.r[24] = 255;
+    pat.r[25] = 253;
+    pat.r[26] = 245;
+    pat.r[27] = 234;
+    pat.r[28] = 218;
+    pat.r[29] = 199;
+    pat.r[30] = 177;
+    pat.r[31] = 153;
+    pat.g[0] = 238;
+    pat.g[1] = 248;
+    pat.g[2] = 254;
+    pat.g[3] = 255;
+    pat.g[4] = 251;
+    pat.g[5] = 242;
+    pat.g[6] = 229;
+    pat.g[7] = 212;
+    pat.g[8] = 192;
+    pat.g[9] = 169;
+    pat.g[10] = 145;
+    pat.g[11] = 120;
+    pat.g[12] = 95;
+    pat.g[13] = 72;
+    pat.g[14] = 51;
+    pat.g[15] = 33;
+    pat.g[16] = 18;
+    pat.g[17] = 8;
+    pat.g[18] = 2;
+    pat.g[19] = 1;
+    pat.g[20] = 5;
+    pat.g[21] = 14;
+    pat.g[22] = 27;
+    pat.g[23] = 44;
+    pat.g[24] = 65;
+    pat.g[25] = 87;
+    pat.g[26] = 111;
+    pat.g[27] = 136;
+    pat.g[28] = 161;
+    pat.g[29] = 184;
+    pat.g[30] = 205;
+    pat.g[31] = 223;
+    pat.b[0] = 18;
+    pat.b[1] = 33;
+    pat.b[2] = 51;
+    pat.b[3] = 72;
+    pat.b[4] = 95;
+    pat.b[5] = 120;
+    pat.b[6] = 145;
+    pat.b[7] = 169;
+    pat.b[8] = 192;
+    pat.b[9] = 212;
+    pat.b[10] = 229;
+    pat.b[11] = 242;
+    pat.b[12] = 251;
+    pat.b[13] = 255;
+    pat.b[14] = 254;
+    pat.b[15] = 248;
+    pat.b[16] = 238;
+    pat.b[17] = 223;
+    pat.b[18] = 205;
+    pat.b[19] = 184;
+    pat.b[20] = 161;
+    pat.b[21] = 136;
+    pat.b[22] = 111;
+    pat.b[23] = 87;
+    pat.b[24] = 64;
+    pat.b[25] = 44;
+    pat.b[26] = 27;
+    pat.b[27] = 14;
+    pat.b[28] = 5;
+    pat.b[29] = 1;
+    pat.b[30] = 2;
+    pat.b[31] = 8;
+    
+    pat.ani = 0x20;
+    int l;
+    for(l = 0; l != 32; l++) {}
+	
+	if(ptmsysmInit() < 0) return 1;
+    ptmsysmSetInfoLedPattern(pat);
+    ptmsysmExit();
+}
 
 void LoadColor() {
 	if (settings_colorvalue == 0) {
@@ -264,25 +404,420 @@ void LoadColor() {
 	}
 }
 
-void LoadBoxArtFile() {
-	char* boxartfile_fullpath = malloc(256);
-	strcat(boxartfile_fullpath, "sdmc:/_nds/twloader/boxart/");
-	strcat(boxartfile_fullpath, boxartfile);
-
-	if (boxartnum == 2) {
-		if (fopen (boxartfile_fullpath, "rb") != NULL) {
-			boxartpath = boxartfile_fullpath;
-		} else {
-			boxartpath = "romfs:/assets/boxart_unknown.png";
-		} fclose (fopen (boxartfile_fullpath, "rb"));
-	} else {
-		if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
-			boxartpath = boxartfile_fullpath+3;
-		} else {
-			boxartpath = "romfs:/assets/boxart_unknown.png";
-		} fclose (fopen (boxartfile_fullpath+3, "rb"));
+void ChangeBoxArtNo() {
+	if (boxartnum == 0) {
+		boxarttexnum = boxarttex1;
+	} else if (boxartnum == 1) {
+		boxarttexnum = boxarttex2;
+	} else if (boxartnum == 2) {
+		boxarttexnum = boxarttex3;
+	} else if (boxartnum == 3) {
+		boxarttexnum = boxarttex4;
+	} else if (boxartnum == 4) {
+		boxarttexnum = boxarttex5;
+	} else if (boxartnum == 5) {
+		boxarttexnum = boxarttex6;
+	} else if (boxartnum == 6) {
+		boxarttexnum = boxarttex7;
+	} else if (boxartnum == 7) {
+		boxarttexnum = boxarttex8;
+	} else if (boxartnum == 8) {
+		boxarttexnum = boxarttex9;
+	} else if (boxartnum == 9) {
+		boxarttexnum = boxarttex10;
+	} else if (boxartnum == 10) {
+		boxarttexnum = boxarttex11;
+	} else if (boxartnum == 11) {
+		boxarttexnum = boxarttex12;
+	} else if (boxartnum == 12) {
+		boxarttexnum = boxarttex13;
+	} else if (boxartnum == 13) {
+		boxarttexnum = boxarttex14;
+	} else if (boxartnum == 14) {
+		boxarttexnum = boxarttex15;
+	} else if (boxartnum == 15) {
+		boxarttexnum = boxarttex16;
+	} else if (boxartnum == 16) {
+		boxarttexnum = boxarttex17;
+	} else if (boxartnum == 17) {
+		boxarttexnum = boxarttex18;
+	} else if (boxartnum == 18) {
+		boxarttexnum = boxarttex19;
+	} else if (boxartnum == 19) {
+		boxarttexnum = boxarttex20;
+	} else if (boxartnum == 20) {
+		boxarttexnum = boxarttex21;
+	} else if (boxartnum == 21) {
+		boxarttexnum = boxarttex22;
+	} else if (boxartnum == 22) {
+		boxarttexnum = boxarttex23;
+	} else if (boxartnum == 23) {
+		boxarttexnum = boxarttex24;
+	} else if (boxartnum == 24) {
+		boxarttexnum = boxarttex25;
+	} else if (boxartnum == 25) {
+		boxarttexnum = boxarttex26;
+	} else if (boxartnum == 26) {
+		boxarttexnum = boxarttex27;
+	} else if (boxartnum == 27) {
+		boxarttexnum = boxarttex28;
+	} else if (boxartnum == 28) {
+		boxarttexnum = boxarttex29;
+	} else if (boxartnum == 29) {
+		boxarttexnum = boxarttex30;
+	} else if (boxartnum == 30) {
+		boxarttexnum = boxarttex31;
+	} else if (boxartnum == 31) {
+		boxarttexnum = boxarttex32;
+	} else if (boxartnum == 32) {
+		boxarttexnum = boxarttex33;
+	} else if (boxartnum == 33) {
+		boxarttexnum = boxarttex34;
+	} else if (boxartnum == 34) {
+		boxarttexnum = boxarttex35;
+	} else if (boxartnum == 35) {
+		boxarttexnum = boxarttex36;
+	} else if (boxartnum == 36) {
+		boxarttexnum = boxarttex37;
+	} else if (boxartnum == 37) {
+		boxarttexnum = boxarttex38;
+	} else if (boxartnum == 38) {
+		boxarttexnum = boxarttex39;
+	} else if (boxartnum == 39) {
+		boxarttexnum = boxarttex40;
+	} else if (boxartnum == 40) {
+		boxarttexnum = boxarttex41;
+	} else if (boxartnum == 41) {
+		boxarttexnum = boxarttex42;
+	} else if (boxartnum == 42) {
+		boxarttexnum = boxarttex43;
+	} else if (boxartnum == 43) {
+		boxarttexnum = boxarttex44;
+	} else if (boxartnum == 44) {
+		boxarttexnum = boxarttex45;
+	} else if (boxartnum == 45) {
+		boxarttexnum = boxarttex46;
+	} else if (boxartnum == 46) {
+		boxarttexnum = boxarttex47;
+	} else if (boxartnum == 47) {
+		boxarttexnum = boxarttex48;
+	} else if (boxartnum == 48) {
+		boxarttexnum = boxarttex49;
+	} else if (boxartnum == 49) {
+		boxarttexnum = boxarttex50;
 	}
-	boxartnum++;
+}
+
+void LoadBoxArt() {
+	if (boxartnum == 0) {
+		boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 1) {
+		boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 2) {
+		boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 3) {
+		boxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 4) {
+		boxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 5) {
+		boxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 6) {
+		boxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 7) {
+		boxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 8) {
+		boxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 9) {
+		boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 10) {
+		boxarttex11 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 11) {
+		boxarttex12 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 12) {
+		boxarttex13 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 13) {
+		boxarttex14 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 14) {
+		boxarttex15 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 15) {
+		boxarttex16 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 16) {
+		boxarttex17 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 17) {
+		boxarttex18 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 18) {
+		boxarttex19 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 19) {
+		boxarttex20 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 20) {
+		boxarttex21 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 21) {
+		boxarttex22 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 22) {
+		boxarttex23 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 23) {
+		boxarttex24 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 24) {
+		boxarttex25 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 25) {
+		boxarttex26 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 26) {
+		boxarttex27 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 27) {
+		boxarttex28 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 28) {
+		boxarttex29 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 29) {
+		boxarttex30 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 30) {
+		boxarttex31 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 31) {
+		boxarttex32 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 32) {
+		boxarttex33 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 33) {
+		boxarttex34 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 34) {
+		boxarttex35 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 35) {
+		boxarttex36 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 36) {
+		boxarttex37 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 37) {
+		boxarttex38 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 38) {
+		boxarttex39 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 39) {
+		boxarttex40 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 40) {
+		boxarttex41 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 41) {
+		boxarttex42 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 42) {
+		boxarttex43 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 43) {
+		boxarttex44 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 44) {
+		boxarttex45 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 45) {
+		boxarttex46 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 46) {
+		boxarttex47 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 47) {
+		boxarttex48 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 48) {
+		boxarttex49 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 49) {
+		boxarttex50 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	}
+}
+
+void LoadFlashcardBoxArt() {
+	if (boxartnum == 0) {
+		fcboxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 1) {
+		fcboxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 2) {
+		fcboxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 3) {
+		fcboxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 4) {
+		fcboxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 5) {
+		fcboxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 6) {
+		fcboxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 7) {
+		fcboxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 8) {
+		fcboxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 9) {
+		fcboxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 10) {
+		fcboxarttex11 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 11) {
+		fcboxarttex12 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 12) {
+		fcboxarttex13 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 13) {
+		fcboxarttex14 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 14) {
+		fcboxarttex15 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 15) {
+		fcboxarttex16 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 16) {
+		fcboxarttex17 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 17) {
+		fcboxarttex18 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 18) {
+		fcboxarttex19 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 19) {
+		fcboxarttex20 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 20) {
+		fcboxarttex21 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 21) {
+		fcboxarttex22 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 22) {
+		fcboxarttex23 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 23) {
+		fcboxarttex24 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 24) {
+		fcboxarttex25 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 25) {
+		fcboxarttex26 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 26) {
+		fcboxarttex27 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 27) {
+		fcboxarttex28 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 28) {
+		fcboxarttex29 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 29) {
+		fcboxarttex30 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 30) {
+		fcboxarttex31 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 31) {
+		fcboxarttex32 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 32) {
+		fcboxarttex33 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 33) {
+		fcboxarttex34 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 34) {
+		fcboxarttex35 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 35) {
+		fcboxarttex36 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 36) {
+		fcboxarttex37 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 37) {
+		fcboxarttex38 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 38) {
+		fcboxarttex39 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 39) {
+		fcboxarttex40 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 40) {
+		fcboxarttex41 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 41) {
+		fcboxarttex42 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 42) {
+		fcboxarttex43 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 43) {
+		fcboxarttex44 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 44) {
+		fcboxarttex45 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 45) {
+		fcboxarttex46 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 46) {
+		fcboxarttex47 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 47) {
+		fcboxarttex48 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 48) {
+		fcboxarttex49 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	} else if (boxartnum == 49) {
+		fcboxarttex50 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	}
+}
+
+void FreeBoxArtTextures() {
+	sf2d_free_texture(boxarttex1);
+	sf2d_free_texture(boxarttex2);
+	sf2d_free_texture(boxarttex3);
+	sf2d_free_texture(boxarttex4);
+	sf2d_free_texture(boxarttex5);
+	sf2d_free_texture(boxarttex6);
+	sf2d_free_texture(boxarttex7);
+	sf2d_free_texture(boxarttex8);
+	sf2d_free_texture(boxarttex9);
+	sf2d_free_texture(boxarttex10);
+	sf2d_free_texture(boxarttex11);
+	sf2d_free_texture(boxarttex12);
+	sf2d_free_texture(boxarttex13);
+	sf2d_free_texture(boxarttex14);
+	sf2d_free_texture(boxarttex15);
+	sf2d_free_texture(boxarttex16);
+	sf2d_free_texture(boxarttex17);
+	sf2d_free_texture(boxarttex18);
+	sf2d_free_texture(boxarttex19);
+	sf2d_free_texture(boxarttex20);
+	sf2d_free_texture(boxarttex21);
+	sf2d_free_texture(boxarttex22);
+	sf2d_free_texture(boxarttex23);
+	sf2d_free_texture(boxarttex24);
+	sf2d_free_texture(boxarttex25);
+	sf2d_free_texture(boxarttex26);
+	sf2d_free_texture(boxarttex27);
+	sf2d_free_texture(boxarttex28);
+	sf2d_free_texture(boxarttex29);
+	sf2d_free_texture(boxarttex30);
+	sf2d_free_texture(boxarttex31);
+	sf2d_free_texture(boxarttex32);
+	sf2d_free_texture(boxarttex33);
+	sf2d_free_texture(boxarttex34);
+	sf2d_free_texture(boxarttex35);
+	sf2d_free_texture(boxarttex36);
+	sf2d_free_texture(boxarttex37);
+	sf2d_free_texture(boxarttex38);
+	sf2d_free_texture(boxarttex39);
+	sf2d_free_texture(boxarttex40);
+	sf2d_free_texture(boxarttex41);
+	sf2d_free_texture(boxarttex42);
+	sf2d_free_texture(boxarttex43);
+	sf2d_free_texture(boxarttex44);
+	sf2d_free_texture(boxarttex45);
+	sf2d_free_texture(boxarttex46);
+	sf2d_free_texture(boxarttex47);
+	sf2d_free_texture(boxarttex48);
+	sf2d_free_texture(boxarttex49);
+	sf2d_free_texture(boxarttex50);
+	
+	sf2d_free_texture(fcboxarttex1);
+	sf2d_free_texture(fcboxarttex2);
+	sf2d_free_texture(fcboxarttex3);
+	sf2d_free_texture(fcboxarttex4);
+	sf2d_free_texture(fcboxarttex5);
+	sf2d_free_texture(fcboxarttex6);
+	sf2d_free_texture(fcboxarttex7);
+	sf2d_free_texture(fcboxarttex8);
+	sf2d_free_texture(fcboxarttex9);
+	sf2d_free_texture(fcboxarttex10);
+	sf2d_free_texture(fcboxarttex11);
+	sf2d_free_texture(fcboxarttex12);
+	sf2d_free_texture(fcboxarttex13);
+	sf2d_free_texture(fcboxarttex14);
+	sf2d_free_texture(fcboxarttex15);
+	sf2d_free_texture(fcboxarttex16);
+	sf2d_free_texture(fcboxarttex17);
+	sf2d_free_texture(fcboxarttex18);
+	sf2d_free_texture(fcboxarttex19);
+	sf2d_free_texture(fcboxarttex20);
+	sf2d_free_texture(fcboxarttex21);
+	sf2d_free_texture(fcboxarttex22);
+	sf2d_free_texture(fcboxarttex23);
+	sf2d_free_texture(fcboxarttex24);
+	sf2d_free_texture(fcboxarttex25);
+	sf2d_free_texture(fcboxarttex26);
+	sf2d_free_texture(fcboxarttex27);
+	sf2d_free_texture(fcboxarttex28);
+	sf2d_free_texture(fcboxarttex29);
+	sf2d_free_texture(fcboxarttex30);
+	sf2d_free_texture(fcboxarttex31);
+	sf2d_free_texture(fcboxarttex32);
+	sf2d_free_texture(fcboxarttex33);
+	sf2d_free_texture(fcboxarttex34);
+	sf2d_free_texture(fcboxarttex35);
+	sf2d_free_texture(fcboxarttex36);
+	sf2d_free_texture(fcboxarttex37);
+	sf2d_free_texture(fcboxarttex38);
+	sf2d_free_texture(fcboxarttex39);
+	sf2d_free_texture(fcboxarttex40);
+	sf2d_free_texture(fcboxarttex41);
+	sf2d_free_texture(fcboxarttex42);
+	sf2d_free_texture(fcboxarttex43);
+	sf2d_free_texture(fcboxarttex44);
+	sf2d_free_texture(fcboxarttex45);
+	sf2d_free_texture(fcboxarttex46);
+	sf2d_free_texture(fcboxarttex47);
+	sf2d_free_texture(fcboxarttex48);
+	sf2d_free_texture(fcboxarttex49);
+	sf2d_free_texture(fcboxarttex50);
 }
 
 void LoadSettings() {
@@ -338,6 +873,11 @@ void LoadSettings() {
 	} else {
 		romselect_layout = 0;
 	} */
+	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0) == 1) {
+		twlsettings_rainbowledvalue = 1;
+	} else {
+		twlsettings_rainbowledvalue = 0;
+	}
 	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0) == 1) {
 		twlsettings_cpuspeedvalue = 1;
 	} else {
@@ -397,6 +937,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, twlsettings_rainbowledvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, twlsettings_bootscreenvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
@@ -444,10 +985,13 @@ int main()
 	srvInit();
 	hidInit();
 
-	// making nds folder if it doesn't exist
+	// make folders if they don't exist
 	mkdir("sdmc:/nds", 0777);
 	mkdir("sdmc:/_dsttfwd", 0777);
 	mkdir("sdmc:/_dstwofwd", 0777);
+	mkdir("sdmc:/_nds/twloader", 0777);
+	mkdir("sdmc:/_nds/twloader/boxart", 0777);
+	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	//if (bootstrapini.GetInt(settingsini_frontend, settingsini_frontend_twlappinstalled, 0) == 0) {
@@ -513,11 +1057,11 @@ int main()
 	sf2d_texture *dsihstex = sfil_load_PNG_file("romfs:/assets/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
 	sf2d_texture *whitescrtex = sfil_load_PNG_file("romfs:/assets/settings/whitescr.png", SF2D_PLACE_RAM); // White screen in settings
 	sf2d_texture *disabledtex = sfil_load_PNG_file("romfs:/assets/settings/disable.png", SF2D_PLACE_RAM);
-	//sf2d_texture *boxarttex1 = sfil_load_PNG_file("romfs:/assets/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
 
 	std::vector<std::string> files = {};
 	std::vector<std::string> fcfiles = {};
 	std::vector<std::string> boxartfiles = {};
+	std::vector<std::string> fcboxartfiles = {};
 	
 	std::string extension_UCnds = ".NDS";
 	std::string extension_LCnds = ".nds";
@@ -541,8 +1085,14 @@ int main()
 	DIR *dir;
 	DIR *flashcarddir;
 	DIR *boxartdir;
+	DIR *fcboxartdir;
 	struct dirent *ent;
 	
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art (SD Card)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+
 	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
 		while ((ent = readdir (boxartdir)) != NULL) {
 			std::string bafname = (ent->d_name);
@@ -554,44 +1104,74 @@ int main()
 		closedir (boxartdir);
 	}
 
-	/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art...");
-	sf2d_end_frame();
-	sf2d_swapbuffers(); */
-
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex1 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex2 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex3 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex4 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex5 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex6 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex7 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex8 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex9 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
-	boxartfile = boxartfiles.at(boxartnum).c_str();
-	LoadBoxArtFile();
-	boxarttex10 = sfil_load_PNG_file(boxartpath, SF2D_PLACE_RAM); // Box art
+	for(boxartnum = 0; boxartnum < boxartfiles.size(); boxartnum++) {
+		boxartfile_fullpath = malloc(256);
+		boxartfile = boxartfiles.at(boxartnum).c_str();
+		strcat(boxartfile_fullpath, boxartfolder);
+		strcat(boxartfile_fullpath, boxartfile);
+		
+		/* if (boxartnum == 3) {	// Fix box art displaying "?".
+			if (fopen (boxartfile_fullpath, "rb") != NULL) {
+				boxartpath = boxartfile_fullpath;
+			} else {
+				boxartpath = "romfs:/assets/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (boxartfile_fullpath, "rb"));
+		} else { */
+			if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
+				boxartpath = boxartfile_fullpath+3;
+			} else {
+				boxartpath = "romfs:/assets/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (boxartfile_fullpath+3, "rb"));
+		//}
+		LoadBoxArt();
+	}
 
 	boxartnum = 0;
-	sf2d_texture* boxarttexnum = boxarttex1;
+	
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art (Flashcard)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+
+	if ((fcboxartdir = opendir ("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
+		while ((ent = readdir (fcboxartdir)) != NULL) {
+			std::string fcbafname = (ent->d_name);
+			if(fcbafname.find(extension_UCpng, (fcbafname.length() - extension_UCpng.length())) != std::string::npos)
+				fcboxartfiles.push_back(ent->d_name);
+			if(fcbafname.find(extension_LCpng, (fcbafname.length() - extension_LCpng.length())) != std::string::npos)
+				fcboxartfiles.push_back(ent->d_name);
+		}
+		closedir (fcboxartdir);
+	}
+
+	for(boxartnum = 0; boxartnum < fcboxartfiles.size(); boxartnum++) {
+		boxartfile_fullpath = malloc(256);
+		boxartfile = fcboxartfiles.at(boxartnum).c_str();
+		strcat(boxartfile_fullpath, fcboxartfolder);
+		strcat(boxartfile_fullpath, boxartfile);
+
+		/* if (boxartnum == 3) {	// Fix box art displaying "?".
+			if (fopen (boxartfile_fullpath, "rb") != NULL) {
+				boxartpath = boxartfile_fullpath;
+			} else {
+				boxartpath = "romfs:/assets/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (boxartfile_fullpath, "rb"));
+		} else { */
+			if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
+				boxartpath = boxartfile_fullpath+3;
+			} else {
+				boxartpath = "romfs:/assets/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (boxartfile_fullpath+3, "rb"));
+		//}
+		LoadBoxArt();
+	}
+
+	boxartnum = 0;
+	
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	// No text
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	if ((dir = opendir ("sdmc:/nds/")) != NULL) {
 	/* print all the files and directories within directory */
@@ -672,8 +1252,8 @@ int main()
 	int boxartXpos;
 	int boxartXmovepos = 0;
 			
-	char* Lshouldertext;
-	char* Rshouldertext;
+	const char* Lshouldertext;
+	const char* Rshouldertext;
 			
 	int LshoulderYpos = 220;
 	int RshoulderYpos = 220;
@@ -756,68 +1336,16 @@ int main()
 			if (i != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
-					if(boxartfiles.size() >= 9) {
-						for(boxartnum = 0; boxartnum < 10; boxartnum++){
-							if (boxartnum == -1) {
-								boxartnum = 9;
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 0) {
-								boxarttexnum = boxarttex1;
-							} else if (boxartnum == 1) {
-								boxarttexnum = boxarttex2;
-							} else if (boxartnum == 2) {
-								boxarttexnum = boxarttex3;
-							} else if (boxartnum == 3) {
-								boxarttexnum = boxarttex4;
-							} else if (boxartnum == 4) {
-								boxarttexnum = boxarttex5;
-							} else if (boxartnum == 5) {
-								boxarttexnum = boxarttex6;
-							} else if (boxartnum == 6) {
-								boxarttexnum = boxarttex7;
-							} else if (boxartnum == 7) {
-								boxarttexnum = boxarttex8;
-							} else if (boxartnum == 8) {
-								boxarttexnum = boxarttex9;
-							} else if (boxartnum == 9) {
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 10) {
-								boxartnum = 0;
-								boxarttexnum = boxarttex1;
-							}
+					if (twlsettings_forwardervalue == 1) {
+						for(boxartnum = 0; boxartnum < fcboxartfiles.size(); boxartnum++) {
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
 						}
 					} else {
 						for(boxartnum = 0; boxartnum < boxartfiles.size(); boxartnum++) {
-							if (boxartnum == -1) {
-								boxartnum = 9;
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 0) {
-								boxarttexnum = boxarttex1;
-							} else if (boxartnum == 1) {
-								boxarttexnum = boxarttex2;
-							} else if (boxartnum == 2) {
-								boxarttexnum = boxarttex3;
-							} else if (boxartnum == 3) {
-								boxarttexnum = boxarttex4;
-							} else if (boxartnum == 4) {
-								boxarttexnum = boxarttex5;
-							} else if (boxartnum == 5) {
-								boxarttexnum = boxarttex6;
-							} else if (boxartnum == 6) {
-								boxarttexnum = boxarttex7;
-							} else if (boxartnum == 7) {
-								boxarttexnum = boxarttex8;
-							} else if (boxartnum == 8) {
-								boxarttexnum = boxarttex9;
-							} else if (boxartnum == 9) {
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 10) {
-								boxartnum = 0;
-								boxarttexnum = boxarttex1;
-							}
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
@@ -851,68 +1379,16 @@ int main()
 			if (i != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
-					if(boxartfiles.size() >= 9) {
-						for(boxartnum = 0; boxartnum < 10; boxartnum++){
-							if (boxartnum == -1) {
-								boxartnum = 9;
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 0) {
-								boxarttexnum = boxarttex1;
-							} else if (boxartnum == 1) {
-								boxarttexnum = boxarttex2;
-							} else if (boxartnum == 2) {
-								boxarttexnum = boxarttex3;
-							} else if (boxartnum == 3) {
-								boxarttexnum = boxarttex4;
-							} else if (boxartnum == 4) {
-								boxarttexnum = boxarttex5;
-							} else if (boxartnum == 5) {
-								boxarttexnum = boxarttex6;
-							} else if (boxartnum == 6) {
-								boxarttexnum = boxarttex7;
-							} else if (boxartnum == 7) {
-								boxarttexnum = boxarttex8;
-							} else if (boxartnum == 8) {
-								boxarttexnum = boxarttex9;
-							} else if (boxartnum == 9) {
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 10) {
-								boxartnum = 0;
-								boxarttexnum = boxarttex1;
-							}
+					if (twlsettings_forwardervalue == 1) {
+						for(boxartnum = 0; boxartnum < fcboxartfiles.size(); boxartnum++) {
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
 						}
 					} else {
 						for(boxartnum = 0; boxartnum < boxartfiles.size(); boxartnum++) {
-							if (boxartnum == -1) {
-								boxartnum = 9;
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 0) {
-								boxarttexnum = boxarttex1;
-							} else if (boxartnum == 1) {
-								boxarttexnum = boxarttex2;
-							} else if (boxartnum == 2) {
-								boxarttexnum = boxarttex3;
-							} else if (boxartnum == 3) {
-								boxarttexnum = boxarttex4;
-							} else if (boxartnum == 4) {
-								boxarttexnum = boxarttex5;
-							} else if (boxartnum == 5) {
-								boxarttexnum = boxarttex6;
-							} else if (boxartnum == 6) {
-								boxarttexnum = boxarttex7;
-							} else if (boxartnum == 7) {
-								boxarttexnum = boxarttex8;
-							} else if (boxartnum == 8) {
-								boxarttexnum = boxarttex9;
-							} else if (boxartnum == 9) {
-								boxarttexnum = boxarttex10;
-							} else if (boxartnum == 10) {
-								boxartnum = 0;
-								boxarttexnum = boxarttex1;
-							}
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
@@ -1117,6 +1593,16 @@ int main()
 						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
 						fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+					} else if (twlsettings_flashcardvalue == 3) {
+						CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
+						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+						fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+						fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
+					} else if (twlsettings_flashcardvalue == 5) {
+						CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
+						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+						fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
+						fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
 					} else if (twlsettings_flashcardvalue == 6) {
 						CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
 						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
@@ -1124,6 +1610,8 @@ int main()
 						fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
 					}
 					SaveSettings();
+					if (twlsettings_rainbowledvalue == 1) {
+						RainbowLED(); }
 					applaunchon = true;
 				}
 			}
@@ -1330,6 +1818,11 @@ int main()
 					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
 					sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 					sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+					if (twlsettings_rainbowledvalue == 1) {
+						twlsettings_rainbowledvaluetext = "On";
+					} else {
+						twlsettings_rainbowledvaluetext = "Off";
+					}
 					if (twlsettings_cpuspeedvalue == 1) {
 						twlsettings_cpuspeedvaluetext = "133mhz (TWL)";
 					} else {
@@ -1374,6 +1867,17 @@ int main()
 						settingsYpos += 12;
 					}
 					if(twlsettingscursorPosition == 1) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_rainbowledtext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_rainbowledvaluetext);
+						settingsYpos += 12;
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "See rainbow colors glowing in");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the Notification LED.");
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_rainbowledtext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_rainbowledvaluetext);
+						settingsYpos += 12;
+					}
+					if(twlsettingscursorPosition == 2) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_cpuspeedtext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_cpuspeedvaluetext);
 						settingsYpos += 12;
@@ -1383,7 +1887,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_cpuspeedvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 2) {
+					if(twlsettingscursorPosition == 3) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreentext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
@@ -1394,7 +1898,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 3) {
+					if(twlsettingscursorPosition == 4) {
 						sftd_draw_textf(font, settingsXpos+16, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetytext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
@@ -1405,7 +1909,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 4) {
+					if(twlsettingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1text);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
@@ -1416,7 +1920,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 5) {
+					if(twlsettingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consoletext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
@@ -1426,7 +1930,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 6) {
+					if(twlsettingscursorPosition == 7) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgexttext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgextvaluetext);
 						settingsYpos += 12;
@@ -1673,37 +2177,42 @@ int main()
 					if (twlsettingscursorPosition == 0) {
 						settings_subscreenmode = 2;
 					} else if (twlsettingscursorPosition == 1) {
+						twlsettings_rainbowledvalue++; // Rainbow LED
+						if(twlsettings_rainbowledvalue == 2) {
+							twlsettings_rainbowledvalue = 0;
+						}
+					} else if (twlsettingscursorPosition == 2) {
 						twlsettings_cpuspeedvalue++; // CPU speed
 						if(twlsettings_cpuspeedvalue == 2) {
 							twlsettings_cpuspeedvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 2) {
+					} else if (twlsettingscursorPosition == 3) {
 						twlsettings_bootscreenvalue++; // Boot screen
 						if(twlsettings_bootscreenvalue == 2) {
 							twlsettings_bootscreenvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 3) {
+					} else if (twlsettingscursorPosition == 4) {
 						twlsettings_healthsafetyvalue++; // H&S message
 						if(twlsettings_healthsafetyvalue == 2) {
 							twlsettings_healthsafetyvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 4) {
+					} else if (twlsettingscursorPosition == 5) {
 						twlsettings_resetslot1value++; // Reset Slot-1
 						if(twlsettings_resetslot1value == 2) {
 							twlsettings_resetslot1value = 0;
 						}
-					} else if (twlsettingscursorPosition == 5) {
+					} else if (twlsettingscursorPosition == 6) {
 						twlsettings_consolevalue++; // Console output
 						if(twlsettings_consolevalue == 3) {
 							twlsettings_consolevalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 6) {
+					} else if (twlsettingscursorPosition == 7) {
 						twlsettings_lockarm9scfgextvalue++; // Lock ARM9 SCFG_EXT
 						if(twlsettings_lockarm9scfgextvalue == 2) {
 							twlsettings_lockarm9scfgextvalue = 0;
 						}
 					}
-				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 6){
+				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 7){
 					twlsettingscursorPosition++;
 				} else if((hDown & KEY_UP) && twlsettingscursorPosition != 0){
 					twlsettingscursorPosition--;
@@ -1799,16 +2308,7 @@ int main()
 	sf2d_free_texture(dsihstex);
 	sf2d_free_texture(whitescrtex);
 	sf2d_free_texture(disabledtex);
-	sf2d_free_texture(boxarttex1);
-	sf2d_free_texture(boxarttex2);
-	sf2d_free_texture(boxarttex3);
-	sf2d_free_texture(boxarttex4);
-	sf2d_free_texture(boxarttex5);
-	sf2d_free_texture(boxarttex6);
-	sf2d_free_texture(boxarttex7);
-	sf2d_free_texture(boxarttex8);
-	sf2d_free_texture(boxarttex9);
-	sf2d_free_texture(boxarttex10);
+	FreeBoxArtTextures();
     sf2d_fini();
 
     return 0;

@@ -127,9 +127,16 @@ int main(int argc, char **argv) {
 				
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
-		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
-			REG_SCFG_CLK = 0x80;
-			fifoSendValue32(FIFO_USER_04, 1);
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) {
+				REG_SCFG_CLK = 0x80;
+				fifoSendValue32(FIFO_USER_04, 1);
+			}
+		} else {
+			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+				REG_SCFG_CLK = 0x80;
+				fifoSendValue32(FIFO_USER_04, 1);
+			}
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {

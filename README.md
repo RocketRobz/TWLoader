@@ -5,5 +5,6 @@ Credits:
 - ahezard: nds-bootstrap. (https://github.com/ahezard/nds-bootstrap)
 - Apache Thunder: NTR-Launcher code, and the recreation of the DS/DSi boot screens.
 - billy-acuna: TWLoader logo.
+- MarcusD: Rainbow colors in Notification LED code.
 - shutterbug2000: File browsing code.
 - spinal_cord: DSi4DS assets.

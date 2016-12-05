@@ -3,7 +3,7 @@ cd twlapp
 make
 patch_ndsheader_dsiware.py TWLapp-hb.nds --mode dsi --maker 01 --code TWLD --title "TWLOADER-TWL" --out TWLapp.nds
 make_cia --srl="TWLapp.nds"
-copy "TWLapp.cia" "../sdroot/_nds/twloader/cia/TWLapp.cia"
+copy "TWLapp.cia" "../sdroot/_nds/twloader/cia/TWLoader - TWLNAND side.cia"
 cd ..
 cd NTR_Launcher
 make
