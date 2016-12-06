@@ -29,7 +29,7 @@ int color_Gvalue;
 int color_Bvalue;
 	
 sf2d_texture *boxarttexnum;
-#include "boxart.h"
+#include "bannerandboxart.h"
 int boxartnum = 0;
 const char* boxartpath;
 const char* boxartfile;
@@ -40,6 +40,9 @@ const char* startborderloc;
 
 const char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
 const char* fcrompathini_rompath = "NDS_PATH";
+const char* fcrompathini_bnrtext1 = "BNR_TEXT1";
+const char* fcrompathini_bnrtext2 = "BNR_TEXT2";
+const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 	
 
 // Settings .ini file
@@ -92,11 +95,18 @@ int settings_colorvalue;
 int settings_topbordervalue;
 
 int romselect_toplayout;
-// int romselect_layout;
-// 0: File browser (Text only)
-// 1: DSi Menu
+//	0: Show box art
+//	1: Hide box art
+
+std::string romsel_gameline1;
+std::string romsel_gameline2;
+std::string romsel_gameline3;
+char *cstr1;
+char *cstr2;
+char *cstr3;
 
 char* rom = (char*)malloc(256);
+const char* flashcardrom;
 std::string fat = "fat:/nds/";
 std::string slashchar = "/";
 std::string woodfat = "fat0:/";
@@ -1540,6 +1550,10 @@ int main()
 			} else {
 				if (cursorPositionset == false) {
 					cursorPosition--;
+					if (twlsettings_forwardervalue == 1) {
+						if (cursorPosition == -1)
+							cursorPosition--;
+					}
 					cursorPositionset = true;
 				}
 				titleboxXmovepos += 8;
@@ -1561,6 +1575,10 @@ int main()
 			} else {
 				if (cursorPositionset == false) {
 					cursorPosition++;
+					if (twlsettings_forwardervalue == 1) {
+						if (cursorPosition == -1)
+							cursorPosition++;
+					}
 					cursorPositionset = true;
 				}
 				if (cursorPosition != i) {
@@ -1587,27 +1605,29 @@ int main()
 					applaunchprep = false;
 				} else {
 					screenoff();
-					CIniFile setfcrompathini( flashcardfolder+rom );
-					if (twlsettings_flashcardvalue == 0) {
-						CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
-						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-						fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-						fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
-					} else if (twlsettings_flashcardvalue == 3) {
-						CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
-						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-						fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-						fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
-					} else if (twlsettings_flashcardvalue == 5) {
-						CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
-						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-						fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
-						fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
-					} else if (twlsettings_flashcardvalue == 6) {
-						CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
-						std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-						fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-						fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+					if (twlsettings_forwardervalue == 1) {
+						CIniFile setfcrompathini( flashcardfolder+rom );
+						if (twlsettings_flashcardvalue == 0) {
+							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 3) {
+							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
+							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 5) {
+							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
+							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
+						} else if (twlsettings_flashcardvalue == 6) {
+							CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
+							fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+						}
 					}
 					SaveSettings();
 					if (twlsettings_rainbowledvalue == 1) {
@@ -1652,21 +1672,45 @@ int main()
 				} else { */
 					if (titleboxXmovetimer == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
+						if (twlsettings_forwardervalue == 1) {
+							if (cursorPosition == -2 || cursorPosition == -1) {
+							} else {
+								flashcardrom = fcfiles.at(cursorPosition).c_str();
+								CIniFile setfcrompathini( flashcardfolder+flashcardrom );
+								romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
+								romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
+								romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
+								char *cstr1 = new char[romsel_gameline1.length() + 1];
+								strcpy(cstr1, romsel_gameline1.c_str());
+								char *cstr2 = new char[romsel_gameline2.length() + 1];
+								strcpy(cstr2, romsel_gameline2.c_str());
+								char *cstr3 = new char[romsel_gameline3.length() + 1];
+								strcpy(cstr3, romsel_gameline3.c_str());
+								sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+							}
+						}
 					} else {
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 					sf2d_draw_texture(homeicontex, 79, 220); // Draw HOME icon
 					sftd_draw_textf(font, 96, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
-					sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-					sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
-					sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+					if (twlsettings_forwardervalue == 0) {
+						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+						sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
+						sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+					} else {
+						sf2d_draw_texture(settingsboxtex, cartXpos+titleboxXmovepos, 119);
+					}
 
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
 					filenameYpos = 0;
 					if (titleboxXmovetimer == 0) {
 						if (cursorPosition == -2) {
-							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
+							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
+							sftd_draw_textf(font, 128, 34, RGBA8(0, 0, 0, 255), 16, "Settings");
 						} else if (cursorPosition == -1) {
 							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 						}
@@ -1966,7 +2010,7 @@ int main()
 					} else if (twlsettings_flashcardvalue == 3) {
 						twlsettings_flashcardvaluetext1 = "Acekard 2(i)";
 						twlsettings_flashcardvaluetext2 = "M3DS Real";
-						twlsettings_flashcardvaluetext3 = "R4i-SDHC v1.4.x (www.r4i-sdhc.com)";
+						twlsettings_flashcardvaluetext3 = " ";
 						twlsettings_flashcardvaluetext4 = " ";
 						twlsettings_flashcardvaluetext5 = " ";
 						twlsettings_flashcardvaluetext6 = " ";
@@ -2016,7 +2060,8 @@ int main()
 		}
 		
 		sf2d_swapbuffers();
-		
+
+
 		if (titleboxXmovetimer == 0) {
 			updatebotscreen = false;
 		}
