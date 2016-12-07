@@ -1,5 +1,56 @@
-#ifndef BOXART_H
-#define BOXART_H
+#ifndef BANNERANDBOXART_H
+#define BANNERANDBOXART_H
+
+sf2d_texture *fcbnricontex1;
+sf2d_texture *fcbnricontex2;
+sf2d_texture *fcbnricontex3;
+sf2d_texture *fcbnricontex4;
+sf2d_texture *fcbnricontex5;
+sf2d_texture *fcbnricontex6;
+sf2d_texture *fcbnricontex7;
+sf2d_texture *fcbnricontex8;
+sf2d_texture *fcbnricontex9;
+sf2d_texture *fcbnricontex10;
+sf2d_texture *fcbnricontex11;
+sf2d_texture *fcbnricontex12;
+sf2d_texture *fcbnricontex13;
+sf2d_texture *fcbnricontex14;
+sf2d_texture *fcbnricontex15;
+sf2d_texture *fcbnricontex16;
+sf2d_texture *fcbnricontex17;
+sf2d_texture *fcbnricontex18;
+sf2d_texture *fcbnricontex19;
+sf2d_texture *fcbnricontex20;
+sf2d_texture *fcbnricontex21;
+sf2d_texture *fcbnricontex22;
+sf2d_texture *fcbnricontex23;
+sf2d_texture *fcbnricontex24;
+sf2d_texture *fcbnricontex25;
+sf2d_texture *fcbnricontex26;
+sf2d_texture *fcbnricontex27;
+sf2d_texture *fcbnricontex28;
+sf2d_texture *fcbnricontex29;
+sf2d_texture *fcbnricontex30;
+sf2d_texture *fcbnricontex31;
+sf2d_texture *fcbnricontex32;
+sf2d_texture *fcbnricontex33;
+sf2d_texture *fcbnricontex34;
+sf2d_texture *fcbnricontex35;
+sf2d_texture *fcbnricontex36;
+sf2d_texture *fcbnricontex37;
+sf2d_texture *fcbnricontex38;
+sf2d_texture *fcbnricontex39;
+sf2d_texture *fcbnricontex40;
+sf2d_texture *fcbnricontex41;
+sf2d_texture *fcbnricontex42;
+sf2d_texture *fcbnricontex43;
+sf2d_texture *fcbnricontex44;
+sf2d_texture *fcbnricontex45;
+sf2d_texture *fcbnricontex46;
+sf2d_texture *fcbnricontex47;
+sf2d_texture *fcbnricontex48;
+sf2d_texture *fcbnricontex49;
+sf2d_texture *fcbnricontex50;
 
 sf2d_texture *boxarttex1;
 sf2d_texture *boxarttex2;
@@ -103,5 +154,5 @@ sf2d_texture *fcboxarttex48;
 sf2d_texture *fcboxarttex49;
 sf2d_texture *fcboxarttex50;
 
-#endif // BOXART_H
+#endif // BANNERANDBOXART_H
 
