@@ -117,6 +117,8 @@ int main(int argc, char **argv) {
 	bool TriggerExit = false;
 	std::string	bootstrapPath = "";
 
+	bool consoleOn = false;
+
 	scanKeys();
 	int pressed = keysDown();
 
@@ -127,10 +129,17 @@ int main(int argc, char **argv) {
 				
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
+		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+			consoleDemoInit();
+			consoleOn = true;
+		}
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) {
 				REG_SCFG_CLK = 0x80;
 				fifoSendValue32(FIFO_USER_04, 1);
+			}
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("TWL_CLOCK ON\n");		
 			}
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
@@ -142,7 +151,8 @@ int main(int argc, char **argv) {
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
 			if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 				if(REG_SCFG_MC == 0x11) { 
-					consoleDemoInit();
+					if (consoleOn == false) {
+						consoleDemoInit(); }
 					printf("Please insert a cartridge...\n");
 					do { swiWaitForVBlank(); } 
 					while (REG_SCFG_MC == 0x11);
@@ -154,9 +164,15 @@ int main(int argc, char **argv) {
 			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 0) {
 					fifoSendValue32(FIFO_USER_02, 1);
+					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+						printf("RESET_SLOT1 ON\n");		
+					}
 				}
 			} else {
 				fifoSendValue32(FIFO_USER_02, 1);
+				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+					printf("RESET_SLOT1 ON\n");		
+				}
 			}
 		}
 
@@ -182,6 +198,11 @@ int main(int argc, char **argv) {
 
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+				printf("Now booting Slot-1 card\n");					
+			}
+		}
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0) {
 				runFile("sd:/_dsttfwd/loadcard.nds");
@@ -190,6 +211,13 @@ int main(int argc, char **argv) {
 		
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
+		}
+		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+				printf("Now setting .nds path\n");	
+				printf ("and booting bootstrap\n");					
+			}
 		}
 	}
 
@@ -224,7 +252,7 @@ int main(int argc, char **argv) {
 		do { swiWaitForVBlank(); scanKeys(); } while (!keysDown());
 		break;
 		}
-		
+
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 		filename = ReplaceAll( filename, "fat:/", "sd:/");
@@ -235,7 +263,7 @@ int main(int argc, char **argv) {
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
 		
-		iprintf ("bootstrap not found.\n");
+		iprintf ("bootstrap not found\n");
 		doPause();
 		
 		TriggerExit = true;

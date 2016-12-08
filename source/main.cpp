@@ -1341,11 +1341,11 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
 	if (twlsettings_consolevalue == 0) {
-		bootstrapini.SetInt(settingsini_twlmode, settingsini_twl_debug, -1);
+		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, -1);
 	} else if (twlsettings_consolevalue == 1) {
-		bootstrapini.SetInt(settingsini_twlmode, settingsini_twl_debug, 0);
+		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 0);
 	} else if (twlsettings_consolevalue == 2) {
-		bootstrapini.SetInt(settingsini_twlmode, settingsini_twl_debug, 1);
+		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 1);
 	}
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
