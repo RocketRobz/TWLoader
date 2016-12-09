@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <string>
+#include <vector>
+
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
@@ -7,6 +11,7 @@
 #include <sftd.h>
 #include <malloc.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 //#include <citrus/app.hpp>
 //#include <citrus/battery.hpp>
 //#include <citrus/core.hpp>
@@ -19,6 +24,8 @@
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 
+touchPosition touch;
+u32 kUp;
 u32 kDown;
 u32 kHeld;
 
@@ -37,7 +44,6 @@ int boxartnum = 0;
 const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
-const char* boxartfile_fullpath;
 const char* topbgloc;
 const char* startborderloc;
 
@@ -82,8 +88,8 @@ const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 const char* Lshouldertext;
 const char* Rshouldertext;
 
-const char* Lshouldertext_showboxart = "Show Box Art";
-const char* Lshouldertext_hideboxart = "Hide Box Art";
+const char* Lshouldertext_boxart = "Box Art";
+const char* Lshouldertext_blank = "Blank";
 const char* Rshouldertext_sdcard = "SD Card";
 const char* Rshouldertext_flashcard = "Flashcard";
 
@@ -128,6 +134,7 @@ std::string slashchar = "/";
 std::string woodfat = "fat0:/";
 std::string dstwofat = "fat1:/";
 std::string flashcardfolder = "sdmc:/nds/flashcard/";
+const char* bnriconfolder = "sdmc:/_nds/twloader/bnricons/";
 const char* fcbnriconfolder = "sdmc:/_nds/twloader/bnricons/flashcard/";
 const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
 const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
@@ -428,6 +435,110 @@ void LoadColor() {
 		color_Rvalue = 215;
 		color_Gvalue = 215;
 		color_Bvalue = 0;
+	}
+}
+
+void ChangeBNRIconNo() {
+	if (bnriconnum == 0) {
+		bnricontexnum = bnricontex1;
+	} else if (bnriconnum == 1) {
+		bnricontexnum = bnricontex2;
+	} else if (bnriconnum == 2) {
+		bnricontexnum = bnricontex3;
+	} else if (bnriconnum == 3) {
+		bnricontexnum = bnricontex4;
+	} else if (bnriconnum == 4) {
+		bnricontexnum = bnricontex5;
+	} else if (bnriconnum == 5) {
+		bnricontexnum = bnricontex6;
+	} else if (bnriconnum == 6) {
+		bnricontexnum = bnricontex7;
+	} else if (bnriconnum == 7) {
+		bnricontexnum = bnricontex8;
+	} else if (bnriconnum == 8) {
+		bnricontexnum = bnricontex9;
+	} else if (bnriconnum == 9) {
+		bnricontexnum = bnricontex10;
+	} else if (bnriconnum == 10) {
+		bnricontexnum = bnricontex11;
+	} else if (bnriconnum == 11) {
+		bnricontexnum = bnricontex12;
+	} else if (bnriconnum == 12) {
+		bnricontexnum = bnricontex13;
+	} else if (bnriconnum == 13) {
+		bnricontexnum = bnricontex14;
+	} else if (bnriconnum == 14) {
+		bnricontexnum = bnricontex15;
+	} else if (bnriconnum == 15) {
+		bnricontexnum = bnricontex16;
+	} else if (bnriconnum == 16) {
+		bnricontexnum = bnricontex17;
+	} else if (bnriconnum == 17) {
+		bnricontexnum = bnricontex18;
+	} else if (bnriconnum == 18) {
+		bnricontexnum = bnricontex19;
+	} else if (bnriconnum == 19) {
+		bnricontexnum = bnricontex20;
+	} else if (bnriconnum == 20) {
+		bnricontexnum = bnricontex21;
+	} else if (bnriconnum == 21) {
+		bnricontexnum = bnricontex22;
+	} else if (bnriconnum == 22) {
+		bnricontexnum = bnricontex23;
+	} else if (bnriconnum == 23) {
+		bnricontexnum = bnricontex24;
+	} else if (bnriconnum == 24) {
+		bnricontexnum = bnricontex25;
+	} else if (bnriconnum == 25) {
+		bnricontexnum = bnricontex26;
+	} else if (bnriconnum == 26) {
+		bnricontexnum = bnricontex27;
+	} else if (bnriconnum == 27) {
+		bnricontexnum = bnricontex28;
+	} else if (bnriconnum == 28) {
+		bnricontexnum = bnricontex29;
+	} else if (bnriconnum == 29) {
+		bnricontexnum = bnricontex30;
+	} else if (bnriconnum == 30) {
+		bnricontexnum = bnricontex31;
+	} else if (bnriconnum == 31) {
+		bnricontexnum = bnricontex32;
+	} else if (bnriconnum == 32) {
+		bnricontexnum = bnricontex33;
+	} else if (bnriconnum == 33) {
+		bnricontexnum = bnricontex34;
+	} else if (bnriconnum == 34) {
+		bnricontexnum = bnricontex35;
+	} else if (bnriconnum == 35) {
+		bnricontexnum = bnricontex36;
+	} else if (bnriconnum == 36) {
+		bnricontexnum = bnricontex37;
+	} else if (bnriconnum == 37) {
+		bnricontexnum = bnricontex38;
+	} else if (bnriconnum == 38) {
+		bnricontexnum = bnricontex39;
+	} else if (bnriconnum == 39) {
+		bnricontexnum = bnricontex40;
+	} else if (bnriconnum == 40) {
+		bnricontexnum = bnricontex41;
+	} else if (bnriconnum == 41) {
+		bnricontexnum = bnricontex42;
+	} else if (bnriconnum == 42) {
+		bnricontexnum = bnricontex43;
+	} else if (bnriconnum == 43) {
+		bnricontexnum = bnricontex44;
+	} else if (bnriconnum == 44) {
+		bnricontexnum = bnricontex45;
+	} else if (bnriconnum == 45) {
+		bnricontexnum = bnricontex46;
+	} else if (bnriconnum == 46) {
+		bnricontexnum = bnricontex47;
+	} else if (bnriconnum == 47) {
+		bnricontexnum = bnricontex48;
+	} else if (bnriconnum == 48) {
+		bnricontexnum = bnricontex49;
+	} else if (bnriconnum == 49) {
+		bnricontexnum = bnricontex50;
 	}
 }
 
@@ -740,6 +851,110 @@ void ChangeFCBoxArtNo() {
 		boxarttexnum = fcboxarttex49;
 	} else if (boxartnum == 49) {
 		boxarttexnum = fcboxarttex50;
+	}
+}
+
+void LoadBNRIcon() {
+	if (bnriconnum == 0) {
+		bnricontex1 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 1) {
+		bnricontex2 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 2) {
+		bnricontex3 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 3) {
+		bnricontex4 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 4) {
+		bnricontex5 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 5) {
+		bnricontex6 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 6) {
+		bnricontex7 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 7) {
+		bnricontex8 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 8) {
+		bnricontex9 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 9) {
+		bnricontex10 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 10) {
+		bnricontex11 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 11) {
+		bnricontex12 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 12) {
+		bnricontex13 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 13) {
+		bnricontex14 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 14) {
+		bnricontex15 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 15) {
+		bnricontex16 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 16) {
+		bnricontex17 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 17) {
+		bnricontex18 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 18) {
+		bnricontex19 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 19) {
+		bnricontex20 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 20) {
+		bnricontex21 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 21) {
+		bnricontex22 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 22) {
+		bnricontex23 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 23) {
+		bnricontex24 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 24) {
+		bnricontex25 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 25) {
+		bnricontex26 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 26) {
+		bnricontex27 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 27) {
+		bnricontex28 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 28) {
+		bnricontex29 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 29) {
+		bnricontex30 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 30) {
+		bnricontex31 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 31) {
+		bnricontex32 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 32) {
+		bnricontex33 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 33) {
+		bnricontex34 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 34) {
+		bnricontex35 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 35) {
+		bnricontex36 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 36) {
+		bnricontex37 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 37) {
+		bnricontex38 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 38) {
+		bnricontex39 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 39) {
+		bnricontex40 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 40) {
+		bnricontex41 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 41) {
+		bnricontex42 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 42) {
+		bnricontex43 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 43) {
+		bnricontex44 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 44) {
+		bnricontex45 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 45) {
+		bnricontex46 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 46) {
+		bnricontex47 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 47) {
+		bnricontex48 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 48) {
+		bnricontex49 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
+	} else if (bnriconnum == 49) {
+		bnricontex50 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
 	}
 }
 
@@ -1056,6 +1271,57 @@ void LoadFCBoxArt() {
 }
 
 void FreeBoxArtTextures() {
+	sf2d_free_texture(bnricontex1);
+	sf2d_free_texture(bnricontex2);
+	sf2d_free_texture(bnricontex3);
+	sf2d_free_texture(bnricontex4);
+	sf2d_free_texture(bnricontex5);
+	sf2d_free_texture(bnricontex6);
+	sf2d_free_texture(bnricontex7);
+	sf2d_free_texture(bnricontex8);
+	sf2d_free_texture(bnricontex9);
+	sf2d_free_texture(bnricontex10);
+	sf2d_free_texture(bnricontex11);
+	sf2d_free_texture(bnricontex12);
+	sf2d_free_texture(bnricontex13);
+	sf2d_free_texture(bnricontex14);
+	sf2d_free_texture(bnricontex15);
+	sf2d_free_texture(bnricontex16);
+	sf2d_free_texture(bnricontex17);
+	sf2d_free_texture(bnricontex18);
+	sf2d_free_texture(bnricontex19);
+	sf2d_free_texture(bnricontex20);
+	sf2d_free_texture(bnricontex21);
+	sf2d_free_texture(bnricontex22);
+	sf2d_free_texture(bnricontex23);
+	sf2d_free_texture(bnricontex24);
+	sf2d_free_texture(bnricontex25);
+	sf2d_free_texture(bnricontex26);
+	sf2d_free_texture(bnricontex27);
+	sf2d_free_texture(bnricontex28);
+	sf2d_free_texture(bnricontex29);
+	sf2d_free_texture(bnricontex30);
+	sf2d_free_texture(bnricontex31);
+	sf2d_free_texture(bnricontex32);
+	sf2d_free_texture(bnricontex33);
+	sf2d_free_texture(bnricontex34);
+	sf2d_free_texture(bnricontex35);
+	sf2d_free_texture(bnricontex36);
+	sf2d_free_texture(bnricontex37);
+	sf2d_free_texture(bnricontex38);
+	sf2d_free_texture(bnricontex39);
+	sf2d_free_texture(bnricontex40);
+	sf2d_free_texture(bnricontex41);
+	sf2d_free_texture(bnricontex42);
+	sf2d_free_texture(bnricontex43);
+	sf2d_free_texture(bnricontex44);
+	sf2d_free_texture(bnricontex45);
+	sf2d_free_texture(bnricontex46);
+	sf2d_free_texture(bnricontex47);
+	sf2d_free_texture(bnricontex48);
+	sf2d_free_texture(bnricontex49);
+	sf2d_free_texture(bnricontex50);
+
 	sf2d_free_texture(fcbnricontex1);
 	sf2d_free_texture(fcbnricontex2);
 	sf2d_free_texture(fcbnricontex3);
@@ -1476,8 +1742,10 @@ int main()
 	sound sfx_wrong("romfs:/sounds/wrong.wav",2,false);
 	sound sfx_back("romfs:/sounds/back.wav",2,false);
 
+	const std::string& path = std::string();
 	std::vector<std::string> files = {};
 	std::vector<std::string> fcfiles = {};
+	std::vector<std::string> bnriconfiles = {};
 	std::vector<std::string> fcbnriconfiles = {};
 	std::vector<std::string> boxartfiles = {};
 	std::vector<std::string> fcboxartfiles = {};
@@ -1503,10 +1771,99 @@ int main()
 		
 	DIR *dir;
 	DIR *flashcarddir;
+	DIR *bnricondir;
 	DIR *fcbnricondir;
 	DIR *boxartdir;
 	DIR *fcboxartdir;
-	struct dirent *ent;
+	struct dirent *namelist;
+
+	if ((dir = opendir (path.empty() ? "sdmc:/nds/" : path.c_str())) != NULL) {
+	/* print all the files and directories within directory */
+		while ((namelist = readdir (dir)) != NULL) {
+			std::string fname = (namelist->d_name);
+			if(fname.find(extension_UCnds, (fname.length() - extension_UCnds.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_LCnds, (fname.length() - extension_LCnds.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds1, (fname.length() - extension_oddnds1.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds2, (fname.length() - extension_oddnds2.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds3, (fname.length() - extension_oddnds3.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds4, (fname.length() - extension_oddnds4.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds5, (fname.length() - extension_oddnds5.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+			if(fname.find(extension_oddnds6, (fname.length() - extension_oddnds6.length())) != std::string::npos)
+				files.push_back(namelist->d_name);
+		}
+		closedir (dir);
+		std::sort( files.begin(), files.end() );
+	}
+	
+	if ((flashcarddir = opendir ("sdmc:/nds/flashcard/")) != NULL) {
+	/* print all the files and directories within directory */
+		while ((namelist = readdir (flashcarddir)) != NULL) {
+			std::string fcfname = (namelist->d_name);
+			if(fcfname.find(extension_UCini, (fcfname.length() - extension_UCini.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_LCini, (fcfname.length() - extension_LCini.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini1, (fcfname.length() - extension_oddini1.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini2, (fcfname.length() - extension_oddini2.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini3, (fcfname.length() - extension_oddini3.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini4, (fcfname.length() - extension_oddini4.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini5, (fcfname.length() - extension_oddini5.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+			if(fcfname.find(extension_oddini6, (fcfname.length() - extension_oddini6.length())) != std::string::npos)
+				fcfiles.push_back(namelist->d_name);
+		}
+		closedir (flashcarddir);
+		std::sort( fcfiles.begin(), fcfiles.end() );
+	}
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+
+	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
+		while ((namelist = readdir (bnricondir)) != NULL) {
+			std::string bifname = (namelist->d_name);
+			if(bifname.find(extension_UCpng, (bifname.length() - extension_UCpng.length())) != std::string::npos)
+				bnriconfiles.push_back(namelist->d_name);
+			if(bifname.find(extension_LCpng, (bifname.length() - extension_LCpng.length())) != std::string::npos)
+				bnriconfiles.push_back(namelist->d_name);
+		}
+		closedir (bnricondir);
+		std::sort( bnriconfiles.begin(), bnriconfiles.end() );
+	}
+
+	for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+		if (bnriconnum < files.size()) {
+			bnriconfile = files.at(bnriconnum).c_str();
+			char buffer[256];
+			strncpy(buffer, bnriconfolder, sizeof(buffer));
+			strncat(buffer, bnriconfile, sizeof(buffer));
+			strncat(buffer, ".png", sizeof(buffer));
+
+			if (fopen (buffer, "rb") != NULL) {
+				tempimagepath = buffer;
+			} else {
+				tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+			} fclose (fopen (buffer, "rb"));
+		} else {
+			tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+		}
+		LoadBNRIcon();
+	}
+
+	bnriconnum = 0;
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
@@ -1514,33 +1871,37 @@ int main()
 	sf2d_swapbuffers();
 
 	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/flashcard/")) != NULL) {
-		while ((ent = readdir (fcbnricondir)) != NULL) {
-			std::string fcbifname = (ent->d_name);
+		while ((namelist = readdir (fcbnricondir)) != NULL) {
+			std::string fcbifname = (namelist->d_name);
 			if(fcbifname.find(extension_UCpng, (fcbifname.length() - extension_UCpng.length())) != std::string::npos)
-				fcbnriconfiles.push_back(ent->d_name);
+				fcbnriconfiles.push_back(namelist->d_name);
 			if(fcbifname.find(extension_LCpng, (fcbifname.length() - extension_LCpng.length())) != std::string::npos)
-				fcbnriconfiles.push_back(ent->d_name);
+				fcbnriconfiles.push_back(namelist->d_name);
 		}
 		closedir (fcbnricondir);
+		std::sort( fcbnriconfiles.begin(), fcbnriconfiles.end() );
 	}
 
 	for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
-		if (bnriconnum < fcbnriconfiles.size()) {
-			boxartfile_fullpath = malloc(256);
-			bnriconfile = fcbnriconfiles.at(bnriconnum).c_str();
-			strcat(boxartfile_fullpath, fcbnriconfolder);
-			strcat(boxartfile_fullpath, bnriconfile);
+		if (bnriconnum < fcfiles.size()) {
+			bnriconfile = fcfiles.at(bnriconnum).c_str();
+			char buffer[256];
+			strncpy(buffer, fcbnriconfolder, sizeof(buffer));
+			strncat(buffer, bnriconfile, sizeof(buffer));
+			strncat(buffer, ".png", sizeof(buffer));
 
-			if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
-				tempimagepath = boxartfile_fullpath+3;
-			} fclose (fopen (boxartfile_fullpath+3, "rb"));
+			if (fopen (buffer, "rb") != NULL) {
+				tempimagepath = buffer;
+			} else {
+				tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+			} fclose (fopen (buffer, "rb"));
 		} else {
 			tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
 		}
 		LoadFCBNRIcon();
 	}
 
-	boxartnum = 0;
+	bnriconnum = 0;
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art (SD Card)...");
@@ -1548,26 +1909,30 @@ int main()
 	sf2d_swapbuffers();
 
 	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
-		while ((ent = readdir (boxartdir)) != NULL) {
-			std::string bafname = (ent->d_name);
+		while ((namelist = readdir (boxartdir)) != NULL) {
+			std::string bafname = (namelist->d_name);
 			if(bafname.find(extension_UCpng, (bafname.length() - extension_UCpng.length())) != std::string::npos)
-				boxartfiles.push_back(ent->d_name);
+				boxartfiles.push_back(namelist->d_name);
 			if(bafname.find(extension_LCpng, (bafname.length() - extension_LCpng.length())) != std::string::npos)
-				boxartfiles.push_back(ent->d_name);
+				boxartfiles.push_back(namelist->d_name);
 		}
 		closedir (boxartdir);
+		std::sort( boxartfiles.begin(), boxartfiles.end() );
 	}
 
 	for(boxartnum = 0; boxartnum < 50; boxartnum++) {
-		if (boxartnum < boxartfiles.size()) {
-			boxartfile_fullpath = malloc(256);
-			boxartfile = boxartfiles.at(boxartnum).c_str();
-			strcat(boxartfile_fullpath, boxartfolder);
-			strcat(boxartfile_fullpath, boxartfile);
+		if (boxartnum < files.size()) {
+			boxartfile = files.at(boxartnum).c_str();
+			char buffer[256];
+			strncpy(buffer, boxartfolder, sizeof(buffer));
+			strncat(buffer, boxartfile, sizeof(buffer));
+			strncat(buffer, ".png", sizeof(buffer));
 		
-			if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
-				tempimagepath = boxartfile_fullpath+3;
-			} fclose (fopen (boxartfile_fullpath+3, "rb"));
+			if (fopen (buffer, "rb") != NULL) {
+				tempimagepath = buffer;
+			} else {
+				tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (buffer, "rb"));
 		} else {
 			tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
 		}
@@ -1582,26 +1947,30 @@ int main()
 	sf2d_swapbuffers();
 
 	if ((fcboxartdir = opendir ("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
-		while ((ent = readdir (fcboxartdir)) != NULL) {
-			std::string fcbafname = (ent->d_name);
+		while ((namelist = readdir (fcboxartdir)) != NULL) {
+			std::string fcbafname = (namelist->d_name);
 			if(fcbafname.find(extension_UCpng, (fcbafname.length() - extension_UCpng.length())) != std::string::npos)
-				fcboxartfiles.push_back(ent->d_name);
+				fcboxartfiles.push_back(namelist->d_name);
 			if(fcbafname.find(extension_LCpng, (fcbafname.length() - extension_LCpng.length())) != std::string::npos)
-				fcboxartfiles.push_back(ent->d_name);
+				fcboxartfiles.push_back(namelist->d_name);
 		}
 		closedir (fcboxartdir);
+		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
 
 	for(boxartnum = 0; boxartnum < 50; boxartnum++) {
-		if (boxartnum < fcboxartfiles.size()) {
-			boxartfile_fullpath = malloc(256);
-			boxartfile = fcboxartfiles.at(boxartnum).c_str();
-			strcat(boxartfile_fullpath, fcboxartfolder);
-			strcat(boxartfile_fullpath, boxartfile);
+		if (boxartnum < fcfiles.size()) {
+			boxartfile = fcfiles.at(boxartnum).c_str();
+			char buffer[256];
+			strncpy(buffer, fcboxartfolder, sizeof(buffer));
+			strncat(buffer, boxartfile, sizeof(buffer));
+			strncat(buffer, ".png", sizeof(buffer));
 
-			if (fopen (boxartfile_fullpath+3, "rb") != NULL) {
-				tempimagepath = boxartfile_fullpath+3;
-			} fclose (fopen (boxartfile_fullpath+3, "rb"));
+			if (fopen (buffer, "rb") != NULL) {
+				tempimagepath = buffer;
+			} else {
+				tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
+			} fclose (fopen (buffer, "rb"));
 		} else {
 			tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
 		}
@@ -1614,54 +1983,6 @@ int main()
 	// No text
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
-	if ((dir = opendir ("sdmc:/nds/")) != NULL) {
-	/* print all the files and directories within directory */
-		while ((ent = readdir (dir)) != NULL) {
-			std::string fname = (ent->d_name);
-			if(fname.find(extension_UCnds, (fname.length() - extension_UCnds.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_LCnds, (fname.length() - extension_LCnds.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds1, (fname.length() - extension_oddnds1.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds2, (fname.length() - extension_oddnds2.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds3, (fname.length() - extension_oddnds3.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds4, (fname.length() - extension_oddnds4.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds5, (fname.length() - extension_oddnds5.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-			if(fname.find(extension_oddnds6, (fname.length() - extension_oddnds6.length())) != std::string::npos)
-				files.push_back(ent->d_name);
-		}
-		closedir (dir);
-	}
-	
-	if ((flashcarddir = opendir ("sdmc:/nds/flashcard/")) != NULL) {
-	/* print all the files and directories within directory */
-		while ((ent = readdir (flashcarddir)) != NULL) {
-			std::string fcfname = (ent->d_name);
-			if(fcfname.find(extension_UCini, (fcfname.length() - extension_UCini.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_LCini, (fcfname.length() - extension_LCini.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini1, (fcfname.length() - extension_oddini1.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini2, (fcfname.length() - extension_oddini2.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini3, (fcfname.length() - extension_oddini3.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini4, (fcfname.length() - extension_oddini4.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini5, (fcfname.length() - extension_oddini5.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-			if(fcfname.find(extension_oddini6, (fcfname.length() - extension_oddini6.length())) != std::string::npos)
-				fcfiles.push_back(ent->d_name);
-		}
-		closedir (flashcarddir);
-	}
 		
 	int cursorPosition = 0, i = 0;
 	bool noromsfound = false;
@@ -1691,6 +2012,9 @@ int main()
 	float offset3dr_boxart = 0.0f;
 	float offset3dl_disabled = 0.0f;
 	float offset3dr_disabled = 0.0f;
+	
+	u16 touch_x = 320/2;
+	u16 touch_y = 240/2;
 
 	//char* nickname = "Nickname";
 	
@@ -1740,6 +2064,7 @@ int main()
 		// Scan hid shared memory for input events
 		hidScanInput();
 		
+		u32 hUp = hidKeysUp();
 		u32 hDown = hidKeysDown();
 		u32 hHeld = hidKeysHeld();
 		
@@ -1980,7 +2305,7 @@ int main()
 		if (playwrongsounddone == true) {
 			if (hHeld & KEY_LEFT || hHeld & KEY_RIGHT) {} else {
 				soundwaittimer += 1;
-				if (soundwaittimer == 3) {
+				if (soundwaittimer == 2) {
 					soundwaittimer = 0;
 					playwrongsounddone = false;
 				}
@@ -2093,12 +2418,12 @@ int main()
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
 							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 3) {
+						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 5) {
+						} else if (twlsettings_flashcardvalue == 2 || twlsettings_flashcardvalue == 4 || twlsettings_flashcardvalue == 5) {
 							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
@@ -2237,10 +2562,13 @@ int main()
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
 								}
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
 								titleboxXpos += 64;
-								ndsiconXpos += 64;
 								filenameYpos += 240;
+							}
+							for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+								ChangeBNRIconNo();
+								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								ndsiconXpos += 64;
 							}
 						} else {
 							for(i = 0; i < files.size(); i++){
@@ -2248,10 +2576,13 @@ int main()
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
 								}
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								sf2d_draw_texture(iconunktex, ndsiconXpos+titleboxXmovepos, 133);
 								titleboxXpos += 64;
-								ndsiconXpos += 64;
 								filenameYpos += 240;
+							}
+							for(bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+								ChangeBNRIconNo();
+								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								ndsiconXpos += 64;
 							}
 						}
 					}
@@ -2266,19 +2597,19 @@ int main()
 					} else {
 						sf2d_draw_texture(bottomcovertex, 128, 116);  // Cover selected game/app
 						if (cursorPosition == -2) {
-							sf2d_draw_texture(settingsboxtex, 128, titleboxYmovepos); // Draw settings box that moves up
+							sf2d_draw_texture(settingsboxtex, 128, titleboxYmovepos-1); // Draw settings box that moves up
 						} else if (cursorPosition == -1) {
 							sf2d_draw_texture(carttex, 128, titleboxYmovepos); // Draw selected Slot-1 game that moves up
 							sf2d_draw_texture(iconunktex, 144, ndsiconYmovepos);
 						} else {
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
+							bnriconnum = cursorPosition;
 							if (twlsettings_forwardervalue == 1) {
-								bnriconnum = cursorPosition;
 								ChangeFCBNRIconNo();
-								sf2d_draw_texture(bnricontexnum, 144, ndsiconYmovepos);
 							} else {
-								sf2d_draw_texture(iconunktex, 144, ndsiconYmovepos);
+								ChangeBNRIconNo();
 							}
+							sf2d_draw_texture(bnricontexnum, 144, ndsiconYmovepos);
 						}
 					}
 				// }
@@ -2565,9 +2896,9 @@ int main()
 		}
 		if (screenmode == 0) {
 			if (romselect_toplayout == 1) {
-				Lshouldertext = Lshouldertext_showboxart;
+				Lshouldertext = Lshouldertext_boxart;
 			} else {
-				Lshouldertext = Lshouldertext_hideboxart;
+				Lshouldertext = Lshouldertext_blank;
 			}
 			if (twlsettings_forwardervalue == 1) {
 				Rshouldertext = Rshouldertext_sdcard;
@@ -2671,7 +3002,49 @@ int main()
 							updatebotscreen = true;
 						}
 					}
-					if(hDown & KEY_A){
+					if(hDown & KEY_TOUCH){
+						hidTouchRead(&touch);
+						touch_x = touch.px;
+						touch_y = touch.py;
+						if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+							if (titleboxXmovetimer == 0) {
+								if(cursorPosition == -2) {
+									titleboxXmovetimer = 1;
+									screenmodeswitch = true;
+									applaunchprep = true;
+								} else if(cursorPosition == -1) {
+									titleboxXmovetimer = 1;
+									twlsettings_launchslot1value = 1;
+									applaunchprep = true;
+								} else {
+									titleboxXmovetimer = 1;
+									if (twlsettings_forwardervalue == 1) {
+										twlsettings_launchslot1value = 1;
+										rom = (char*)(fcfiles.at(cursorPosition)).c_str();
+									} else {
+										twlsettings_launchslot1value = 0;
+										rom = (char*)(files.at(cursorPosition)).c_str();
+									}
+									applaunchprep = true;
+								}
+							}
+							updatebotscreen = true;
+							//bgm_menu.stop();
+							sfx_launch.play();
+						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180) {
+							//titleboxXmovepos -= 64;
+							if (titleboxXmoveright == false) {
+								titleboxXmoveleft = true;
+							}
+							updatebotscreen = true;
+						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180) {
+							//titleboxXmovepos -= 64;
+							if (titleboxXmoveleft == false) {
+								titleboxXmoveright = true;
+							}
+						updatebotscreen = true;
+						}
+					} else if(hDown & KEY_A){
 						if (titleboxXmovetimer == 0) {
 							if(cursorPosition == -2) {
 								titleboxXmovetimer = 1;

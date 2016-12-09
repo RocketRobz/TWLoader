@@ -113,22 +113,24 @@ int main(int argc, char **argv) {
 	// REG_SCFG_CLK = 0x80;
 	REG_SCFG_CLK = 0x85;
 
+	bool HealthandSafety_MSG = false;
 	bool UseNTRSplash = true;
 	bool TriggerExit = false;
 	std::string	bootstrapPath = "";
 
 	bool consoleOn = false;
 
-	scanKeys();
-	int pressed = keysDown();
+	/* scanKeys();
+	int pressed = keysDown(); */
 
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
-		bootstrapPath = twloaderini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");	
-				
+		bootstrapPath = twloaderini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");
+		
+		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 1) { HealthandSafety_MSG = true; }
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
-		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
+		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;
@@ -206,6 +208,12 @@ int main(int argc, char **argv) {
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0) {
 				runFile("sd:/_dsttfwd/loadcard.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1) {
+				runFile("sd:/_nds/twloader/loadflashcard/r4.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2) {
+				runFile("sd:/_nds/twloader/loadflashcard/r4idsn.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {
+				runFile("sd:/_nds/twloader/loadflashcard/ace_rpg.nds");
 			}
 		}
 		
