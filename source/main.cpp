@@ -10,6 +10,7 @@
 #include <sfil.h>
 #include <sftd.h>
 #include <malloc.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 //#include <citrus/app.hpp>
@@ -41,6 +42,10 @@ sf2d_texture *boxarttexnum;
 #include "bannerandboxart.h"
 int bnriconnum = 0;
 int boxartnum = 0;
+int storedboxartnum = 0;
+int storedboxartnum2 = 0;
+int storedfilenum = 0;
+const char* boxartfile_fullpath;
 const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
@@ -99,7 +104,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 1.5.1";
+const char* settings_vertext = "Ver. 1.5.2";
 
 const char* settingstext_bot;
 
@@ -542,315 +547,211 @@ void ChangeBNRIconNo() {
 	}
 }
 
-void ChangeFCBNRIconNo() {
-	if (bnriconnum == 0) {
-		bnricontexnum = fcbnricontex1;
-	} else if (bnriconnum == 1) {
-		bnricontexnum = fcbnricontex2;
-	} else if (bnriconnum == 2) {
-		bnricontexnum = fcbnricontex3;
-	} else if (bnriconnum == 3) {
-		bnricontexnum = fcbnricontex4;
-	} else if (bnriconnum == 4) {
-		bnricontexnum = fcbnricontex5;
-	} else if (bnriconnum == 5) {
-		bnricontexnum = fcbnricontex6;
-	} else if (bnriconnum == 6) {
-		bnricontexnum = fcbnricontex7;
-	} else if (bnriconnum == 7) {
-		bnricontexnum = fcbnricontex8;
-	} else if (bnriconnum == 8) {
-		bnricontexnum = fcbnricontex9;
-	} else if (bnriconnum == 9) {
-		bnricontexnum = fcbnricontex10;
-	} else if (bnriconnum == 10) {
-		bnricontexnum = fcbnricontex11;
-	} else if (bnriconnum == 11) {
-		bnricontexnum = fcbnricontex12;
-	} else if (bnriconnum == 12) {
-		bnricontexnum = fcbnricontex13;
-	} else if (bnriconnum == 13) {
-		bnricontexnum = fcbnricontex14;
-	} else if (bnriconnum == 14) {
-		bnricontexnum = fcbnricontex15;
-	} else if (bnriconnum == 15) {
-		bnricontexnum = fcbnricontex16;
-	} else if (bnriconnum == 16) {
-		bnricontexnum = fcbnricontex17;
-	} else if (bnriconnum == 17) {
-		bnricontexnum = fcbnricontex18;
-	} else if (bnriconnum == 18) {
-		bnricontexnum = fcbnricontex19;
-	} else if (bnriconnum == 19) {
-		bnricontexnum = fcbnricontex20;
-	} else if (bnriconnum == 20) {
-		bnricontexnum = fcbnricontex21;
-	} else if (bnriconnum == 21) {
-		bnricontexnum = fcbnricontex22;
-	} else if (bnriconnum == 22) {
-		bnricontexnum = fcbnricontex23;
-	} else if (bnriconnum == 23) {
-		bnricontexnum = fcbnricontex24;
-	} else if (bnriconnum == 24) {
-		bnricontexnum = fcbnricontex25;
-	} else if (bnriconnum == 25) {
-		bnricontexnum = fcbnricontex26;
-	} else if (bnriconnum == 26) {
-		bnricontexnum = fcbnricontex27;
-	} else if (bnriconnum == 27) {
-		bnricontexnum = fcbnricontex28;
-	} else if (bnriconnum == 28) {
-		bnricontexnum = fcbnricontex29;
-	} else if (bnriconnum == 29) {
-		bnricontexnum = fcbnricontex30;
-	} else if (bnriconnum == 30) {
-		bnricontexnum = fcbnricontex31;
-	} else if (bnriconnum == 31) {
-		bnricontexnum = fcbnricontex32;
-	} else if (bnriconnum == 32) {
-		bnricontexnum = fcbnricontex33;
-	} else if (bnriconnum == 33) {
-		bnricontexnum = fcbnricontex34;
-	} else if (bnriconnum == 34) {
-		bnricontexnum = fcbnricontex35;
-	} else if (bnriconnum == 35) {
-		bnricontexnum = fcbnricontex36;
-	} else if (bnriconnum == 36) {
-		bnricontexnum = fcbnricontex37;
-	} else if (bnriconnum == 37) {
-		bnricontexnum = fcbnricontex38;
-	} else if (bnriconnum == 38) {
-		bnricontexnum = fcbnricontex39;
-	} else if (bnriconnum == 39) {
-		bnricontexnum = fcbnricontex40;
-	} else if (bnriconnum == 40) {
-		bnricontexnum = fcbnricontex41;
-	} else if (bnriconnum == 41) {
-		bnricontexnum = fcbnricontex42;
-	} else if (bnriconnum == 42) {
-		bnricontexnum = fcbnricontex43;
-	} else if (bnriconnum == 43) {
-		bnricontexnum = fcbnricontex44;
-	} else if (bnriconnum == 44) {
-		bnricontexnum = fcbnricontex45;
-	} else if (bnriconnum == 45) {
-		bnricontexnum = fcbnricontex46;
-	} else if (bnriconnum == 46) {
-		bnricontexnum = fcbnricontex47;
-	} else if (bnriconnum == 47) {
-		bnricontexnum = fcbnricontex48;
-	} else if (bnriconnum == 48) {
-		bnricontexnum = fcbnricontex49;
-	} else if (bnriconnum == 49) {
-		bnricontexnum = fcbnricontex50;
-	}
-}
-
 void ChangeBoxArtNo() {
-	if (boxartnum == 0) {
+	if ( boxartnum == 0 ) {
 		boxarttexnum = boxarttex1;
-	} else if (boxartnum == 1) {
+	} else if ( boxartnum == 1 ) {
 		boxarttexnum = boxarttex2;
-	} else if (boxartnum == 2) {
+	} else if ( boxartnum == 2 ) {
 		boxarttexnum = boxarttex3;
-	} else if (boxartnum == 3) {
+	} else if ( boxartnum == 3 ) {
 		boxarttexnum = boxarttex4;
-	} else if (boxartnum == 4) {
+	} else if ( boxartnum == 4 ) {
 		boxarttexnum = boxarttex5;
-	} else if (boxartnum == 5) {
+	} else if ( boxartnum == 5 ) {
 		boxarttexnum = boxarttex6;
-	} else if (boxartnum == 6) {
-		boxarttexnum = boxarttex7;
-	} else if (boxartnum == 7) {
-		boxarttexnum = boxarttex8;
-	} else if (boxartnum == 8) {
-		boxarttexnum = boxarttex9;
-	} else if (boxartnum == 9) {
-		boxarttexnum = boxarttex10;
-	} else if (boxartnum == 10) {
-		boxarttexnum = boxarttex11;
-	} else if (boxartnum == 11) {
-		boxarttexnum = boxarttex12;
-	} else if (boxartnum == 12) {
-		boxarttexnum = boxarttex13;
-	} else if (boxartnum == 13) {
-		boxarttexnum = boxarttex14;
-	} else if (boxartnum == 14) {
-		boxarttexnum = boxarttex15;
-	} else if (boxartnum == 15) {
-		boxarttexnum = boxarttex16;
-	} else if (boxartnum == 16) {
-		boxarttexnum = boxarttex17;
-	} else if (boxartnum == 17) {
-		boxarttexnum = boxarttex18;
-	} else if (boxartnum == 18) {
-		boxarttexnum = boxarttex19;
-	} else if (boxartnum == 19) {
-		boxarttexnum = boxarttex20;
-	} else if (boxartnum == 20) {
-		boxarttexnum = boxarttex21;
-	} else if (boxartnum == 21) {
-		boxarttexnum = boxarttex22;
-	} else if (boxartnum == 22) {
-		boxarttexnum = boxarttex23;
-	} else if (boxartnum == 23) {
-		boxarttexnum = boxarttex24;
-	} else if (boxartnum == 24) {
-		boxarttexnum = boxarttex25;
-	} else if (boxartnum == 25) {
-		boxarttexnum = boxarttex26;
-	} else if (boxartnum == 26) {
-		boxarttexnum = boxarttex27;
-	} else if (boxartnum == 27) {
-		boxarttexnum = boxarttex28;
-	} else if (boxartnum == 28) {
-		boxarttexnum = boxarttex29;
-	} else if (boxartnum == 29) {
-		boxarttexnum = boxarttex30;
-	} else if (boxartnum == 30) {
-		boxarttexnum = boxarttex31;
-	} else if (boxartnum == 31) {
-		boxarttexnum = boxarttex32;
-	} else if (boxartnum == 32) {
-		boxarttexnum = boxarttex33;
-	} else if (boxartnum == 33) {
-		boxarttexnum = boxarttex34;
-	} else if (boxartnum == 34) {
-		boxarttexnum = boxarttex35;
-	} else if (boxartnum == 35) {
-		boxarttexnum = boxarttex36;
-	} else if (boxartnum == 36) {
-		boxarttexnum = boxarttex37;
-	} else if (boxartnum == 37) {
-		boxarttexnum = boxarttex38;
-	} else if (boxartnum == 38) {
-		boxarttexnum = boxarttex39;
-	} else if (boxartnum == 39) {
-		boxarttexnum = boxarttex40;
-	} else if (boxartnum == 40) {
-		boxarttexnum = boxarttex41;
-	} else if (boxartnum == 41) {
-		boxarttexnum = boxarttex42;
-	} else if (boxartnum == 42) {
-		boxarttexnum = boxarttex43;
-	} else if (boxartnum == 43) {
-		boxarttexnum = boxarttex44;
-	} else if (boxartnum == 44) {
-		boxarttexnum = boxarttex45;
-	} else if (boxartnum == 45) {
-		boxarttexnum = boxarttex46;
-	} else if (boxartnum == 46) {
-		boxarttexnum = boxarttex47;
-	} else if (boxartnum == 47) {
-		boxarttexnum = boxarttex48;
-	} else if (boxartnum == 48) {
-		boxarttexnum = boxarttex49;
-	} else if (boxartnum == 49) {
-		boxarttexnum = boxarttex50;
+	} else if ( boxartnum == 6 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 7 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 8 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 9 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 10 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 11 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 12 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 13 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 14 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 15 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 16 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 17 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 18 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 19 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 20 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 21 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 22 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 23 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 24 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 25 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 26 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 27 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 28 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 29 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 30 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 31 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 32 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 33 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 34 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 35 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 36 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 37 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 38 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 39 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 40 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 41 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 42 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 43 ) {
+		boxarttexnum = boxarttex2;
+	} else if ( boxartnum == 44 ) {
+		boxarttexnum = boxarttex3;
+	} else if ( boxartnum == 45 ) {
+		boxarttexnum = boxarttex4;
+	} else if ( boxartnum == 46 ) {
+		boxarttexnum = boxarttex5;
+	} else if ( boxartnum == 47 ) {
+		boxarttexnum = boxarttex6;
+	} else if ( boxartnum == 48 ) {
+		boxarttexnum = boxarttex1;
+	} else if ( boxartnum == 49 ) {
+		boxarttexnum = boxarttex2;
 	}
 }
 
-void ChangeFCBoxArtNo() {
+void StoreBoxArtPath() {
 	if (boxartnum == 0) {
-		boxarttexnum = fcboxarttex1;
+		boxartpath1 = tempimagepath;
 	} else if (boxartnum == 1) {
-		boxarttexnum = fcboxarttex2;
+		boxartpath2 = tempimagepath;
 	} else if (boxartnum == 2) {
-		boxarttexnum = fcboxarttex3;
+		boxartpath3 = tempimagepath;
 	} else if (boxartnum == 3) {
-		boxarttexnum = fcboxarttex4;
+		boxartpath4 = tempimagepath;
 	} else if (boxartnum == 4) {
-		boxarttexnum = fcboxarttex5;
+		boxartpath5 = tempimagepath;
 	} else if (boxartnum == 5) {
-		boxarttexnum = fcboxarttex6;
+		boxartpath6 = tempimagepath;
 	} else if (boxartnum == 6) {
-		boxarttexnum = fcboxarttex7;
+		boxartpath7 = tempimagepath;
 	} else if (boxartnum == 7) {
-		boxarttexnum = fcboxarttex8;
+		boxartpath8 = tempimagepath;
 	} else if (boxartnum == 8) {
-		boxarttexnum = fcboxarttex9;
+		boxartpath9 = tempimagepath;
 	} else if (boxartnum == 9) {
-		boxarttexnum = fcboxarttex10;
+		boxartpath10 = tempimagepath;
 	} else if (boxartnum == 10) {
-		boxarttexnum = fcboxarttex11;
+		boxartpath11 = tempimagepath;
 	} else if (boxartnum == 11) {
-		boxarttexnum = fcboxarttex12;
+		boxartpath12 = tempimagepath;
 	} else if (boxartnum == 12) {
-		boxarttexnum = fcboxarttex13;
+		boxartpath13 = tempimagepath;
 	} else if (boxartnum == 13) {
-		boxarttexnum = fcboxarttex14;
+		boxartpath14 = tempimagepath;
 	} else if (boxartnum == 14) {
-		boxarttexnum = fcboxarttex15;
+		boxartpath15 = tempimagepath;
 	} else if (boxartnum == 15) {
-		boxarttexnum = fcboxarttex16;
+		boxartpath16 = tempimagepath;
 	} else if (boxartnum == 16) {
-		boxarttexnum = fcboxarttex17;
+		boxartpath17 = tempimagepath;
 	} else if (boxartnum == 17) {
-		boxarttexnum = fcboxarttex18;
+		boxartpath18 = tempimagepath;
 	} else if (boxartnum == 18) {
-		boxarttexnum = fcboxarttex19;
+		boxartpath19 = tempimagepath;
 	} else if (boxartnum == 19) {
-		boxarttexnum = fcboxarttex20;
+		boxartpath20 = tempimagepath;
 	} else if (boxartnum == 20) {
-		boxarttexnum = fcboxarttex21;
+		boxartpath21 = tempimagepath;
 	} else if (boxartnum == 21) {
-		boxarttexnum = fcboxarttex22;
+		boxartpath22 = tempimagepath;
 	} else if (boxartnum == 22) {
-		boxarttexnum = fcboxarttex23;
+		boxartpath23 = tempimagepath;
 	} else if (boxartnum == 23) {
-		boxarttexnum = fcboxarttex24;
+		boxartpath24 = tempimagepath;
 	} else if (boxartnum == 24) {
-		boxarttexnum = fcboxarttex25;
+		boxartpath25 = tempimagepath;
 	} else if (boxartnum == 25) {
-		boxarttexnum = fcboxarttex26;
+		boxartpath26 = tempimagepath;
 	} else if (boxartnum == 26) {
-		boxarttexnum = fcboxarttex27;
+		boxartpath27 = tempimagepath;
 	} else if (boxartnum == 27) {
-		boxarttexnum = fcboxarttex28;
+		boxartpath28 = tempimagepath;
 	} else if (boxartnum == 28) {
-		boxarttexnum = fcboxarttex29;
+		boxartpath29 = tempimagepath;
 	} else if (boxartnum == 29) {
-		boxarttexnum = fcboxarttex30;
+		boxartpath30 = tempimagepath;
 	} else if (boxartnum == 30) {
-		boxarttexnum = fcboxarttex31;
+		boxartpath31 = tempimagepath;
 	} else if (boxartnum == 31) {
-		boxarttexnum = fcboxarttex32;
+		boxartpath32 = tempimagepath;
 	} else if (boxartnum == 32) {
-		boxarttexnum = fcboxarttex33;
+		boxartpath33 = tempimagepath;
 	} else if (boxartnum == 33) {
-		boxarttexnum = fcboxarttex34;
+		boxartpath34 = tempimagepath;
 	} else if (boxartnum == 34) {
-		boxarttexnum = fcboxarttex35;
+		boxartpath35 = tempimagepath;
 	} else if (boxartnum == 35) {
-		boxarttexnum = fcboxarttex36;
+		boxartpath36 = tempimagepath;
 	} else if (boxartnum == 36) {
-		boxarttexnum = fcboxarttex37;
+		boxartpath37 = tempimagepath;
 	} else if (boxartnum == 37) {
-		boxarttexnum = fcboxarttex38;
+		boxartpath38 = tempimagepath;
 	} else if (boxartnum == 38) {
-		boxarttexnum = fcboxarttex39;
+		boxartpath39 = tempimagepath;
 	} else if (boxartnum == 39) {
-		boxarttexnum = fcboxarttex40;
+		boxartpath40 = tempimagepath;
 	} else if (boxartnum == 40) {
-		boxarttexnum = fcboxarttex41;
+		boxartpath41 = tempimagepath;
 	} else if (boxartnum == 41) {
-		boxarttexnum = fcboxarttex42;
+		boxartpath42 = tempimagepath;
 	} else if (boxartnum == 42) {
-		boxarttexnum = fcboxarttex43;
+		boxartpath43 = tempimagepath;
 	} else if (boxartnum == 43) {
-		boxarttexnum = fcboxarttex44;
+		boxartpath44 = tempimagepath;
 	} else if (boxartnum == 44) {
-		boxarttexnum = fcboxarttex45;
+		boxartpath45 = tempimagepath;
 	} else if (boxartnum == 45) {
-		boxarttexnum = fcboxarttex46;
+		boxartpath46 = tempimagepath;
 	} else if (boxartnum == 46) {
-		boxarttexnum = fcboxarttex47;
+		boxartpath47 = tempimagepath;
 	} else if (boxartnum == 47) {
-		boxarttexnum = fcboxarttex48;
+		boxartpath48 = tempimagepath;
 	} else if (boxartnum == 48) {
-		boxarttexnum = fcboxarttex49;
+		boxartpath49 = tempimagepath;
 	} else if (boxartnum == 49) {
-		boxarttexnum = fcboxarttex50;
+		boxartpath50 = tempimagepath;
 	}
 }
 
@@ -958,319 +859,161 @@ void LoadBNRIcon() {
 	}
 }
 
-void LoadFCBNRIcon() {
-	if (bnriconnum == 0) {
-		fcbnricontex1 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 1) {
-		fcbnricontex2 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 2) {
-		fcbnricontex3 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 3) {
-		fcbnricontex4 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 4) {
-		fcbnricontex5 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 5) {
-		fcbnricontex6 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 6) {
-		fcbnricontex7 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 7) {
-		fcbnricontex8 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 8) {
-		fcbnricontex9 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 9) {
-		fcbnricontex10 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 10) {
-		fcbnricontex11 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 11) {
-		fcbnricontex12 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 12) {
-		fcbnricontex13 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 13) {
-		fcbnricontex14 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 14) {
-		fcbnricontex15 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 15) {
-		fcbnricontex16 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 16) {
-		fcbnricontex17 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 17) {
-		fcbnricontex18 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 18) {
-		fcbnricontex19 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 19) {
-		fcbnricontex20 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 20) {
-		fcbnricontex21 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 21) {
-		fcbnricontex22 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 22) {
-		fcbnricontex23 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 23) {
-		fcbnricontex24 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 24) {
-		fcbnricontex25 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 25) {
-		fcbnricontex26 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 26) {
-		fcbnricontex27 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 27) {
-		fcbnricontex28 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 28) {
-		fcbnricontex29 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 29) {
-		fcbnricontex30 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 30) {
-		fcbnricontex31 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 31) {
-		fcbnricontex32 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 32) {
-		fcbnricontex33 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 33) {
-		fcbnricontex34 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 34) {
-		fcbnricontex35 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 35) {
-		fcbnricontex36 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 36) {
-		fcbnricontex37 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 37) {
-		fcbnricontex38 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 38) {
-		fcbnricontex39 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 39) {
-		fcbnricontex40 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 40) {
-		fcbnricontex41 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 41) {
-		fcbnricontex42 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 42) {
-		fcbnricontex43 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 43) {
-		fcbnricontex44 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 44) {
-		fcbnricontex45 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 45) {
-		fcbnricontex46 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 46) {
-		fcbnricontex47 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 47) {
-		fcbnricontex48 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 48) {
-		fcbnricontex49 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 49) {
-		fcbnricontex50 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Banner icon
-	}
-}
-
 void LoadBoxArt() {
-	if (boxartnum == 0) {
-		boxarttex1 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 1) {
-		boxarttex2 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 2) {
-		boxarttex3 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 3) {
-		boxarttex4 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 4) {
-		boxarttex5 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 5) {
-		boxarttex6 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 6) {
-		boxarttex7 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 7) {
-		boxarttex8 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 8) {
-		boxarttex9 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 9) {
-		boxarttex10 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 10) {
-		boxarttex11 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 11) {
-		boxarttex12 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 12) {
-		boxarttex13 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 13) {
-		boxarttex14 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 14) {
-		boxarttex15 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 15) {
-		boxarttex16 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 16) {
-		boxarttex17 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 17) {
-		boxarttex18 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 18) {
-		boxarttex19 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 19) {
-		boxarttex20 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 20) {
-		boxarttex21 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 21) {
-		boxarttex22 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 22) {
-		boxarttex23 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 23) {
-		boxarttex24 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 24) {
-		boxarttex25 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 25) {
-		boxarttex26 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 26) {
-		boxarttex27 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 27) {
-		boxarttex28 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 28) {
-		boxarttex29 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 29) {
-		boxarttex30 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 30) {
-		boxarttex31 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 31) {
-		boxarttex32 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 32) {
-		boxarttex33 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 33) {
-		boxarttex34 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 34) {
-		boxarttex35 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 35) {
-		boxarttex36 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 36) {
-		boxarttex37 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 37) {
-		boxarttex38 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 38) {
-		boxarttex39 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 39) {
-		boxarttex40 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 40) {
-		boxarttex41 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 41) {
-		boxarttex42 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 42) {
-		boxarttex43 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 43) {
-		boxarttex44 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 44) {
-		boxarttex45 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 45) {
-		boxarttex46 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 46) {
-		boxarttex47 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 47) {
-		boxarttex48 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 48) {
-		boxarttex49 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 49) {
-		boxarttex50 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
+	if ( boxartnum == 0 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath1, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 1 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath2, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 2 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath3, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 3 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath4, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 4 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath5, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 5 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath6, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 6 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath7, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 7 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath8, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 8 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath9, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 9 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath10, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 10 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath11, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 11 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath12, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 12 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath13, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 13 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath14, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 14 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath15, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 15 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath16, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 16 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath17, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 17 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath18, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 18 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath19, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 19 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath20, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 20 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath21, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 21 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath22, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 22 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath23, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 23 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath24, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 24 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath25, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 25 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath26, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 26 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath27, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 27 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath28, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 28 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath29, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 29 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath30, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 30 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath31, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 31 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath32, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 32 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath33, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 33 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath34, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 34 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath35, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 35 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath36, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 36 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath37, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 37 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath38, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 38 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath39, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 39 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath40, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 40 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath41, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 41 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath42, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 42 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath43, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 43 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath44, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 44 ) {
+		sf2d_free_texture(boxarttex3);
+		boxarttex3 = sfil_load_PNG_file(boxartpath45, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 45 ) {
+		sf2d_free_texture(boxarttex4);
+		boxarttex4 = sfil_load_PNG_file(boxartpath46, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 46 ) {
+		sf2d_free_texture(boxarttex5);
+		boxarttex5 = sfil_load_PNG_file(boxartpath47, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 47 ) {
+		sf2d_free_texture(boxarttex6);
+		boxarttex6 = sfil_load_PNG_file(boxartpath48, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 48 ) {
+		sf2d_free_texture(boxarttex1);
+		boxarttex1 = sfil_load_PNG_file(boxartpath49, SF2D_PLACE_RAM); // Box art
+	} else if ( boxartnum == 49 ) {
+		sf2d_free_texture(boxarttex2);
+		boxarttex2 = sfil_load_PNG_file(boxartpath50, SF2D_PLACE_RAM); // Box art
 	}
 }
 
-void LoadFCBoxArt() {
-	if (boxartnum == 0) {
-		fcboxarttex1 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 1) {
-		fcboxarttex2 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 2) {
-		fcboxarttex3 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 3) {
-		fcboxarttex4 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 4) {
-		fcboxarttex5 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 5) {
-		fcboxarttex6 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 6) {
-		fcboxarttex7 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 7) {
-		fcboxarttex8 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 8) {
-		fcboxarttex9 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 9) {
-		fcboxarttex10 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 10) {
-		fcboxarttex11 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 11) {
-		fcboxarttex12 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 12) {
-		fcboxarttex13 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 13) {
-		fcboxarttex14 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 14) {
-		fcboxarttex15 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 15) {
-		fcboxarttex16 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 16) {
-		fcboxarttex17 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 17) {
-		fcboxarttex18 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 18) {
-		fcboxarttex19 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 19) {
-		fcboxarttex20 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 20) {
-		fcboxarttex21 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 21) {
-		fcboxarttex22 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 22) {
-		fcboxarttex23 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 23) {
-		fcboxarttex24 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 24) {
-		fcboxarttex25 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 25) {
-		fcboxarttex26 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 26) {
-		fcboxarttex27 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 27) {
-		fcboxarttex28 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 28) {
-		fcboxarttex29 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 29) {
-		fcboxarttex30 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 30) {
-		fcboxarttex31 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 31) {
-		fcboxarttex32 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 32) {
-		fcboxarttex33 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 33) {
-		fcboxarttex34 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 34) {
-		fcboxarttex35 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 35) {
-		fcboxarttex36 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 36) {
-		fcboxarttex37 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 37) {
-		fcboxarttex38 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 38) {
-		fcboxarttex39 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 39) {
-		fcboxarttex40 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 40) {
-		fcboxarttex41 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 41) {
-		fcboxarttex42 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 42) {
-		fcboxarttex43 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 43) {
-		fcboxarttex44 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 44) {
-		fcboxarttex45 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 45) {
-		fcboxarttex46 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 46) {
-		fcboxarttex47 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 47) {
-		fcboxarttex48 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 48) {
-		fcboxarttex49 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	} else if (boxartnum == 49) {
-		fcboxarttex50 = sfil_load_PNG_file(tempimagepath, SF2D_PLACE_RAM); // Box art
-	}
-}
-
-void FreeBoxArtTextures() {
+void FreeBannerTextures() {
 	sf2d_free_texture(bnricontex1);
 	sf2d_free_texture(bnricontex2);
 	sf2d_free_texture(bnricontex3);
@@ -1321,159 +1064,6 @@ void FreeBoxArtTextures() {
 	sf2d_free_texture(bnricontex48);
 	sf2d_free_texture(bnricontex49);
 	sf2d_free_texture(bnricontex50);
-
-	sf2d_free_texture(fcbnricontex1);
-	sf2d_free_texture(fcbnricontex2);
-	sf2d_free_texture(fcbnricontex3);
-	sf2d_free_texture(fcbnricontex4);
-	sf2d_free_texture(fcbnricontex5);
-	sf2d_free_texture(fcbnricontex6);
-	sf2d_free_texture(fcbnricontex7);
-	sf2d_free_texture(fcbnricontex8);
-	sf2d_free_texture(fcbnricontex9);
-	sf2d_free_texture(fcbnricontex10);
-	sf2d_free_texture(fcbnricontex11);
-	sf2d_free_texture(fcbnricontex12);
-	sf2d_free_texture(fcbnricontex13);
-	sf2d_free_texture(fcbnricontex14);
-	sf2d_free_texture(fcbnricontex15);
-	sf2d_free_texture(fcbnricontex16);
-	sf2d_free_texture(fcbnricontex17);
-	sf2d_free_texture(fcbnricontex18);
-	sf2d_free_texture(fcbnricontex19);
-	sf2d_free_texture(fcbnricontex20);
-	sf2d_free_texture(fcbnricontex21);
-	sf2d_free_texture(fcbnricontex22);
-	sf2d_free_texture(fcbnricontex23);
-	sf2d_free_texture(fcbnricontex24);
-	sf2d_free_texture(fcbnricontex25);
-	sf2d_free_texture(fcbnricontex26);
-	sf2d_free_texture(fcbnricontex27);
-	sf2d_free_texture(fcbnricontex28);
-	sf2d_free_texture(fcbnricontex29);
-	sf2d_free_texture(fcbnricontex30);
-	sf2d_free_texture(fcbnricontex31);
-	sf2d_free_texture(fcbnricontex32);
-	sf2d_free_texture(fcbnricontex33);
-	sf2d_free_texture(fcbnricontex34);
-	sf2d_free_texture(fcbnricontex35);
-	sf2d_free_texture(fcbnricontex36);
-	sf2d_free_texture(fcbnricontex37);
-	sf2d_free_texture(fcbnricontex38);
-	sf2d_free_texture(fcbnricontex39);
-	sf2d_free_texture(fcbnricontex40);
-	sf2d_free_texture(fcbnricontex41);
-	sf2d_free_texture(fcbnricontex42);
-	sf2d_free_texture(fcbnricontex43);
-	sf2d_free_texture(fcbnricontex44);
-	sf2d_free_texture(fcbnricontex45);
-	sf2d_free_texture(fcbnricontex46);
-	sf2d_free_texture(fcbnricontex47);
-	sf2d_free_texture(fcbnricontex48);
-	sf2d_free_texture(fcbnricontex49);
-	sf2d_free_texture(fcbnricontex50);
-
-	sf2d_free_texture(boxarttex1);
-	sf2d_free_texture(boxarttex2);
-	sf2d_free_texture(boxarttex3);
-	sf2d_free_texture(boxarttex4);
-	sf2d_free_texture(boxarttex5);
-	sf2d_free_texture(boxarttex6);
-	sf2d_free_texture(boxarttex7);
-	sf2d_free_texture(boxarttex8);
-	sf2d_free_texture(boxarttex9);
-	sf2d_free_texture(boxarttex10);
-	sf2d_free_texture(boxarttex11);
-	sf2d_free_texture(boxarttex12);
-	sf2d_free_texture(boxarttex13);
-	sf2d_free_texture(boxarttex14);
-	sf2d_free_texture(boxarttex15);
-	sf2d_free_texture(boxarttex16);
-	sf2d_free_texture(boxarttex17);
-	sf2d_free_texture(boxarttex18);
-	sf2d_free_texture(boxarttex19);
-	sf2d_free_texture(boxarttex20);
-	sf2d_free_texture(boxarttex21);
-	sf2d_free_texture(boxarttex22);
-	sf2d_free_texture(boxarttex23);
-	sf2d_free_texture(boxarttex24);
-	sf2d_free_texture(boxarttex25);
-	sf2d_free_texture(boxarttex26);
-	sf2d_free_texture(boxarttex27);
-	sf2d_free_texture(boxarttex28);
-	sf2d_free_texture(boxarttex29);
-	sf2d_free_texture(boxarttex30);
-	sf2d_free_texture(boxarttex31);
-	sf2d_free_texture(boxarttex32);
-	sf2d_free_texture(boxarttex33);
-	sf2d_free_texture(boxarttex34);
-	sf2d_free_texture(boxarttex35);
-	sf2d_free_texture(boxarttex36);
-	sf2d_free_texture(boxarttex37);
-	sf2d_free_texture(boxarttex38);
-	sf2d_free_texture(boxarttex39);
-	sf2d_free_texture(boxarttex40);
-	sf2d_free_texture(boxarttex41);
-	sf2d_free_texture(boxarttex42);
-	sf2d_free_texture(boxarttex43);
-	sf2d_free_texture(boxarttex44);
-	sf2d_free_texture(boxarttex45);
-	sf2d_free_texture(boxarttex46);
-	sf2d_free_texture(boxarttex47);
-	sf2d_free_texture(boxarttex48);
-	sf2d_free_texture(boxarttex49);
-	sf2d_free_texture(boxarttex50);
-	
-	sf2d_free_texture(fcboxarttex1);
-	sf2d_free_texture(fcboxarttex2);
-	sf2d_free_texture(fcboxarttex3);
-	sf2d_free_texture(fcboxarttex4);
-	sf2d_free_texture(fcboxarttex5);
-	sf2d_free_texture(fcboxarttex6);
-	sf2d_free_texture(fcboxarttex7);
-	sf2d_free_texture(fcboxarttex8);
-	sf2d_free_texture(fcboxarttex9);
-	sf2d_free_texture(fcboxarttex10);
-	sf2d_free_texture(fcboxarttex11);
-	sf2d_free_texture(fcboxarttex12);
-	sf2d_free_texture(fcboxarttex13);
-	sf2d_free_texture(fcboxarttex14);
-	sf2d_free_texture(fcboxarttex15);
-	sf2d_free_texture(fcboxarttex16);
-	sf2d_free_texture(fcboxarttex17);
-	sf2d_free_texture(fcboxarttex18);
-	sf2d_free_texture(fcboxarttex19);
-	sf2d_free_texture(fcboxarttex20);
-	sf2d_free_texture(fcboxarttex21);
-	sf2d_free_texture(fcboxarttex22);
-	sf2d_free_texture(fcboxarttex23);
-	sf2d_free_texture(fcboxarttex24);
-	sf2d_free_texture(fcboxarttex25);
-	sf2d_free_texture(fcboxarttex26);
-	sf2d_free_texture(fcboxarttex27);
-	sf2d_free_texture(fcboxarttex28);
-	sf2d_free_texture(fcboxarttex29);
-	sf2d_free_texture(fcboxarttex30);
-	sf2d_free_texture(fcboxarttex31);
-	sf2d_free_texture(fcboxarttex32);
-	sf2d_free_texture(fcboxarttex33);
-	sf2d_free_texture(fcboxarttex34);
-	sf2d_free_texture(fcboxarttex35);
-	sf2d_free_texture(fcboxarttex36);
-	sf2d_free_texture(fcboxarttex37);
-	sf2d_free_texture(fcboxarttex38);
-	sf2d_free_texture(fcboxarttex39);
-	sf2d_free_texture(fcboxarttex40);
-	sf2d_free_texture(fcboxarttex41);
-	sf2d_free_texture(fcboxarttex42);
-	sf2d_free_texture(fcboxarttex43);
-	sf2d_free_texture(fcboxarttex44);
-	sf2d_free_texture(fcboxarttex45);
-	sf2d_free_texture(fcboxarttex46);
-	sf2d_free_texture(fcboxarttex47);
-	sf2d_free_texture(fcboxarttex48);
-	sf2d_free_texture(fcboxarttex49);
-	sf2d_free_texture(fcboxarttex50);
 }
 
 void LoadSettings() {
@@ -1827,11 +1417,6 @@ int main()
 		std::sort( fcfiles.begin(), fcfiles.end() );
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
 	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
 		while ((namelist = readdir (bnricondir)) != NULL) {
 			std::string bifname = (namelist->d_name);
@@ -1843,32 +1428,6 @@ int main()
 		closedir (bnricondir);
 		std::sort( bnriconfiles.begin(), bnriconfiles.end() );
 	}
-
-	for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
-		if (bnriconnum < files.size()) {
-			bnriconfile = files.at(bnriconnum).c_str();
-			char buffer[256];
-			strncpy(buffer, bnriconfolder, sizeof(buffer));
-			strncat(buffer, bnriconfile, sizeof(buffer));
-			strncat(buffer, ".png", sizeof(buffer));
-
-			if (fopen (buffer, "rb") != NULL) {
-				tempimagepath = buffer;
-			} else {
-				tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
-			} fclose (fopen (buffer, "rb"));
-		} else {
-			tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
-		}
-		LoadBNRIcon();
-	}
-
-	bnriconnum = 0;
-
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
 
 	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/flashcard/")) != NULL) {
 		while ((namelist = readdir (fcbnricondir)) != NULL) {
@@ -1882,32 +1441,6 @@ int main()
 		std::sort( fcbnriconfiles.begin(), fcbnriconfiles.end() );
 	}
 
-	for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
-		if (bnriconnum < fcfiles.size()) {
-			bnriconfile = fcfiles.at(bnriconnum).c_str();
-			char buffer[256];
-			strncpy(buffer, fcbnriconfolder, sizeof(buffer));
-			strncat(buffer, bnriconfile, sizeof(buffer));
-			strncat(buffer, ".png", sizeof(buffer));
-
-			if (fopen (buffer, "rb") != NULL) {
-				tempimagepath = buffer;
-			} else {
-				tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
-			} fclose (fopen (buffer, "rb"));
-		} else {
-			tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
-		}
-		LoadFCBNRIcon();
-	}
-
-	bnriconnum = 0;
-
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art (SD Card)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
 	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
 		while ((namelist = readdir (boxartdir)) != NULL) {
 			std::string bafname = (namelist->d_name);
@@ -1920,32 +1453,6 @@ int main()
 		std::sort( boxartfiles.begin(), boxartfiles.end() );
 	}
 
-	for(boxartnum = 0; boxartnum < 50; boxartnum++) {
-		if (boxartnum < files.size()) {
-			boxartfile = files.at(boxartnum).c_str();
-			char buffer[256];
-			strncpy(buffer, boxartfolder, sizeof(buffer));
-			strncat(buffer, boxartfile, sizeof(buffer));
-			strncat(buffer, ".png", sizeof(buffer));
-		
-			if (fopen (buffer, "rb") != NULL) {
-				tempimagepath = buffer;
-			} else {
-				tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
-			} fclose (fopen (buffer, "rb"));
-		} else {
-			tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
-		}
-		LoadBoxArt();
-	}
-
-	boxartnum = 0;
-	
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading box art (Flashcard)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
 	if ((fcboxartdir = opendir ("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
 		while ((namelist = readdir (fcboxartdir)) != NULL) {
 			std::string fcbafname = (namelist->d_name);
@@ -1957,32 +1464,6 @@ int main()
 		closedir (fcboxartdir);
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
-
-	for(boxartnum = 0; boxartnum < 50; boxartnum++) {
-		if (boxartnum < fcfiles.size()) {
-			boxartfile = fcfiles.at(boxartnum).c_str();
-			char buffer[256];
-			strncpy(buffer, fcboxartfolder, sizeof(buffer));
-			strncat(buffer, boxartfile, sizeof(buffer));
-			strncat(buffer, ".png", sizeof(buffer));
-
-			if (fopen (buffer, "rb") != NULL) {
-				tempimagepath = buffer;
-			} else {
-				tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
-			} fclose (fopen (buffer, "rb"));
-		} else {
-			tempimagepath = "romfs:/graphics/boxart_unknown.png";	// Prevent crashing
-		}
-		LoadFCBoxArt();
-	}
-
-	boxartnum = 0;
-	
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	// No text
-	sf2d_end_frame();
-	sf2d_swapbuffers();
 		
 	int cursorPosition = 0, i = 0;
 	bool noromsfound = false;
@@ -2000,6 +1481,7 @@ int main()
 	bool fadeout = false;
 		
 	bool colortexloaded = true;
+	bool boxarttexloaded = false;
 
 	bool updatebotscreen = true;
 	bool screenmodeswitch = false;
@@ -2051,6 +1533,8 @@ int main()
 	int settingsXpos = 24;
 	int settingsvalueXpos = 240;
 	int settingsYpos;
+	
+	bool run = true;
 
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
@@ -2060,7 +1544,8 @@ int main()
 	memset(hmac, 0, sizeof(hmac));
 
 	// Loop as long as the status is not exit
-	while(aptMainLoop()) {
+	while(run && aptMainLoop()) {
+	//while(run) {
 		// Scan hid shared memory for input events
 		hidScanInput();
 		
@@ -2095,6 +1580,122 @@ int main()
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
 				colortexloaded = true;
 			}
+			if (boxarttexloaded == false) {
+				if (twlsettings_forwardervalue == 0) {
+					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
+					sf2d_end_frame();
+					sf2d_swapbuffers(); */
+					for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+						if (bnriconnum < files.size()) {
+							bnriconfile = files.at(bnriconnum).c_str();
+							char buffer[256];
+							strncpy(buffer, bnriconfolder, sizeof(buffer));
+							strncat(buffer, bnriconfile, sizeof(buffer));
+							strncat(buffer, ".png", sizeof(buffer));
+
+							if( access( buffer, F_OK ) != -1 ) {
+								tempimagepath = buffer;
+							} else {
+								tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+							}
+						} else {
+							tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+						}
+						LoadBNRIcon();
+					}
+
+					bnriconnum = 0;
+
+					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
+					sf2d_end_frame();
+					sf2d_swapbuffers(); */
+					for(boxartnum = 0; boxartnum < 50; boxartnum++) {
+						if (boxartnum < files.size()) {
+							boxartfile = files.at(boxartnum).c_str();
+							boxartfile_fullpath = malloc(256);
+							strcpy(boxartfile_fullpath, boxartfolder);
+							strcat(boxartfile_fullpath, boxartfile);
+							strcat(boxartfile_fullpath, ".png");
+						
+							if( access( boxartfile_fullpath, F_OK ) != -1 ) {
+								tempimagepath = boxartfile_fullpath;
+							} else {
+								tempimagepath = "romfs:/graphics/boxart_unknown.png";
+							}
+						} else {
+							tempimagepath = "romfs:/graphics/boxart_unknown.png";
+						}
+						StoreBoxArtPath();
+					}
+
+				} else {
+					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
+					sf2d_end_frame();
+					sf2d_swapbuffers(); */
+					for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+						if (bnriconnum < fcfiles.size()) {
+							bnriconfile = fcfiles.at(bnriconnum).c_str();
+							char buffer[256];
+							strncpy(buffer, fcbnriconfolder, sizeof(buffer));
+							strncat(buffer, bnriconfile, sizeof(buffer));
+							strncat(buffer, ".png", sizeof(buffer));
+
+							if( access( buffer, F_OK ) != -1 ) {
+								tempimagepath = buffer;
+							} else {
+								tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+							}
+						} else {
+							tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+						}
+						LoadBNRIcon();
+					}
+
+					bnriconnum = 0;
+
+					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (Flashcard)...");
+					sf2d_end_frame();
+					sf2d_swapbuffers(); */
+					for(boxartnum = 0; boxartnum < 50; boxartnum++) {
+						if (boxartnum < fcfiles.size()) {
+							boxartfile = fcfiles.at(boxartnum).c_str();
+							boxartfile_fullpath = malloc(256);
+							strcpy(boxartfile_fullpath, fcboxartfolder);
+							strcat(boxartfile_fullpath, boxartfile);
+							strcat(boxartfile_fullpath, ".png");
+						
+							if( access( boxartfile_fullpath, F_OK ) != -1 ) {
+								tempimagepath = boxartfile_fullpath;
+							} else {
+								tempimagepath = "romfs:/graphics/boxart_unknown.png";
+							}
+						} else {
+							tempimagepath = "romfs:/graphics/boxart_unknown.png";
+						}
+						StoreBoxArtPath();
+					}
+				}
+				
+				boxartnum = 0;
+				LoadBoxArt();
+				boxartnum = 1;
+				LoadBoxArt();
+				boxartnum = 2;
+				LoadBoxArt();
+				boxartnum = 3;
+				LoadBoxArt();
+				boxartnum = 4;
+				LoadBoxArt();
+				boxartnum = 5;
+				LoadBoxArt();
+				boxarttexloaded = true;
+				boxartnum = 0;
+			}
+
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
 				batteryIcon = batterychrgtex;
 			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
@@ -2109,7 +1710,7 @@ int main()
 					if (twlsettings_forwardervalue == 1) {
 						boxartXpos = 136;
 						for(boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
-							ChangeFCBoxArtNo();
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
@@ -2136,7 +1737,7 @@ int main()
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
-			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartfile_fullpath); // Debug text
+			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartpath1); // Debug text
 			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 			sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -2153,7 +1754,7 @@ int main()
 					if (twlsettings_forwardervalue == 1) {
 						boxartXpos = 136;
 						for(boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
-							ChangeFCBoxArtNo();
+							ChangeBoxArtNo();
 							sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 							boxartXpos += 144;
@@ -2180,7 +1781,7 @@ int main()
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
-			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartfile_fullpath); // Debug text
+			//sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, boxartpath1); // Debug text
 			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
 			sf2d_draw_texture(shoulderRtex, 327, RshoulderYpos);
 			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -2296,9 +1897,13 @@ int main()
 			if (fadealpha > 255) {
 				fadealpha = 255;
 				//musicbool = false;
-				screenmode = 0;
-				fadeout = false;
-				fadein = true;
+				if(screenmode == 1) {
+					screenmode = 0;
+					fadeout = false;
+					fadein = true;
+				} else {
+					run = false;
+				}
 			}
 		}
 		
@@ -2330,6 +1935,29 @@ int main()
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				sfx_select.play();
+				if ( cursorPosition == 3 ||
+				cursorPosition == 6 ||
+				cursorPosition == 9 ||
+				cursorPosition == 12 ||
+				cursorPosition == 15 ||
+				cursorPosition == 18 ||
+				cursorPosition == 21 ||
+				cursorPosition == 24 ||
+				cursorPosition == 27 ||
+				cursorPosition == 30 ||
+				cursorPosition == 33 ||
+				cursorPosition == 36 ||
+				cursorPosition == 39 ||
+				cursorPosition == 42 ||
+				cursorPosition == 45 ||
+				cursorPosition == 48 ) {
+					boxartnum = cursorPosition-1;
+					LoadBoxArt();
+					boxartnum--;
+					LoadBoxArt();
+					boxartnum--;
+					LoadBoxArt();
+				}
 			} else {
 				if (cursorPositionset == false) {
 					cursorPosition--;
@@ -2362,6 +1990,29 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				sfx_stop.play();
+				if ( cursorPosition == 4 ||
+				cursorPosition == 7 ||
+				cursorPosition == 10 ||
+				cursorPosition == 13 ||
+				cursorPosition == 16 ||
+				cursorPosition == 19 ||
+				cursorPosition == 22 ||
+				cursorPosition == 25 ||
+				cursorPosition == 28 ||
+				cursorPosition == 31 ||
+				cursorPosition == 34 ||
+				cursorPosition == 37 ||
+				cursorPosition == 40 ||
+				cursorPosition == 43 ||
+				cursorPosition == 46 ||
+				cursorPosition == 49 ) {
+					boxartnum = cursorPosition+2;
+					LoadBoxArt();
+					boxartnum++;
+					LoadBoxArt();
+					boxartnum++;
+					LoadBoxArt();
+				}
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
@@ -2536,7 +2187,7 @@ int main()
 								filenameYpos += 240;
 							}
 							for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
-								ChangeFCBNRIconNo();
+								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
 							}
@@ -2550,7 +2201,7 @@ int main()
 								filenameYpos += 240;
 							}
 							for(bnriconnum = 0; bnriconnum < fcfiles.size(); bnriconnum++) {
-								ChangeFCBNRIconNo();
+								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
 							}
@@ -2604,11 +2255,7 @@ int main()
 						} else {
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 							bnriconnum = cursorPosition;
-							if (twlsettings_forwardervalue == 1) {
-								ChangeFCBNRIconNo();
-							} else {
-								ChangeBNRIconNo();
-							}
+							ChangeBNRIconNo();
 							sf2d_draw_texture(bnricontexnum, 144, ndsiconYmovepos);
 						}
 					}
@@ -2984,11 +2631,13 @@ int main()
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						noromsfound = false;
+						FreeBannerTextures();
 						if (twlsettings_forwardervalue == 1) {
 							twlsettings_forwardervalue = 0;
 						} else {
 							twlsettings_forwardervalue = 1;
 						}
+						boxarttexloaded = false;
 						sfx_switch.stop();	// Prevent freezing
 						sfx_switch.play();
 						updatebotscreen = true;
@@ -3081,7 +2730,11 @@ int main()
 							titleboxXmoveleft = true;
 						}
 						updatebotscreen = true;
-					} /* else if (hDown & KEY_SELECT) {
+					} /* else if (hDown & KEY_START) {
+						titleboxXmovetimer = 1;
+						fadeout = true;
+						updatebotscreen = true;
+					} */ /* else if (hDown & KEY_SELECT) {
 						screenmode = 1;
 						updatebotscreen = true;
 					} */
@@ -3208,7 +2861,8 @@ int main()
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}
-	}
+	//}	// run
+	}	// aptMainLoop
 
 	
 	SaveSettings();
@@ -3253,7 +2907,13 @@ int main()
 	sf2d_free_texture(dsihstex);
 	sf2d_free_texture(whitescrtex);
 	sf2d_free_texture(disabledtex);
-	FreeBoxArtTextures();
+	FreeBannerTextures();
+	sf2d_free_texture(boxarttex1);
+	sf2d_free_texture(boxarttex2);
+	sf2d_free_texture(boxarttex3);
+	sf2d_free_texture(boxarttex4);
+	sf2d_free_texture(boxarttex5);
+	sf2d_free_texture(boxarttex6);
 	ndspExit();
 	sf2d_fini();
 
