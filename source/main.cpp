@@ -2727,25 +2727,9 @@ int main()
 				boxartXmovepos += 18;
 				sfx_select.play();
 				// Load the previous banner icons
-				if ( cursorPosition == 6 ||
-				cursorPosition == 11 ||
-				cursorPosition == 16 ||
-				cursorPosition == 21 ||
-				cursorPosition == 26 ||
-				cursorPosition == 31 ||
-				cursorPosition == 36 ||
-				cursorPosition == 41 ||
-				cursorPosition == 46 ||
-				cursorPosition == 51 ||
-				cursorPosition == 56 ||
-				cursorPosition == 61 ||
-				cursorPosition == 66 ||
-				cursorPosition == 71 ||
-				cursorPosition == 76 ||
-				cursorPosition == 81 ||
-				cursorPosition == 86 ||
-				cursorPosition == 91 ||
-				cursorPosition == 96 ) {
+				if ( cursorPosition == 6+pagenum*20 ||
+				cursorPosition == 11+pagenum*20 ||
+				cursorPosition == 16+pagenum*20 ) {
 					bnriconnum = cursorPosition-2;
 					LoadBNRIcon();
 					bnriconnum--;
@@ -2758,38 +2742,12 @@ int main()
 					LoadBNRIcon();
 				}
 				// Load the previous box art
-				if ( cursorPosition == 3 ||
-				cursorPosition == 6 ||
-				cursorPosition == 9 ||
-				cursorPosition == 12 ||
-				cursorPosition == 15 ||
-				cursorPosition == 18 ||
-				cursorPosition == 21 ||
-				cursorPosition == 24 ||
-				cursorPosition == 27 ||
-				cursorPosition == 30 ||
-				cursorPosition == 33 ||
-				cursorPosition == 36 ||
-				cursorPosition == 39 ||
-				cursorPosition == 42 ||
-				cursorPosition == 45 ||
-				cursorPosition == 48 ||
-				cursorPosition == 51 ||
-				cursorPosition == 54 ||
-				cursorPosition == 57 ||
-				cursorPosition == 60 ||
-				cursorPosition == 63 ||
-				cursorPosition == 66 ||
-				cursorPosition == 69 ||
-				cursorPosition == 72 ||
-				cursorPosition == 75 ||
-				cursorPosition == 78 ||
-				cursorPosition == 81 ||
-				cursorPosition == 84 ||
-				cursorPosition == 87 ||
-				cursorPosition == 90 ||
-				cursorPosition == 93 ||
-				cursorPosition == 96 ) {
+				if ( cursorPosition == 3+pagenum*20 ||
+				cursorPosition == 6+pagenum*20 ||
+				cursorPosition == 9+pagenum*20 ||
+				cursorPosition == 12+pagenum*20 ||
+				cursorPosition == 15+pagenum*20 ||
+				cursorPosition == 18+pagenum*20 ) {
 					boxartnum = cursorPosition-1;
 					LoadBoxArt();
 					boxartnum--;
@@ -2847,25 +2805,9 @@ int main()
 				// Delay a frame
 				sfx_stop.play();
 				// Load the next banner icons
-				if ( cursorPosition == 7 ||
-				cursorPosition == 12 ||
-				cursorPosition == 17 ||
-				cursorPosition == 22 ||
-				cursorPosition == 27 ||
-				cursorPosition == 32 ||
-				cursorPosition == 37 ||
-				cursorPosition == 42 ||
-				cursorPosition == 47 ||
-				cursorPosition == 52 ||
-				cursorPosition == 57 ||
-				cursorPosition == 62 ||
-				cursorPosition == 67 ||
-				cursorPosition == 72 ||
-				cursorPosition == 77 ||
-				cursorPosition == 82 ||
-				cursorPosition == 87 ||
-				cursorPosition == 92 ||
-				cursorPosition == 97 ) {
+				if ( cursorPosition == 7+pagenum*20 ||
+				cursorPosition == 12+pagenum*20 ||
+				cursorPosition == 17+pagenum*20 ) {
 					bnriconnum = cursorPosition+3;
 					LoadBNRIcon();
 					bnriconnum++;
@@ -2878,38 +2820,12 @@ int main()
 					LoadBNRIcon();
 				}
 				// Load the next box art
-				if ( cursorPosition == 4 ||
-				cursorPosition == 70 ||
-				cursorPosition == 10 ||
-				cursorPosition == 13 ||
-				cursorPosition == 16 ||
-				cursorPosition == 19 ||
-				cursorPosition == 22 ||
-				cursorPosition == 25 ||
-				cursorPosition == 28 ||
-				cursorPosition == 31 ||
-				cursorPosition == 34 ||
-				cursorPosition == 37 ||
-				cursorPosition == 40 ||
-				cursorPosition == 43 ||
-				cursorPosition == 46 ||
-				cursorPosition == 49 ||
-				cursorPosition == 52 ||
-				cursorPosition == 55 ||
-				cursorPosition == 58 ||
-				cursorPosition == 61 ||
-				cursorPosition == 64 ||
-				cursorPosition == 67 ||
-				cursorPosition == 70 ||
-				cursorPosition == 73 ||
-				cursorPosition == 76 ||
-				cursorPosition == 79 ||
-				cursorPosition == 82 ||
-				cursorPosition == 85 ||
-				cursorPosition == 88 ||
-				cursorPosition == 91 ||
-				cursorPosition == 94 ||
-				cursorPosition == 97 ) {
+				if ( cursorPosition == 4+pagenum*20 ||
+				cursorPosition == 7+pagenum*20 ||
+				cursorPosition == 10+pagenum*20 ||
+				cursorPosition == 13+pagenum*20 ||
+				cursorPosition == 16+pagenum*20 ||
+				cursorPosition == 19+pagenum*20 ) {
 					boxartnum = cursorPosition+2;
 					LoadBoxArt();
 					boxartnum++;
