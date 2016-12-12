@@ -2305,7 +2305,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+					for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
 						if (bnriconnum < files.size()) {
 							bnriconfile = files.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2328,7 +2328,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(boxartnum = 0; boxartnum < 50; boxartnum++) {
+					for(boxartnum = 0; boxartnum < 100; boxartnum++) {
 						if (boxartnum < files.size()) {
 							boxartfile = files.at(boxartnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2351,7 +2351,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = 0; bnriconnum < 50; bnriconnum++) {
+					for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
 						if (bnriconnum < fcfiles.size()) {
 							bnriconfile = fcfiles.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2374,7 +2374,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(boxartnum = 0; boxartnum < 50; boxartnum++) {
+					for(boxartnum = 0; boxartnum < 100; boxartnum++) {
 						if (boxartnum < fcfiles.size()) {
 							boxartfile = fcfiles.at(boxartnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -3022,13 +3022,23 @@ int main()
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
 					sftd_draw_textf(font, 98, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
 					if (twlsettings_forwardervalue == 0) {
-						sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-						sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
-						sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+						if (cursorPosition < 1) {
+							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
+						}
+						if (cursorPosition < 2) {
+							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+						}
+						if (cursorPosition < 3) {
+							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
+							sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+						}
 					} else {
-						sf2d_draw_texture(bracetex, 32+titleboxXmovepos, 116);
-						sf2d_draw_texture(settingsboxtex, cartXpos+titleboxXmovepos, 119);
+						if (cursorPosition < 2) {
+							sf2d_draw_texture(bracetex, 32+titleboxXmovepos, 116);
+						}
+						if (cursorPosition < 3) {
+							sf2d_draw_texture(settingsboxtex, cartXpos+titleboxXmovepos, 119);
+						}
 					}
 
 					titleboxXpos = 128;
