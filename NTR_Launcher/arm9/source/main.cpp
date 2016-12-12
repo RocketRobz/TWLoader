@@ -62,13 +62,6 @@ int main(int argc, const char* argv[]) {
 			consoleOn = true;
 		}
 
-		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			fifoSendValue32(FIFO_USER_02, 1);
-			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-				printf("RESET_SLOT1 ON\n");		
-			}
-		}
-
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("SD access ON\n");		

@@ -42,6 +42,7 @@ sf2d_texture *boxarttexnum;
 #include "bannerandboxart.h"
 int bnriconnum = 0;
 int boxartnum = 0;
+int pagenum = 0;
 const char* tempfile_fullpath;
 const char* tempimagepath;
 const char* bnriconfile;
@@ -102,7 +103,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 1.5.3";
+const char* settings_vertext = "Ver. 1.5.4";
 
 const char* settingstext_bot;
 
@@ -445,8 +446,8 @@ void LoadColor() {
 }
 
 void ChangeBNRIconNo() {
-	if ( bnriconnum == 0 ||
-		bnriconnum == 10 ||
+	if ( bnriconnum == 0+pagenum*20 ||
+		bnriconnum == 10+pagenum*20 /* ||
 		bnriconnum == 20 ||
 		bnriconnum == 30 ||
 		bnriconnum == 40 ||
@@ -454,10 +455,10 @@ void ChangeBNRIconNo() {
 		bnriconnum == 60 ||
 		bnriconnum == 70 ||
 		bnriconnum == 80 ||
-		bnriconnum == 90) {
+		bnriconnum == 90 */ ) {
 		bnricontexnum = bnricontex1;
-	} else if ( bnriconnum == 1 ||
-				bnriconnum == 11 ||
+	} else if ( bnriconnum == 1+pagenum*20 ||
+				bnriconnum == 11+pagenum*20 /* ||
 				bnriconnum == 21 ||
 				bnriconnum == 31 ||
 				bnriconnum == 41 ||
@@ -465,10 +466,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 61 ||
 				bnriconnum == 71 ||
 				bnriconnum == 81 ||
-				bnriconnum == 91 ) {
+				bnriconnum == 91 */ ) {
 		bnricontexnum = bnricontex2;
-	} else if ( bnriconnum == 2 ||
-				bnriconnum == 12 ||
+	} else if ( bnriconnum == 2+pagenum*20 ||
+				bnriconnum == 12+pagenum*20 /* ||
 				bnriconnum == 22 ||
 				bnriconnum == 32 ||
 				bnriconnum == 42 ||
@@ -476,10 +477,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 62 ||
 				bnriconnum == 72 ||
 				bnriconnum == 82 ||
-				bnriconnum == 92 ) {
+				bnriconnum == 92 */ ) {
 		bnricontexnum = bnricontex3;
-	} else if ( bnriconnum == 3 ||
-				bnriconnum == 13 ||
+	} else if ( bnriconnum == 3+pagenum*20 ||
+				bnriconnum == 13+pagenum*20 /* ||
 				bnriconnum == 23 ||
 				bnriconnum == 33 ||
 				bnriconnum == 43 ||
@@ -487,10 +488,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 63 ||
 				bnriconnum == 73 ||
 				bnriconnum == 83 ||
-				bnriconnum == 93 ) {
+				bnriconnum == 93 */ ) {
 		bnricontexnum = bnricontex4;
-	} else if ( bnriconnum == 4 ||
-				bnriconnum == 14 ||
+	} else if ( bnriconnum == 4+pagenum*20 ||
+				bnriconnum == 14+pagenum*20 /* ||
 				bnriconnum == 24 ||
 				bnriconnum == 34 ||
 				bnriconnum == 44 ||
@@ -498,10 +499,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 64 ||
 				bnriconnum == 74 ||
 				bnriconnum == 84 ||
-				bnriconnum == 94 ) {
+				bnriconnum == 94 */ ) {
 		bnricontexnum = bnricontex5;
-	} else if ( bnriconnum == 5 ||
-				bnriconnum == 15 ||
+	} else if ( bnriconnum == 5+pagenum*20 ||
+				bnriconnum == 15+pagenum*20 /* ||
 				bnriconnum == 25 ||
 				bnriconnum == 35 ||
 				bnriconnum == 45 ||
@@ -509,10 +510,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 65 ||
 				bnriconnum == 75 ||
 				bnriconnum == 85 ||
-				bnriconnum == 95 ) {
+				bnriconnum == 95 */ ) {
 		bnricontexnum = bnricontex6;
-	} else if ( bnriconnum == 6 ||
-				bnriconnum == 16 ||
+	} else if ( bnriconnum == 6+pagenum*20 ||
+				bnriconnum == 16+pagenum*20 /* ||
 				bnriconnum == 26 ||
 				bnriconnum == 36 ||
 				bnriconnum == 46 ||
@@ -520,10 +521,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 66 ||
 				bnriconnum == 76 ||
 				bnriconnum == 86 ||
-				bnriconnum == 96 ) {
+				bnriconnum == 96 */ ) {
 		bnricontexnum = bnricontex7;
-	} else if ( bnriconnum == 7 ||
-				bnriconnum == 17 ||
+	} else if ( bnriconnum == 7+pagenum*20 ||
+				bnriconnum == 17+pagenum*20 /* ||
 				bnriconnum == 27 ||
 				bnriconnum == 37 ||
 				bnriconnum == 47 ||
@@ -531,10 +532,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 67 ||
 				bnriconnum == 77 ||
 				bnriconnum == 87 ||
-				bnriconnum == 97 ) {
+				bnriconnum == 97 */ ) {
 		bnricontexnum = bnricontex8;
-	} else if ( bnriconnum == 8 ||
-				bnriconnum == 18 ||
+	} else if ( bnriconnum == 8+pagenum*20 ||
+				bnriconnum == 18+pagenum*20 /* ||
 				bnriconnum == 28 ||
 				bnriconnum == 38 ||
 				bnriconnum == 48 ||
@@ -542,10 +543,10 @@ void ChangeBNRIconNo() {
 				bnriconnum == 68 ||
 				bnriconnum == 78 ||
 				bnriconnum == 88 ||
-				bnriconnum == 98 ) {
+				bnriconnum == 98 */ ) {
 		bnricontexnum = bnricontex9;
-	} else if ( bnriconnum == 9 ||
-				bnriconnum == 19 ||
+	} else if ( bnriconnum == 9+pagenum*20 ||
+				bnriconnum == 19+pagenum*20 /* ||
 				bnriconnum == 29 ||
 				bnriconnum == 39 ||
 				bnriconnum == 49 ||
@@ -553,53 +554,53 @@ void ChangeBNRIconNo() {
 				bnriconnum == 69 ||
 				bnriconnum == 79 ||
 				bnriconnum == 89 ||
-				bnriconnum == 99 ) {
+				bnriconnum == 99 */ ) {
 		bnricontexnum = bnricontex10;
 	}
 }
 
 void ChangeBoxArtNo() {
-	if ( boxartnum == 0 ) {
+	if ( boxartnum == 0+pagenum*20 ) {
 		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 1 ) {
+	} else if ( boxartnum == 1+pagenum*20 ) {
 		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 2 ) {
+	} else if ( boxartnum == 2+pagenum*20 ) {
 		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 3 ) {
+	} else if ( boxartnum == 3+pagenum*20 ) {
 		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 4 ) {
+	} else if ( boxartnum == 4+pagenum*20 ) {
 		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 5 ) {
+	} else if ( boxartnum == 5+pagenum*20 ) {
 		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 6 ) {
+	} else if ( boxartnum == 6+pagenum*20 ) {
 		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 7 ) {
+	} else if ( boxartnum == 7+pagenum*20 ) {
 		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 8 ) {
+	} else if ( boxartnum == 8+pagenum*20 ) {
 		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 9 ) {
+	} else if ( boxartnum == 9+pagenum*20 ) {
 		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 10 ) {
+	} else if ( boxartnum == 10+pagenum*20 ) {
 		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 11 ) {
+	} else if ( boxartnum == 11+pagenum*20 ) {
 		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 12 ) {
+	} else if ( boxartnum == 12+pagenum*20 ) {
 		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 13 ) {
+	} else if ( boxartnum == 13+pagenum*20 ) {
 		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 14 ) {
+	} else if ( boxartnum == 14+pagenum*20 ) {
 		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 15 ) {
+	} else if ( boxartnum == 15+pagenum*20 ) {
 		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 16 ) {
+	} else if ( boxartnum == 16+pagenum*20 ) {
 		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 17 ) {
+	} else if ( boxartnum == 17+pagenum*20 ) {
 		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 18 ) {
+	} else if ( boxartnum == 18+pagenum*20 ) {
 		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 19 ) {
+	} else if ( boxartnum == 19+pagenum*20 ) {
 		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 20 ) {
+	} /* else if ( boxartnum == 20 ) {
 		boxarttexnum = boxarttex3;
 	} else if ( boxartnum == 21 ) {
 		boxarttexnum = boxarttex4;
@@ -759,51 +760,51 @@ void ChangeBoxArtNo() {
 		boxarttexnum = boxarttex3;
 	} else if ( boxartnum == 99 ) {
 		boxarttexnum = boxarttex4;
-	}
+	} */
 }
 
 void StoreBNRIconPath() {
-	if (bnriconnum == 0) {
+	if (bnriconnum == 0+pagenum*20) {
 		bnriconpath1 = tempimagepath;
-	} else if (bnriconnum == 1) {
+	} else if (bnriconnum == 1+pagenum*20) {
 		bnriconpath2 = tempimagepath;
-	} else if (bnriconnum == 2) {
+	} else if (bnriconnum == 2+pagenum*20) {
 		bnriconpath3 = tempimagepath;
-	} else if (bnriconnum == 3) {
+	} else if (bnriconnum == 3+pagenum*20) {
 		bnriconpath4 = tempimagepath;
-	} else if (bnriconnum == 4) {
+	} else if (bnriconnum == 4+pagenum*20) {
 		bnriconpath5 = tempimagepath;
-	} else if (bnriconnum == 5) {
+	} else if (bnriconnum == 5+pagenum*20) {
 		bnriconpath6 = tempimagepath;
-	} else if (bnriconnum == 6) {
+	} else if (bnriconnum == 6+pagenum*20) {
 		bnriconpath7 = tempimagepath;
-	} else if (bnriconnum == 7) {
+	} else if (bnriconnum == 7+pagenum*20) {
 		bnriconpath8 = tempimagepath;
-	} else if (bnriconnum == 8) {
+	} else if (bnriconnum == 8+pagenum*20) {
 		bnriconpath9 = tempimagepath;
-	} else if (bnriconnum == 9) {
+	} else if (bnriconnum == 9+pagenum*20) {
 		bnriconpath10 = tempimagepath;
-	} else if (bnriconnum == 10) {
+	} else if (bnriconnum == 10+pagenum*20) {
 		bnriconpath11 = tempimagepath;
-	} else if (bnriconnum == 11) {
+	} else if (bnriconnum == 11+pagenum*20) {
 		bnriconpath12 = tempimagepath;
-	} else if (bnriconnum == 12) {
+	} else if (bnriconnum == 12+pagenum*20) {
 		bnriconpath13 = tempimagepath;
-	} else if (bnriconnum == 13) {
+	} else if (bnriconnum == 13+pagenum*20) {
 		bnriconpath14 = tempimagepath;
-	} else if (bnriconnum == 14) {
+	} else if (bnriconnum == 14+pagenum*20) {
 		bnriconpath15 = tempimagepath;
-	} else if (bnriconnum == 15) {
+	} else if (bnriconnum == 15+pagenum*20) {
 		bnriconpath16 = tempimagepath;
-	} else if (bnriconnum == 16) {
+	} else if (bnriconnum == 16+pagenum*20) {
 		bnriconpath17 = tempimagepath;
-	} else if (bnriconnum == 17) {
+	} else if (bnriconnum == 17+pagenum*20) {
 		bnriconpath18 = tempimagepath;
-	} else if (bnriconnum == 18) {
+	} else if (bnriconnum == 18+pagenum*20) {
 		bnriconpath19 = tempimagepath;
-	} else if (bnriconnum == 19) {
+	} else if (bnriconnum == 19+pagenum*20) {
 		bnriconpath20 = tempimagepath;
-	} else if (bnriconnum == 20) {
+	} /* else if (bnriconnum == 20) {
 		bnriconpath21 = tempimagepath;
 	} else if (bnriconnum == 21) {
 		bnriconpath22 = tempimagepath;
@@ -963,51 +964,51 @@ void StoreBNRIconPath() {
 		bnriconpath99 = tempimagepath;
 	} else if (bnriconnum == 99) {
 		bnriconpath100 = tempimagepath;
-	}
+	} */
 }
 
 void StoreBoxArtPath() {
-	if (boxartnum == 0) {
+	if (boxartnum == 0+pagenum*20) {
 		boxartpath1 = tempimagepath;
-	} else if (boxartnum == 1) {
+	} else if (boxartnum == 1+pagenum*20) {
 		boxartpath2 = tempimagepath;
-	} else if (boxartnum == 2) {
+	} else if (boxartnum == 2+pagenum*20) {
 		boxartpath3 = tempimagepath;
-	} else if (boxartnum == 3) {
+	} else if (boxartnum == 3+pagenum*20) {
 		boxartpath4 = tempimagepath;
-	} else if (boxartnum == 4) {
+	} else if (boxartnum == 4+pagenum*20) {
 		boxartpath5 = tempimagepath;
-	} else if (boxartnum == 5) {
+	} else if (boxartnum == 5+pagenum*20) {
 		boxartpath6 = tempimagepath;
-	} else if (boxartnum == 6) {
+	} else if (boxartnum == 6+pagenum*20) {
 		boxartpath7 = tempimagepath;
-	} else if (boxartnum == 7) {
+	} else if (boxartnum == 7+pagenum*20) {
 		boxartpath8 = tempimagepath;
-	} else if (boxartnum == 8) {
+	} else if (boxartnum == 8+pagenum*20) {
 		boxartpath9 = tempimagepath;
-	} else if (boxartnum == 9) {
+	} else if (boxartnum == 9+pagenum*20) {
 		boxartpath10 = tempimagepath;
-	} else if (boxartnum == 10) {
+	} else if (boxartnum == 10+pagenum*20) {
 		boxartpath11 = tempimagepath;
-	} else if (boxartnum == 11) {
+	} else if (boxartnum == 11+pagenum*20) {
 		boxartpath12 = tempimagepath;
-	} else if (boxartnum == 12) {
+	} else if (boxartnum == 12+pagenum*20) {
 		boxartpath13 = tempimagepath;
-	} else if (boxartnum == 13) {
+	} else if (boxartnum == 13+pagenum*20) {
 		boxartpath14 = tempimagepath;
-	} else if (boxartnum == 14) {
+	} else if (boxartnum == 14+pagenum*20) {
 		boxartpath15 = tempimagepath;
-	} else if (boxartnum == 15) {
+	} else if (boxartnum == 15+pagenum*20) {
 		boxartpath16 = tempimagepath;
-	} else if (boxartnum == 16) {
+	} else if (boxartnum == 16+pagenum*20) {
 		boxartpath17 = tempimagepath;
-	} else if (boxartnum == 17) {
+	} else if (boxartnum == 17+pagenum*20) {
 		boxartpath18 = tempimagepath;
-	} else if (boxartnum == 18) {
+	} else if (boxartnum == 18+pagenum*20) {
 		boxartpath19 = tempimagepath;
-	} else if (boxartnum == 19) {
+	} else if (boxartnum == 19+pagenum*20) {
 		boxartpath20 = tempimagepath;
-	} else if (boxartnum == 20) {
+	} /* else if (boxartnum == 20) {
 		boxartpath21 = tempimagepath;
 	} else if (boxartnum == 21) {
 		boxartpath22 = tempimagepath;
@@ -1167,71 +1168,71 @@ void StoreBoxArtPath() {
 		boxartpath99 = tempimagepath;
 	} else if (boxartnum == 99) {
 		boxartpath100 = tempimagepath;
-	}
+	} */
 }
 
 void LoadBNRIcon() {
-	if (bnriconnum == 0) {
+	if (bnriconnum == 0+pagenum*20) {
 		sf2d_free_texture(bnricontex1);
 		bnricontex1 = sfil_load_PNG_file(bnriconpath1, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 1) {
+	} else if (bnriconnum == 1+pagenum*20) {
 		sf2d_free_texture(bnricontex2);
 		bnricontex2 = sfil_load_PNG_file(bnriconpath2, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 2) {
+	} else if (bnriconnum == 2+pagenum*20) {
 		sf2d_free_texture(bnricontex3);
 		bnricontex3 = sfil_load_PNG_file(bnriconpath3, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 3) {
+	} else if (bnriconnum == 3+pagenum*20) {
 		sf2d_free_texture(bnricontex4);
 		bnricontex4 = sfil_load_PNG_file(bnriconpath4, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 4) {
+	} else if (bnriconnum == 4+pagenum*20) {
 		sf2d_free_texture(bnricontex5);
 		bnricontex5 = sfil_load_PNG_file(bnriconpath5, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 5) {
+	} else if (bnriconnum == 5+pagenum*20) {
 		sf2d_free_texture(bnricontex6);
 		bnricontex6 = sfil_load_PNG_file(bnriconpath6, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 6) {
+	} else if (bnriconnum == 6+pagenum*20) {
 		sf2d_free_texture(bnricontex7);
 		bnricontex7 = sfil_load_PNG_file(bnriconpath7, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 7) {
+	} else if (bnriconnum == 7+pagenum*20) {
 		sf2d_free_texture(bnricontex8);
 		bnricontex8 = sfil_load_PNG_file(bnriconpath8, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 8) {
+	} else if (bnriconnum == 8+pagenum*20) {
 		sf2d_free_texture(bnricontex9);
 		bnricontex9 = sfil_load_PNG_file(bnriconpath9, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 9) {
+	} else if (bnriconnum == 9+pagenum*20) {
 		sf2d_free_texture(bnricontex10);
 		bnricontex10 = sfil_load_PNG_file(bnriconpath10, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 10) {
+	} else if (bnriconnum == 10+pagenum*20) {
 		sf2d_free_texture(bnricontex1);
 		bnricontex1 = sfil_load_PNG_file(bnriconpath11, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 11) {
+	} else if (bnriconnum == 11+pagenum*20) {
 		sf2d_free_texture(bnricontex2);
 		bnricontex2 = sfil_load_PNG_file(bnriconpath12, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 12) {
+	} else if (bnriconnum == 12+pagenum*20) {
 		sf2d_free_texture(bnricontex3);
 		bnricontex3 = sfil_load_PNG_file(bnriconpath13, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 13) {
+	} else if (bnriconnum == 13+pagenum*20) {
 		sf2d_free_texture(bnricontex4);
 		bnricontex4 = sfil_load_PNG_file(bnriconpath14, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 14) {
+	} else if (bnriconnum == 14+pagenum*20) {
 		sf2d_free_texture(bnricontex5);
 		bnricontex5 = sfil_load_PNG_file(bnriconpath15, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 15) {
+	} else if (bnriconnum == 15+pagenum*20) {
 		sf2d_free_texture(bnricontex6);
 		bnricontex6 = sfil_load_PNG_file(bnriconpath16, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 16) {
+	} else if (bnriconnum == 16+pagenum*20) {
 		sf2d_free_texture(bnricontex7);
 		bnricontex7 = sfil_load_PNG_file(bnriconpath17, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 17) {
+	} else if (bnriconnum == 17+pagenum*20) {
 		sf2d_free_texture(bnricontex8);
 		bnricontex8 = sfil_load_PNG_file(bnriconpath18, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 18) {
+	} else if (bnriconnum == 18+pagenum*20) {
 		sf2d_free_texture(bnricontex9);
 		bnricontex9 = sfil_load_PNG_file(bnriconpath19, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 19) {
+	} else if (bnriconnum == 19+pagenum*20) {
 		sf2d_free_texture(bnricontex10);
 		bnricontex10 = sfil_load_PNG_file(bnriconpath20, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 20) {
+	} /* else if (bnriconnum == 20) {
 		sf2d_free_texture(bnricontex1);
 		bnricontex1 = sfil_load_PNG_file(bnriconpath21, SF2D_PLACE_RAM); // Banner icon
 	} else if (bnriconnum == 21) {
@@ -1471,71 +1472,71 @@ void LoadBNRIcon() {
 	} else if (bnriconnum == 99) {
 		sf2d_free_texture(bnricontex10);
 		bnricontex10 = sfil_load_PNG_file(bnriconpath100, SF2D_PLACE_RAM); // Banner icon
-	}
+	} */
 }
 
 void LoadBoxArt() {
-	if ( boxartnum == 0 ) {
+	if ( boxartnum == 0+pagenum*20 ) {
 		sf2d_free_texture(boxarttex1);
 		boxarttex1 = sfil_load_PNG_file(boxartpath1, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 1 ) {
+	} else if ( boxartnum == 1+pagenum*20 ) {
 		sf2d_free_texture(boxarttex2);
 		boxarttex2 = sfil_load_PNG_file(boxartpath2, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 2 ) {
+	} else if ( boxartnum == 2+pagenum*20 ) {
 		sf2d_free_texture(boxarttex3);
 		boxarttex3 = sfil_load_PNG_file(boxartpath3, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 3 ) {
+	} else if ( boxartnum == 3+pagenum*20 ) {
 		sf2d_free_texture(boxarttex4);
 		boxarttex4 = sfil_load_PNG_file(boxartpath4, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 4 ) {
+	} else if ( boxartnum == 4+pagenum*20 ) {
 		sf2d_free_texture(boxarttex5);
 		boxarttex5 = sfil_load_PNG_file(boxartpath5, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 5 ) {
+	} else if ( boxartnum == 5+pagenum*20 ) {
 		sf2d_free_texture(boxarttex6);
 		boxarttex6 = sfil_load_PNG_file(boxartpath6, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 6 ) {
+	} else if ( boxartnum == 6+pagenum*20 ) {
 		sf2d_free_texture(boxarttex1);
 		boxarttex1 = sfil_load_PNG_file(boxartpath7, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 7 ) {
+	} else if ( boxartnum == 7+pagenum*20 ) {
 		sf2d_free_texture(boxarttex2);
 		boxarttex2 = sfil_load_PNG_file(boxartpath8, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 8 ) {
+	} else if ( boxartnum == 8+pagenum*20 ) {
 		sf2d_free_texture(boxarttex3);
 		boxarttex3 = sfil_load_PNG_file(boxartpath9, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 9 ) {
+	} else if ( boxartnum == 9+pagenum*20 ) {
 		sf2d_free_texture(boxarttex4);
 		boxarttex4 = sfil_load_PNG_file(boxartpath10, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 10 ) {
+	} else if ( boxartnum == 10+pagenum*20 ) {
 		sf2d_free_texture(boxarttex5);
 		boxarttex5 = sfil_load_PNG_file(boxartpath11, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 11 ) {
+	} else if ( boxartnum == 11+pagenum*20 ) {
 		sf2d_free_texture(boxarttex6);
 		boxarttex6 = sfil_load_PNG_file(boxartpath12, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 12 ) {
+	} else if ( boxartnum == 12+pagenum*20 ) {
 		sf2d_free_texture(boxarttex1);
 		boxarttex1 = sfil_load_PNG_file(boxartpath13, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 13 ) {
+	} else if ( boxartnum == 13+pagenum*20 ) {
 		sf2d_free_texture(boxarttex2);
 		boxarttex2 = sfil_load_PNG_file(boxartpath14, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 14 ) {
+	} else if ( boxartnum == 14+pagenum*20 ) {
 		sf2d_free_texture(boxarttex3);
 		boxarttex3 = sfil_load_PNG_file(boxartpath15, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 15 ) {
+	} else if ( boxartnum == 15+pagenum*20 ) {
 		sf2d_free_texture(boxarttex4);
 		boxarttex4 = sfil_load_PNG_file(boxartpath16, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 16 ) {
+	} else if ( boxartnum == 16+pagenum*20 ) {
 		sf2d_free_texture(boxarttex5);
 		boxarttex5 = sfil_load_PNG_file(boxartpath17, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 17 ) {
+	} else if ( boxartnum == 17+pagenum*20 ) {
 		sf2d_free_texture(boxarttex6);
 		boxarttex6 = sfil_load_PNG_file(boxartpath18, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 18 ) {
+	} else if ( boxartnum == 18+pagenum*20 ) {
 		sf2d_free_texture(boxarttex1);
 		boxarttex1 = sfil_load_PNG_file(boxartpath19, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 19 ) {
+	} else if ( boxartnum == 19+pagenum*20 ) {
 		sf2d_free_texture(boxarttex2);
 		boxarttex2 = sfil_load_PNG_file(boxartpath20, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 20 ) {
+	} /* else if ( boxartnum == 20 ) {
 		sf2d_free_texture(boxarttex3);
 		boxarttex3 = sfil_load_PNG_file(boxartpath21, SF2D_PLACE_RAM); // Box art
 	} else if ( boxartnum == 21 ) {
@@ -1775,7 +1776,7 @@ void LoadBoxArt() {
 	} else if ( boxartnum == 99 ) {
 		sf2d_free_texture(boxarttex4);
 		boxarttex4 = sfil_load_PNG_file(boxartpath100, SF2D_PLACE_RAM); // Box art
-	}
+	} */
 }
 
 
@@ -2007,6 +2008,8 @@ int main()
 	//sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM);
 	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
+	sf2d_texture *shoulderYtex = sfil_load_PNG_file("romfs:/graphics/shoulder_Y.png", SF2D_PLACE_RAM); // Y button
+	sf2d_texture *shoulderXtex = sfil_load_PNG_file("romfs:/graphics/shoulder_X.png", SF2D_PLACE_RAM); // X button
 	sf2d_texture *batterychrgtex = sfil_load_PNG_file("romfs:/graphics/battery_charging.png", SF2D_PLACE_RAM);
 	sf2d_texture *battery0tex = sfil_load_PNG_file("romfs:/graphics/battery0.png", SF2D_PLACE_RAM);
 	sf2d_texture *battery1tex = sfil_load_PNG_file("romfs:/graphics/battery1.png", SF2D_PLACE_RAM);
@@ -2222,6 +2225,9 @@ int main()
 	int boxartXpos;
 	int boxartXmovepos = 0;
 	
+	int YbuttonYpos = 220;
+	int XbuttonYpos = 220;
+	
 	int LshoulderYpos = 220;
 	int RshoulderYpos = 220;
 
@@ -2305,7 +2311,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
+					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < files.size()) {
 							bnriconfile = files.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2328,7 +2334,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(boxartnum = 0; boxartnum < 100; boxartnum++) {
+					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < files.size()) {
 							boxartfile = files.at(boxartnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2351,7 +2357,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
+					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < fcfiles.size()) {
 							bnriconfile = fcfiles.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2374,7 +2380,7 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(boxartnum = 0; boxartnum < 100; boxartnum++) {
+					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < fcfiles.size()) {
 							boxartfile = fcfiles.at(boxartnum).c_str();
 							tempfile_fullpath = malloc(256);
@@ -2394,42 +2400,42 @@ int main()
 					}
 				}
 				
-				bnriconnum = 0;
+				bnriconnum = 0+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 1;
+				bnriconnum = 1+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 2;
+				bnriconnum = 2+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 3;
+				bnriconnum = 3+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 4;
+				bnriconnum = 4+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 5;
+				bnriconnum = 5+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 6;
+				bnriconnum = 6+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 7;
+				bnriconnum = 7+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 8;
+				bnriconnum = 8+pagenum*20;
 				LoadBNRIcon();
-				bnriconnum = 9;
+				bnriconnum = 9+pagenum*20;
 				LoadBNRIcon();
 				
-				boxartnum = 0;
+				boxartnum = 0+pagenum*20;
 				LoadBoxArt();
-				boxartnum = 1;
+				boxartnum = 1+pagenum*20;
 				LoadBoxArt();
-				boxartnum = 2;
+				boxartnum = 2+pagenum*20;
 				LoadBoxArt();
-				boxartnum = 3;
+				boxartnum = 3+pagenum*20;
 				LoadBoxArt();
-				boxartnum = 4;
+				boxartnum = 4+pagenum*20;
 				LoadBoxArt();
-				boxartnum = 5;
+				boxartnum = 5+pagenum*20;
 				LoadBoxArt();
 				
 				boxarttexloaded = true;
-				boxartnum = 0;
+				boxartnum = 0+pagenum*20;
 			}
 
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
@@ -2445,15 +2451,15 @@ int main()
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
 					if (twlsettings_forwardervalue == 1) {
-						if(fcfiles.size() >= 99) {
-							for(boxartnum = 0; boxartnum < 100; boxartnum++) {
+						if(fcfiles.size() >= 19+pagenum*20) {
+							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 								boxartXpos += 144;
 							}
 						} else {
-							for(boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
+							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
@@ -2461,15 +2467,15 @@ int main()
 							}
 						}
 					} else {
-						if(files.size() >= 99) {
-							for(boxartnum = 0; boxartnum < 100; boxartnum++) {
+						if(files.size() >= 19+pagenum*20) {
+							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 								boxartXpos += 144;
 							}
 						} else {
-							for(boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
@@ -2506,15 +2512,15 @@ int main()
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
 					if (twlsettings_forwardervalue == 1) {
-						if(fcfiles.size() >= 99) {
-							for(boxartnum = 0; boxartnum < 100; boxartnum++) {
+						if(fcfiles.size() >= 19+pagenum*20) {
+							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 								boxartXpos += 144;
 							}
 						} else {
-							for(boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
+							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
@@ -2522,15 +2528,15 @@ int main()
 							}
 						}
 					} else {
-						if(files.size() >= 49) {
-							for(boxartnum = 0; boxartnum < 50; boxartnum++) {
+						if(files.size() >= 19+pagenum*20) {
+							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
 								boxartXpos += 144;
 							}
 						} else {
-							for(boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
 								ChangeBoxArtNo();
 								sf2d_draw_texture(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 0xC0)); // Draw box art's reflection
@@ -2652,6 +2658,21 @@ int main()
 			if (RshoulderYpos != 220)
 			{RshoulderYpos -= 1;}
 		}
+		
+		/* if(hHeld & KEY_Y){
+			if (YbuttonYpos != 223)
+			{YbuttonYpos += 1;}
+		} else {
+			if (YbuttonYpos != 220)
+			{YbuttonYpos -= 1;}
+		}
+		if(hHeld & KEY_X){
+			if (XbuttonYpos != 223)
+			{XbuttonYpos += 1;}
+		} else {
+			if (XbuttonYpos != 220)
+			{XbuttonYpos -= 1;}
+		} */
 		
 		if (fadein == true) {
 			fadealpha -= 31;
@@ -2785,18 +2806,35 @@ int main()
 					}
 					cursorPositionset = true;
 				}
-				if (cursorPosition != -3) {
-					titleboxXmovepos += 8;
-					boxartXmovepos += 18;
+				if (pagenum == 0) {
+					if (cursorPosition != -3) {
+						titleboxXmovepos += 8;
+						boxartXmovepos += 18;
+					} else {
+						titleboxXmovetimer = 0;
+						titleboxXmoveleft = false;
+						cursorPositionset = false;
+						cursorPosition++;
+						if (!playwrongsounddone) {
+							sfx_wrong.stop();
+							sfx_wrong.play();
+							playwrongsounddone = true;
+						}
+					}
 				} else {
-					titleboxXmovetimer = 0;
-					titleboxXmoveleft = false;
-					cursorPositionset = false;
-					cursorPosition++;
-					if (!playwrongsounddone) {
-						sfx_wrong.stop();
-						sfx_wrong.play();
-						playwrongsounddone = true;
+					if (cursorPosition != -1+pagenum*20) {
+						titleboxXmovepos += 8;
+						boxartXmovepos += 18;
+					} else {
+						titleboxXmovetimer = 0;
+						titleboxXmoveleft = false;
+						cursorPositionset = false;
+						cursorPosition++;
+						if (!playwrongsounddone) {
+							sfx_wrong.stop();
+							sfx_wrong.play();
+							playwrongsounddone = true;
+						}
 					}
 				}
 			}
@@ -2841,7 +2879,7 @@ int main()
 				}
 				// Load the next box art
 				if ( cursorPosition == 4 ||
-				cursorPosition == 7 ||
+				cursorPosition == 70 ||
 				cursorPosition == 10 ||
 				cursorPosition == 13 ||
 				cursorPosition == 16 ||
@@ -3021,23 +3059,43 @@ int main()
 					}
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
 					sftd_draw_textf(font, 98, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
+					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
+					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 					if (twlsettings_forwardervalue == 0) {
-						if (cursorPosition < 1) {
+						if(files.size() < 19-pagenum*20) {
+							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+						} else {
+							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
+						}
+						if(files.size() > 20+pagenum*20) {
+							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Next");
+						} else {
+							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
+						}
+						if (pagenum == 0) {
 							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-						}
-						if (cursorPosition < 2) {
 							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-						}
-						if (cursorPosition < 3) {
 							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
 							sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+						} else {
+							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 						}
 					} else {
-						if (cursorPosition < 2) {
-							sf2d_draw_texture(bracetex, 32+titleboxXmovepos, 116);
+						if(fcfiles.size() < 19-pagenum*20) {
+							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+						} else {
+							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
 						}
-						if (cursorPosition < 3) {
+						if(fcfiles.size() > 20+pagenum*20) {
+							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Next");
+						} else {
+							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
+						}
+						if (pagenum == 0) {
+							sf2d_draw_texture(bracetex, 32+titleboxXmovepos, 116);
 							sf2d_draw_texture(settingsboxtex, cartXpos+titleboxXmovepos, 119);
+						} else {
+							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 						}
 					}
 
@@ -3051,6 +3109,11 @@ int main()
 						} else if (cursorPosition == -1) {
 							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 						} else {
+							if (twlsettings_forwardervalue == 1) {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, fcfiles.at(cursorPosition).c_str());
+							} else {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, files.at(cursorPosition).c_str());
+							}
 							if (settings_countervalue == 1) {
 								char str[20] = {0};
 								std::sprintf(str, "%d", cursorPosition+1);
@@ -3069,60 +3132,60 @@ int main()
 						}
 					}
 					if (twlsettings_forwardervalue == 1) {
-						if(fcfiles.size() >= 99) {
-							for(i = 0; i < 100; i++){
-								if (titleboxXmovetimer == 0) {
+						if(fcfiles.size() >= 19+pagenum*20) {
+							for(i = pagenum*20; i < 20+pagenum*20; i++){
+								/* if (titleboxXmovetimer == 0) {
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
-								}
+								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								filenameYpos += 240;
+								// filenameYpos += 240;
 							}
-							for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
+							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(i = 0; i < fcfiles.size(); i++){
-								if (titleboxXmovetimer == 0) {
+							for(i = pagenum*20; i < fcfiles.size(); i++){
+								/* if (titleboxXmovetimer == 0) {
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
-								}
+								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								filenameYpos += 240;
+								// filenameYpos += 240;
 							}
-							for(bnriconnum = 0; bnriconnum < fcfiles.size(); bnriconnum++) {
+							for(bnriconnum = pagenum*20; bnriconnum < fcfiles.size(); bnriconnum++) {
 								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
 							}
 						}
 					} else {
-						if(files.size() >= 99) {
-							for(i = 0; i < 100; i++){
-								if (titleboxXmovetimer == 0) {
+						if(files.size() >= 19+pagenum*20) {
+							for(i = pagenum*20; i < 20+pagenum*20; i++){
+								/* if (titleboxXmovetimer == 0) {
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
-								}
+								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								filenameYpos += 240;
+								// filenameYpos += 240;
 							}
-							for(bnriconnum = 0; bnriconnum < 100; bnriconnum++) {
+							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(i = 0; i < files.size(); i++){
-								if (titleboxXmovetimer == 0) {
+							for(i = pagenum*20; i < files.size(); i++){
+								/* if (titleboxXmovetimer == 0) {
 									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
-								}
+								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								filenameYpos += 240;
+								// filenameYpos += 240;
 							}
-							for(bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
 								ChangeBNRIconNo();
 								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
 								ndsiconXpos += 64;
@@ -3565,10 +3628,117 @@ int main()
 							updatebotscreen = true;
 						}
 					}
+					if(hDown & KEY_X) {
+						if (twlsettings_forwardervalue == 1) {
+							if(fcfiles.size() > 20+pagenum*20) {
+								pagenum++;
+								cursorPosition = 0+pagenum*20;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								boxarttexloaded = false;
+								sfx_switch.stop();	// Prevent freezing
+								sfx_switch.play();
+								updatebotscreen = true;
+							}
+						} else {
+							if(files.size() > 20+pagenum*20) {
+								pagenum++;
+								cursorPosition = 0+pagenum*20;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								boxarttexloaded = false;
+								sfx_switch.stop();	// Prevent freezing
+								sfx_switch.play();
+								updatebotscreen = true;
+							}
+						}
+					} else if(hDown & KEY_Y) {
+						if (twlsettings_forwardervalue == 1) {
+							if(fcfiles.size() < 19-pagenum*20) {
+								pagenum--;
+								cursorPosition = 0+pagenum*20;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								boxarttexloaded = false;
+								sfx_switch.stop();	// Prevent freezing
+								sfx_switch.play();
+								updatebotscreen = true;
+							}
+						} else {
+							if(files.size() < 19-pagenum*20) {
+								pagenum--;
+								cursorPosition = 0+pagenum*20;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								boxarttexloaded = false;
+								sfx_switch.stop();	// Prevent freezing
+								sfx_switch.play();
+								updatebotscreen = true;
+							}
+						}
+					}
 					if(hDown & KEY_TOUCH){
 						hidTouchRead(&touch);
 						touch_x = touch.px;
 						touch_y = touch.py;
+						if (touch_x <= 72 && touch_y >= YbuttonYpos) {
+							if (twlsettings_forwardervalue == 1) {
+								if(fcfiles.size() < 19-pagenum*20) {
+									pagenum--;
+									cursorPosition = 0+pagenum*20;
+									titleboxXmovepos = 0;
+									boxartXmovepos = 0;
+									// noromsfound = false;
+									boxarttexloaded = false;
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+									updatebotscreen = true;
+								}
+							} else {
+								if(files.size() < 19-pagenum*20) {
+									pagenum--;
+									cursorPosition = 0+pagenum*20;
+									titleboxXmovepos = 0;
+									boxartXmovepos = 0;
+									// noromsfound = false;
+									boxarttexloaded = false;
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+									updatebotscreen = true;
+								}
+							}
+						}
+						if (touch_x >= 248 && touch_y >= XbuttonYpos) {
+							if (twlsettings_forwardervalue == 1) {
+								if(fcfiles.size() > 20+pagenum*20) {
+									pagenum++;
+									cursorPosition = 0+pagenum*20;
+									titleboxXmovepos = 0;
+									boxartXmovepos = 0;
+									// noromsfound = false;
+									boxarttexloaded = false;
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+									updatebotscreen = true;
+								}
+							} else {
+								if(files.size() > 20+pagenum*20) {
+									pagenum++;
+									cursorPosition = 0+pagenum*20;
+									titleboxXmovepos = 0;
+									boxartXmovepos = 0;
+									// noromsfound = false;
+									boxarttexloaded = false;
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+									updatebotscreen = true;
+								}
+							}
+						}
 						if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
 							if (titleboxXmovetimer == 0) {
 								if(cursorPosition == -2) {
