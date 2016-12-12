@@ -161,22 +161,6 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-		
-		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
-				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 0) {
-					fifoSendValue32(FIFO_USER_02, 1);
-					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-						printf("RESET_SLOT1 ON\n");		
-					}
-				}
-			} else {
-				fifoSendValue32(FIFO_USER_02, 1);
-				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-					printf("RESET_SLOT1 ON\n");		
-				}
-			}
-		}
 
 		fifoSendValue32(FIFO_USER_01, 1);
 		fifoWaitValue32(FIFO_USER_03);

@@ -33,10 +33,11 @@
 
 int main(int argc, const char* argv[]) {
 	
-	// NTR Mode/Splash used by default
 	bool EnableSD = false;
 
 	REG_SCFG_CLK = 0x85;
+
+	bool consoleOn = false;
 
 	swiWaitForVBlank();
 
@@ -54,9 +55,24 @@ int main(int argc, const char* argv[]) {
 	int pressed = keysDown();
 
 	if (fatInitDefault()) {
-		CIniFile ntrlauncher_config( "sd:/_nds/twloader/settings.ini" );
+		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
-		if(ntrlauncher_config.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+			consoleDemoInit();
+			consoleOn = true;
+		}
+
+		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
+			fifoSendValue32(FIFO_USER_02, 1);
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("RESET_SLOT1 ON\n");		
+			}
+		}
+
+		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("SD access ON\n");		
+			}
 			EnableSD = true;
 			// Tell Arm7 to use alternate SCFG_EXT values.
 			fifoSendValue32(FIFO_USER_05, 1);
