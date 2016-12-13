@@ -135,19 +135,14 @@ int main(int argc, char **argv) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
-			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) {
-				REG_SCFG_CLK = 0x80;
-				fifoSendValue32(FIFO_USER_04, 1);
-			}
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+			REG_SCFG_CLK |= 0x1;
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_CLOCK ON\n");		
 			}
 		} else {
-			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
-				REG_SCFG_CLK = 0x80;
-				fifoSendValue32(FIFO_USER_04, 1);
-			}
+			REG_SCFG_CLK = 0x80;
+			fifoSendValue32(FIFO_USER_04, 1);
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
@@ -163,7 +158,14 @@ int main(int argc, char **argv) {
 		}
 		
 		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {} else {
+			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {} else {
+					fifoSendValue32(FIFO_USER_02, 1);
+					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+						printf("RESET_SLOT1 ON\n");		
+					}
+				}
+			} else {
 				fifoSendValue32(FIFO_USER_02, 1);
 				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 					printf("RESET_SLOT1 ON\n");		
