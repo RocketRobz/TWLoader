@@ -103,7 +103,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 1.5.4";
+const char* settings_vertext = "Ver. 1.5.5";
 
 const char* settingstext_bot;
 
@@ -2978,7 +2978,7 @@ int main()
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 					if (twlsettings_forwardervalue == 0) {
-						if(files.size() < 19-pagenum*20) {
+						if(files.size() <= 0-pagenum*20) {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
 						} else {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
@@ -2988,16 +2988,8 @@ int main()
 						} else {
 							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
 						}
-						if (pagenum == 0) {
-							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
-							sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
-						} else {
-							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
-						}
 					} else {
-						if(fcfiles.size() < 19-pagenum*20) {
+						if(fcfiles.size() <= 0-pagenum*20) {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
 						} else {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
@@ -3007,6 +2999,17 @@ int main()
 						} else {
 							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
 						}
+					}
+					if (twlsettings_forwardervalue == 0) {
+						if (pagenum == 0) {
+							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
+							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
+							sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+						} else {
+							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
+						}
+					} else {
 						if (pagenum == 0) {
 							sf2d_draw_texture(bracetex, 32+titleboxXmovepos, 116);
 							sf2d_draw_texture(settingsboxtex, cartXpos+titleboxXmovepos, 119);
@@ -3517,6 +3520,7 @@ int main()
 				startborderscalesize = 1.0;
 				if(applaunchprep == false) {
 					if(hDown & KEY_R) {
+						pagenum = 0;
 						cursorPosition = 0;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
@@ -3572,7 +3576,7 @@ int main()
 						}
 					} else if(hDown & KEY_Y) {
 						if (twlsettings_forwardervalue == 1) {
-							if(fcfiles.size() < 19-pagenum*20) {
+							if(fcfiles.size() <= 0-pagenum*20) {
 								pagenum--;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
@@ -3584,7 +3588,7 @@ int main()
 								updatebotscreen = true;
 							}
 						} else {
-							if(files.size() < 19-pagenum*20) {
+							if(files.size() <= 0-pagenum*20) {
 								pagenum--;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
@@ -3603,7 +3607,7 @@ int main()
 						touch_y = touch.py;
 						if (touch_x <= 72 && touch_y >= YbuttonYpos) {
 							if (twlsettings_forwardervalue == 1) {
-								if(fcfiles.size() < 19-pagenum*20) {
+								if(fcfiles.size() <= 0-pagenum*20) {
 									pagenum--;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
@@ -3615,7 +3619,7 @@ int main()
 									updatebotscreen = true;
 								}
 							} else {
-								if(files.size() < 19-pagenum*20) {
+								if(files.size() <= 0-pagenum*20) {
 									pagenum--;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
@@ -3627,8 +3631,7 @@ int main()
 									updatebotscreen = true;
 								}
 							}
-						}
-						if (touch_x >= 248 && touch_y >= XbuttonYpos) {
+						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
 							if (twlsettings_forwardervalue == 1) {
 								if(fcfiles.size() > 20+pagenum*20) {
 									pagenum++;
@@ -3654,8 +3657,7 @@ int main()
 									updatebotscreen = true;
 								}
 							}
-						}
-						if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+						} else if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
 							if (titleboxXmovetimer == 0) {
 								if(cursorPosition == -2) {
 									titleboxXmovetimer = 1;
@@ -3695,9 +3697,9 @@ int main()
 											sfx_wrong.stop();
 											sfx_wrong.play();
 											playwrongsounddone = true;
-										} else {
-											titleboxXmoveright = true;
 										}
+									} else {
+										titleboxXmoveright = true;
 									}
 								} else {
 									titleboxXmoveright = true;
