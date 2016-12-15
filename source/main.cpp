@@ -49,6 +49,7 @@ const char* bnriconfile;
 const char* boxartfile;
 const char* topbgloc;
 const char* startborderloc;
+const char* musicpath = "romfs:/null.wav";
 
 
 const char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
@@ -2044,9 +2045,12 @@ int main()
 	sf2d_texture *dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
 	sf2d_texture *whitescrtex = sfil_load_PNG_file("romfs:/graphics/settings/whitescr.png", SF2D_PLACE_RAM); // White screen in settings
 	sf2d_texture *disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM);
-	/* bool musicbool = false;
-	sound bgm_menu("romfs:/music/menu.wav");
-	sound bgm_settings("sdmc:/_nds/twloader/music/settings.wav"); */
+	bool musicbool = false;
+	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
+		musicpath = "sdmc:/_nds/twloader/music.wav";
+	}
+	sound bgm_menu(musicpath);
+	//sound bgm_settings("sdmc:/_nds/twloader/music/settings.wav");
 	sound sfx_launch("romfs:/sounds/launch.wav",2,false);
 	sound sfx_select("romfs:/sounds/select.wav",2,false);
 	sound sfx_stop("romfs:/sounds/stop.wav",2,false);
@@ -2289,17 +2293,6 @@ int main()
 		u8 batteryLevel = 0;
 		
 		if(screenmode == 0) {
-			/* if (!musicbool) {
-				bgm_menu.play();
-				musicbool = true;
-			} */
-			if (twlsettings_forwardervalue == 1) {
-				noromtext1 = "No INIs found!";
-				noromtext2 = "Put .ini files in 'sdmc:/nds/flashcard'.";
-			} else {
-				noromtext1 = "No ROMs found!";
-				noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
-			}
 			if (colortexloaded == false) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
@@ -2438,6 +2431,17 @@ int main()
 				boxartnum = 0+pagenum*20;
 			}
 
+			if (!musicbool) {
+				bgm_menu.play();
+				musicbool = true;
+			}
+			if (twlsettings_forwardervalue == 1) {
+				noromtext1 = "No INIs found!";
+				noromtext2 = "Put .ini files in 'sdmc:/nds/flashcard'.";
+			} else {
+				noromtext1 = "No ROMs found!";
+				noromtext2 = "Put .nds ROMs in 'sdmc:/nds'.";
+			}
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
 				batteryIcon = batterychrgtex;
 			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
@@ -2687,7 +2691,7 @@ int main()
 			fadealpha += 31;
 			if (fadealpha > 255) {
 				fadealpha = 255;
-				//musicbool = false;
+				musicbool = false;
 				if(screenmode == 1) {
 					screenmode = 0;
 					fadeout = false;
@@ -2873,7 +2877,7 @@ int main()
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
 				if(screenmodeswitch == true) {
-					//musicbool = false;
+					musicbool = false;
 					screenmode = 1;
 					titleboxYmovepos = 120;
 					ndsiconYmovepos = 133;
@@ -3024,7 +3028,7 @@ int main()
 					if (titleboxXmovetimer == 0) {
 						if (cursorPosition == -2) {
 							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-							sftd_draw_textf(font, 132, 34, RGBA8(0, 0, 0, 255), 16, "Settings");
+							sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
 						} else if (cursorPosition == -1) {
 							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 						} else {
@@ -3680,7 +3684,7 @@ int main()
 								}
 							}
 							updatebotscreen = true;
-							//bgm_menu.stop();
+							bgm_menu.stop();
 							sfx_launch.play();
 						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
@@ -3730,7 +3734,7 @@ int main()
 							}
 						}
 						updatebotscreen = true;
-						//bgm_menu.stop();
+						bgm_menu.stop();
 						sfx_launch.play();
 					} else if(hHeld & KEY_RIGHT){
 						//titleboxXmovepos -= 64;
