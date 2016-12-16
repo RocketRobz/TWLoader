@@ -106,7 +106,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 1.5.5";
+const char* settings_vertext = "Ver. 1.5.6";
 
 const char* settingstext_bot;
 
