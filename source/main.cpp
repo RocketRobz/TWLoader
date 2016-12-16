@@ -41,6 +41,7 @@ sf2d_texture *bnricontexnum;
 sf2d_texture *boxarttexnum;
 #include "bannerandboxart.h"
 int bnriconnum = 0;
+int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
 const char* tempfile_fullpath;
@@ -54,6 +55,7 @@ const char* musicpath = "romfs:/null.wav";
 
 const char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
 const char* fcrompathini_rompath = "NDS_PATH";
+const char* fcrompathini_bnriconaniseq = "BNR_ICONANISEQ";
 const char* fcrompathini_bnrtext1 = "BNR_TEXT1";
 const char* fcrompathini_bnrtext2 = "BNR_TEXT2";
 const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
@@ -128,12 +130,15 @@ int romselect_toplayout;
 //	0: Show box art
 //	1: Hide box art
 
+const char* romsel_filename;
 std::string romsel_gameline1;
 std::string romsel_gameline2;
 std::string romsel_gameline3;
 char *cstr1;
 char *cstr2;
 char *cstr3;
+const char* romsel_counter1;
+const char* romsel_counter2;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
@@ -2191,7 +2196,7 @@ int main()
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
 		
-	int cursorPosition = 0, i = 0;
+	int cursorPosition = 0, storedcursorPosition = 0, i = 0;
 	bool noromsfound = false;
 	int settingscursorPosition = 0, twlsettingscursorPosition = 0;
 	
@@ -2292,6 +2297,9 @@ int main()
 
 		u8 batteryChargeState = 0;
 		u8 batteryLevel = 0;
+		
+		if (storedcursorPosition < 0)
+			storedcursorPosition = 0;
 		
 		if(screenmode == 0) {
 			if (colortexloaded == false) {
@@ -2664,7 +2672,7 @@ int main()
 			{RshoulderYpos -= 1;}
 		}
 		
-		/* if(hHeld & KEY_Y){
+		if(hHeld & KEY_Y){
 			if (YbuttonYpos != 223)
 			{YbuttonYpos += 1;}
 		} else {
@@ -2677,7 +2685,7 @@ int main()
 		} else {
 			if (XbuttonYpos != 220)
 			{XbuttonYpos -= 1;}
-		} */
+		}
 		
 		if (fadein == true) {
 			fadealpha -= 31;
@@ -2721,6 +2729,7 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				bannertextloaded = false;			
+				storedcursorPosition = cursorPosition;
 				sfx_stop.play();
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
@@ -2810,6 +2819,7 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				bannertextloaded = false;
+				storedcursorPosition = cursorPosition;
 				sfx_stop.play();
 				// Load the next banner icons
 				if ( cursorPosition == 7+pagenum*20 ||
@@ -2925,9 +2935,8 @@ int main()
 			}
 		}
 
-		if(updatebotscreen == true){
+		// if(updatebotscreen == true){
 			if (screenmode == 0) {
-				i = 0;
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 				
@@ -2955,13 +2964,19 @@ int main()
 						}
 					}
 				} else { */
-					// if (titleboxXmovetimer == 0) {
+					if (fadealpha == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// sfx_menuselect.play();
 						if (twlsettings_forwardervalue == 1) {
-							if (cursorPosition == -2 || cursorPosition == -1) {
+							if (cursorPosition == -2) {
+								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
+								sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
+							} else if (cursorPosition == -1) {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 							} else {
 								if (bannertextloaded == false) {
+									if (fcfiles.size() != 0)
+										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
 									CIniFile setfcrompathini( flashcardfolder+flashcardrom );
 									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
@@ -2973,23 +2988,60 @@ int main()
 									strcpy(cstr2, romsel_gameline2.c_str());
 									char *cstr3 = new char[romsel_gameline3.length() + 1];
 									strcpy(cstr3, romsel_gameline3.c_str());
+									char str[20] = {0};
+									std::sprintf(str, "%d", cursorPosition+1);
+									romsel_counter1 = str;
+									char str2[20] = {0};
+									std::sprintf(str2, "%d", fcfiles.size());
+									romsel_counter2 = str2;
 									bannertextloaded = true;
 								}
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
 								sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
 								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+								sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+								sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+							}
+						} else {
+							if (cursorPosition == -2) {
+								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
+								sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
+							} else if (cursorPosition == -1) {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+							} else {
+								if (bannertextloaded == false) {
+									if (files.size() != 0)
+										romsel_filename = files.at(storedcursorPosition).c_str();
+									char str[20] = {0};
+									std::sprintf(str, "%d", cursorPosition+1);
+									romsel_counter1 = str;
+									char str2[20] = {0};
+									std::sprintf(str2, "%d", files.size());
+									romsel_counter2 = str2;
+									bannertextloaded = true;
+								}
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+								sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+								sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 							}
 						}
-					// } else {
-					// 	sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
-					// }
+					} else {
+						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
+					}
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
 					sftd_draw_textf(font, 98, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 					if (twlsettings_forwardervalue == 0) {
-						if(files.size() <= 0-pagenum*20) {
-							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+						if (pagenum != 0) {
+							if(files.size() <= 0-pagenum*20) {
+								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+							} else {
+								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
+							}
 						} else {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
 						}
@@ -2999,8 +3051,12 @@ int main()
 							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
 						}
 					} else {
-						if(fcfiles.size() <= 0-pagenum*20) {
-							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+						if (pagenum != 0) {
+							if(fcfiles.size() <= 0-pagenum*20) {
+								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
+							} else {
+								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
+							}
 						} else {
 							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
 						}
@@ -3031,94 +3087,47 @@ int main()
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
 					filenameYpos = 0;
-					// if (titleboxXmovetimer == 0) {
-						if (cursorPosition == -2) {
-							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-							sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
-						} else if (cursorPosition == -1) {
-							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
-						} else {
-							if (twlsettings_forwardervalue == 1) {
-								if (fcfiles.size() != 0)
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, fcfiles.at(cursorPosition).c_str());
-							} else {
-								if (files.size() != 0)
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, files.at(cursorPosition).c_str());
-							}
-							if (settings_countervalue == 1) {
-								char str[20] = {0};
-								std::sprintf(str, "%d", cursorPosition+1);
-								sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, str);
-								sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-								if (twlsettings_forwardervalue == 1) {
-									char str2[20] = {0};
-									std::sprintf(str2, "%d", fcfiles.size());
-									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, str2);
-								} else {
-									char str2[20] = {0};
-									std::sprintf(str2, "%d", files.size());
-									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, str2);
-								}
-							}
-						}
-					// }
 					if (twlsettings_forwardervalue == 1) {
 						if(fcfiles.size() >= 19+pagenum*20) {
 							for(i = pagenum*20; i < 20+pagenum*20; i++){
-								/* if (titleboxXmovetimer == 0) {
-									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
-								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								// filenameYpos += 240;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
 							for(i = pagenum*20; i < fcfiles.size(); i++){
-								/* if (titleboxXmovetimer == 0) {
-									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, fcfiles.at(i).c_str());
-								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								// filenameYpos += 240;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < fcfiles.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
 								ndsiconXpos += 64;
 							}
 						}
 					} else {
 						if(files.size() >= 19+pagenum*20) {
 							for(i = pagenum*20; i < 20+pagenum*20; i++){
-								/* if (titleboxXmovetimer == 0) {
-									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
-								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								// filenameYpos += 240;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
 							for(i = pagenum*20; i < files.size(); i++){
-								/* if (titleboxXmovetimer == 0) {
-									sftd_draw_textf(font, 10, 8+filenameYpos-240*cursorPosition, RGBA8(127, 127, 127, 255), 12, files.at(i).c_str());
-								} */
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-								// filenameYpos += 240;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
 								ndsiconXpos += 64;
 							}
 						}
@@ -3142,7 +3151,7 @@ int main()
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 							bnriconnum = cursorPosition;
 							ChangeBNRIconNo();
-							sf2d_draw_texture(bnricontexnum, 144, ndsiconYmovepos);
+							sf2d_draw_texture_part(bnricontexnum, 144, ndsiconYmovepos, 0, bnriconframenum*32, 32, 32);
 						}
 					}
 				// }
@@ -3438,7 +3447,7 @@ int main()
 		sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 
 		sf2d_end_frame();
-		}
+		// }
 		
 		sf2d_swapbuffers();
 
@@ -3535,6 +3544,7 @@ int main()
 						pagenum = 0;
 						bannertextloaded = false;
 						cursorPosition = 0;
+						storedcursorPosition = cursorPosition;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						noromsfound = false;
@@ -3552,12 +3562,14 @@ int main()
 						if (twlsettings_forwardervalue == 1) {	// If no ROMs are found
 							if (fcfiles.size() == 0) {	// If no ROMs are found
 								cursorPosition = -2;
+								storedcursorPosition = cursorPosition;
 								titleboxXmovepos = +64;
 								boxartXmovepos = 0;
 							}
 						} else {
 							if (files.size() == 0) {	// If no ROMs are found
 								cursorPosition = -1;
+								storedcursorPosition = cursorPosition;
 								titleboxXmovepos = +64;
 								boxartXmovepos = 0;
 							}
@@ -3571,6 +3583,7 @@ int main()
 								pagenum++;
 								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
 								// noromsfound = false;
@@ -3584,6 +3597,7 @@ int main()
 								pagenum++;
 								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
 								// noromsfound = false;
@@ -3594,44 +3608,13 @@ int main()
 							}
 						}
 					} else if(hDown & KEY_Y) {
-						if (twlsettings_forwardervalue == 1) {
-							if(fcfiles.size() <= 0-pagenum*20) {
-								pagenum--;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								boxarttexloaded = false;
-								sfx_switch.stop();	// Prevent freezing
-								sfx_switch.play();
-								updatebotscreen = true;
-							}
-						} else {
-							if(files.size() <= 0-pagenum*20) {
-								pagenum--;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								boxarttexloaded = false;
-								sfx_switch.stop();	// Prevent freezing
-								sfx_switch.play();
-								updatebotscreen = true;
-							}
-						}
-					}
-					if(hDown & KEY_TOUCH){
-						hidTouchRead(&touch);
-						touch_x = touch.px;
-						touch_y = touch.py;
-						if (touch_x <= 72 && touch_y >= YbuttonYpos) {
+						if (pagenum != 0) {
 							if (twlsettings_forwardervalue == 1) {
 								if(fcfiles.size() <= 0-pagenum*20) {
 									pagenum--;
 									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
+									storedcursorPosition = cursorPosition;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
 									// noromsfound = false;
@@ -3645,6 +3628,7 @@ int main()
 									pagenum--;
 									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
+									storedcursorPosition = cursorPosition;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
 									// noromsfound = false;
@@ -3654,12 +3638,51 @@ int main()
 									updatebotscreen = true;
 								}
 							}
+						}
+					}
+					if(hDown & KEY_TOUCH){
+						hidTouchRead(&touch);
+						touch_x = touch.px;
+						touch_y = touch.py;
+						if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
+							if (pagenum != 0) {
+								if (twlsettings_forwardervalue == 1) {
+									if(fcfiles.size() <= 0-pagenum*20) {
+										pagenum--;
+										bannertextloaded = false;
+										cursorPosition = 0+pagenum*20;
+										storedcursorPosition = cursorPosition;
+										titleboxXmovepos = 0;
+										boxartXmovepos = 0;
+										// noromsfound = false;
+										boxarttexloaded = false;
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+										updatebotscreen = true;
+									}
+								} else {
+									if(files.size() <= 0-pagenum*20) {
+										pagenum--;
+										bannertextloaded = false;
+										cursorPosition = 0+pagenum*20;
+										storedcursorPosition = cursorPosition;
+										titleboxXmovepos = 0;
+										boxartXmovepos = 0;
+										// noromsfound = false;
+										boxarttexloaded = false;
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+										updatebotscreen = true;
+									}
+								}
+							}
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
 							if (twlsettings_forwardervalue == 1) {
 								if(fcfiles.size() > 20+pagenum*20) {
 									pagenum++;
 									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
+									storedcursorPosition = cursorPosition;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
 									// noromsfound = false;
@@ -3673,6 +3696,7 @@ int main()
 									pagenum++;
 									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
+									storedcursorPosition = cursorPosition;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
 									// noromsfound = false;
