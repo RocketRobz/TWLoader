@@ -2207,6 +2207,7 @@ int main()
 	bool fadeout = false;
 		
 	bool colortexloaded = true;
+	bool bannertextloaded = false;
 	bool boxarttexloaded = false;
 
 	bool updatebotscreen = true;
@@ -2719,6 +2720,7 @@ int main()
 				titleboxXmoveleft = false;
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
+				bannertextloaded = false;			
 				sfx_stop.play();
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
@@ -2807,6 +2809,7 @@ int main()
 				titleboxXmoveright = false;
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
+				bannertextloaded = false;
 				sfx_stop.play();
 				// Load the next banner icons
 				if ( cursorPosition == 7+pagenum*20 ||
@@ -2952,31 +2955,34 @@ int main()
 						}
 					}
 				} else { */
-					if (titleboxXmovetimer == 0) {
+					// if (titleboxXmovetimer == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// sfx_menuselect.play();
 						if (twlsettings_forwardervalue == 1) {
 							if (cursorPosition == -2 || cursorPosition == -1) {
 							} else {
-								flashcardrom = fcfiles.at(cursorPosition).c_str();
-								CIniFile setfcrompathini( flashcardfolder+flashcardrom );
-								romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
-								romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
-								romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
-								char *cstr1 = new char[romsel_gameline1.length() + 1];
-								strcpy(cstr1, romsel_gameline1.c_str());
-								char *cstr2 = new char[romsel_gameline2.length() + 1];
-								strcpy(cstr2, romsel_gameline2.c_str());
-								char *cstr3 = new char[romsel_gameline3.length() + 1];
-								strcpy(cstr3, romsel_gameline3.c_str());
+								if (bannertextloaded == false) {
+									flashcardrom = fcfiles.at(cursorPosition).c_str();
+									CIniFile setfcrompathini( flashcardfolder+flashcardrom );
+									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
+									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
+									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
+									char *cstr1 = new char[romsel_gameline1.length() + 1];
+									strcpy(cstr1, romsel_gameline1.c_str());
+									char *cstr2 = new char[romsel_gameline2.length() + 1];
+									strcpy(cstr2, romsel_gameline2.c_str());
+									char *cstr3 = new char[romsel_gameline3.length() + 1];
+									strcpy(cstr3, romsel_gameline3.c_str());
+									bannertextloaded = true;
+								}
 								sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
 								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
 							}
 						}
-					} else {
-						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
-					}
+					// } else {
+					// 	sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
+					// }
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
 					sftd_draw_textf(font, 98, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
@@ -3025,7 +3031,7 @@ int main()
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
 					filenameYpos = 0;
-					if (titleboxXmovetimer == 0) {
+					// if (titleboxXmovetimer == 0) {
 						if (cursorPosition == -2) {
 							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
 							sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
@@ -3033,9 +3039,11 @@ int main()
 							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 						} else {
 							if (twlsettings_forwardervalue == 1) {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, fcfiles.at(cursorPosition).c_str());
+								if (fcfiles.size() != 0)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, fcfiles.at(cursorPosition).c_str());
 							} else {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, files.at(cursorPosition).c_str());
+								if (files.size() != 0)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, files.at(cursorPosition).c_str());
 							}
 							if (settings_countervalue == 1) {
 								char str[20] = {0};
@@ -3053,7 +3061,7 @@ int main()
 								}
 							}
 						}
-					}
+					// }
 					if (twlsettings_forwardervalue == 1) {
 						if(fcfiles.size() >= 19+pagenum*20) {
 							for(i = pagenum*20; i < 20+pagenum*20; i++){
@@ -3525,6 +3533,7 @@ int main()
 				if(applaunchprep == false) {
 					if(hDown & KEY_R) {
 						pagenum = 0;
+						bannertextloaded = false;
 						cursorPosition = 0;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
@@ -3540,22 +3549,27 @@ int main()
 						updatebotscreen = true;
 					}
 					if (noromsfound == false) {
-						noromsfound = true;
-						if (i == 0) {	// If no ROMs are found
-							if (twlsettings_forwardervalue == 1) {
+						if (twlsettings_forwardervalue == 1) {	// If no ROMs are found
+							if (fcfiles.size() == 0) {	// If no ROMs are found
 								cursorPosition = -2;
-							} else {
-								cursorPosition = -1;
+								titleboxXmovepos = +64;
+								boxartXmovepos = 0;
 							}
-							titleboxXmovepos = +64;
-							boxartXmovepos = 0;
-							updatebotscreen = true;
+						} else {
+							if (files.size() == 0) {	// If no ROMs are found
+								cursorPosition = -1;
+								titleboxXmovepos = +64;
+								boxartXmovepos = 0;
+							}
 						}
+						updatebotscreen = true;
+						noromsfound = true;
 					}
 					if(hDown & KEY_X) {
 						if (twlsettings_forwardervalue == 1) {
 							if(fcfiles.size() > 20+pagenum*20) {
 								pagenum++;
+								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
@@ -3568,6 +3582,7 @@ int main()
 						} else {
 							if(files.size() > 20+pagenum*20) {
 								pagenum++;
+								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
@@ -3582,6 +3597,7 @@ int main()
 						if (twlsettings_forwardervalue == 1) {
 							if(fcfiles.size() <= 0-pagenum*20) {
 								pagenum--;
+								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
@@ -3594,6 +3610,7 @@ int main()
 						} else {
 							if(files.size() <= 0-pagenum*20) {
 								pagenum--;
+								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								titleboxXmovepos = 0;
 								boxartXmovepos = 0;
@@ -3613,6 +3630,7 @@ int main()
 							if (twlsettings_forwardervalue == 1) {
 								if(fcfiles.size() <= 0-pagenum*20) {
 									pagenum--;
+									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
@@ -3625,6 +3643,7 @@ int main()
 							} else {
 								if(files.size() <= 0-pagenum*20) {
 									pagenum--;
+									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
@@ -3639,6 +3658,7 @@ int main()
 							if (twlsettings_forwardervalue == 1) {
 								if(fcfiles.size() > 20+pagenum*20) {
 									pagenum++;
+									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
@@ -3651,6 +3671,7 @@ int main()
 							} else {
 								if(files.size() > 20+pagenum*20) {
 									pagenum++;
+									bannertextloaded = false;
 									cursorPosition = 0+pagenum*20;
 									titleboxXmovepos = 0;
 									boxartXmovepos = 0;
