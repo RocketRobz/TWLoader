@@ -135,16 +135,14 @@ int main(int argc, char **argv) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
-			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
-				REG_SCFG_CLK |= 0x1;
-				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-					printf("TWL_CLOCK ON\n");		
-				}
-			} else {
-				REG_SCFG_CLK = 0x80;
-				fifoSendValue32(FIFO_USER_04, 1);
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+			REG_SCFG_CLK |= 0x1;
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("TWL_CLOCK ON\n");		
 			}
+		} else {
+			REG_SCFG_CLK = 0x80;
+			fifoSendValue32(FIFO_USER_04, 1);
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
@@ -257,7 +255,7 @@ int main(int argc, char **argv) {
 		do { swiWaitForVBlank(); scanKeys(); } while (!keysDown());
 		break;
 		}
-
+		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 		filename = ReplaceAll( filename, "fat:/", "sd:/");
