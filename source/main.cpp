@@ -49,6 +49,7 @@ const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
 const char* topbgloc;
+const char* dotcircleloc;
 const char* startborderloc;
 const char* musicpath = "romfs:/null.wav";
 
@@ -106,7 +107,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 1.5.6";
+const char* settings_vertext = "Ver. 1.6.0";
 
 const char* settingstext_bot;
 
@@ -138,7 +139,8 @@ char *cstr1;
 char *cstr2;
 char *cstr3;
 const char* romsel_counter1;
-const char* romsel_counter2;
+const char* romsel_counter2fc;
+const char* romsel_counter2sd;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
@@ -342,111 +344,136 @@ void RainbowLED() {
 void LoadColor() {
 	if (settings_colorvalue == 0) {
 		topbgloc = "romfs:/graphics/topbg/0-gray.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/0-gray.png";
 		startborderloc = "romfs:/graphics/start_border/0-gray.png";
 		color_Rvalue = 99;
 		color_Gvalue = 127;
 		color_Bvalue = 127;
 	} else if (settings_colorvalue == 1) {
 		topbgloc = "romfs:/graphics/topbg/1-brown.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/1-brown.png";
 		startborderloc = "romfs:/graphics/start_border/1-brown.png";
 		color_Rvalue = 139;
 		color_Gvalue = 99;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 2) {
 		topbgloc = "romfs:/graphics/topbg/2-red.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/2-red.png";
 		startborderloc = "romfs:/graphics/start_border/2-red.png";
 		color_Rvalue = 255;
 		color_Gvalue = 0;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 3) {
 		topbgloc = "romfs:/graphics/topbg/3-pink.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/3-pink.png";
 		startborderloc = "romfs:/graphics/start_border/3-pink.png";
 		color_Rvalue = 255;
 		color_Gvalue = 127;
 		color_Bvalue = 127;
 	} else if (settings_colorvalue == 4) {
 		topbgloc = "romfs:/graphics/topbg/4-orange.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/4-orange.png";
 		startborderloc = "romfs:/graphics/start_border/4-orange.png";
 		color_Rvalue = 169;
 		color_Gvalue = 31;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 5) {
 		topbgloc = "romfs:/graphics/topbg/5-yellow.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/5-yellow.png";
 		startborderloc = "romfs:/graphics/start_border/5-yellow.png";
 		color_Rvalue = 215;
 		color_Gvalue = 215;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 6) {
 		topbgloc = "romfs:/graphics/topbg/6-yellowgreen.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/6-yellowgreen.png";
 		startborderloc = "romfs:/graphics/start_border/6-yellowgreen.png";
 		color_Rvalue = 215;
 		color_Gvalue = 255;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 7) {
 		topbgloc = "romfs:/graphics/topbg/7-green1.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/7-green1.png";
 		startborderloc = "romfs:/graphics/start_border/7-green1.png";
 		color_Rvalue = 0;
 		color_Gvalue = 255;
 		color_Bvalue = 0;
 	} else if (settings_colorvalue == 8) {
 		topbgloc = "romfs:/graphics/topbg/8-green2.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/8-green2.png";
 		startborderloc = "romfs:/graphics/start_border/8-green2.png";
 		color_Rvalue = 63;
 		color_Gvalue = 255;
 		color_Bvalue = 63;
 	} else if (settings_colorvalue == 9) {
 		topbgloc = "romfs:/graphics/topbg/9-lightgreen.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/9-lightgreen.png";
 		startborderloc = "romfs:/graphics/start_border/9-lightgreen.png";
 		color_Rvalue = 31;
 		color_Gvalue = 231;
 		color_Bvalue = 31;
 	} else if (settings_colorvalue == 10) {
 		topbgloc = "romfs:/graphics/topbg/10-skyblue.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/10-skyblue.png";
 		startborderloc = "romfs:/graphics/start_border/10-skyblue.png";
 		color_Rvalue = 0;
 		color_Gvalue = 63;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 11) {
 		topbgloc = "romfs:/graphics/topbg/11-lightblue.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/11-lightblue.png";
 		startborderloc = "romfs:/graphics/start_border/11-lightblue.png";
 		color_Rvalue = 63;
 		color_Gvalue = 63;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 12) {
 		topbgloc = "romfs:/graphics/topbg/12-blue.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/12-blue.png";
 		startborderloc = "romfs:/graphics/start_border/12-blue.png";
 		color_Rvalue = 0;
 		color_Gvalue = 0;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 13) {
 		topbgloc = "romfs:/graphics/topbg/13-violet.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/13-violet.png";
 		startborderloc = "romfs:/graphics/start_border/13-violet.png";
 		color_Rvalue = 127;
 		color_Gvalue = 0;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 14) {
 		topbgloc = "romfs:/graphics/topbg/14-purple.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/14-purple.png";
 		startborderloc = "romfs:/graphics/start_border/14-purple.png";
 		color_Rvalue = 255;
 		color_Gvalue = 0;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 15) {
 		topbgloc = "romfs:/graphics/topbg/15-fuschia.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/15-fuschia.png";
 		startborderloc = "romfs:/graphics/start_border/15-fuschia.png";
 		color_Rvalue = 255;
 		color_Gvalue = 0;
 		color_Bvalue = 127;
 	} else if (settings_colorvalue == 16) {
 		topbgloc = "romfs:/graphics/topbg/16-red&blue.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/16-red&blue.png";
 		startborderloc = "romfs:/graphics/start_border/16-red&blue.png";
 		color_Rvalue = 255;
 		color_Gvalue = 0;
 		color_Bvalue = 255;
 	} else if (settings_colorvalue == 17) {
 		topbgloc = "romfs:/graphics/topbg/17-green&yellow.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/17-green&yellow.png";
 		startborderloc = "romfs:/graphics/start_border/17-green&yellow.png";
 		color_Rvalue = 215;
 		color_Gvalue = 215;
+		color_Bvalue = 0;
+	} else if (settings_colorvalue == 18) {
+		topbgloc = "romfs:/graphics/topbg/18-christmas.png";
+		dotcircleloc = "romfs:/graphics/dotcircle/18-christmas.png";
+		startborderloc = "romfs:/graphics/start_border/18-christmas.png";
+		color_Rvalue = 255;
+		color_Gvalue = 255;
 		color_Bvalue = 0;
 	}
 }
@@ -1787,7 +1814,9 @@ void LoadBoxArt() {
 
 
 void LoadSettings() {
-	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0) == 17) {
+	if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0) == 18) {
+		settings_colorvalue = 18;
+	} else if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0) == 17) {
 		settings_colorvalue = 17;
 	} else if (settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0) == 16) {
 		settings_colorvalue = 16;
@@ -2036,6 +2065,7 @@ int main()
 	sf2d_texture *whomeicontex = sfil_load_PNG_file("romfs:/graphics/whomeicon.png", SF2D_PLACE_RAM); // HOME icon (Settings)
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *bottomcovertex = sfil_load_PNG_file("romfs:/graphics/bottom_cover.png", SF2D_PLACE_RAM); // Image to cover selected game/app
+	sf2d_texture *dotcircletex = sfil_load_PNG_file(dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 	sf2d_texture *startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/graphics/cart.png", SF2D_PLACE_RAM); // Cartridge on bottom screen
@@ -2196,6 +2226,13 @@ int main()
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
 		
+	char str2[20] = {0};
+	std::sprintf(str2, "%d", fcfiles.size());
+	romsel_counter2fc = str2;
+	char str3[20] = {0};
+	std::sprintf(str3, "%d", files.size());
+	romsel_counter2sd = str3;
+
 	int cursorPosition = 0, storedcursorPosition = 0, i = 0;
 	bool noromsfound = false;
 	int settingscursorPosition = 0, twlsettingscursorPosition = 0;
@@ -2227,6 +2264,7 @@ int main()
 	float offset3dl_disabled = 0.0f;
 	float offset3dr_disabled = 0.0f;
 	
+	float rad = 0.0f;
 	u16 touch_x = 320/2;
 	u16 touch_y = 240/2;
 
@@ -2304,6 +2342,7 @@ int main()
 		if(screenmode == 0) {
 			if (colortexloaded == false) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+				dotcircletex = sfil_load_PNG_file(dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
 				colortexloaded = true;
 			}
@@ -2586,6 +2625,7 @@ int main()
 			} */
 			if (colortexloaded == true) {
 				sf2d_free_texture(topbgtex);
+				sf2d_free_texture(dotcircletex);
 				sf2d_free_texture(startbordertex);
 				colortexloaded = false;
 			}
@@ -2886,12 +2926,14 @@ int main()
 			}
 		}
 		if(applaunchprep == true) {
+			rad += 0.50f;
 			titleboxYmovepos -= 6;
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
 				if(screenmodeswitch == true) {
 					musicbool = false;
 					screenmode = 1;
+					rad == 0.0f;
 					titleboxYmovepos = 120;
 					ndsiconYmovepos = 133;
 					fadein = true;
@@ -2988,21 +3030,22 @@ int main()
 									strcpy(cstr2, romsel_gameline2.c_str());
 									char *cstr3 = new char[romsel_gameline3.length() + 1];
 									strcpy(cstr3, romsel_gameline3.c_str());
-									char str[20] = {0};
-									std::sprintf(str, "%d", cursorPosition+1);
-									romsel_counter1 = str;
-									char str2[20] = {0};
-									std::sprintf(str2, "%d", fcfiles.size());
-									romsel_counter2 = str2;
 									bannertextloaded = true;
 								}
 								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
 								sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
 								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
-								sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-								sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+								if (settings_countervalue == 1) {
+									char str[20] = {0};
+									std::sprintf(str, "%d", storedcursorPosition+1);
+									romsel_counter1 = str;
+									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+									sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+								} else {
+									bannertextloaded = true;
+								}
 							}
 						} else {
 							if (cursorPosition == -2) {
@@ -3014,18 +3057,19 @@ int main()
 								if (bannertextloaded == false) {
 									if (files.size() != 0)
 										romsel_filename = files.at(storedcursorPosition).c_str();
-									char str[20] = {0};
-									std::sprintf(str, "%d", cursorPosition+1);
-									romsel_counter1 = str;
-									char str2[20] = {0};
-									std::sprintf(str2, "%d", files.size());
-									romsel_counter2 = str2;
 									bannertextloaded = true;
 								}
 								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-								sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+								if (settings_countervalue == 1) {
+									char str[20] = {0};
+									std::sprintf(str, "%d", storedcursorPosition+1);
+									romsel_counter1 = str;
+									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+									sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+								} else {
+									bannertextloaded = true;
+								}
 							}
 						}
 					} else {
@@ -3153,6 +3197,7 @@ int main()
 							ChangeBNRIconNo();
 							sf2d_draw_texture_part(bnricontexnum, 144, ndsiconYmovepos, 0, bnriconframenum*32, 32, 32);
 						}
+						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
 				// }
 			} else if(screenmode == 1) {
@@ -3201,6 +3246,8 @@ int main()
 						settings_colorvaluetext = "Red & Blue";
 					} else if (settings_colorvalue == 17) {
 						settings_colorvaluetext = "Green & Yellow";
+					} else if (settings_colorvalue == 18) {
+						settings_colorvaluetext = "Christmas";
 					}
 					if (settings_topbordervalue == 0) {
 						settings_topbordervaluetext = "Off";
@@ -3891,7 +3938,7 @@ int main()
 				if(hDown & KEY_A || hDown & KEY_RIGHT){
 					if (settingscursorPosition == 0) {
 						settings_colorvalue++; // Color
-						if(settings_colorvalue == 18) {
+						if(settings_colorvalue == 19) {
 							settings_colorvalue = 0;
 						}
 						LoadColor();
@@ -3911,7 +3958,7 @@ int main()
 					if (settingscursorPosition == 0) {
 						settings_colorvalue--; // Color
 						if(settings_colorvalue == -1) {
-							settings_colorvalue = 17;
+							settings_colorvalue = 18;
 						}
 						LoadColor();
 						sfx_select.play();
@@ -3979,6 +4026,7 @@ int main()
 	sf2d_free_texture(settingsboxtex);
 	sf2d_free_texture(carttex);
 	sf2d_free_texture(boxfulltex);
+	if (colortexloaded == true) { sf2d_free_texture(dotcircletex); }
 	if (colortexloaded == true) { sf2d_free_texture(startbordertex); }
 	sf2d_free_texture(settingstex);
 	sf2d_free_texture(dsboottex);
