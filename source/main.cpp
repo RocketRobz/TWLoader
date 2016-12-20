@@ -2023,7 +2023,6 @@ int main()
 	std::string	bootstrapPath = "";
 	
     sf2d_init();
- 	ndspInit();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(1);
 
@@ -2080,6 +2079,13 @@ int main()
 	sf2d_texture *dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
 	sf2d_texture *whitescrtex = sfil_load_PNG_file("romfs:/graphics/settings/whitescr.png", SF2D_PLACE_RAM); // White screen in settings
 	sf2d_texture *disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM);
+
+	bool dspfirmfound = false;
+ 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+		ndspInit();
+		dspfirmfound = true;
+	}
+
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
@@ -2480,7 +2486,7 @@ int main()
 			}
 
 			if (!musicbool) {
-				bgm_menu.play();
+				if (dspfirmfound) { bgm_menu.play(); }
 				musicbool = true;
 			}
 			if (twlsettings_forwardervalue == 1) {
@@ -2620,7 +2626,7 @@ int main()
 			sf2d_end_frame();
 		} else if(screenmode == 1) {
 			/* if (!musicbool) {
-				bgm_settings.play();
+				if (dspfirmfound) { bgm_settings.play(); }
 				musicbool = true;
 			} */
 			if (colortexloaded == true) {
@@ -2770,7 +2776,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;			
 				storedcursorPosition = cursorPosition;
-				sfx_stop.play();
+				if (dspfirmfound) { sfx_stop.play(); }
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
@@ -2780,7 +2786,7 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
-				sfx_select.play();
+				if (dspfirmfound) { sfx_select.play(); }
 				// Load the previous banner icons
 				if ( cursorPosition == 6+pagenum*20 ||
 				cursorPosition == 11+pagenum*20 ||
@@ -2829,8 +2835,10 @@ int main()
 						cursorPositionset = false;
 						cursorPosition++;
 						if (!playwrongsounddone) {
-							sfx_wrong.stop();
-							sfx_wrong.play();
+							if (dspfirmfound) {
+								sfx_wrong.stop();
+								sfx_wrong.play();
+							}
 							playwrongsounddone = true;
 						}
 					}
@@ -2844,8 +2852,10 @@ int main()
 						cursorPositionset = false;
 						cursorPosition++;
 						if (!playwrongsounddone) {
-							sfx_wrong.stop();
-							sfx_wrong.play();
+							if (dspfirmfound) {
+								sfx_wrong.stop();
+								sfx_wrong.play();
+							}
 							playwrongsounddone = true;
 						}
 					}
@@ -2860,7 +2870,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;
 				storedcursorPosition = cursorPosition;
-				sfx_stop.play();
+				if (dspfirmfound) { sfx_stop.play(); }
 				// Load the next banner icons
 				if ( cursorPosition == 7+pagenum*20 ||
 				cursorPosition == 12+pagenum*20 ||
@@ -2899,7 +2909,7 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
-				sfx_select.play();
+				if (dspfirmfound) { sfx_select.play(); }
 			} else {
 				if (cursorPositionset == false) {
 					cursorPosition++;
@@ -2918,8 +2928,10 @@ int main()
 					cursorPositionset = false;
 					cursorPosition--;
 					if (!playwrongsounddone) {
-						sfx_wrong.stop();
-						sfx_wrong.play();
+						if (dspfirmfound) {
+							sfx_wrong.stop();
+							sfx_wrong.play();
+						}
 						playwrongsounddone = true;
 					}
 				}
@@ -3008,7 +3020,7 @@ int main()
 				} else { */
 					if (fadealpha == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
-						// sfx_menuselect.play();
+						// if (dspfirmfound) { sfx_menuselect.play(); }
 						if (twlsettings_forwardervalue == 1) {
 							if (cursorPosition == -2) {
 								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
@@ -3523,8 +3535,10 @@ int main()
 				} else {
 					romselect_toplayout = 1;
 				}
-				sfx_switch.stop();	// Prevent freezing
-				sfx_switch.play();
+				if (dspfirmfound) {
+					sfx_switch.stop();	// Prevent freezing
+					sfx_switch.play();
+				}
 			}
 			/* if (romselect_layout == 0) {
 				Rshouldertext = "DSi-Menu";
@@ -3601,8 +3615,10 @@ int main()
 							twlsettings_forwardervalue = 1;
 						}
 						boxarttexloaded = false;
-						sfx_switch.stop();	// Prevent freezing
-						sfx_switch.play();
+						if (dspfirmfound) {
+							sfx_switch.stop();	// Prevent freezing
+							sfx_switch.play();
+						}
 						updatebotscreen = true;
 					}
 					if (noromsfound == false) {
@@ -3635,8 +3651,10 @@ int main()
 								boxartXmovepos = 0;
 								// noromsfound = false;
 								boxarttexloaded = false;
-								sfx_switch.stop();	// Prevent freezing
-								sfx_switch.play();
+								if (dspfirmfound) {
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+								}
 								updatebotscreen = true;
 							}
 						} else {
@@ -3649,8 +3667,10 @@ int main()
 								boxartXmovepos = 0;
 								// noromsfound = false;
 								boxarttexloaded = false;
-								sfx_switch.stop();	// Prevent freezing
-								sfx_switch.play();
+								if (dspfirmfound) {
+									sfx_switch.stop();	// Prevent freezing
+									sfx_switch.play();
+								}
 								updatebotscreen = true;
 							}
 						}
@@ -3666,8 +3686,10 @@ int main()
 									boxartXmovepos = 0;
 									// noromsfound = false;
 									boxarttexloaded = false;
-									sfx_switch.stop();	// Prevent freezing
-									sfx_switch.play();
+									if (dspfirmfound) {
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+									}
 									updatebotscreen = true;
 								}
 							} else {
@@ -3680,8 +3702,10 @@ int main()
 									boxartXmovepos = 0;
 									// noromsfound = false;
 									boxarttexloaded = false;
-									sfx_switch.stop();	// Prevent freezing
-									sfx_switch.play();
+									if (dspfirmfound) {
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+									}
 									updatebotscreen = true;
 								}
 							}
@@ -3703,8 +3727,10 @@ int main()
 										boxartXmovepos = 0;
 										// noromsfound = false;
 										boxarttexloaded = false;
-										sfx_switch.stop();	// Prevent freezing
-										sfx_switch.play();
+										if (dspfirmfound) {
+											sfx_switch.stop();	// Prevent freezing
+											sfx_switch.play();
+										}
 										updatebotscreen = true;
 									}
 								} else {
@@ -3717,8 +3743,10 @@ int main()
 										boxartXmovepos = 0;
 										// noromsfound = false;
 										boxarttexloaded = false;
-										sfx_switch.stop();	// Prevent freezing
-										sfx_switch.play();
+										if (dspfirmfound) {
+											sfx_switch.stop();	// Prevent freezing
+											sfx_switch.play();
+										}
 										updatebotscreen = true;
 									}
 								}
@@ -3734,8 +3762,10 @@ int main()
 									boxartXmovepos = 0;
 									// noromsfound = false;
 									boxarttexloaded = false;
-									sfx_switch.stop();	// Prevent freezing
-									sfx_switch.play();
+									if (dspfirmfound) {
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+									}
 									updatebotscreen = true;
 								}
 							} else {
@@ -3748,8 +3778,10 @@ int main()
 									boxartXmovepos = 0;
 									// noromsfound = false;
 									boxarttexloaded = false;
-									sfx_switch.stop();	// Prevent freezing
-									sfx_switch.play();
+									if (dspfirmfound) {
+										sfx_switch.stop();	// Prevent freezing
+										sfx_switch.play();
+									}
 									updatebotscreen = true;
 								}
 							}
@@ -3776,8 +3808,10 @@ int main()
 								}
 							}
 							updatebotscreen = true;
-							bgm_menu.stop();
-							sfx_launch.play();
+							if (dspfirmfound) {
+								bgm_menu.stop();
+								sfx_launch.play();
+							}
 						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
 							if (titleboxXmoveright == false) {
@@ -3790,8 +3824,10 @@ int main()
 								if (twlsettings_forwardervalue == 1) {
 									if (i == 0) {
 										if (!playwrongsounddone) {
-											sfx_wrong.stop();
-											sfx_wrong.play();
+											if (dspfirmfound) {
+												sfx_wrong.stop();
+												sfx_wrong.play();
+											}
 											playwrongsounddone = true;
 										}
 									} else {
@@ -3826,16 +3862,20 @@ int main()
 							}
 						}
 						updatebotscreen = true;
-						bgm_menu.stop();
-						sfx_launch.play();
+						if (dspfirmfound) {
+							bgm_menu.stop();
+							sfx_launch.play();
+						}
 					} else if(hHeld & KEY_RIGHT){
 						//titleboxXmovepos -= 64;
 						if (titleboxXmoveleft == false) {
 							if (twlsettings_forwardervalue == 1) {
 								if (i == 0) {
 									if (!playwrongsounddone) {
-										sfx_wrong.stop();
-										sfx_wrong.play();
+										if (dspfirmfound) {
+											sfx_wrong.stop();
+											sfx_wrong.play();
+										}
 										playwrongsounddone = true;
 									}
 								} else {
@@ -3869,13 +3909,13 @@ int main()
 			if (settings_subscreenmode == 2) {
 				if(hDown & KEY_LEFT && twlsettings_flashcardvalue != 0){
 					twlsettings_flashcardvalue--; // Flashcard
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if(hDown & KEY_RIGHT && twlsettings_flashcardvalue != 6){
 					twlsettings_flashcardvalue++; // Flashcard
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if(hDown & KEY_A || hDown & KEY_B){
 					settings_subscreenmode = 1;
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				}
 			} else if (settings_subscreenmode == 1) {
 				if(hDown & KEY_A){
@@ -3917,22 +3957,26 @@ int main()
 							twlsettings_lockarm9scfgextvalue = 0;
 						}
 					}
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 7){
 					twlsettingscursorPosition++;
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && twlsettingscursorPosition != 0){
 					twlsettingscursorPosition--;
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if(hDown & KEY_L){
 					settings_subscreenmode = 0;
-					sfx_switch.stop();	// Prevent freezing
-					sfx_switch.play();
+					if (dspfirmfound) {
+						sfx_switch.stop();	// Prevent freezing
+						sfx_switch.play();
+					}
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
 					fadeout = true;
-					//bgm_settings.stop();
-					sfx_back.play();
+					if (dspfirmfound) {
+						// bgm_settings.stop();
+						sfx_back.play();
+					}
 				}
 			} else {
 				if(hDown & KEY_A || hDown & KEY_RIGHT){
@@ -3953,7 +3997,7 @@ int main()
 							settings_countervalue = 0;
 						}
 					}
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} if(hDown & KEY_LEFT){
 					if (settingscursorPosition == 0) {
 						settings_colorvalue--; // Color
@@ -3961,23 +4005,27 @@ int main()
 							settings_colorvalue = 18;
 						}
 						LoadColor();
-						sfx_select.play();
+						if (dspfirmfound) { sfx_select.play(); }
 					} 
 				} else if((hDown & KEY_DOWN) && settingscursorPosition != 2){
 					settingscursorPosition++;
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
 					settingscursorPosition--;
-					sfx_select.play();
+					if (dspfirmfound) { sfx_select.play(); }
 				} else if(hDown & KEY_R){
 					settings_subscreenmode = 1;
-					sfx_switch.stop();	// Prevent freezing
-					sfx_switch.play();
+					if (dspfirmfound) {
+						sfx_switch.stop();	// Prevent freezing
+						sfx_switch.play();
+					}
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
 					fadeout = true;
-					//bgm_settings.stop();
-					sfx_back.play();
+					if (dspfirmfound) {
+						// bgm_settings.stop();
+						sfx_back.play();
+					}
 				}
 			}
 		}
@@ -4051,7 +4099,7 @@ int main()
 	sf2d_free_texture(boxarttex4);
 	sf2d_free_texture(boxarttex5);
 	sf2d_free_texture(boxarttex6);
-	ndspExit();
+	if (dspfirmfound) { ndspExit(); }
 	sf2d_fini();
 
     return 0;
