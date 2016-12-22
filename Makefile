@@ -13,8 +13,8 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 # External tools
 #---------------------------------------------------------------------------------
-MAKEROM 	?= ../tools/makerom.exe
-BANNERTOOL 	?= ../tools/bannertool.exe
+MAKEROM 	?= makerom
+BANNERTOOL 	?= bannertool
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
