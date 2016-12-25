@@ -2341,6 +2341,9 @@ int main()
 
 		u8 batteryChargeState = 0;
 		u8 batteryLevel = 0;
+		// Definition for batteryIcon and ptmuInit service
+		u32 batteryIcon = 0;
+		ptmuInit();
 		
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
@@ -2499,7 +2502,25 @@ int main()
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
 				batteryIcon = batterychrgtex;
 			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
-				batteryIcon = battery5tex;
+				switch (batteryLevel){
+					case 5:
+						if (batteryChargeState){
+							batteryIcon = battery5tex;
+						}							
+					case 4:
+						batteryIcon = battery4tex;
+						break;
+					case 3:
+						batteryIcon = battery3tex;
+						break;
+					case 2:
+						batteryIcon = battery2tex;
+						break;	
+					case 1:
+						batteryIcon = battery1tex;
+						break;
+				}
+
 			} else {
 				batteryIcon = battery0tex;
 			}
@@ -2635,10 +2656,29 @@ int main()
 				sf2d_free_texture(startbordertex);
 				colortexloaded = false;
 			}
+			
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
 				batteryIcon = setbatterychrgtex;
 			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
-				batteryIcon = setbattery5tex;
+				switch (batteryLevel){
+					case 5:
+						if (batteryChargeState){
+							batteryIcon = setbattery5tex;
+						}
+					case 4:
+						batteryIcon = setbattery4tex;
+						break;
+					case 3:
+						batteryIcon = setbattery3tex;
+						break;
+					case 2:
+						batteryIcon = setbattery2tex;
+						break;	
+					case 1:
+						batteryIcon = setbattery1tex;
+						break;
+				}
+
 			} else {
 				batteryIcon = setbattery0tex;
 			}
@@ -4046,6 +4086,7 @@ int main()
 	romfsExit();
 	sdmcExit();
 	aptExit();
+	ptmuExit();
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(shoulderLtex);
