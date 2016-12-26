@@ -2299,10 +2299,9 @@ int main()
 	memset(param, 0, sizeof(param));
 	memset(hmac, 0, sizeof(hmac));
 	if(settings_autoupdatevalue == 1){
-		remove("/_nds/tmp.nds");
-		downloadfile("https://dl.joshuadoes.com/?platform=3DS&app=nds-bootstrap-dldi&channel=fresh&version=latest&url&download","/_nds/tmp.nds");
-		rename("sdmc:/_nds/bootstrap-dldi.nds","sdmc:/_nds/oldbootsrap.nds");
-		rename("sdmc:/_nds/tmp.nds","sdmc:/_nds/bootstrap-dldi.nds");
+		remove("/_nds/bootstrap-dldi.nds");
+		downloadfile("https://joshuadoes.com/projects/3DSHomebrew/BUILDS/nds-bootstrap/bootstrap-dldi.nds","/_nds/bootstrap-dldi.nds");
+	
 	}
 	// Loop as long as the status is not exit
 	while(run && aptMainLoop()) {
