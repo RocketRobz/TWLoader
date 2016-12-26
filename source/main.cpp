@@ -71,6 +71,7 @@ const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
 const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 const char* settingsini_frontend_counter = "COUNTER";
+const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 //char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
 const char* settingsini_twlmode = "TWL-MODE";
@@ -117,11 +118,13 @@ const char* settings_colortext = "Color";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
+const char* settings_autoupdatetext = "Auto-update bootstrap";
 
 const char* settings_colorvaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
+const char* settings_autoupdatevaluetext;
 
 const char* settings_lrpicktext = "Left/Right: Pick";
 const char* settings_absavereturn = "A/B: Save and Return";
@@ -131,6 +134,7 @@ int settings_colorvalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
+int settings_autoupdatevalue;
 
 int romselect_toplayout;
 //	0: Show box art
@@ -235,7 +239,63 @@ Result ptmsysmSetInfoLedPattern(RGBLedPattern pattern)
     if(ret < 0) return ret;
     return ipc[1];
 }
+void downloadfile(const char* url, const char* file){
+	acInit();
+	httpcInit(0x1000);
+	u32 wifistatuts;
+	ACU_GetWifiStatus(&wifistatuts);
+	if(wifistatuts > 0 && wifistatuts < 3){ //Checks if wifi is on
+	u8 method = 0;
+	httpcContext context;
+	u32 statuscode=0;
+	HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
+	if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
+
+	do {
+		if (statuscode >= 301 && statuscode <= 308) {
+			char newurl[4096];
+			httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
+			url = &newurl[0];
+
+			httpcCloseContext(&context);
+		}
+
+		Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
+		httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+
+		if(ret==0){
+			httpcBeginRequest(&context);
+			u32 contentsize=0;
+			httpcGetResponseStatusCode(&context, &statuscode);
+			if (statuscode == 200){
+				u32 readSize = 0;
+				long int bytesWritten = 0;
+				u8* buf = (u8*)malloc(0x1000);
+				memset(buf, 0, 0x1000);
+
+				Handle fileHandle;
+				FS_Path filePath=fsMakePath(PATH_ASCII, file);
+				FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
+
+				do {
+					ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
+					FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
+					bytesWritten += readSize;
+				} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
+
+				FSFILE_Close(fileHandle);
+				svcCloseHandle(fileHandle);
+				free(buf);
+			}
+		}
+	} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
+	httpcCloseContext(&context);
+		
+	}
+	httpcExit();
+	acExit();
+}
 void RainbowLED() {
 	RGBLedPattern pat;
     memset(&pat, 0, sizeof(pat));
@@ -1825,6 +1885,7 @@ void LoadSettings() {
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
+	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
 	// romselect_layout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0);
 	twlsettings_rainbowledvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0);
 	twlsettings_cpuspeedvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0);
@@ -1856,6 +1917,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
 	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, twlsettings_rainbowledvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
@@ -2004,6 +2066,7 @@ int main()
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
 	}
+
 	sound bgm_menu(musicpath);
 	//sound bgm_settings("sdmc:/_nds/twloader/music/settings.wav");
 	sound sfx_launch("romfs:/sounds/launch.wav",2,false);
@@ -2235,7 +2298,12 @@ int main()
 	// Clear both buffers
 	memset(param, 0, sizeof(param));
 	memset(hmac, 0, sizeof(hmac));
-
+	if(settings_autoupdatevalue == 1){
+		remove("/_nds/tmp.nds");
+		downloadfile("https://dl.joshuadoes.com/?platform=3DS&app=nds-bootstrap-dldi&channel=fresh&version=latest&url&download","/_nds/tmp.nds");
+		rename("sdmc:/_nds/bootstrap-dldi.nds","sdmc:/_nds/oldbootsrap.nds");
+		rename("sdmc:/_nds/tmp.nds","sdmc:/_nds/bootstrap-dldi.nds");
+	}
 	// Loop as long as the status is not exit
 	while(run && aptMainLoop()) {
 	//while(run) {
@@ -3225,7 +3293,11 @@ int main()
 					} else if (settings_topbordervalue == 1) {
 						settings_countervaluetext = "On";
 					}
-						
+					if (settings_autoupdatevalue == 0) {
+						settings_autoupdatevaluetext = "Off";
+					} else if (settings_autoupdatevalue == 1){
+						settings_autoupdatevaluetext = "On";
+					}
 					settingstext_bot = "Settings: GUI";
 					settingsYpos = 40;
 					if(settingscursorPosition == 0) {
@@ -3269,6 +3341,16 @@ int main()
 					} else {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_countertext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_countervaluetext);
+						settingsYpos += 12;
+					}
+					if(settingscursorPosition == 4) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update at launch the bootstrap-dldi.nds file");
+						settingsYpos += 12;
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
 						settingsYpos += 12;
 					}
 				} else if (settings_subscreenmode == 1) {
@@ -3968,6 +4050,11 @@ int main()
 						if(settings_countervalue == 2) {
 							settings_countervalue = 0;
 						}
+					} else if (settingscursorPosition == 4) {
+						settings_autoupdatevalue++; // Enable or disable autoupdate
+						if(settings_autoupdatevalue == 2) {
+							settings_autoupdatevalue = 0;
+						}
 					}
 					if (dspfirmfound) { sfx_select.play(); }
 				} if(hDown & KEY_LEFT){
@@ -3979,7 +4066,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 3){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 4){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
