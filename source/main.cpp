@@ -72,6 +72,7 @@ const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 const char* settingsini_frontend_counter = "COUNTER";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
+const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
 //char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
 const char* settingsini_twlmode = "TWL-MODE";
@@ -110,7 +111,7 @@ const char* noromtext2;
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 2.0";
+const char* settings_vertext = "Ver. 2.0.1";
 
 const char* settingstext_bot;
 
@@ -119,12 +120,14 @@ const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
+const char* settings_autodltext = "Auto-download latest TWLoader";
 
 const char* settings_colorvaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
 const char* settings_autoupdatevaluetext;
+const char* settings_autodlvaluetext;
 
 const char* settings_lrpicktext = "Left/Right: Pick";
 const char* settings_absavereturn = "A/B: Save and Return";
@@ -135,6 +138,7 @@ int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
 int settings_autoupdatevalue;
+int settings_autodlvalue;
 
 int romselect_toplayout;
 //	0: Show box art
@@ -1886,6 +1890,7 @@ void LoadSettings() {
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
+	settings_autodlvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autodl, 0);
 	// romselect_layout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0);
 	twlsettings_rainbowledvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0);
 	twlsettings_cpuspeedvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0);
@@ -1918,6 +1923,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autodl, settings_autodlvalue);
 	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, twlsettings_rainbowledvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
@@ -2208,6 +2214,44 @@ int main()
 		closedir (fcboxartdir);
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
+	
+	if(settings_autodlvalue == 1){
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (GUI CIA)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (TWLNAND side CIA)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+	}
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	
+	if(settings_autoupdatevalue == 2){
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+	} else if(settings_autoupdatevalue == 1){
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
+	}
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 		
 	char str2[20] = {0};
 	std::sprintf(str2, "%d", fcfiles.size());
@@ -2298,9 +2342,6 @@ int main()
 	// Clear both buffers
 	memset(param, 0, sizeof(param));
 	memset(hmac, 0, sizeof(hmac));
-	if(settings_autoupdatevalue == 1){
-		downloadfile("https://joshuadoes.com/projects/3DSHomebrew/BUILDS/nds-bootstrap/bootstrap-dldi.nds","/_nds/bootstrap-dldi.nds");
-	}
 	// Loop as long as the status is not exit
 	while(run && aptMainLoop()) {
 	//while(run) {
@@ -2767,7 +2808,12 @@ int main()
 					fadeout = false;
 					fadein = true;
 				} else {
-					run = false;
+					// run = false;
+					screenoff();
+					SaveSettings();
+					if (twlsettings_rainbowledvalue == 1) {
+						RainbowLED(); }
+					applaunchon = true;
 				}
 			}
 		}
@@ -3290,10 +3336,17 @@ int main()
 					} else if (settings_topbordervalue == 1) {
 						settings_countervaluetext = "On";
 					}
-					if (settings_autoupdatevalue == 0) {
+					if (settings_autoupdatevalue == 2) {
+						settings_autoupdatevaluetext = "Unofficial";
+					} else if (settings_autoupdatevalue == 1) {
+						settings_autoupdatevaluetext = "Release";
+					} else if (settings_autoupdatevalue == 0){
 						settings_autoupdatevaluetext = "Off";
-					} else if (settings_autoupdatevalue == 1){
-						settings_autoupdatevaluetext = "On";
+					}
+					if (settings_autodlvalue == 1) {
+						settings_autodlvaluetext = "On";
+					} else if (settings_autodlvalue == 0){
+						settings_autodlvaluetext = "Off";
 					}
 					settingstext_bot = "Settings: GUI";
 					settingsYpos = 40;
@@ -3343,11 +3396,22 @@ int main()
 					if(settingscursorPosition == 4) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
-						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update at launch the bootstrap-dldi.nds file");
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
 						settingsYpos += 12;
 					} else {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
+						settingsYpos += 12;
+					}
+					if(settingscursorPosition == 5) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodltext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodlvaluetext);
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "TWLoader version at launch.");
+						settingsYpos += 12;
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autodltext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autodlvaluetext);
 						settingsYpos += 12;
 					}
 				} else if (settings_subscreenmode == 1) {
@@ -3938,14 +4002,16 @@ int main()
 							titleboxXmoveleft = true;
 						}
 						updatebotscreen = true;
-					} /* else if (hDown & KEY_START) {
+					} else if (hDown & KEY_SELECT) {
 						titleboxXmovetimer = 1;
+						twlsettings_launchslot1value = 2;
 						fadeout = true;
 						updatebotscreen = true;
-					} */ /* else if (hDown & KEY_SELECT) {
-						screenmode = 1;
-						updatebotscreen = true;
-					} */
+						if (dspfirmfound) {
+							bgm_menu.stop();
+							sfx_launch.play();
+						}
+					}
 				}
 			//}
 		} else if (screenmode == 1) {
@@ -4049,8 +4115,13 @@ int main()
 						}
 					} else if (settingscursorPosition == 4) {
 						settings_autoupdatevalue++; // Enable or disable autoupdate
-						if(settings_autoupdatevalue == 2) {
+						if(settings_autoupdatevalue == 3) {
 							settings_autoupdatevalue = 0;
+						}
+					} else if (settingscursorPosition == 5) {
+						settings_autodlvalue++; // Enable or disable autodownload
+						if(settings_autodlvalue == 2) {
+							settings_autodlvalue = 0;
 						}
 					}
 					if (dspfirmfound) { sfx_select.play(); }
@@ -4063,7 +4134,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 4){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 5){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
