@@ -130,7 +130,8 @@ int main(int argc, char **argv) {
 		
 		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 1) { HealthandSafety_MSG = true; }
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
-		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
+		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
+			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;

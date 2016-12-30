@@ -83,6 +83,7 @@ const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
 const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
 const char* settingsini_twl_resetslot1 = "RESET_SLOT1";
 const char* settingsini_twl_debug = "DEBUG";
+const char* settingsini_twl_gbarunner = "GBARUNNER";
 const char* settingsini_twl_forwarder = "FORWARDER";
 const char* settingsini_twl_flashcard = "FLASHCARD";
 // End
@@ -157,12 +158,13 @@ const char* romsel_counter2sd;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
-std::string fat = "fat:/roms/nds/";
+std::string sdmc = "sdmc:/";
+std::string fat = "fat:/";
 std::string slashchar = "/";
 std::string woodfat = "fat0:/";
 std::string dstwofat = "fat1:/";
-std::string romfolder = "sdmc:/roms/nds/";
-std::string flashcardfolder = "sdmc:/roms/flashcard/nds/";
+std::string romfolder = "roms/nds/";
+std::string flashcardfolder = "roms/flashcard/nds/";
 const char* bnriconfolder = "sdmc:/_nds/twloader/bnricons/";
 const char* fcbnriconfolder = "sdmc:/_nds/twloader/bnricons/flashcard/";
 const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
@@ -212,6 +214,7 @@ int twlsettings_launchslot1value;
 int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
 int twlsettings_lockarm9scfgextvalue;
+int gbarunnervalue = 0;
 
 
 Handle ptmsysmHandle = 0;
@@ -1940,9 +1943,10 @@ void SaveSettings() {
 	}
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
 	// Set ROM path if ROM is selected
 	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
+		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+romfolder+rom);
 	}
 	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
@@ -2810,6 +2814,26 @@ int main()
 				} else {
 					// run = false;
 					screenoff();
+					if (twlsettings_forwardervalue == 1) {
+						if (twlsettings_flashcardvalue == 0) {
+							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
+							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 2 || twlsettings_flashcardvalue == 4 || twlsettings_flashcardvalue == 5) {
+							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
+						} else if (twlsettings_flashcardvalue == 6) {
+							CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+						}
+					}
+					gbarunnervalue = 1;
 					SaveSettings();
 					if (twlsettings_rainbowledvalue == 1) {
 						RainbowLED(); }
@@ -3015,7 +3039,7 @@ int main()
 				} else {
 					screenoff();
 					if (twlsettings_forwardervalue == 1) {
-						CIniFile setfcrompathini( flashcardfolder+rom );
+						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						if (twlsettings_flashcardvalue == 0) {
 							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
@@ -3093,7 +3117,7 @@ int main()
 									if (fcfiles.size() != 0)
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
-									CIniFile setfcrompathini( flashcardfolder+flashcardrom );
+									CIniFile setfcrompathini( sdmc+flashcardfolder+flashcardrom );
 									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
 									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
 									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
@@ -3708,7 +3732,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(applaunchprep == false) {
+				if(applaunchprep == false || fadealpha == 255) {
 					if (settings_locswitchvalue == 1) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
@@ -4003,14 +4027,23 @@ int main()
 						}
 						updatebotscreen = true;
 					} else if (hDown & KEY_SELECT) {
-						titleboxXmovetimer = 1;
-						twlsettings_launchslot1value = 2;
-						fadeout = true;
-						updatebotscreen = true;
-						if (dspfirmfound) {
-							bgm_menu.stop();
-							sfx_launch.play();
+						if (titleboxXmovetimer == 0) {
+							titleboxXmovetimer = 1;
+							romfolder = "_nds/";
+							rom = "GBARunner2.nds";
+							if (twlsettings_forwardervalue == 1) {
+								twlsettings_launchslot1value = 1;
+							} else {
+								twlsettings_launchslot1value = 0;
+							}
+							fadeout = true;
+							updatebotscreen = true;
+							if (dspfirmfound) {
+								bgm_menu.stop();
+								sfx_launch.play();
+							}
 						}
+						
 					}
 				}
 			//}
