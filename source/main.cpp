@@ -34,6 +34,17 @@ CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
+sftd_font *font;
+sf2d_texture *settingstex;
+
+int screenmode = 0;
+// 0: ROM select
+// 1: Settings
+	
+int settings_subscreenmode = 0;
+// 0: Frontend settings
+// 1: NTR/TWL-mode settings
+
 int color_Rvalue;
 int color_Gvalue;
 int color_Bvalue;
@@ -50,6 +61,7 @@ const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
 const char* topbgloc;
+const char* bottomloc;
 const char* dotcircleloc;
 const char* startborderloc;
 const char* musicpath = "romfs:/null.wav";
@@ -65,15 +77,15 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 
 // Settings .ini file
 const char* settingsini_frontend = "FRONTEND";
-//char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
+//const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
 const char* settingsini_frontend_color = "COLOR";
 const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
 const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
+const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
 const char* settingsini_frontend_counter = "COUNTER";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
-//char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
 const char* settingsini_twlmode = "TWL-MODE";
 const char* settingsini_twl_rainbowled = "RAINBOW_LED";
@@ -101,18 +113,17 @@ const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 const char* Lshouldertext;
 const char* Rshouldertext;
 
-const char* Lshouldertext_boxart = "Box Art";
-const char* Lshouldertext_blank = "Blank";
-const char* Rshouldertext_sdcard = "SD Card";
-const char* Rshouldertext_flashcard = "Flashcard";
-
 const char* noromtext1;
 const char* noromtext2;
 
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 2.0.1";
+const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
+const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
+const char* settings_startbuttontext = "START: Download TWLoader CIA files";
+
+const char* settings_vertext = "Ver. 2.1";
 
 const char* settingstext_bot;
 
@@ -120,6 +131,7 @@ const char* settings_colortext = "Color";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
+const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
 
@@ -127,6 +139,7 @@ const char* settings_colorvaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
+const char* settings_custombotvaluetext;
 const char* settings_autoupdatevaluetext;
 const char* settings_autodlvaluetext;
 
@@ -138,6 +151,7 @@ int settings_colorvalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
+int settings_custombotvalue;
 int settings_autoupdatevalue;
 int settings_autodlvalue;
 
@@ -303,6 +317,53 @@ void downloadfile(const char* url, const char* file){
 	httpcExit();
 	acExit();
 }
+
+void DownloadTWLoaderCIAs() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
+	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
+	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+}
+
+void UpdateBootstrapUnofficial() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+}
+
+void UpdateBootstrapRelease() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
+}
+
 void RainbowLED() {
 	RGBLedPattern pat;
     memset(&pat, 0, sizeof(pat));
@@ -548,6 +609,18 @@ void LoadColor() {
 		color_Rvalue = 255;
 		color_Gvalue = 255;
 		color_Bvalue = 0;
+	}
+}
+
+void LoadBottomImage() {
+	bottomloc = "romfs:/graphics/bottom.png";
+	
+	if (settings_custombotvalue == 1) {
+		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
+			bottomloc = "sdmc:/_nds/twloader/bottom.png";
+		} else {
+			bottomloc = "romfs:/graphics/bottom.png";
+		}
 	}
 }
 
@@ -1891,6 +1964,7 @@ void LoadSettings() {
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
+	settings_custombotvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
 	settings_autodlvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autodl, 0);
@@ -1924,6 +1998,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autodl, settings_autodlvalue);
@@ -2011,15 +2086,25 @@ int main()
     sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(1);
+	
+	// Clear logo screen
+	sf2d_start_frame(GFX_TOP, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	// Font loading
 	sftd_init();
-	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
+	font = sftd_load_font_file("romfs:/font.ttf");
 	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 20, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
 
 	LoadSettings();
 
 	LoadColor();
+	LoadBottomImage();
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM);
@@ -2044,7 +2129,7 @@ int main()
 	sf2d_texture *setbattery3tex = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
 	sf2d_texture *setbattery4tex = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
 	sf2d_texture *setbattery5tex = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/graphics/bottom.png", SF2D_PLACE_RAM); // Bottom of menu
+	sf2d_texture *bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
 	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_placeholder.png", SF2D_PLACE_RAM); // Icon placeholder at bottom of menu
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *whomeicontex = sfil_load_PNG_file("romfs:/graphics/whomeicon.png", SF2D_PLACE_RAM); // HOME icon (Settings)
@@ -2057,7 +2142,7 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
-	sf2d_texture *settingstex = sfil_load_PNG_file("romfs:/graphics/settings/screen.png", SF2D_PLACE_RAM); // Bottom of settings screen
+	settingstex = sfil_load_PNG_file("romfs:/graphics/settings/screen.png", SF2D_PLACE_RAM); // Bottom of settings screen
 	sf2d_texture *settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	sf2d_texture *dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
@@ -2220,38 +2305,16 @@ int main()
 	}
 	
 	if(settings_autodlvalue == 1){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (GUI CIA)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (TWLNAND side CIA)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+		DownloadTWLoaderCIAs();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
 	if(settings_autoupdatevalue == 2){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+		UpdateBootstrapUnofficial();
 	} else if(settings_autoupdatevalue == 1){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
+		UpdateBootstrapRelease();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
@@ -2325,15 +2388,7 @@ int main()
 	
 	int startbordermovepos;
 	float startborderscalesize;
-			
-	int screenmode = 0;
-	// 0: ROM select
-	// 1: Settings
 	
-	int settings_subscreenmode = 0;
-	// 0: Frontend settings
-	// 1: NTR/TWL-mode settings
-			
 	int settingsXpos = 24;
 	int settingsvalueXpos = 240;
 	int settingsYpos;
@@ -2375,6 +2430,7 @@ int main()
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				dotcircletex = sfil_load_PNG_file(dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
+				bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
 				colortexloaded = true;
 			}
 			if (boxarttexloaded == false) {
@@ -2678,6 +2734,7 @@ int main()
 				sf2d_free_texture(topbgtex);
 				sf2d_free_texture(dotcircletex);
 				sf2d_free_texture(startbordertex);
+				sf2d_free_texture(bottomtex);
 				colortexloaded = false;
 			}
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
@@ -2725,6 +2782,11 @@ int main()
 				}
 			} else {
 				sf2d_draw_texture(settingslogotex, offset3dl_boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+				if (settings_subscreenmode == 0) {
+					sftd_draw_textf(font, offset3dl_disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+					sftd_draw_textf(font, offset3dl_disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+					sftd_draw_textf(font, offset3dl_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
+				}
 			}
 			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
 			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
@@ -2755,6 +2817,11 @@ int main()
 				}
 			} else {
 				sf2d_draw_texture(settingslogotex, offset3dr_boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+				if (settings_subscreenmode == 0) {
+					sftd_draw_textf(font, offset3dr_disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+					sftd_draw_textf(font, offset3dr_disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+					sftd_draw_textf(font, offset3dr_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
+				}
 			}
 			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
 			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
@@ -3360,6 +3427,11 @@ int main()
 					} else if (settings_topbordervalue == 1) {
 						settings_countervaluetext = "On";
 					}
+					if (settings_custombotvalue == 0) {
+						settings_custombotvaluetext = "Off";
+					} else if (settings_topbordervalue == 1) {
+						settings_custombotvaluetext = "On";
+					}
 					if (settings_autoupdatevalue == 2) {
 						settings_autoupdatevaluetext = "Unofficial";
 					} else if (settings_autoupdatevalue == 1) {
@@ -3418,6 +3490,17 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 4) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombottext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombotvaluetext);
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "for the game menu.");
+						settingsYpos += 12;
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombottext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombotvaluetext);
+						settingsYpos += 12;
+					}
+					if(settingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -3427,7 +3510,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 5) {
+					if(settingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodltext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodlvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -3648,14 +3731,14 @@ int main()
 		}
 		if (screenmode == 0) {
 			if (romselect_toplayout == 1) {
-				Lshouldertext = Lshouldertext_boxart;
+				Lshouldertext = "Box Art";
 			} else {
-				Lshouldertext = Lshouldertext_blank;
+				Lshouldertext = "Blank";
 			}
 			if (twlsettings_forwardervalue == 1) {
-				Rshouldertext = Rshouldertext_sdcard;
+				Rshouldertext = "SD Card";
 			} else {
-				Rshouldertext = Rshouldertext_flashcard;
+				Rshouldertext = "Flashcard";
 			}
 			/* if (i == 0) {	// If no ROMs are found
 				romselect_layout = 1;
@@ -4147,11 +4230,17 @@ int main()
 							settings_countervalue = 0;
 						}
 					} else if (settingscursorPosition == 4) {
+						settings_custombotvalue++; // Custom bottom image
+						if(settings_custombotvalue == 2) {
+							settings_custombotvalue = 0;
+						}
+						LoadBottomImage();
+					} else if (settingscursorPosition == 5) {
 						settings_autoupdatevalue++; // Enable or disable autoupdate
 						if(settings_autoupdatevalue == 3) {
 							settings_autoupdatevalue = 0;
 						}
-					} else if (settingscursorPosition == 5) {
+					} else if (settingscursorPosition == 6) {
 						settings_autodlvalue++; // Enable or disable autodownload
 						if(settings_autodlvalue == 2) {
 							settings_autodlvalue = 0;
@@ -4167,7 +4256,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 5){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 6){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
@@ -4179,6 +4268,12 @@ int main()
 						sfx_switch.stop();	// Prevent freezing
 						sfx_switch.play();
 					}
+				} else if(hDown & KEY_X){
+					UpdateBootstrapRelease();
+				} else if(hDown & KEY_Y){
+					UpdateBootstrapUnofficial();
+				} else if(hDown & KEY_START){
+					DownloadTWLoaderCIAs();
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
 					fadeout = true;
@@ -4224,7 +4319,7 @@ int main()
 	sf2d_free_texture(setbattery3tex);
 	sf2d_free_texture(setbattery4tex);
 	sf2d_free_texture(setbattery5tex);
-	sf2d_free_texture(bottomtex);
+	if (colortexloaded == true) { sf2d_free_texture(bottomtex); }
 	sf2d_free_texture(iconunktex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(whomeicontex);
