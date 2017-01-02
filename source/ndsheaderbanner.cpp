@@ -19,6 +19,8 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 	
 	u32 textureData[1024];	
 	
+	fseek ( ndsFile , 0 , SEEK_SET );
+	
 	fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
 	
 	fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
@@ -36,6 +38,7 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 		textureData[2*i+1] =  colorConvert(myBanner.palette[secondPixel], firstPixel);
 	}
   
+    fseek ( ndsFile , 0 , SEEK_SET );
   
     return sf2d_create_texture_mem_RGBA8(&textureData, 32, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
