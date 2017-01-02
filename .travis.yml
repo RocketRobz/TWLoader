@@ -19,7 +19,7 @@ install:
   - cd ..  
   - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
-  - cp -R /tmp/portlibs ${DEVKITPRO}/
+  - cp -R portlibs ${DEVKITPRO}/
   - wget --no-check-certificate https://codeload.github.com/xerpi/sf2dlib/zip/master -O /tmp/sf2dlib.zip
   - unzip /tmp/sf2dlib.zip
   - cd sf2dlib-master/libsf2d
