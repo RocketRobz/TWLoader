@@ -7,27 +7,27 @@ before_install:
 
 install:
   - sudo perl devkitARMupdate.pl
-  - wget --no-check-certificate https://github.com/smealum/ctrulib/zip/master -O /tmp/ctrulib.zip
+  - wget --no-check-certificate https://codeload.github.com/smealum/ctrulib/zip/master -O /tmp/ctrulib.zip
   - unzip /tmp/ctrulib.zip
   - cd ctrulib-master/libctru
   - make && sudo make install
   - cd ../..
-  - wget --no-check-certificate https://github.com/fincs/citro3d/zip/master -O /tmp/citro3d.zip
+  - wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/master -O /tmp/citro3d.zip
   - unzip /tmp/citro3d.zip
   - cd citro3d-master
   - make && sudo make install
   - cd ..
-  - wget --no-check-certificate https://github.com/xerpi/sf2dlib/zip/master -O /tmp/sf2dlib.zip
+  - wget --no-check-certificate https://codeload.github.com/xerpi/sf2dlib/zip/master -O /tmp/sf2dlib.zip
   - unzip /tmp/sf2dlib.zip
   - cd sf2dlib-master/libsf2d
   - make && sudo make install
   - cd ../..
-  - wget --no-check-certificate https://github.com/xerpi/sfillib/zip/master -O /tmp/sfillib.zip
+  - wget --no-check-certificate https://codeload.github.com/xerpi/sfillib/zip/master -O /tmp/sfillib.zip
   - unzip /tmp/sfillib.zip
   - cd sfillib-master/libsfil
   - make && sudo make install
   - cd ../..
-  - wget --no-check-certificate https://github.com/xerpi/sftdlib/zip/master -O /tmp/sftdlib.zip
+  - wget --no-check-certificate https://codeload.github.com/xerpi/sftdlib/zip/master -O /tmp/sftdlib.zip
   - unzip /tmp/sftdlib.zip
   - cd sftdlib-master/libsftd
   - make && sudo make install
