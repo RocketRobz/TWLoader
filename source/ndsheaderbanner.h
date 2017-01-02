@@ -29,8 +29,8 @@
 \brief Defines for many of the regions of memory on the DS as well as a few control functions for memory bus access
 */
 
-//#ifndef NDS_MEMORY_INCLUDE
-//#define NDS_MEMORY_INCLUDE
+#ifndef NDS_HEADER
+#define NDS_HEADER
 
 //#include "ndstypes.h"
 
@@ -78,13 +78,14 @@
 //#define VRAM          ((u16*)0x06000000)
 //#endif
 
-
+#include <sf2d.h>
+#include <stdio.h>
 
 /*!
 	\brief the GBA file header format.
 	See gbatek for more info.
 */
-struct sGBAHeader {
+typedef struct {
 	u32 entryPoint;		//!< 32 bits arm opcode to jump to executable code.
 	u8 logo[156];		//!< nintendo logo needed for booting the game.
 	char title[0xC];	//!< 12 characters for the game title.
@@ -98,7 +99,7 @@ struct sGBAHeader {
 	u8 version;			//!< the version of the game.
 	u8 complement;		//!< complement checksum of the gba header.
 	u16 checksum;		//!< a 16 bit checksum? (gbatek says its unused/reserved).
-} GBAHeader;
+} sGBAHeader;
 
 //#define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
@@ -106,7 +107,7 @@ struct sGBAHeader {
 	\brief the NDS file header format
 	See gbatek for more info.
 */
-struct sNDSHeader {
+typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
 	char gameCode[4];			//!< 4 characters for the game code.
 	char makercode[2];			//!< identifies the (commercial) developer.
@@ -164,7 +165,8 @@ struct sNDSHeader {
 	u32 offset_0x16C;			//reserved?
 
 	u8 zero[0x90];
-} NDSHeader;
+} sNDSHeader;
+
 
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
@@ -173,16 +175,16 @@ struct sNDSHeader {
 	\brief the NDS banner format.
 	See gbatek for more information.
 */
-struct sNDSBanner {
+typedef struct {
   u16 version;			//!< version of the banner.
   u16 crc;				//!< 16 bit crc/checksum of the banner.
   u8 reserved[28];
   u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
   u16 palette[16];		//!< the pallete of the icon.
   u16 titles[6][128];	//!< title of the game in 6 different languages.
-} NDSBanner;
+} sNDSBanner;
+
+sf2d_texture* grabIcon(FILE* ndsFile);
 
 
-
-
-//#endif
+#endif // NDS_HEADER
