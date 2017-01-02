@@ -17,7 +17,7 @@ install:
   - cd citro3d-master
   - make && sudo make install
   - cd ..  
-  - wget --no-check-certificate https://github-cloud.s3.amazonaws.com/releases/34987440/c6510886-916d-11e5-9511-86cb42349489.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20170102%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170102T202452Z&X-Amz-Expires=300&X-Amz-Signature=64ec6cacf2e8643fce7545f2c8ec09e02cb9b4b8726107e1cfc315829e5aee87&X-Amz-SignedHeaders=host&actor_id=16766068&response-content-disposition=attachment%3B%20filename%3Dportlibs-linux.zip&response-content-type=application%2Foctet-stream -O /tmp/3ds_portlibs.zip
+  - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
   - cp -R /tmp/portlibs ${DEVKITPRO}/
   - wget --no-check-certificate https://codeload.github.com/xerpi/sf2dlib/zip/master -O /tmp/sf2dlib.zip
