@@ -26,12 +26,12 @@ extern "C" {
 void vramcpy_ui (void* dest, const void* src, int size);
 void BootJingle (void);
 void BootJingleDSi (void);
-void BootSplashDSi (void);
+void BootSplashDSi (bool HealthandSafety_MSG);
 void CartridgePrompt (void);
 void CartridgePromptDSi (void);
 void CartridgePromptNoHS (void);
-void BootSplashDS (void);
-void BootSplashInit (bool UseNTRSplash);
+void BootSplashDS (bool HealthandSafety_MSG);
+void BootSplashInit (bool UseNTRSplash, bool HealthandSafety_MSG);
 
 #ifdef __cplusplus
 }

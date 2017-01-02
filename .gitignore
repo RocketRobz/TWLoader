@@ -1,0 +1,7 @@
+*.cia
+*.3dsx
+*.bin
+*.elf
+*.smdh
+*.dat
+build

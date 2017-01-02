@@ -113,29 +113,44 @@ int main(int argc, char **argv) {
 	// REG_SCFG_CLK = 0x80;
 	REG_SCFG_CLK = 0x85;
 
+	bool HealthandSafety_MSG = false;
 	bool UseNTRSplash = true;
 	bool TriggerExit = false;
-	std::string	bootstrapPath = "";
+	// std::string	bootstrapPath = "";
 
-	scanKeys();
-	int pressed = keysDown();
+	bool consoleOn = false;
+
+	/* scanKeys();
+	int pressed = keysDown(); */
 
 	if (fatInitDefault()) {
-		CIniFile hbmenuini( "sd:/_nds/twloader/settings.ini" );
+		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
-		bootstrapPath = hbmenuini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");	
-				
-		if(hbmenuini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
-		if(hbmenuini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { if( pressed & KEY_B ) {} else { BootSplashInit(UseNTRSplash); } }
-		if(hbmenuini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+		// bootstrapPath = twloaderini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");
+		
+		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 1) { HealthandSafety_MSG = true; }
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
+		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
+			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
+		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+			consoleDemoInit();
+			consoleOn = true;
+		}
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+			REG_SCFG_CLK |= 0x1;
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("TWL_CLOCK ON\n");		
+			}
+		} else {
 			REG_SCFG_CLK = 0x80;
 			fifoSendValue32(FIFO_USER_04, 1);
 		}
 
-		if(hbmenuini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
-			if(hbmenuini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
+			if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 				if(REG_SCFG_MC == 0x11) { 
-					consoleDemoInit();
+					if (consoleOn == false) {
+						consoleDemoInit(); }
 					printf("Please insert a cartridge...\n");
 					do { swiWaitForVBlank(); } 
 					while (REG_SCFG_MC == 0x11);
@@ -143,14 +158,20 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(hbmenuini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-			if(REG_SCFG_MC == 0x11) { 
-				consoleDemoInit();
-				printf("Please insert a cartridge...\n");
-				do { swiWaitForVBlank(); } 
-				while (REG_SCFG_MC == 0x11);
+		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {} else {
+					fifoSendValue32(FIFO_USER_02, 1);
+					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+						printf("RESET_SLOT1 ON\n");		
+					}
+				}
+			} else {
+				fifoSendValue32(FIFO_USER_02, 1);
+				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+					printf("RESET_SLOT1 ON\n");		
+				}
 			}
-			fifoSendValue32(FIFO_USER_02, 1);
 		}
 
 		fifoSendValue32(FIFO_USER_01, 1);
@@ -159,11 +180,11 @@ int main(int argc, char **argv) {
 		// Only time SCFG should be locked is for compatiblity with NTR retail stuff.
 		// So NTR SCFG values (that preserve SD access) are always used when locking.
 		// Locking Arm9 SCFG kills SD access. So that will not occur here.
-		if(hbmenuini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
 			fifoSendValue32(FIFO_USER_05, 1);
 			REG_SCFG_EXT = 0x83000000;
 		} else {
-			if(hbmenuini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
 				fifoSendValue32(FIFO_USER_06, 1);
 				REG_SCFG_EXT = 0x8307F100;
 			} else {
@@ -175,8 +196,32 @@ int main(int argc, char **argv) {
 
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 		
-		if(hbmenuini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+				printf("Now booting Slot-1 card\n");					
+			}
+		}
+		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0) {
+				runFile("sd:/_dsttfwd/loadcard.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1) {
+				runFile("sd:/_nds/twloader/loadflashcard/r4.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2) {
+				runFile("sd:/_nds/twloader/loadflashcard/r4idsn.nds");
+			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {
+				runFile("sd:/_nds/twloader/loadflashcard/ace_rpg.nds");
+			}
+		}
+		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
+		}
+		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
+				printf("Now setting .nds path\n");	
+				printf ("and booting bootstrap\n");					
+			}
 		}
 	}
 
@@ -187,6 +232,7 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 
 	std::string filename;
+	std::string gamename;
 
 	if (!fatInitDefault()) {
 		// Subscreen as a console
@@ -204,6 +250,7 @@ int main(int argc, char **argv) {
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
+	FILE* ndsfile;
 
 	while(1) {
 
@@ -212,17 +259,34 @@ int main(int argc, char **argv) {
 		break;
 		}
 		
+		struct sNDSHeadersmall {
+			char gameTitle[12];			//!< 12 characters for the game title.
+			char gameCode[4];			//!< 4 characters for the game code.
+			u16 makercode;			//!< identifies the (commercial) developer.
+		} NDSHeader;
+		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-		filename = ReplaceAll( filename, "fat:/", "sd:/");
-		runFile(filename);
+		gamename = bootstrapini.GetString("NDS-BOOTSTRAP", "NDS_PATH","");
+		gamename = ReplaceAll( gamename, "fat:/", "sd:/");
+		ndsfile = fopen(gamename.c_str(),"rb");
+		fread(&NDSHeader,1,sizeof(NDSHeader),ndsfile);
+		
+		if (NDSHeader.makercode != 0x0000) {	// if the launched game is a retail ROM
+			filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+			filename = ReplaceAll( filename, "fat:/", "sd:/");
+			runFile(filename);
+		} else {	// or if the launched game is a homebrew ROM
+			filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH_HB","");
+			filename = ReplaceAll( filename, "fat:/", "sd:/");
+			runFile(filename);
+		}
 		
 		// Subscreen as a console
 		videoSetModeSub(MODE_0_2D);
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
 		
-		iprintf ("bootstrap not found.");
+		iprintf ("bootstrap not found\n");
 		doPause();
 		
 		TriggerExit = true;

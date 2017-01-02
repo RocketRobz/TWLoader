@@ -9,6 +9,13 @@ endif
 TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
+
+#---------------------------------------------------------------------------------
+# External tools
+#---------------------------------------------------------------------------------
+MAKEROM 	?= makerom
+BANNERTOOL 	?= bannertool
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -37,7 +44,7 @@ APP_AUTHOR	:=	Robz8
 APP_DESCRIPTION :=  CTR mode .nds frontend
 ICON		:=	app/icon.png
 BNR_IMAGE	:=  app/banner.png
-BNR_AUDIO	:=	app/BannerAudio.bcwav
+BNR_AUDIO	:=	app/BannerAudio.wav
 RSF_FILE	:=	app/build-cia.rsf
 
 #---------------------------------------------------------------------------------
@@ -145,7 +152,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia $(TARGET).elf app/banner.bin app/icon.bin
 
 
 #---------------------------------------------------------------------------------
@@ -169,11 +176,11 @@ all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
 $(OUTPUT).elf	:	$(OFILES)
 
 $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
-	../tools/bannertool makebanner -i "../app/banner.png" -ca "../app/BannerAudio.bcwav" -o "../app/banner.bin"
+	$(BANNERTOOL) makebanner -i "../app/banner.png" -a "../app/BannerAudio.wav" -o "../app/banner.bin"
 
-	../tools/bannertool makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
+	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-	../tools/makerom -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major 1 -minor 1
+	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major 1 -minor 1
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
