@@ -79,6 +79,7 @@
 //#endif
 
 #include <sf2d.h>
+#include <sfil.h>
 #include <stdio.h>
 
 /*!
