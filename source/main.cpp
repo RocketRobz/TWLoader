@@ -945,45 +945,45 @@ void ChangeBoxArtNo() {
 
 void StoreBNRIconPath() {
 	if (bnriconnum == 0+pagenum*20) {
-		ndsFile1 = tempfilepath;
+		ndsFile1 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 1+pagenum*20) {
-		ndsFile2 = tempfilepath;
+		ndsFile2 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 2+pagenum*20) {
-		ndsFile3 = tempfilepath;
+		ndsFile3 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 3+pagenum*20) {
-		ndsFile4 = tempfilepath;
+		ndsFile4 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 4+pagenum*20) {
-		ndsFile5 = tempfilepath;
+		ndsFile5 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 5+pagenum*20) {
-		ndsFile6 = tempfilepath;
+		ndsFile6 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 6+pagenum*20) {
-		ndsFile7 = tempfilepath;
+		ndsFile7 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 7+pagenum*20) {
-		ndsFile8 = tempfilepath;
+		ndsFile8 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 8+pagenum*20) {
-		ndsFile9 = tempfilepath;
+		ndsFile9 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 9+pagenum*20) {
-		ndsFile10 = tempfilepath;
+		ndsFile10 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 10+pagenum*20) {
-		ndsFile11 = tempfilepath;
+		ndsFile11 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 11+pagenum*20) {
-		ndsFile12 = tempfilepath;
+		ndsFile12 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 12+pagenum*20) {
-		ndsFile13 = tempfilepath;
+		ndsFile13 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 13+pagenum*20) {
-		ndsFile14 = tempfilepath;
+		ndsFile14 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 14+pagenum*20) {
-		ndsFile15 = tempfilepath;
+		ndsFile15 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 15+pagenum*20) {
-		ndsFile16 = tempfilepath;
+		ndsFile16 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 16+pagenum*20) {
-		ndsFile17 = tempfilepath;
+		ndsFile17 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 17+pagenum*20) {
-		ndsFile18 = tempfilepath;
+		ndsFile18 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 18+pagenum*20) {
-		ndsFile19 = tempfilepath;
+		ndsFile19 = fopen(tempimagepath,"rb");
 	} else if (bnriconnum == 19+pagenum*20) {
-		ndsFile20 = tempfilepath;
+		ndsFile20 = fopen(tempimagepath,"rb");
 	}
 }
 
@@ -1236,130 +1236,150 @@ void StoreBoxArtPath() {
 }
 
 void LoadBNRIcon() {
-	if (bnriconnum == 0+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = grabIcon(ndsFile1); // Banner icon
-	} else if (bnriconnum == 1+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = grabIcon(ndsFile2); // Banner icon
-	} else if (bnriconnum == 2+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = grabIcon(ndsFile3); // Banner icon
-	} else if (bnriconnum == 3+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = grabIcon(ndsFile4); // Banner icon
-	} else if (bnriconnum == 4+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = grabIcon(ndsFile5); // Banner icon
-	} else if (bnriconnum == 5+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = grabIcon(ndsFile6); // Banner icon
-	} else if (bnriconnum == 6+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = grabIcon(ndsFile7); // Banner icon
-	} else if (bnriconnum == 7+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = grabIcon(ndsFile8); // Banner icon
-	} else if (bnriconnum == 8+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = grabIcon(ndsFile9); // Banner icon
-	} else if (bnriconnum == 9+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = grabIcon(ndsFile10); // Banner icon
-	} else if (bnriconnum == 10+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = grabIcon(ndsFile11); // Banner icon
-	} else if (bnriconnum == 11+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = grabIcon(ndsFile12); // Banner icon
-	} else if (bnriconnum == 12+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = grabIcon(ndsFile13); // Banner icon
-	} else if (bnriconnum == 13+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = grabIcon(ndsFile14); // Banner icon
-	} else if (bnriconnum == 14+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = grabIcon(ndsFile15); // Banner icon
-	} else if (bnriconnum == 15+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = grabIcon(ndsFile16); // Banner icon
-	} else if (bnriconnum == 16+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = grabIcon(ndsFile17); // Banner icon
-	} else if (bnriconnum == 17+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = grabIcon(ndsFile18); // Banner icon
-	} else if (bnriconnum == 18+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = grabIcon(ndsFile19); // Banner icon
-	} else if (bnriconnum == 19+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = grabIcon(ndsFile20); // Banner icon
-	}
-}
-
-void LoadFCBNRIcon() {
-	if (bnriconnum == 0+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath1, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 1+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath2, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 2+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath3, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 3+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath4, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 4+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath5, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 5+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath6, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 6+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath7, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 7+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath8, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 8+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath9, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 9+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath10, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 10+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath11, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 11+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath12, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 12+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath13, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 13+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath14, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 14+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath15, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 15+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath16, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 16+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath17, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 17+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath18, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 18+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath19, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 19+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath20, SF2D_PLACE_RAM); // Banner icon
+	if (twlsettings_forwardervalue == 0) {
+		if (bnriconnum == 0+pagenum*20) {
+			sf2d_free_texture(bnricontex1);
+			bnricontex1 = grabIcon(ndsFile1); // Banner icon
+			fclose(ndsFile1);
+		} else if (bnriconnum == 1+pagenum*20) {
+			sf2d_free_texture(bnricontex2);
+			bnricontex2 = grabIcon(ndsFile2); // Banner icon
+			fclose(ndsFile2);
+		} else if (bnriconnum == 2+pagenum*20) {
+			sf2d_free_texture(bnricontex3);
+			bnricontex3 = grabIcon(ndsFile3); // Banner icon
+			fclose(ndsFile3);
+		} else if (bnriconnum == 3+pagenum*20) {
+			sf2d_free_texture(bnricontex4);
+			bnricontex4 = grabIcon(ndsFile4); // Banner icon
+			fclose(ndsFile4);
+		} else if (bnriconnum == 4+pagenum*20) {
+			sf2d_free_texture(bnricontex5);
+			bnricontex5 = grabIcon(ndsFile5); // Banner icon
+			fclose(ndsFile5);
+		} else if (bnriconnum == 5+pagenum*20) {
+			sf2d_free_texture(bnricontex6);
+			bnricontex6 = grabIcon(ndsFile6); // Banner icon
+			fclose(ndsFile6);
+		} else if (bnriconnum == 6+pagenum*20) {
+			sf2d_free_texture(bnricontex7);
+			bnricontex7 = grabIcon(ndsFile7); // Banner icon
+			fclose(ndsFile7);
+		} else if (bnriconnum == 7+pagenum*20) {
+			sf2d_free_texture(bnricontex8);
+			bnricontex8 = grabIcon(ndsFile8); // Banner icon
+			fclose(ndsFile8);
+		} else if (bnriconnum == 8+pagenum*20) {
+			sf2d_free_texture(bnricontex9);
+			bnricontex9 = grabIcon(ndsFile9); // Banner icon
+			fclose(ndsFile9);
+		} else if (bnriconnum == 9+pagenum*20) {
+			sf2d_free_texture(bnricontex10);
+			bnricontex10 = grabIcon(ndsFile10); // Banner icon
+			fclose(ndsFile10);
+		} else if (bnriconnum == 10+pagenum*20) {
+			sf2d_free_texture(bnricontex1);
+			bnricontex1 = grabIcon(ndsFile11); // Banner icon
+			fclose(ndsFile11);
+		} else if (bnriconnum == 11+pagenum*20) {
+			sf2d_free_texture(bnricontex2);
+			bnricontex2 = grabIcon(ndsFile12); // Banner icon
+			fclose(ndsFile12);
+		} else if (bnriconnum == 12+pagenum*20) {
+			sf2d_free_texture(bnricontex3);
+			bnricontex3 = grabIcon(ndsFile13); // Banner icon
+			fclose(ndsFile13);
+		} else if (bnriconnum == 13+pagenum*20) {
+			sf2d_free_texture(bnricontex4);
+			bnricontex4 = grabIcon(ndsFile14); // Banner icon
+			fclose(ndsFile14);
+		} else if (bnriconnum == 14+pagenum*20) {
+			sf2d_free_texture(bnricontex5);
+			bnricontex5 = grabIcon(ndsFile15); // Banner icon
+			fclose(ndsFile15);
+		} else if (bnriconnum == 15+pagenum*20) {
+			sf2d_free_texture(bnricontex6);
+			bnricontex6 = grabIcon(ndsFile16); // Banner icon
+			fclose(ndsFile16);
+		} else if (bnriconnum == 16+pagenum*20) {
+			sf2d_free_texture(bnricontex7);
+			bnricontex7 = grabIcon(ndsFile17); // Banner icon
+			fclose(ndsFile17);
+		} else if (bnriconnum == 17+pagenum*20) {
+			sf2d_free_texture(bnricontex8);
+			bnricontex8 = grabIcon(ndsFile18); // Banner icon
+			fclose(ndsFile18);
+		} else if (bnriconnum == 18+pagenum*20) {
+			sf2d_free_texture(bnricontex9);
+			bnricontex9 = grabIcon(ndsFile19); // Banner icon
+			fclose(ndsFile19);
+		} else if (bnriconnum == 19+pagenum*20) {
+			sf2d_free_texture(bnricontex10);
+			bnricontex10 = grabIcon(ndsFile20); // Banner icon
+			fclose(ndsFile20);
+		}
+	} else {
+		if (bnriconnum == 0+pagenum*20) {
+			sf2d_free_texture(bnricontex1);
+			bnricontex1 = sfil_load_PNG_file(bnriconpath1, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 1+pagenum*20) {
+			sf2d_free_texture(bnricontex2);
+			bnricontex2 = sfil_load_PNG_file(bnriconpath2, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 2+pagenum*20) {
+			sf2d_free_texture(bnricontex3);
+			bnricontex3 = sfil_load_PNG_file(bnriconpath3, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 3+pagenum*20) {
+			sf2d_free_texture(bnricontex4);
+			bnricontex4 = sfil_load_PNG_file(bnriconpath4, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 4+pagenum*20) {
+			sf2d_free_texture(bnricontex5);
+			bnricontex5 = sfil_load_PNG_file(bnriconpath5, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 5+pagenum*20) {
+			sf2d_free_texture(bnricontex6);
+			bnricontex6 = sfil_load_PNG_file(bnriconpath6, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 6+pagenum*20) {
+			sf2d_free_texture(bnricontex7);
+			bnricontex7 = sfil_load_PNG_file(bnriconpath7, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 7+pagenum*20) {
+			sf2d_free_texture(bnricontex8);
+			bnricontex8 = sfil_load_PNG_file(bnriconpath8, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 8+pagenum*20) {
+			sf2d_free_texture(bnricontex9);
+			bnricontex9 = sfil_load_PNG_file(bnriconpath9, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 9+pagenum*20) {
+			sf2d_free_texture(bnricontex10);
+			bnricontex10 = sfil_load_PNG_file(bnriconpath10, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 10+pagenum*20) {
+			sf2d_free_texture(bnricontex1);
+			bnricontex1 = sfil_load_PNG_file(bnriconpath11, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 11+pagenum*20) {
+			sf2d_free_texture(bnricontex2);
+			bnricontex2 = sfil_load_PNG_file(bnriconpath12, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 12+pagenum*20) {
+			sf2d_free_texture(bnricontex3);
+			bnricontex3 = sfil_load_PNG_file(bnriconpath13, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 13+pagenum*20) {
+			sf2d_free_texture(bnricontex4);
+			bnricontex4 = sfil_load_PNG_file(bnriconpath14, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 14+pagenum*20) {
+			sf2d_free_texture(bnricontex5);
+			bnricontex5 = sfil_load_PNG_file(bnriconpath15, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 15+pagenum*20) {
+			sf2d_free_texture(bnricontex6);
+			bnricontex6 = sfil_load_PNG_file(bnriconpath16, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 16+pagenum*20) {
+			sf2d_free_texture(bnricontex7);
+			bnricontex7 = sfil_load_PNG_file(bnriconpath17, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 17+pagenum*20) {
+			sf2d_free_texture(bnricontex8);
+			bnricontex8 = sfil_load_PNG_file(bnriconpath18, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 18+pagenum*20) {
+			sf2d_free_texture(bnricontex9);
+			bnricontex9 = sfil_load_PNG_file(bnriconpath19, SF2D_PLACE_RAM); // Banner icon
+		} else if (bnriconnum == 19+pagenum*20) {
+			sf2d_free_texture(bnricontex10);
+			bnricontex10 = sfil_load_PNG_file(bnriconpath20, SF2D_PLACE_RAM); // Banner icon
+		}
 	}
 }
 
@@ -1795,7 +1815,12 @@ int main()
     sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(1);
-	
+
+	// Font loading
+	sftd_init();
+	font = sftd_load_font_file("romfs:/font.ttf");
+	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 20, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
+
 	// Clear logo screen
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_end_frame();
@@ -1804,11 +1829,6 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
-	// Font loading
-	sftd_init();
-	font = sftd_load_font_file("romfs:/font.ttf");
-	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 20, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
 
 	LoadSettings();
 
@@ -2154,9 +2174,8 @@ int main()
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 							strcat(tempfile_fullpath, bnriconfile);
-							tempfilepath = fopen(tempfile_fullpath,"rb");
+							tempimagepath = tempfile_fullpath;
 							StoreBNRIconPath();
-							fclose(tempfilepath);
 						}
 					}
 
@@ -2182,27 +2201,6 @@ int main()
 						}
 						StoreBoxArtPath();
 					}
-					
-					bnriconnum = 0+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 1+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 2+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 3+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 4+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 5+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 6+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 7+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 8+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 9+pagenum*20;
-					LoadBNRIcon();
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
@@ -2249,28 +2247,28 @@ int main()
 						}
 						StoreBoxArtPath();
 					}
-					
-					bnriconnum = 0+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 1+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 2+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 3+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 4+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 5+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 6+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 7+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 8+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 9+pagenum*20;
-					LoadFCBNRIcon();
 				}
+				
+				bnriconnum = 0+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 1+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 2+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 3+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 4+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 5+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 6+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 7+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 8+pagenum*20;
+				LoadBNRIcon();
+				bnriconnum = 9+pagenum*20;
+				LoadBNRIcon();
 				
 				boxartnum = 0+pagenum*20;
 				LoadBoxArt();
@@ -2651,6 +2649,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;			
 				storedcursorPosition = cursorPosition;
+				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
@@ -2661,6 +2660,7 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
+				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
 				// Load the previous banner icons
 				if ( cursorPosition == 6+pagenum*20 ||
@@ -2745,6 +2745,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;
 				storedcursorPosition = cursorPosition;
+				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
 				// Load the next banner icons
 				if ( cursorPosition == 7+pagenum*20 ||
@@ -2784,6 +2785,7 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
+				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
 			} else {
 				if (cursorPositionset == false) {
@@ -3062,7 +3064,7 @@ int main()
 							}
 						} 
 					}
-					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
+					sf2d_draw_texture_scale(bracetex, 39+titleboxXpos+titleboxXmovepos, 116, -1, 1);
 					if (applaunchprep == false) {
 						if (titleboxXmovetimer == 0) {
 							startbordermovepos = 0;
