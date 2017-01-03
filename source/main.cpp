@@ -2175,8 +2175,12 @@ int main()
 							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 							strcat(tempfile_fullpath, bnriconfile);
 							tempimagepath = tempfile_fullpath;
-							StoreBNRIconPath();
+						} else {
+							tempfile_fullpath = malloc(256);
+							strcpy(tempfile_fullpath, "romfs:/emptyheader.nds");
+							tempimagepath = tempfile_fullpath;
 						}
+						StoreBNRIconPath();
 					}
 
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -3027,7 +3031,7 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
@@ -3037,7 +3041,7 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < fcfiles.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						}
@@ -3049,7 +3053,7 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0.50, 0.50);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
@@ -3059,12 +3063,12 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0.50, 0.50);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} 
 					}
-					sf2d_draw_texture_scale(bracetex, 39+titleboxXpos+titleboxXmovepos, 116, -1, 1);
+					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
 					if (applaunchprep == false) {
 						if (titleboxXmovetimer == 0) {
 							startbordermovepos = 0;
@@ -3083,7 +3087,7 @@ int main()
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 							bnriconnum = cursorPosition;
 							ChangeBNRIconNo();
-							sf2d_draw_texture_part(bnricontexnum, 144, ndsiconYmovepos, 0, bnriconframenum*32, 32, 32);
+							sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 						}
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
