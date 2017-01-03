@@ -17,7 +17,7 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 	sNDSHeader NDSHeader;
 	sNDSBanner myBanner;
 	
-	u32 textureData[1024];	
+	u32 textureData[2048];	
 	
 	fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
 	
@@ -34,11 +34,12 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 			u32 firstPixel = twopixel & 0x00FF;
 			u32 secondPixel = (twopixel & 0xFF00) >> 4;
 			textureData[2*i] = colorConvert(myBanner.palette[firstPixel], firstPixel);
+			textureData[4*i] = colorConvert(myBanner.palette[firstPixel], firstPixel);
 			textureData[2*i+1] =  colorConvert(myBanner.palette[secondPixel], firstPixel);
+			textureData[4*i+1] =  colorConvert(myBanner.palette[secondPixel], firstPixel);
 		}
 	  
-		// return sf2d_create_texture_mem_RGBA8(&textureData, 32, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM); // Stops TWLoader for some reason
-		return sfil_load_PNG_file("romfs:/graphics/icon_placeholder.png", SF2D_PLACE_RAM); // placeholder
+		return sf2d_create_texture_mem_RGBA8(&textureData, 64, 64, TEXFMT_RGBA8, SF2D_PLACE_RAM); // Stops TWLoader for some reason
 	} else {
 		return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
 	}

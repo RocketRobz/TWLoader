@@ -3049,7 +3049,7 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0.50, 0.50);
 								ndsiconXpos += 64;
 							}
 						} else {
@@ -3059,7 +3059,7 @@ int main()
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0.50, 0.50);
 								ndsiconXpos += 64;
 							}
 						} 
