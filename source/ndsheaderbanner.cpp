@@ -39,7 +39,7 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 			textureData[4*i+1] =  colorConvert(myBanner.palette[secondPixel], firstPixel);
 		}
 	  
-		return sf2d_create_texture_mem_RGBA8(&textureData, 64, 64, TEXFMT_RGBA8, SF2D_PLACE_RAM); // Stops TWLoader for some reason
+		return sf2d_create_texture_mem_RGBA8(&textureData, 64, 64, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 	} else {
 		return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
 	}
