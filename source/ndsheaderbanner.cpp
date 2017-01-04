@@ -1,3 +1,5 @@
+#include <string>
+
 #include "ndsheaderbanner.h"
 #include <stdio.h>
 
@@ -13,6 +15,33 @@ u32 colorConvert(u32 iconPixel, u16 indice) {
     u8 b = (((iconPixel >> 10) & 0x1F) * 255) / 31;
     
     return RGBA8(r, g, b, a) ;
+}
+
+char* grabText(FILE* ndsFile) {
+    sNDSHeader NDSHeader;
+    sNDSBanner myBanner;
+	
+	fseek ( ndsFile , 0 , SEEK_SET );
+    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+	
+	if (NDSHeader.bannerOffset != 0x00000000) {
+        fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
+        
+        fread(&myBanner,1,sizeof(myBanner),ndsFile);
+		
+		// turn unicode into ascii (kind of)
+		// and convert 0x0A into 0x00
+		int i;
+		char *p = (char*)myBanner.titles[0];
+		for (i = 0; i < sizeof(myBanner.titles[0]); i = i+2) {
+			if ((p[i] == 0x0A) || (p[i] == 0xFF))
+				p[i/2] = 0;
+			else
+				p[i/2] = p[i];
+		}
+
+		return p;
+	}
 }
 
 sf2d_texture* grabIcon(FILE* ndsFile) {
