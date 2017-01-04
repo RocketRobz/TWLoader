@@ -35,6 +35,7 @@ CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
 sftd_font *font;
+sftd_font *font_b;
 sf2d_texture *settingstex;
 
 int screenmode = 0;
@@ -58,7 +59,7 @@ int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
 const char* tempfile_fullpath;
-FILE* tempfilepath;
+const char* tempfile;
 const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
@@ -1813,8 +1814,9 @@ int main()
 
 	// Font loading
 	sftd_init();
-	font = sftd_load_font_file("romfs:/font.ttf");
-	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 20, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
+	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
+	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
+	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
 
 	// Clear logo screen
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -2992,8 +2994,22 @@ int main()
 								if (bannertextloaded == false) {
 									if (files.size() != 0)
 										romsel_filename = files.at(storedcursorPosition).c_str();
+									/* tempfile = files.at(cursorPosition).c_str();
+									tempfile_fullpath = malloc(256);
+									strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+									strcat(tempfile_fullpath, tempfile);
+									bnriconnum = cursorPosition;
+									OpenBNRIcon();
+									strcpy(grabText(ndsFile1), romsel_gameline1.c_str());
+									strcpy(grabText(ndsFile1), romsel_gameline2.c_str());
+									strcpy(grabText(ndsFile1), romsel_gameline3.c_str());
+									fclose(ndsFile1); */
+									// bannertextloaded = true;
 								}
 								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								/* sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str()); */
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3010,7 +3026,7 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
-					sftd_draw_textf(font, 98, 220, RGBA8(0, 0, 0, 255), 14, ": Return to HOME Menu");
+					sftd_draw_textf(font, 98, 221, RGBA8(0, 0, 0, 255), 13, ": Return to HOME Menu");
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 					if (twlsettings_forwardervalue == 0) {
@@ -3117,7 +3133,7 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						sftd_draw_textf(font, 140, 176, RGBA8(255, 255, 255, 255), 13, "START");
+						sftd_draw_textf(font_b, 140, 177, RGBA8(255, 255, 255, 255), 12, "START");
 					} else {
 						sf2d_draw_texture(bottomcovertex, 128, 116);  // Cover selected game/app
 						if (cursorPosition == -2) {
@@ -3147,7 +3163,7 @@ int main()
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sf2d_draw_texture(settingstex, 0, 0);
 				sf2d_draw_texture(whomeicontex, 81, 220); // Draw HOME icon
-				sftd_draw_textf(font, 98, 220, RGBA8(255, 255, 255, 255), 14, ": Return to HOME Menu");
+				sftd_draw_textf(font, 98, 221, RGBA8(255, 255, 255, 255), 13, ": Return to HOME Menu");
 				if (settings_subscreenmode == 0) {
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
@@ -3209,7 +3225,7 @@ int main()
 					}
 					if (settings_custombotvalue == 0) {
 						settings_custombotvaluetext = "Off";
-					} else if (settings_topbordervalue == 1) {
+					} else if (settings_custombotvalue == 1) {
 						settings_custombotvaluetext = "On";
 					}
 					if (settings_autoupdatevalue == 2) {
