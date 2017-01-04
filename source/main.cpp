@@ -3204,7 +3204,7 @@ int main()
 					}
 					if (settings_countervalue == 0) {
 						settings_countervaluetext = "Off";
-					} else if (settings_topbordervalue == 1) {
+					} else if (settings_countervalue == 1) {
 						settings_countervaluetext = "On";
 					}
 					if (settings_custombotvalue == 0) {
