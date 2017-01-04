@@ -1,7 +1,7 @@
 BasicInfo:
   Title                   : "TWLoader"
-  ProductCode             : "CTR-H-TWLDR"
-  Logo                    : Nintendo # Nintendo / Licensed / Distributed / iQue / iQueForSystem
+  ProductCode             : "CTR-H-TWLD"
+  Logo                    : Homebrew # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 RomFs:
   RootPath: "../romfs"

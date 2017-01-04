@@ -34,11 +34,23 @@ CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
+sftd_font *font;
+sf2d_texture *settingstex;
+
+int screenmode = 0;
+// 0: ROM select
+// 1: Settings
+	
+int settings_subscreenmode = 0;
+// 0: Frontend settings
+// 1: NTR/TWL-mode settings
+
 int color_Rvalue;
 int color_Gvalue;
 int color_Bvalue;
 
 sf2d_texture *bnricontexnum;
+sf2d_texture *bnricontexlaunch;
 sf2d_texture *boxarttexnum;
 #include "bannerandboxart.h"
 int bnriconnum = 0;
@@ -46,10 +58,12 @@ int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
 const char* tempfile_fullpath;
+FILE* tempfilepath;
 const char* tempimagepath;
 const char* bnriconfile;
 const char* boxartfile;
 const char* topbgloc;
+const char* bottomloc;
 const char* dotcircleloc;
 const char* startborderloc;
 const char* musicpath = "romfs:/null.wav";
@@ -65,15 +79,15 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 
 // Settings .ini file
 const char* settingsini_frontend = "FRONTEND";
-//char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
+//const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
 const char* settingsini_frontend_color = "COLOR";
 const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
 const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
+const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
 const char* settingsini_frontend_counter = "COUNTER";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
-//char* settingsini_frontend_botlayout = "BOTTOM_LAYOUT";
 	
 const char* settingsini_twlmode = "TWL-MODE";
 const char* settingsini_twl_rainbowled = "RAINBOW_LED";
@@ -83,6 +97,7 @@ const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
 const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
 const char* settingsini_twl_resetslot1 = "RESET_SLOT1";
 const char* settingsini_twl_debug = "DEBUG";
+const char* settingsini_twl_gbarunner = "GBARUNNER";
 const char* settingsini_twl_forwarder = "FORWARDER";
 const char* settingsini_twl_flashcard = "FLASHCARD";
 // End
@@ -100,18 +115,17 @@ const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 const char* Lshouldertext;
 const char* Rshouldertext;
 
-const char* Lshouldertext_boxart = "Box Art";
-const char* Lshouldertext_blank = "Blank";
-const char* Rshouldertext_sdcard = "SD Card";
-const char* Rshouldertext_flashcard = "Flashcard";
-
 const char* noromtext1;
 const char* noromtext2;
 
 const char* batterytext;
 
 // Settings text
-const char* settings_vertext = "Ver. 2.0.1";
+const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
+const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
+const char* settings_startbuttontext = "START: Download TWLoader CIA files";
+
+const char* settings_vertext = "Ver. 2.1.1";
 
 const char* settingstext_bot;
 
@@ -119,6 +133,7 @@ const char* settings_colortext = "Color";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
+const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
 
@@ -126,6 +141,7 @@ const char* settings_colorvaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
+const char* settings_custombotvaluetext;
 const char* settings_autoupdatevaluetext;
 const char* settings_autodlvaluetext;
 
@@ -137,6 +153,7 @@ int settings_colorvalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
+int settings_custombotvalue;
 int settings_autoupdatevalue;
 int settings_autodlvalue;
 
@@ -157,12 +174,13 @@ const char* romsel_counter2sd;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
-std::string fat = "fat:/roms/nds/";
+std::string sdmc = "sdmc:/";
+std::string fat = "fat:/";
 std::string slashchar = "/";
 std::string woodfat = "fat0:/";
 std::string dstwofat = "fat1:/";
-std::string romfolder = "sdmc:/roms/nds/";
-std::string flashcardfolder = "sdmc:/roms/flashcard/nds/";
+std::string romfolder = "roms/nds/";
+std::string flashcardfolder = "roms/flashcard/nds/";
 const char* bnriconfolder = "sdmc:/_nds/twloader/bnricons/";
 const char* fcbnriconfolder = "sdmc:/_nds/twloader/bnricons/flashcard/";
 const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
@@ -212,6 +230,7 @@ int twlsettings_launchslot1value;
 int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
 int twlsettings_lockarm9scfgextvalue;
+int gbarunnervalue = 0;
 
 
 Handle ptmsysmHandle = 0;
@@ -300,6 +319,53 @@ void downloadfile(const char* url, const char* file){
 	httpcExit();
 	acExit();
 }
+
+void DownloadTWLoaderCIAs() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
+	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
+	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+}
+
+void UpdateBootstrapUnofficial() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+}
+
+void UpdateBootstrapRelease() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == 1)
+		sf2d_draw_texture(settingstex, 0, 0);
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
+}
+
 void RainbowLED() {
 	RGBLedPattern pat;
     memset(&pat, 0, sizeof(pat));
@@ -548,117 +614,79 @@ void LoadColor() {
 	}
 }
 
+void LoadBottomImage() {
+	bottomloc = "romfs:/graphics/bottom.png";
+	
+	if (settings_custombotvalue == 1) {
+		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
+			bottomloc = "sdmc:/_nds/twloader/bottom.png";
+		} else {
+			bottomloc = "romfs:/graphics/bottom.png";
+		}
+	}
+}
+
 void ChangeBNRIconNo() {
-	if ( bnriconnum == 0+pagenum*20 ||
-		bnriconnum == 10+pagenum*20 /* ||
-		bnriconnum == 20 ||
-		bnriconnum == 30 ||
-		bnriconnum == 40 ||
-		bnriconnum == 50 ||
-		bnriconnum == 60 ||
-		bnriconnum == 70 ||
-		bnriconnum == 80 ||
-		bnriconnum == 90 */ ) {
+	if ( bnriconnum == 0+pagenum*20 ) {
 		bnricontexnum = bnricontex1;
-	} else if ( bnriconnum == 1+pagenum*20 ||
-				bnriconnum == 11+pagenum*20 /* ||
-				bnriconnum == 21 ||
-				bnriconnum == 31 ||
-				bnriconnum == 41 ||
-				bnriconnum == 51 ||
-				bnriconnum == 61 ||
-				bnriconnum == 71 ||
-				bnriconnum == 81 ||
-				bnriconnum == 91 */ ) {
+	} else if ( bnriconnum == 1+pagenum*20 ) {
 		bnricontexnum = bnricontex2;
-	} else if ( bnriconnum == 2+pagenum*20 ||
-				bnriconnum == 12+pagenum*20 /* ||
-				bnriconnum == 22 ||
-				bnriconnum == 32 ||
-				bnriconnum == 42 ||
-				bnriconnum == 52 ||
-				bnriconnum == 62 ||
-				bnriconnum == 72 ||
-				bnriconnum == 82 ||
-				bnriconnum == 92 */ ) {
+	} else if ( bnriconnum == 2+pagenum*20 ) {
 		bnricontexnum = bnricontex3;
-	} else if ( bnriconnum == 3+pagenum*20 ||
-				bnriconnum == 13+pagenum*20 /* ||
-				bnriconnum == 23 ||
-				bnriconnum == 33 ||
-				bnriconnum == 43 ||
-				bnriconnum == 53 ||
-				bnriconnum == 63 ||
-				bnriconnum == 73 ||
-				bnriconnum == 83 ||
-				bnriconnum == 93 */ ) {
+	} else if ( bnriconnum == 3+pagenum*20 ) {
 		bnricontexnum = bnricontex4;
-	} else if ( bnriconnum == 4+pagenum*20 ||
-				bnriconnum == 14+pagenum*20 /* ||
-				bnriconnum == 24 ||
-				bnriconnum == 34 ||
-				bnriconnum == 44 ||
-				bnriconnum == 54 ||
-				bnriconnum == 64 ||
-				bnriconnum == 74 ||
-				bnriconnum == 84 ||
-				bnriconnum == 94 */ ) {
+	} else if ( bnriconnum == 4+pagenum*20 ) {
 		bnricontexnum = bnricontex5;
-	} else if ( bnriconnum == 5+pagenum*20 ||
-				bnriconnum == 15+pagenum*20 /* ||
-				bnriconnum == 25 ||
-				bnriconnum == 35 ||
-				bnriconnum == 45 ||
-				bnriconnum == 55 ||
-				bnriconnum == 65 ||
-				bnriconnum == 75 ||
-				bnriconnum == 85 ||
-				bnriconnum == 95 */ ) {
+	} else if ( bnriconnum == 5+pagenum*20 ) {
 		bnricontexnum = bnricontex6;
-	} else if ( bnriconnum == 6+pagenum*20 ||
-				bnriconnum == 16+pagenum*20 /* ||
-				bnriconnum == 26 ||
-				bnriconnum == 36 ||
-				bnriconnum == 46 ||
-				bnriconnum == 56 ||
-				bnriconnum == 66 ||
-				bnriconnum == 76 ||
-				bnriconnum == 86 ||
-				bnriconnum == 96 */ ) {
+	} else if ( bnriconnum == 6+pagenum*20 ) {
 		bnricontexnum = bnricontex7;
-	} else if ( bnriconnum == 7+pagenum*20 ||
-				bnriconnum == 17+pagenum*20 /* ||
-				bnriconnum == 27 ||
-				bnriconnum == 37 ||
-				bnriconnum == 47 ||
-				bnriconnum == 57 ||
-				bnriconnum == 67 ||
-				bnriconnum == 77 ||
-				bnriconnum == 87 ||
-				bnriconnum == 97 */ ) {
+	} else if ( bnriconnum == 7+pagenum*20 ) {
 		bnricontexnum = bnricontex8;
-	} else if ( bnriconnum == 8+pagenum*20 ||
-				bnriconnum == 18+pagenum*20 /* ||
-				bnriconnum == 28 ||
-				bnriconnum == 38 ||
-				bnriconnum == 48 ||
-				bnriconnum == 58 ||
-				bnriconnum == 68 ||
-				bnriconnum == 78 ||
-				bnriconnum == 88 ||
-				bnriconnum == 98 */ ) {
+	} else if ( bnriconnum == 8+pagenum*20 ) {
 		bnricontexnum = bnricontex9;
-	} else if ( bnriconnum == 9+pagenum*20 ||
-				bnriconnum == 19+pagenum*20 /* ||
-				bnriconnum == 29 ||
-				bnriconnum == 39 ||
-				bnriconnum == 49 ||
-				bnriconnum == 59 ||
-				bnriconnum == 69 ||
-				bnriconnum == 79 ||
-				bnriconnum == 89 ||
-				bnriconnum == 99 */ ) {
+	} else if ( bnriconnum == 9+pagenum*20 ) {
 		bnricontexnum = bnricontex10;
+	} else if ( bnriconnum == 10+pagenum*20 ) {
+		bnricontexnum = bnricontex11;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex1;
+	} else if ( bnriconnum == 11+pagenum*20 ) {
+		bnricontexnum = bnricontex12;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex2;
+	} else if ( bnriconnum == 12+pagenum*20 ) {
+		bnricontexnum = bnricontex13;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex3;
+	} else if ( bnriconnum == 13+pagenum*20 ) {
+		bnricontexnum = bnricontex14;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex4;
+	} else if ( bnriconnum == 14+pagenum*20 ) {
+		bnricontexnum = bnricontex15;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex5;
+	} else if ( bnriconnum == 15+pagenum*20 ) {
+		bnricontexnum = bnricontex16;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex6;
+	} else if ( bnriconnum == 16+pagenum*20 ) {
+		bnricontexnum = bnricontex17;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex7;
+	} else if ( bnriconnum == 17+pagenum*20 ) {
+		bnricontexnum = bnricontex18;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex8;
+	} else if ( bnriconnum == 18+pagenum*20 ) {
+		bnricontexnum = bnricontex19;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex9;
+	} else if ( bnriconnum == 19+pagenum*20 ) {
+		bnricontexnum = bnricontex20;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex10;
 	}
 }
 
@@ -866,6 +894,50 @@ void ChangeBoxArtNo() {
 	} */
 }
 
+void OpenBNRIcon() {
+	if (bnriconnum == 0+pagenum*20) {
+		ndsFile1 = fopen(bnriconpath1,"rb");
+	} else if (bnriconnum == 1+pagenum*20) {
+		ndsFile2 = fopen(bnriconpath2,"rb");
+	} else if (bnriconnum == 2+pagenum*20) {
+		ndsFile3 = fopen(bnriconpath3,"rb");
+	} else if (bnriconnum == 3+pagenum*20) {
+		ndsFile4 = fopen(bnriconpath4,"rb");
+	} else if (bnriconnum == 4+pagenum*20) {
+		ndsFile5 = fopen(bnriconpath5,"rb");
+	} else if (bnriconnum == 5+pagenum*20) {
+		ndsFile6 = fopen(bnriconpath6,"rb");
+	} else if (bnriconnum == 6+pagenum*20) {
+		ndsFile7 = fopen(bnriconpath7,"rb");
+	} else if (bnriconnum == 7+pagenum*20) {
+		ndsFile8 = fopen(bnriconpath8,"rb");
+	} else if (bnriconnum == 8+pagenum*20) {
+		ndsFile9 = fopen(bnriconpath9,"rb");
+	} else if (bnriconnum == 9+pagenum*20) {
+		ndsFile10 = fopen(bnriconpath10,"rb");
+	} else if (bnriconnum == 10+pagenum*20) {
+		ndsFile11 = fopen(bnriconpath11,"rb");
+	} else if (bnriconnum == 11+pagenum*20) {
+		ndsFile12 = fopen(bnriconpath12,"rb");
+	} else if (bnriconnum == 12+pagenum*20) {
+		ndsFile13 = fopen(bnriconpath13,"rb");
+	} else if (bnriconnum == 13+pagenum*20) {
+		ndsFile14 = fopen(bnriconpath14,"rb");
+	} else if (bnriconnum == 14+pagenum*20) {
+		ndsFile15 = fopen(bnriconpath15,"rb");
+	} else if (bnriconnum == 15+pagenum*20) {
+		ndsFile16 = fopen(bnriconpath16,"rb");
+	} else if (bnriconnum == 16+pagenum*20) {
+		ndsFile17 = fopen(bnriconpath17,"rb");
+	} else if (bnriconnum == 17+pagenum*20) {
+		ndsFile18 = fopen(bnriconpath18,"rb");
+	} else if (bnriconnum == 18+pagenum*20) {
+		ndsFile19 = fopen(bnriconpath19,"rb");
+	} else if (bnriconnum == 19+pagenum*20) {
+		ndsFile20 = fopen(bnriconpath20,"rb");
+	}
+}
+
 void StoreBNRIconPath() {
 	if (bnriconnum == 0+pagenum*20) {
 		bnriconpath1 = tempimagepath;
@@ -907,167 +979,7 @@ void StoreBNRIconPath() {
 		bnriconpath19 = tempimagepath;
 	} else if (bnriconnum == 19+pagenum*20) {
 		bnriconpath20 = tempimagepath;
-	} /* else if (bnriconnum == 20) {
-		bnriconpath21 = tempimagepath;
-	} else if (bnriconnum == 21) {
-		bnriconpath22 = tempimagepath;
-	} else if (bnriconnum == 22) {
-		bnriconpath23 = tempimagepath;
-	} else if (bnriconnum == 23) {
-		bnriconpath24 = tempimagepath;
-	} else if (bnriconnum == 24) {
-		bnriconpath25 = tempimagepath;
-	} else if (bnriconnum == 25) {
-		bnriconpath26 = tempimagepath;
-	} else if (bnriconnum == 26) {
-		bnriconpath27 = tempimagepath;
-	} else if (bnriconnum == 27) {
-		bnriconpath28 = tempimagepath;
-	} else if (bnriconnum == 28) {
-		bnriconpath29 = tempimagepath;
-	} else if (bnriconnum == 29) {
-		bnriconpath30 = tempimagepath;
-	} else if (bnriconnum == 30) {
-		bnriconpath31 = tempimagepath;
-	} else if (bnriconnum == 31) {
-		bnriconpath32 = tempimagepath;
-	} else if (bnriconnum == 32) {
-		bnriconpath33 = tempimagepath;
-	} else if (bnriconnum == 33) {
-		bnriconpath34 = tempimagepath;
-	} else if (bnriconnum == 34) {
-		bnriconpath35 = tempimagepath;
-	} else if (bnriconnum == 35) {
-		bnriconpath36 = tempimagepath;
-	} else if (bnriconnum == 36) {
-		bnriconpath37 = tempimagepath;
-	} else if (bnriconnum == 37) {
-		bnriconpath38 = tempimagepath;
-	} else if (bnriconnum == 38) {
-		bnriconpath39 = tempimagepath;
-	} else if (bnriconnum == 39) {
-		bnriconpath40 = tempimagepath;
-	} else if (bnriconnum == 40) {
-		bnriconpath41 = tempimagepath;
-	} else if (bnriconnum == 41) {
-		bnriconpath42 = tempimagepath;
-	} else if (bnriconnum == 42) {
-		bnriconpath43 = tempimagepath;
-	} else if (bnriconnum == 43) {
-		bnriconpath44 = tempimagepath;
-	} else if (bnriconnum == 44) {
-		bnriconpath45 = tempimagepath;
-	} else if (bnriconnum == 45) {
-		bnriconpath46 = tempimagepath;
-	} else if (bnriconnum == 46) {
-		bnriconpath47 = tempimagepath;
-	} else if (bnriconnum == 47) {
-		bnriconpath48 = tempimagepath;
-	} else if (bnriconnum == 48) {
-		bnriconpath49 = tempimagepath;
-	} else if (bnriconnum == 49) {
-		bnriconpath50 = tempimagepath;
-	} else if (bnriconnum == 50) {
-		bnriconpath51 = tempimagepath;
-	} else if (bnriconnum == 51) {
-		bnriconpath52 = tempimagepath;
-	} else if (bnriconnum == 52) {
-		bnriconpath53 = tempimagepath;
-	} else if (bnriconnum == 53) {
-		bnriconpath54 = tempimagepath;
-	} else if (bnriconnum == 54) {
-		bnriconpath55 = tempimagepath;
-	} else if (bnriconnum == 55) {
-		bnriconpath56 = tempimagepath;
-	} else if (bnriconnum == 56) {
-		bnriconpath57 = tempimagepath;
-	} else if (bnriconnum == 57) {
-		bnriconpath58 = tempimagepath;
-	} else if (bnriconnum == 58) {
-		bnriconpath59 = tempimagepath;
-	} else if (bnriconnum == 59) {
-		bnriconpath60 = tempimagepath;
-	} else if (bnriconnum == 60) {
-		bnriconpath61 = tempimagepath;
-	} else if (bnriconnum == 61) {
-		bnriconpath62 = tempimagepath;
-	} else if (bnriconnum == 62) {
-		bnriconpath63 = tempimagepath;
-	} else if (bnriconnum == 63) {
-		bnriconpath64 = tempimagepath;
-	} else if (bnriconnum == 64) {
-		bnriconpath65 = tempimagepath;
-	} else if (bnriconnum == 65) {
-		bnriconpath66 = tempimagepath;
-	} else if (bnriconnum == 66) {
-		bnriconpath67 = tempimagepath;
-	} else if (bnriconnum == 67) {
-		bnriconpath68 = tempimagepath;
-	} else if (bnriconnum == 68) {
-		bnriconpath69 = tempimagepath;
-	} else if (bnriconnum == 69) {
-		bnriconpath70 = tempimagepath;
-	} else if (bnriconnum == 70) {
-		bnriconpath71 = tempimagepath;
-	} else if (bnriconnum == 71) {
-		bnriconpath72 = tempimagepath;
-	} else if (bnriconnum == 72) {
-		bnriconpath73 = tempimagepath;
-	} else if (bnriconnum == 73) {
-		bnriconpath74 = tempimagepath;
-	} else if (bnriconnum == 74) {
-		bnriconpath75 = tempimagepath;
-	} else if (bnriconnum == 75) {
-		bnriconpath76 = tempimagepath;
-	} else if (bnriconnum == 76) {
-		bnriconpath77 = tempimagepath;
-	} else if (bnriconnum == 77) {
-		bnriconpath78 = tempimagepath;
-	} else if (bnriconnum == 78) {
-		bnriconpath79 = tempimagepath;
-	} else if (bnriconnum == 79) {
-		bnriconpath80 = tempimagepath;
-	} else if (bnriconnum == 80) {
-		bnriconpath81 = tempimagepath;
-	} else if (bnriconnum == 81) {
-		bnriconpath82 = tempimagepath;
-	} else if (bnriconnum == 82) {
-		bnriconpath83 = tempimagepath;
-	} else if (bnriconnum == 83) {
-		bnriconpath84 = tempimagepath;
-	} else if (bnriconnum == 84) {
-		bnriconpath85 = tempimagepath;
-	} else if (bnriconnum == 85) {
-		bnriconpath86 = tempimagepath;
-	} else if (bnriconnum == 86) {
-		bnriconpath87 = tempimagepath;
-	} else if (bnriconnum == 87) {
-		bnriconpath88 = tempimagepath;
-	} else if (bnriconnum == 88) {
-		bnriconpath89 = tempimagepath;
-	} else if (bnriconnum == 89) {
-		bnriconpath90 = tempimagepath;
-	} else if (bnriconnum == 90) {
-		bnriconpath91 = tempimagepath;
-	} else if (bnriconnum == 91) {
-		bnriconpath92 = tempimagepath;
-	} else if (bnriconnum == 92) {
-		bnriconpath93 = tempimagepath;
-	} else if (bnriconnum == 93) {
-		bnriconpath94 = tempimagepath;
-	} else if (bnriconnum == 94) {
-		bnriconpath95 = tempimagepath;
-	} else if (bnriconnum == 95) {
-		bnriconpath96 = tempimagepath;
-	} else if (bnriconnum == 96) {
-		bnriconpath97 = tempimagepath;
-	} else if (bnriconnum == 97) {
-		bnriconpath98 = tempimagepath;
-	} else if (bnriconnum == 98) {
-		bnriconpath99 = tempimagepath;
-	} else if (bnriconnum == 99) {
-		bnriconpath100 = tempimagepath;
-	} */
+	}
 }
 
 void StoreBoxArtPath() {
@@ -1277,6 +1189,90 @@ void StoreBoxArtPath() {
 void LoadBNRIcon() {
 	if (bnriconnum == 0+pagenum*20) {
 		sf2d_free_texture(bnricontex1);
+		bnricontex1 = grabIcon(ndsFile1); // Banner icon
+		fclose(ndsFile1);
+	} else if (bnriconnum == 1+pagenum*20) {
+		sf2d_free_texture(bnricontex2);
+		bnricontex2 = grabIcon(ndsFile2); // Banner icon
+		fclose(ndsFile2);
+	} else if (bnriconnum == 2+pagenum*20) {
+		sf2d_free_texture(bnricontex3);
+		bnricontex3 = grabIcon(ndsFile3); // Banner icon
+		fclose(ndsFile3);
+	} else if (bnriconnum == 3+pagenum*20) {
+		sf2d_free_texture(bnricontex4);
+		bnricontex4 = grabIcon(ndsFile4); // Banner icon
+		fclose(ndsFile4);
+	} else if (bnriconnum == 4+pagenum*20) {
+		sf2d_free_texture(bnricontex5);
+		bnricontex5 = grabIcon(ndsFile5); // Banner icon
+		fclose(ndsFile5);
+	} else if (bnriconnum == 5+pagenum*20) {
+		sf2d_free_texture(bnricontex6);
+		bnricontex6 = grabIcon(ndsFile6); // Banner icon
+		fclose(ndsFile6);
+	} else if (bnriconnum == 6+pagenum*20) {
+		sf2d_free_texture(bnricontex7);
+		bnricontex7 = grabIcon(ndsFile7); // Banner icon
+		fclose(ndsFile7);
+	} else if (bnriconnum == 7+pagenum*20) {
+		sf2d_free_texture(bnricontex8);
+		bnricontex8 = grabIcon(ndsFile8); // Banner icon
+		fclose(ndsFile8);
+	} else if (bnriconnum == 8+pagenum*20) {
+		sf2d_free_texture(bnricontex9);
+		bnricontex9 = grabIcon(ndsFile9); // Banner icon
+		fclose(ndsFile9);
+	} else if (bnriconnum == 9+pagenum*20) {
+		sf2d_free_texture(bnricontex10);
+		bnricontex10 = grabIcon(ndsFile10); // Banner icon
+		fclose(ndsFile10);
+	} else if (bnriconnum == 10+pagenum*20) {
+		sf2d_free_texture(bnricontex11);
+		bnricontex11 = grabIcon(ndsFile11); // Banner icon
+		fclose(ndsFile11);
+	} else if (bnriconnum == 11+pagenum*20) {
+		sf2d_free_texture(bnricontex12);
+		bnricontex12 = grabIcon(ndsFile12); // Banner icon
+		fclose(ndsFile12);
+	} else if (bnriconnum == 12+pagenum*20) {
+		sf2d_free_texture(bnricontex13);
+		bnricontex13 = grabIcon(ndsFile13); // Banner icon
+		fclose(ndsFile13);
+	} else if (bnriconnum == 13+pagenum*20) {
+		sf2d_free_texture(bnricontex14);
+		bnricontex14 = grabIcon(ndsFile14); // Banner icon
+		fclose(ndsFile14);
+	} else if (bnriconnum == 14+pagenum*20) {
+		sf2d_free_texture(bnricontex15);
+		bnricontex15 = grabIcon(ndsFile15); // Banner icon
+		fclose(ndsFile15);
+	} else if (bnriconnum == 15+pagenum*20) {
+		sf2d_free_texture(bnricontex16);
+		bnricontex16 = grabIcon(ndsFile16); // Banner icon
+		fclose(ndsFile16);
+	} else if (bnriconnum == 16+pagenum*20) {
+		sf2d_free_texture(bnricontex17);
+		bnricontex17 = grabIcon(ndsFile17); // Banner icon
+		fclose(ndsFile17);
+	} else if (bnriconnum == 17+pagenum*20) {
+		sf2d_free_texture(bnricontex18);
+		bnricontex18 = grabIcon(ndsFile18); // Banner icon
+		fclose(ndsFile18);
+	} else if (bnriconnum == 18+pagenum*20) {
+		sf2d_free_texture(bnricontex19);
+		bnricontex19 = grabIcon(ndsFile19); // Banner icon
+		fclose(ndsFile19);
+	} else if (bnriconnum == 19+pagenum*20) {
+		sf2d_free_texture(bnricontex20);
+		bnricontex20 = grabIcon(ndsFile20); // Banner icon
+		fclose(ndsFile20);
+	}
+}
+
+void LoadFCBNRIcon() {
+	if (bnriconnum == 0+pagenum*20) {
+		sf2d_free_texture(bnricontex1);
 		bnricontex1 = sfil_load_PNG_file(bnriconpath1, SF2D_PLACE_RAM); // Banner icon
 	} else if (bnriconnum == 1+pagenum*20) {
 		sf2d_free_texture(bnricontex2);
@@ -1335,247 +1331,51 @@ void LoadBNRIcon() {
 	} else if (bnriconnum == 19+pagenum*20) {
 		sf2d_free_texture(bnricontex10);
 		bnricontex10 = sfil_load_PNG_file(bnriconpath20, SF2D_PLACE_RAM); // Banner icon
-	} /* else if (bnriconnum == 20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath21, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 21) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath22, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 22) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath23, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 23) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath24, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 24) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath25, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 25) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath26, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 26) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath27, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 27) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath28, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 28) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath29, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 29) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath30, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 30) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath31, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 31) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath32, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 32) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath33, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 33) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath34, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 34) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath35, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 35) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath36, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 36) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath37, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 37) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath38, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 38) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath39, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 39) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath40, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 40) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath41, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 41) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath42, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 42) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath43, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 43) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath44, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 44) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath45, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 45) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath46, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 46) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath47, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 47) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath48, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 48) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath49, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 49) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath50, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 50) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath51, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 51) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath52, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 52) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath53, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 53) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath54, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 54) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath55, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 55) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath56, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 56) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath57, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 57) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath58, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 58) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath59, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 59) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath60, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 60) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath61, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 61) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath62, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 62) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath63, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 63) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath64, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 64) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath65, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 65) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath66, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 66) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath67, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 67) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath68, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 68) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath69, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 69) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath70, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 70) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath71, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 71) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath72, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 72) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath73, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 73) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath74, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 74) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath75, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 75) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath76, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 76) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath77, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 77) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath78, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 78) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath79, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 79) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath80, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 80) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath81, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 81) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath82, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 82) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath83, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 83) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath84, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 84) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath85, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 85) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath86, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 86) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath87, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 87) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath88, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 88) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath89, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 89) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath90, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 90) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath91, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 91) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath92, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 92) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath93, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 93) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath94, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 94) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath95, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 95) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath96, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 96) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath97, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 97) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath98, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 98) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath99, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 99) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath100, SF2D_PLACE_RAM); // Banner icon
-	} */
+	}
+}
+
+void LoadBNRIconatLaunch() {
+	if (bnriconnum == 0+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile1); // Banner icon
+	} else if (bnriconnum == 1+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile2); // Banner icon
+	} else if (bnriconnum == 2+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile3); // Banner icon
+	} else if (bnriconnum == 3+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile4); // Banner icon
+	} else if (bnriconnum == 4+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile5); // Banner icon
+	} else if (bnriconnum == 5+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile6); // Banner icon
+	} else if (bnriconnum == 6+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile7); // Banner icon
+	} else if (bnriconnum == 7+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile8); // Banner icon
+	} else if (bnriconnum == 8+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile9); // Banner icon
+	} else if (bnriconnum == 9+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile10); // Banner icon
+	} else if (bnriconnum == 10+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile11); // Banner icon
+	} else if (bnriconnum == 11+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile12); // Banner icon
+	} else if (bnriconnum == 12+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile13); // Banner icon
+	} else if (bnriconnum == 13+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile14); // Banner icon
+	} else if (bnriconnum == 14+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile15); // Banner icon
+	} else if (bnriconnum == 15+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile16); // Banner icon
+	} else if (bnriconnum == 16+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile17); // Banner icon
+	} else if (bnriconnum == 17+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile18); // Banner icon
+	} else if (bnriconnum == 18+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile19); // Banner icon
+	} else if (bnriconnum == 19+pagenum*20) {
+		bnricontexlaunch = grabandstoreIcon(ndsFile20); // Banner icon
+	}
 }
 
 void LoadBoxArt() {
@@ -1888,6 +1688,7 @@ void LoadSettings() {
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
+	settings_custombotvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
 	settings_autodlvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autodl, 0);
@@ -1921,6 +1722,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autodl, settings_autodlvalue);
@@ -1940,9 +1742,10 @@ void SaveSettings() {
 	}
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
 	// Set ROM path if ROM is selected
 	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+rom);
+		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+romfolder+rom);
 	}
 	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
@@ -2010,12 +1813,22 @@ int main()
 
 	// Font loading
 	sftd_init();
-	sftd_font *font = sftd_load_font_file("romfs:/font.ttf");
+	font = sftd_load_font_file("romfs:/font.ttf");
 	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 20, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
+
+	// Clear logo screen
+	sf2d_start_frame(GFX_TOP, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	LoadSettings();
 
 	LoadColor();
+	LoadBottomImage();
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM);
@@ -2040,7 +1853,7 @@ int main()
 	sf2d_texture *setbattery3tex = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
 	sf2d_texture *setbattery4tex = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
 	sf2d_texture *setbattery5tex = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
-	sf2d_texture *bottomtex = sfil_load_PNG_file("romfs:/graphics/bottom.png", SF2D_PLACE_RAM); // Bottom of menu
+	sf2d_texture *bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
 	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_placeholder.png", SF2D_PLACE_RAM); // Icon placeholder at bottom of menu
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *whomeicontex = sfil_load_PNG_file("romfs:/graphics/whomeicon.png", SF2D_PLACE_RAM); // HOME icon (Settings)
@@ -2053,7 +1866,7 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
-	sf2d_texture *settingstex = sfil_load_PNG_file("romfs:/graphics/settings/screen.png", SF2D_PLACE_RAM); // Bottom of settings screen
+	settingstex = sfil_load_PNG_file("romfs:/graphics/settings/screen.png", SF2D_PLACE_RAM); // Bottom of settings screen
 	sf2d_texture *settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	sf2d_texture *dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
@@ -2216,38 +2029,16 @@ int main()
 	}
 	
 	if(settings_autodlvalue == 1){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (GUI CIA)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version (TWLNAND side CIA)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+		DownloadTWLoaderCIAs();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
 	if(settings_autoupdatevalue == 2){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+		UpdateBootstrapUnofficial();
 	} else if(settings_autoupdatevalue == 1){
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
+		UpdateBootstrapRelease();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
@@ -2260,7 +2051,7 @@ int main()
 	std::sprintf(str3, "%d", files.size());
 	romsel_counter2sd = str3;
 
-	int cursorPosition = 0, storedcursorPosition = 0, i = 0;
+	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;
 	int settingscursorPosition = 0, twlsettingscursorPosition = 0;
 	
@@ -2282,6 +2073,7 @@ int main()
 	bool updatebotscreen = true;
 	bool screenmodeswitch = false;
 	bool applaunchprep = false;
+	bool applaunchicon = false;
 	bool applaunchon = false;
 		
 	float offset3dl_topbg = 0.0f;
@@ -2321,15 +2113,7 @@ int main()
 	
 	int startbordermovepos;
 	float startborderscalesize;
-			
-	int screenmode = 0;
-	// 0: ROM select
-	// 1: Settings
 	
-	int settings_subscreenmode = 0;
-	// 0: Frontend settings
-	// 1: NTR/TWL-mode settings
-			
 	int settingsXpos = 24;
 	int settingsvalueXpos = 240;
 	int settingsYpos;
@@ -2371,6 +2155,7 @@ int main()
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				dotcircletex = sfil_load_PNG_file(dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 				startbordertex = sfil_load_PNG_file(startborderloc, SF2D_PLACE_RAM); // "START" border
+				bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
 				colortexloaded = true;
 			}
 			if (boxarttexloaded == false) {
@@ -2383,19 +2168,16 @@ int main()
 						if (bnriconnum < files.size()) {
 							bnriconfile = files.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, bnriconfolder);
+							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 							strcat(tempfile_fullpath, bnriconfile);
-							strcat(tempfile_fullpath, ".png");
-
-							if( access( tempfile_fullpath, F_OK ) != -1 ) {
-								tempimagepath = tempfile_fullpath;
-							} else {
-								tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
-							}
+							tempimagepath = tempfile_fullpath;
 						} else {
-							tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+							tempfile_fullpath = malloc(256);
+							strcpy(tempfile_fullpath, "romfs:/emptyheader.nds");
+							tempimagepath = tempfile_fullpath;
 						}
 						StoreBNRIconPath();
+						OpenBNRIcon();
 					}
 
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -2420,6 +2202,47 @@ int main()
 						}
 						StoreBoxArtPath();
 					}
+					
+					bnriconnum = 0+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 1+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 2+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 3+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 4+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 5+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 6+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 7+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 8+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 9+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 10+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 11+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 12+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 13+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 14+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 15+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 16+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 17+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 18+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 19+pagenum*20;
+					LoadBNRIcon();
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
@@ -2466,28 +2289,28 @@ int main()
 						}
 						StoreBoxArtPath();
 					}
+					
+					bnriconnum = 0+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 1+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 2+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 3+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 4+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 5+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 6+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 7+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 8+pagenum*20;
+					LoadFCBNRIcon();
+					bnriconnum = 9+pagenum*20;
+					LoadFCBNRIcon();
 				}
-				
-				bnriconnum = 0+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 1+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 2+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 3+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 4+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 5+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 6+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 7+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 8+pagenum*20;
-				LoadBNRIcon();
-				bnriconnum = 9+pagenum*20;
-				LoadBNRIcon();
 				
 				boxartnum = 0+pagenum*20;
 				LoadBoxArt();
@@ -2542,7 +2365,7 @@ int main()
 
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);
 			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
-			if (i != 0) {	// If ROMs are found, then display box art
+			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
 					if (twlsettings_forwardervalue == 1) {
@@ -2605,7 +2428,7 @@ int main()
 				
 			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 			sf2d_draw_texture_scale(topbgtex, offset3dr_topbg + -12, 0, 1.32, 1);
-			if (i != 0) {	// If ROMs are found, then display box art
+			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
 					if (twlsettings_forwardervalue == 1) {
@@ -2674,6 +2497,7 @@ int main()
 				sf2d_free_texture(topbgtex);
 				sf2d_free_texture(dotcircletex);
 				sf2d_free_texture(startbordertex);
+				sf2d_free_texture(bottomtex);
 				colortexloaded = false;
 			}
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
@@ -2721,6 +2545,11 @@ int main()
 				}
 			} else {
 				sf2d_draw_texture(settingslogotex, offset3dl_boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+				if (settings_subscreenmode == 0) {
+					sftd_draw_textf(font, offset3dl_disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+					sftd_draw_textf(font, offset3dl_disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+					sftd_draw_textf(font, offset3dl_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
+				}
 			}
 			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
 			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
@@ -2751,6 +2580,11 @@ int main()
 				}
 			} else {
 				sf2d_draw_texture(settingslogotex, offset3dr_boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+				if (settings_subscreenmode == 0) {
+					sftd_draw_textf(font, offset3dr_disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+					sftd_draw_textf(font, offset3dr_disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+					sftd_draw_textf(font, offset3dr_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
+				}
 			}
 			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
 			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
@@ -2810,6 +2644,26 @@ int main()
 				} else {
 					// run = false;
 					screenoff();
+					if (twlsettings_forwardervalue == 1) {
+						if (twlsettings_flashcardvalue == 0) {
+							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
+							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
+						} else if (twlsettings_flashcardvalue == 2 || twlsettings_flashcardvalue == 4 || twlsettings_flashcardvalue == 5) {
+							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
+						} else if (twlsettings_flashcardvalue == 6) {
+							CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
+							fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+						}
+					}
+					gbarunnervalue = 1;
 					SaveSettings();
 					if (twlsettings_rainbowledvalue == 1) {
 						RainbowLED(); }
@@ -2837,6 +2691,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;			
 				storedcursorPosition = cursorPosition;
+				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
@@ -2847,21 +2702,24 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
+				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
-				// Load the previous banner icons
-				if ( cursorPosition == 6+pagenum*20 ||
-				cursorPosition == 11+pagenum*20 ||
-				cursorPosition == 16+pagenum*20 ) {
-					bnriconnum = cursorPosition-2;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
+				if (twlsettings_forwardervalue == 1) {
+					// Load the previous banner icons
+					if ( cursorPosition == 6+pagenum*20 ||
+					cursorPosition == 11+pagenum*20 ||
+					cursorPosition == 16+pagenum*20 ) {
+						bnriconnum = cursorPosition-2;
+						LoadFCBNRIcon();
+						bnriconnum--;
+						LoadFCBNRIcon();
+						bnriconnum--;
+						LoadFCBNRIcon();
+						bnriconnum--;
+						LoadFCBNRIcon();
+						bnriconnum--;
+						LoadFCBNRIcon();
+					}
 				}
 				// Load the previous box art
 				if ( cursorPosition == 3+pagenum*20 ||
@@ -2931,21 +2789,24 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;
 				storedcursorPosition = cursorPosition;
+				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
-				// Load the next banner icons
-				if ( cursorPosition == 7+pagenum*20 ||
-				cursorPosition == 12+pagenum*20 ||
-				cursorPosition == 17+pagenum*20 ) {
-					bnriconnum = cursorPosition+3;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
+				if (twlsettings_forwardervalue == 1) {
+					// Load the next banner icons
+					if ( cursorPosition == 7+pagenum*20 ||
+					cursorPosition == 12+pagenum*20 ||
+					cursorPosition == 17+pagenum*20 ) {
+						bnriconnum = cursorPosition+3;
+						LoadFCBNRIcon();
+						bnriconnum++;
+						LoadFCBNRIcon();
+						bnriconnum++;
+						LoadFCBNRIcon();
+						bnriconnum++;
+						LoadFCBNRIcon();
+						bnriconnum++;
+						LoadFCBNRIcon();
+					}
 				}
 				// Load the next box art
 				if ( cursorPosition == 4+pagenum*20 ||
@@ -2970,6 +2831,7 @@ int main()
 			} else if (titleboxXmovetimer == 2) {
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
+				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
 			} else {
 				if (cursorPositionset == false) {
@@ -2980,7 +2842,7 @@ int main()
 					}
 					cursorPositionset = true;
 				}
-				if (cursorPosition != i) {
+				if (cursorPosition != filenum) {
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {
@@ -3015,7 +2877,7 @@ int main()
 				} else {
 					screenoff();
 					if (twlsettings_forwardervalue == 1) {
-						CIniFile setfcrompathini( flashcardfolder+rom );
+						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						if (twlsettings_flashcardvalue == 0) {
 							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
@@ -3058,7 +2920,7 @@ int main()
 				/* if (romselect_layout == 0) {
 					filenameYpos = 0;
 					if(files.size() >= 49) {
-						for(i = 0; i < 50; i++){
+						for(filenum = 0; filenum < 50; filenum++){
 							if(cursorPosition == i) {
 								sftd_draw_textf(font, 10, filenameYpos+filenameYmovepos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, files.at(i).c_str());
 								filenameYpos += 12;
@@ -3068,7 +2930,7 @@ int main()
 							}
 						}
 					} else {
-						for(i = 0; i < files.size(); i++){
+						for(filenum = 0; filenum < files.size(); filenum++){
 							if(cursorPosition == i) {
 								sftd_draw_textf(font, 10, filenameYpos+filenameYmovepos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, files.at(i).c_str());
 								filenameYpos += 12;
@@ -3093,7 +2955,7 @@ int main()
 									if (fcfiles.size() != 0)
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
-									CIniFile setfcrompathini( flashcardfolder+flashcardrom );
+									CIniFile setfcrompathini( sdmc+flashcardfolder+flashcardrom );
 									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
 									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
 									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
@@ -3205,48 +3067,48 @@ int main()
 					filenameYpos = 0;
 					if (twlsettings_forwardervalue == 1) {
 						if(fcfiles.size() >= 19+pagenum*20) {
-							for(i = pagenum*20; i < 20+pagenum*20; i++){
+							for(filenum = pagenum*20; filenum < 20+pagenum*20; filenum++){
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(i = pagenum*20; i < fcfiles.size(); i++){
+							for(filenum = pagenum*20; filenum < fcfiles.size(); filenum++){
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < fcfiles.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						}
 					} else {
 						if(files.size() >= 19+pagenum*20) {
-							for(i = pagenum*20; i < 20+pagenum*20; i++){
+							for(filenum = pagenum*20; filenum < 20+pagenum*20; filenum++){
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(i = pagenum*20; i < files.size(); i++){
+							for(filenum = pagenum*20; filenum < files.size(); filenum++){
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
 							}
 							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
 								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, 0, bnriconframenum*32, 32, 32);
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
-						}
+						} 
 					}
 					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
 					if (applaunchprep == false) {
@@ -3265,9 +3127,18 @@ int main()
 							sf2d_draw_texture(iconunktex, 144, ndsiconYmovepos);
 						} else {
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
-							bnriconnum = cursorPosition;
-							ChangeBNRIconNo();
-							sf2d_draw_texture_part(bnricontexnum, 144, ndsiconYmovepos, 0, bnriconframenum*32, 32, 32);
+							if (!applaunchicon) {
+								bnriconnum = cursorPosition;
+								if (twlsettings_forwardervalue == 0) {
+									OpenBNRIcon();
+									LoadBNRIconatLaunch();
+								} else {
+									ChangeBNRIconNo();
+									bnricontexlaunch = bnricontexnum;
+								}
+								applaunchicon = true;
+							}
+							sf2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
 						}
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
@@ -3336,6 +3207,11 @@ int main()
 					} else if (settings_topbordervalue == 1) {
 						settings_countervaluetext = "On";
 					}
+					if (settings_custombotvalue == 0) {
+						settings_custombotvaluetext = "Off";
+					} else if (settings_topbordervalue == 1) {
+						settings_custombotvaluetext = "On";
+					}
 					if (settings_autoupdatevalue == 2) {
 						settings_autoupdatevaluetext = "Unofficial";
 					} else if (settings_autoupdatevalue == 1) {
@@ -3394,6 +3270,17 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 4) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombottext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombotvaluetext);
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "for the game menu.");
+						settingsYpos += 12;
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombottext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombotvaluetext);
+						settingsYpos += 12;
+					}
+					if(settingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -3403,7 +3290,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 5) {
+					if(settingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodltext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodlvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -3624,16 +3511,16 @@ int main()
 		}
 		if (screenmode == 0) {
 			if (romselect_toplayout == 1) {
-				Lshouldertext = Lshouldertext_boxart;
+				Lshouldertext = "Box Art";
 			} else {
-				Lshouldertext = Lshouldertext_blank;
+				Lshouldertext = "Blank";
 			}
 			if (twlsettings_forwardervalue == 1) {
-				Rshouldertext = Rshouldertext_sdcard;
+				Rshouldertext = "SD Card";
 			} else {
-				Rshouldertext = Rshouldertext_flashcard;
+				Rshouldertext = "Flashcard";
 			}
-			/* if (i == 0) {	// If no ROMs are found
+			/* if (filenum == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
@@ -3708,7 +3595,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(applaunchprep == false) {
+				if(applaunchprep == false || fadealpha == 255) {
 					if (settings_locswitchvalue == 1) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
@@ -3932,7 +3819,7 @@ int main()
 							//titleboxXmovepos -= 64;
 							if (titleboxXmoveleft == false) {
 								if (twlsettings_forwardervalue == 1) {
-									if (i == 0) {
+									if (filenum == 0) {
 										if (!playwrongsounddone) {
 											if (dspfirmfound) {
 												sfx_wrong.stop();
@@ -3980,7 +3867,7 @@ int main()
 						//titleboxXmovepos -= 64;
 						if (titleboxXmoveleft == false) {
 							if (twlsettings_forwardervalue == 1) {
-								if (i == 0) {
+								if (filenum == 0) {
 									if (!playwrongsounddone) {
 										if (dspfirmfound) {
 											sfx_wrong.stop();
@@ -4003,14 +3890,23 @@ int main()
 						}
 						updatebotscreen = true;
 					} else if (hDown & KEY_SELECT) {
-						titleboxXmovetimer = 1;
-						twlsettings_launchslot1value = 2;
-						fadeout = true;
-						updatebotscreen = true;
-						if (dspfirmfound) {
-							bgm_menu.stop();
-							sfx_launch.play();
+						if (titleboxXmovetimer == 0) {
+							titleboxXmovetimer = 1;
+							romfolder = "_nds/";
+							rom = "GBARunner2.nds";
+							if (twlsettings_forwardervalue == 1) {
+								twlsettings_launchslot1value = 1;
+							} else {
+								twlsettings_launchslot1value = 0;
+							}
+							fadeout = true;
+							updatebotscreen = true;
+							if (dspfirmfound) {
+								bgm_menu.stop();
+								sfx_launch.play();
+							}
 						}
+						
 					}
 				}
 			//}
@@ -4114,11 +4010,17 @@ int main()
 							settings_countervalue = 0;
 						}
 					} else if (settingscursorPosition == 4) {
+						settings_custombotvalue++; // Custom bottom image
+						if(settings_custombotvalue == 2) {
+							settings_custombotvalue = 0;
+						}
+						LoadBottomImage();
+					} else if (settingscursorPosition == 5) {
 						settings_autoupdatevalue++; // Enable or disable autoupdate
 						if(settings_autoupdatevalue == 3) {
 							settings_autoupdatevalue = 0;
 						}
-					} else if (settingscursorPosition == 5) {
+					} else if (settingscursorPosition == 6) {
 						settings_autodlvalue++; // Enable or disable autodownload
 						if(settings_autodlvalue == 2) {
 							settings_autodlvalue = 0;
@@ -4134,7 +4036,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 5){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 6){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
@@ -4146,6 +4048,12 @@ int main()
 						sfx_switch.stop();	// Prevent freezing
 						sfx_switch.play();
 					}
+				} else if(hDown & KEY_X){
+					UpdateBootstrapRelease();
+				} else if(hDown & KEY_Y){
+					UpdateBootstrapUnofficial();
+				} else if(hDown & KEY_START){
+					DownloadTWLoaderCIAs();
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
 					fadeout = true;
@@ -4191,7 +4099,7 @@ int main()
 	sf2d_free_texture(setbattery3tex);
 	sf2d_free_texture(setbattery4tex);
 	sf2d_free_texture(setbattery5tex);
-	sf2d_free_texture(bottomtex);
+	if (colortexloaded == true) { sf2d_free_texture(bottomtex); }
 	sf2d_free_texture(iconunktex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(whomeicontex);

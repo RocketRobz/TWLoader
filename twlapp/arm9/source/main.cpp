@@ -130,7 +130,8 @@ int main(int argc, char **argv) {
 		
 		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 1) { HealthandSafety_MSG = true; }
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
-		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
+		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
+			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) { BootSplashInit(UseNTRSplash, HealthandSafety_MSG); }
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;
@@ -258,11 +259,7 @@ int main(int argc, char **argv) {
 		break;
 		}
 		
-		struct sNDSHeadersmall {
-			char gameTitle[12];			//!< 12 characters for the game title.
-			char gameCode[4];			//!< 4 characters for the game code.
-			u16 makercode;			//!< identifies the (commercial) developer.
-		} NDSHeader;
+		sNDSHeader NDSHeader;
 		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		gamename = bootstrapini.GetString("NDS-BOOTSTRAP", "NDS_PATH","");

@@ -1,6 +1,27 @@
 #ifndef BANNERANDBOXART_H
 #define BANNERANDBOXART_H
 
+FILE* ndsFile1;
+FILE* ndsFile2;
+FILE* ndsFile3;
+FILE* ndsFile4;
+FILE* ndsFile5;
+FILE* ndsFile6;
+FILE* ndsFile7;
+FILE* ndsFile8;
+FILE* ndsFile9;
+FILE* ndsFile10;
+FILE* ndsFile11;
+FILE* ndsFile12;
+FILE* ndsFile13;
+FILE* ndsFile14;
+FILE* ndsFile15;
+FILE* ndsFile16;
+FILE* ndsFile17;
+FILE* ndsFile18;
+FILE* ndsFile19;
+FILE* ndsFile20;
+
 const char* bnriconpath1;
 const char* bnriconpath2;
 const char* bnriconpath3;
@@ -32,6 +53,17 @@ sf2d_texture *bnricontex7;
 sf2d_texture *bnricontex8;
 sf2d_texture *bnricontex9;
 sf2d_texture *bnricontex10;
+// Below is for .nds icons only
+sf2d_texture *bnricontex11;
+sf2d_texture *bnricontex12;
+sf2d_texture *bnricontex13;
+sf2d_texture *bnricontex14;
+sf2d_texture *bnricontex15;
+sf2d_texture *bnricontex16;
+sf2d_texture *bnricontex17;
+sf2d_texture *bnricontex18;
+sf2d_texture *bnricontex19;
+sf2d_texture *bnricontex20;
 
 const char* boxartpath1;
 const char* boxartpath2;
