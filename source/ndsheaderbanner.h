@@ -186,6 +186,7 @@ typedef struct {
 } sNDSBanner;
 
 sf2d_texture* grabIcon(FILE* ndsFile);
+sf2d_texture* grabandstoreIcon(FILE* ndsFile);
 
 
 #endif // NDS_HEADER
