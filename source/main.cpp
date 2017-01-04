@@ -626,116 +626,66 @@ void LoadBottomImage() {
 }
 
 void ChangeBNRIconNo() {
-	if ( bnriconnum == 0+pagenum*20 ||
-		bnriconnum == 10+pagenum*20 /* ||
-		bnriconnum == 20 ||
-		bnriconnum == 30 ||
-		bnriconnum == 40 ||
-		bnriconnum == 50 ||
-		bnriconnum == 60 ||
-		bnriconnum == 70 ||
-		bnriconnum == 80 ||
-		bnriconnum == 90 */ ) {
+	if ( bnriconnum == 0+pagenum*20 ) {
 		bnricontexnum = bnricontex1;
-	} else if ( bnriconnum == 1+pagenum*20 ||
-				bnriconnum == 11+pagenum*20 /* ||
-				bnriconnum == 21 ||
-				bnriconnum == 31 ||
-				bnriconnum == 41 ||
-				bnriconnum == 51 ||
-				bnriconnum == 61 ||
-				bnriconnum == 71 ||
-				bnriconnum == 81 ||
-				bnriconnum == 91 */ ) {
+	} else if ( bnriconnum == 1+pagenum*20 ) {
 		bnricontexnum = bnricontex2;
-	} else if ( bnriconnum == 2+pagenum*20 ||
-				bnriconnum == 12+pagenum*20 /* ||
-				bnriconnum == 22 ||
-				bnriconnum == 32 ||
-				bnriconnum == 42 ||
-				bnriconnum == 52 ||
-				bnriconnum == 62 ||
-				bnriconnum == 72 ||
-				bnriconnum == 82 ||
-				bnriconnum == 92 */ ) {
+	} else if ( bnriconnum == 2+pagenum*20 ) {
 		bnricontexnum = bnricontex3;
-	} else if ( bnriconnum == 3+pagenum*20 ||
-				bnriconnum == 13+pagenum*20 /* ||
-				bnriconnum == 23 ||
-				bnriconnum == 33 ||
-				bnriconnum == 43 ||
-				bnriconnum == 53 ||
-				bnriconnum == 63 ||
-				bnriconnum == 73 ||
-				bnriconnum == 83 ||
-				bnriconnum == 93 */ ) {
+	} else if ( bnriconnum == 3+pagenum*20 ) {
 		bnricontexnum = bnricontex4;
-	} else if ( bnriconnum == 4+pagenum*20 ||
-				bnriconnum == 14+pagenum*20 /* ||
-				bnriconnum == 24 ||
-				bnriconnum == 34 ||
-				bnriconnum == 44 ||
-				bnriconnum == 54 ||
-				bnriconnum == 64 ||
-				bnriconnum == 74 ||
-				bnriconnum == 84 ||
-				bnriconnum == 94 */ ) {
+	} else if ( bnriconnum == 4+pagenum*20 ) {
 		bnricontexnum = bnricontex5;
-	} else if ( bnriconnum == 5+pagenum*20 ||
-				bnriconnum == 15+pagenum*20 /* ||
-				bnriconnum == 25 ||
-				bnriconnum == 35 ||
-				bnriconnum == 45 ||
-				bnriconnum == 55 ||
-				bnriconnum == 65 ||
-				bnriconnum == 75 ||
-				bnriconnum == 85 ||
-				bnriconnum == 95 */ ) {
+	} else if ( bnriconnum == 5+pagenum*20 ) {
 		bnricontexnum = bnricontex6;
-	} else if ( bnriconnum == 6+pagenum*20 ||
-				bnriconnum == 16+pagenum*20 /* ||
-				bnriconnum == 26 ||
-				bnriconnum == 36 ||
-				bnriconnum == 46 ||
-				bnriconnum == 56 ||
-				bnriconnum == 66 ||
-				bnriconnum == 76 ||
-				bnriconnum == 86 ||
-				bnriconnum == 96 */ ) {
+	} else if ( bnriconnum == 6+pagenum*20 ) {
 		bnricontexnum = bnricontex7;
-	} else if ( bnriconnum == 7+pagenum*20 ||
-				bnriconnum == 17+pagenum*20 /* ||
-				bnriconnum == 27 ||
-				bnriconnum == 37 ||
-				bnriconnum == 47 ||
-				bnriconnum == 57 ||
-				bnriconnum == 67 ||
-				bnriconnum == 77 ||
-				bnriconnum == 87 ||
-				bnriconnum == 97 */ ) {
+	} else if ( bnriconnum == 7+pagenum*20 ) {
 		bnricontexnum = bnricontex8;
-	} else if ( bnriconnum == 8+pagenum*20 ||
-				bnriconnum == 18+pagenum*20 /* ||
-				bnriconnum == 28 ||
-				bnriconnum == 38 ||
-				bnriconnum == 48 ||
-				bnriconnum == 58 ||
-				bnriconnum == 68 ||
-				bnriconnum == 78 ||
-				bnriconnum == 88 ||
-				bnriconnum == 98 */ ) {
+	} else if ( bnriconnum == 8+pagenum*20 ) {
 		bnricontexnum = bnricontex9;
-	} else if ( bnriconnum == 9+pagenum*20 ||
-				bnriconnum == 19+pagenum*20 /* ||
-				bnriconnum == 29 ||
-				bnriconnum == 39 ||
-				bnriconnum == 49 ||
-				bnriconnum == 59 ||
-				bnriconnum == 69 ||
-				bnriconnum == 79 ||
-				bnriconnum == 89 ||
-				bnriconnum == 99 */ ) {
+	} else if ( bnriconnum == 9+pagenum*20 ) {
 		bnricontexnum = bnricontex10;
+	} else if ( bnriconnum == 10+pagenum*20 ) {
+		bnricontexnum = bnricontex11;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex1;
+	} else if ( bnriconnum == 11+pagenum*20 ) {
+		bnricontexnum = bnricontex12;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex2;
+	} else if ( bnriconnum == 12+pagenum*20 ) {
+		bnricontexnum = bnricontex13;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex3;
+	} else if ( bnriconnum == 13+pagenum*20 ) {
+		bnricontexnum = bnricontex14;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex4;
+	} else if ( bnriconnum == 14+pagenum*20 ) {
+		bnricontexnum = bnricontex15;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex5;
+	} else if ( bnriconnum == 15+pagenum*20 ) {
+		bnricontexnum = bnricontex16;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex6;
+	} else if ( bnriconnum == 16+pagenum*20 ) {
+		bnricontexnum = bnricontex17;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex7;
+	} else if ( bnriconnum == 17+pagenum*20 ) {
+		bnricontexnum = bnricontex18;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex8;
+	} else if ( bnriconnum == 18+pagenum*20 ) {
+		bnricontexnum = bnricontex19;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex9;
+	} else if ( bnriconnum == 19+pagenum*20 ) {
+		bnricontexnum = bnricontex20;
+		if (twlsettings_forwardervalue == 1)
+			bnricontexnum = bnricontex10;
 	}
 }
 
@@ -1278,44 +1228,44 @@ void LoadBNRIcon() {
 			bnricontex10 = grabIcon(ndsFile10); // Banner icon
 			fclose(ndsFile10);
 		} else if (bnriconnum == 10+pagenum*20) {
-			sf2d_free_texture(bnricontex1);
-			bnricontex1 = grabIcon(ndsFile11); // Banner icon
+			sf2d_free_texture(bnricontex11);
+			bnricontex11 = grabIcon(ndsFile11); // Banner icon
 			fclose(ndsFile11);
 		} else if (bnriconnum == 11+pagenum*20) {
-			sf2d_free_texture(bnricontex2);
-			bnricontex2 = grabIcon(ndsFile12); // Banner icon
+			sf2d_free_texture(bnricontex12);
+			bnricontex12 = grabIcon(ndsFile12); // Banner icon
 			fclose(ndsFile12);
 		} else if (bnriconnum == 12+pagenum*20) {
-			sf2d_free_texture(bnricontex3);
-			bnricontex3 = grabIcon(ndsFile13); // Banner icon
+			sf2d_free_texture(bnricontex13);
+			bnricontex13 = grabIcon(ndsFile13); // Banner icon
 			fclose(ndsFile13);
 		} else if (bnriconnum == 13+pagenum*20) {
-			sf2d_free_texture(bnricontex4);
-			bnricontex4 = grabIcon(ndsFile14); // Banner icon
+			sf2d_free_texture(bnricontex14);
+			bnricontex14 = grabIcon(ndsFile14); // Banner icon
 			fclose(ndsFile14);
 		} else if (bnriconnum == 14+pagenum*20) {
-			sf2d_free_texture(bnricontex5);
-			bnricontex5 = grabIcon(ndsFile15); // Banner icon
+			sf2d_free_texture(bnricontex15);
+			bnricontex15 = grabIcon(ndsFile15); // Banner icon
 			fclose(ndsFile15);
 		} else if (bnriconnum == 15+pagenum*20) {
-			sf2d_free_texture(bnricontex6);
-			bnricontex6 = grabIcon(ndsFile16); // Banner icon
+			sf2d_free_texture(bnricontex16);
+			bnricontex16 = grabIcon(ndsFile16); // Banner icon
 			fclose(ndsFile16);
 		} else if (bnriconnum == 16+pagenum*20) {
-			sf2d_free_texture(bnricontex7);
-			bnricontex7 = grabIcon(ndsFile17); // Banner icon
+			sf2d_free_texture(bnricontex17);
+			bnricontex17 = grabIcon(ndsFile17); // Banner icon
 			fclose(ndsFile17);
 		} else if (bnriconnum == 17+pagenum*20) {
-			sf2d_free_texture(bnricontex8);
-			bnricontex8 = grabIcon(ndsFile18); // Banner icon
+			sf2d_free_texture(bnricontex18);
+			bnricontex18 = grabIcon(ndsFile18); // Banner icon
 			fclose(ndsFile18);
 		} else if (bnriconnum == 18+pagenum*20) {
-			sf2d_free_texture(bnricontex9);
-			bnricontex9 = grabIcon(ndsFile19); // Banner icon
+			sf2d_free_texture(bnricontex19);
+			bnricontex19 = grabIcon(ndsFile19); // Banner icon
 			fclose(ndsFile19);
 		} else if (bnriconnum == 19+pagenum*20) {
-			sf2d_free_texture(bnricontex10);
-			bnricontex10 = grabIcon(ndsFile20); // Banner icon
+			sf2d_free_texture(bnricontex20);
+			bnricontex20 = grabIcon(ndsFile20); // Banner icon
 			fclose(ndsFile20);
 		}
 	} else {
@@ -2273,6 +2223,28 @@ int main()
 				LoadBNRIcon();
 				bnriconnum = 9+pagenum*20;
 				LoadBNRIcon();
+				if (twlsettings_forwardervalue == 0) {
+					bnriconnum = 10+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 11+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 12+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 13+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 14+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 15+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 16+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 17+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 18+pagenum*20;
+					LoadBNRIcon();
+					bnriconnum = 19+pagenum*20;
+					LoadBNRIcon();
+				}
 				
 				boxartnum = 0+pagenum*20;
 				LoadBoxArt();
@@ -2666,20 +2638,22 @@ int main()
 				boxartXmovepos += 18;
 				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
-				// Load the previous banner icons
-				if ( cursorPosition == 6+pagenum*20 ||
-				cursorPosition == 11+pagenum*20 ||
-				cursorPosition == 16+pagenum*20 ) {
-					bnriconnum = cursorPosition-2;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
-					bnriconnum--;
-					LoadBNRIcon();
+				if (twlsettings_forwardervalue == 1) {
+					// Load the previous banner icons
+					if ( cursorPosition == 6+pagenum*20 ||
+					cursorPosition == 11+pagenum*20 ||
+					cursorPosition == 16+pagenum*20 ) {
+						bnriconnum = cursorPosition-2;
+						LoadBNRIcon();
+						bnriconnum--;
+						LoadBNRIcon();
+						bnriconnum--;
+						LoadBNRIcon();
+						bnriconnum--;
+						LoadBNRIcon();
+						bnriconnum--;
+						LoadBNRIcon();
+					}
 				}
 				// Load the previous box art
 				if ( cursorPosition == 3+pagenum*20 ||
@@ -2751,20 +2725,22 @@ int main()
 				storedcursorPosition = cursorPosition;
 				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
-				// Load the next banner icons
-				if ( cursorPosition == 7+pagenum*20 ||
-				cursorPosition == 12+pagenum*20 ||
-				cursorPosition == 17+pagenum*20 ) {
-					bnriconnum = cursorPosition+3;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
-					bnriconnum++;
-					LoadBNRIcon();
+				if (twlsettings_forwardervalue == 1) {
+					// Load the next banner icons
+					if ( cursorPosition == 7+pagenum*20 ||
+					cursorPosition == 12+pagenum*20 ||
+					cursorPosition == 17+pagenum*20 ) {
+						bnriconnum = cursorPosition+3;
+						LoadBNRIcon();
+						bnriconnum++;
+						LoadBNRIcon();
+						bnriconnum++;
+						LoadBNRIcon();
+						bnriconnum++;
+						LoadBNRIcon();
+						bnriconnum++;
+						LoadBNRIcon();
+					}
 				}
 				// Load the next box art
 				if ( cursorPosition == 4+pagenum*20 ||
