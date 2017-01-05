@@ -1785,7 +1785,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_titlelanguajevalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguaje, settings_titlelanguajevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
