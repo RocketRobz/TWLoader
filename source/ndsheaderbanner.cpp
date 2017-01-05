@@ -32,7 +32,7 @@ char* grabText(FILE* ndsFile) {
         
         fread(&myBanner,1,sizeof(myBanner),ndsFile);
 		
-		int bnrtitlenum = 0;
+		int bnrtitlenum = 1;
 		int size = sizeof(myBanner.titles[bnrtitlenum]);
 		
 		// turn unicode into ascii (kind of)
