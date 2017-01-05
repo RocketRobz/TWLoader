@@ -59,6 +59,7 @@ int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
 const char* tempfile_fullpath;
+FILE* tempfilepath;
 const char* tempfile;
 const char* tempimagepath;
 const char* bnriconfile;
@@ -82,6 +83,7 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 const char* settingsini_frontend = "FRONTEND";
 //const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
 const char* settingsini_frontend_color = "COLOR";
+const char* settingsini_frontend_filename = "SHOW_FILENAME";
 const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
 const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
@@ -126,11 +128,12 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.1.1";
+const char* settings_vertext = "Ver. 2.1.2";
 
 const char* settingstext_bot;
 
 const char* settings_colortext = "Color";
+const char* settings_filenametext = "Show filename";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
@@ -139,6 +142,7 @@ const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
 
 const char* settings_colorvaluetext;
+const char* settings_filenamevaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
@@ -151,6 +155,7 @@ const char* settings_absavereturn = "A/B: Save and Return";
 // End
 
 int settings_colorvalue;
+int settings_filenamevalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
@@ -939,6 +944,50 @@ void OpenBNRIcon() {
 	}
 }
 
+void OpenBNRIconTemp() {
+	if (bnriconnum == 0+pagenum*20) {
+		tempfilepath = fopen(bnriconpath1,"rb");
+	} else if (bnriconnum == 1+pagenum*20) {
+		tempfilepath = fopen(bnriconpath2,"rb");
+	} else if (bnriconnum == 2+pagenum*20) {
+		tempfilepath = fopen(bnriconpath3,"rb");
+	} else if (bnriconnum == 3+pagenum*20) {
+		tempfilepath = fopen(bnriconpath4,"rb");
+	} else if (bnriconnum == 4+pagenum*20) {
+		tempfilepath = fopen(bnriconpath5,"rb");
+	} else if (bnriconnum == 5+pagenum*20) {
+		tempfilepath = fopen(bnriconpath6,"rb");
+	} else if (bnriconnum == 6+pagenum*20) {
+		tempfilepath = fopen(bnriconpath7,"rb");
+	} else if (bnriconnum == 7+pagenum*20) {
+		tempfilepath = fopen(bnriconpath8,"rb");
+	} else if (bnriconnum == 8+pagenum*20) {
+		tempfilepath = fopen(bnriconpath9,"rb");
+	} else if (bnriconnum == 9+pagenum*20) {
+		tempfilepath = fopen(bnriconpath10,"rb");
+	} else if (bnriconnum == 10+pagenum*20) {
+		tempfilepath = fopen(bnriconpath11,"rb");
+	} else if (bnriconnum == 11+pagenum*20) {
+		tempfilepath = fopen(bnriconpath12,"rb");
+	} else if (bnriconnum == 12+pagenum*20) {
+		tempfilepath = fopen(bnriconpath13,"rb");
+	} else if (bnriconnum == 13+pagenum*20) {
+		tempfilepath = fopen(bnriconpath14,"rb");
+	} else if (bnriconnum == 14+pagenum*20) {
+		tempfilepath = fopen(bnriconpath15,"rb");
+	} else if (bnriconnum == 15+pagenum*20) {
+		tempfilepath = fopen(bnriconpath16,"rb");
+	} else if (bnriconnum == 16+pagenum*20) {
+		tempfilepath = fopen(bnriconpath17,"rb");
+	} else if (bnriconnum == 17+pagenum*20) {
+		tempfilepath = fopen(bnriconpath18,"rb");
+	} else if (bnriconnum == 18+pagenum*20) {
+		tempfilepath = fopen(bnriconpath19,"rb");
+	} else if (bnriconnum == 19+pagenum*20) {
+		tempfilepath = fopen(bnriconpath20,"rb");
+	}
+}
+
 void StoreBNRIconPath() {
 	if (bnriconnum == 0+pagenum*20) {
 		bnriconpath1 = tempimagepath;
@@ -1686,6 +1735,7 @@ void LoadBoxArt() {
 
 void LoadSettings() {
 	settings_colorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
+	settings_filenamevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
@@ -1720,6 +1770,7 @@ void LoadSettings() {
 
 void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings_colorvalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings_filenamevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
@@ -1816,7 +1867,8 @@ int main()
 	sftd_init();
 	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
-	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:-.'!?()\"end"); //Hack to avoid blurry text!
+	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+	sftd_draw_textf(font_b, 0, 0, RGBA8(255, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
 
 	// Clear logo screen
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -2117,7 +2169,7 @@ int main()
 	float startborderscalesize;
 	
 	int settingsXpos = 24;
-	int settingsvalueXpos = 240;
+	int settingsvalueXpos = 236;
 	int settingsYpos;
 	
 	bool run = true;
@@ -2410,9 +2462,9 @@ int main()
 			}
 			if (settings_topbordervalue == 1) {
 				sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
-				sftd_draw_text(font, 328, 2, RGBA8(0, 0, 0, 255), 13, RetTime().c_str());
+				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
 			} else {
-				sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
+				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
@@ -2473,9 +2525,9 @@ int main()
 			}
 			if (settings_topbordervalue == 1) {
 				sf2d_draw_texture(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2);
-				sftd_draw_text(font, 328, 2, RGBA8(0, 0, 0, 255), 13, RetTime().c_str());
+				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
 			} else {
-				sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
+				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			//sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
@@ -2553,8 +2605,8 @@ int main()
 					sftd_draw_textf(font, offset3dl_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
 				}
 			}
-			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
-			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
+			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
@@ -2588,8 +2640,8 @@ int main()
 					sftd_draw_textf(font, offset3dr_disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
 				}
 			}
-			sftd_draw_text(font, 328, 2, RGBA8(255, 255, 255, 255), 13, RetTime().c_str());
-			sftd_draw_textf(font, 336, 218, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
+			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
@@ -2949,9 +3001,10 @@ int main()
 						if (twlsettings_forwardervalue == 1) {
 							if (cursorPosition == -2) {
 								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-								sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
+								sftd_draw_textf(font_b, 128, 40, RGBA8(0, 0, 0, 255), 16, "Settings");
 							} else if (cursorPosition == -1) {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+								if (settings_filenamevalue == 1)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 							} else {
 								if (bannertextloaded == false) {
 									if (fcfiles.size() != 0)
@@ -2969,10 +3022,11 @@ int main()
 									strcpy(cstr3, romsel_gameline3.c_str());
 									bannertextloaded = true;
 								}
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								if (settings_filenamevalue == 1)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font_b, 10, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+								sftd_draw_textf(font_b, 10, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -2987,29 +3041,29 @@ int main()
 						} else {
 							if (cursorPosition == -2) {
 								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-								sftd_draw_textf(font, 132, 36, RGBA8(0, 0, 0, 255), 16, "Settings");
+								sftd_draw_textf(font_b, 128, 40, RGBA8(0, 0, 0, 255), 16, "Settings");
 							} else if (cursorPosition == -1) {
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+								if (settings_filenamevalue == 1)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 							} else {
 								if (bannertextloaded == false) {
 									if (files.size() != 0)
 										romsel_filename = files.at(storedcursorPosition).c_str();
-									/* tempfile = files.at(cursorPosition).c_str();
+									tempfile = files.at(cursorPosition).c_str();
 									tempfile_fullpath = malloc(256);
 									strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 									strcat(tempfile_fullpath, tempfile);
 									bnriconnum = cursorPosition;
-									OpenBNRIcon();
-									strcpy(grabText(ndsFile1), romsel_gameline1.c_str());
-									strcpy(grabText(ndsFile1), romsel_gameline2.c_str());
-									strcpy(grabText(ndsFile1), romsel_gameline3.c_str());
-									fclose(ndsFile1); */
-									// bannertextloaded = true;
+									OpenBNRIconTemp();
+									romsel_gameline1 = grabText(tempfilepath);
+									char *cstr1 = new char[romsel_gameline1.length() + 1];
+									strcpy(cstr1, romsel_gameline1.c_str());
+									fclose(tempfilepath);
+									bannertextloaded = true;
 								}
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								/* sftd_draw_textf(font, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								sftd_draw_textf(font, 10, 44, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-								sftd_draw_textf(font, 10, 64, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str()); */
+								if (settings_filenamevalue == 1)
+									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3208,6 +3262,11 @@ int main()
 					} else if (settings_colorvalue == 18) {
 						settings_colorvaluetext = "Christmas";
 					}
+					if (settings_filenamevalue == 0) {
+						settings_filenamevaluetext = "Off";
+					} else if (settings_filenamevalue == 1) {
+						settings_filenamevaluetext = "On";
+					}
 					if (settings_locswitchvalue == 0) {
 						settings_locswitchvaluetext = "Off";
 					} else if (settings_locswitchvalue == 1) {
@@ -3254,6 +3313,16 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 1) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_filenametext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_filenamevaluetext);
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
+						settingsYpos += 12;
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_filenametext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_filenamevaluetext);
+						settingsYpos += 12;
+					}
+					if(settingscursorPosition == 2) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_locswitchtext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_locswitchvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
@@ -3264,7 +3333,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_locswitchvaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 2) {
+					if(settingscursorPosition == 3) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_topbordertext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_topbordervaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
@@ -3274,7 +3343,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_topbordervaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 3) {
+					if(settingscursorPosition == 4) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_countertext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_countervaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
@@ -3285,7 +3354,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_countervaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 4) {
+					if(settingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombottext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombotvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
@@ -3296,7 +3365,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombotvaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 5) {
+					if(settingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -3306,7 +3375,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 6) {
+					if(settingscursorPosition == 7) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodltext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodlvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -4011,32 +4080,37 @@ int main()
 						}
 						LoadColor();
 					} else if (settingscursorPosition == 1) {
+						settings_filenamevalue++; // Show filename
+						if(settings_filenamevalue == 2) {
+							settings_filenamevalue = 0;
+						}
+					} else if (settingscursorPosition == 2) {
 						settings_locswitchvalue++; // Game location switcher
 						if(settings_locswitchvalue == 2) {
 							settings_locswitchvalue = 0;
 						}
-					} else if (settingscursorPosition == 2) {
+					} else if (settingscursorPosition == 3) {
 						settings_topbordervalue++; // Top border
 						if(settings_topbordervalue == 2) {
 							settings_topbordervalue = 0;
 						}
-					} else if (settingscursorPosition == 3) {
+					} else if (settingscursorPosition == 4) {
 						settings_countervalue++; // Game counter
 						if(settings_countervalue == 2) {
 							settings_countervalue = 0;
 						}
-					} else if (settingscursorPosition == 4) {
+					} else if (settingscursorPosition == 5) {
 						settings_custombotvalue++; // Custom bottom image
 						if(settings_custombotvalue == 2) {
 							settings_custombotvalue = 0;
 						}
 						LoadBottomImage();
-					} else if (settingscursorPosition == 5) {
+					} else if (settingscursorPosition == 6) {
 						settings_autoupdatevalue++; // Enable or disable autoupdate
 						if(settings_autoupdatevalue == 3) {
 							settings_autoupdatevalue = 0;
 						}
-					} else if (settingscursorPosition == 6) {
+					} else if (settingscursorPosition == 7) {
 						settings_autodlvalue++; // Enable or disable autodownload
 						if(settings_autodlvalue == 2) {
 							settings_autodlvalue = 0;
@@ -4052,7 +4126,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 6){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 7){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
@@ -4083,7 +4157,7 @@ int main()
 
 		while(applaunchon){
 			// Prepare for the app launch
-			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44LL, 0); // TWL app's title ID
+			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44LL, 0); // TWLNAND side's title ID
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}

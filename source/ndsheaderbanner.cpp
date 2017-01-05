@@ -2,6 +2,9 @@
 
 #include "ndsheaderbanner.h"
 #include <stdio.h>
+#include <malloc.h>
+
+const char* savedtext;
 
 u32 * storedtextureData = (u32*) linearAlloc(1024*sizeof(u32));  
 
@@ -29,18 +32,22 @@ char* grabText(FILE* ndsFile) {
         
         fread(&myBanner,1,sizeof(myBanner),ndsFile);
 		
+		int bnrtitlenum = 0;
+		int size = sizeof(myBanner.titles[bnrtitlenum]);
+		
 		// turn unicode into ascii (kind of)
-		// and convert 0x0A into 0x00
 		int i;
-		char *p = (char*)myBanner.titles[0];
-		for (i = 0; i < sizeof(myBanner.titles[0]); i = i+2) {
-			if ((p[i] == 0x0A) || (p[i] == 0xFF))
-				p[i/2] = 0;
-			else
-				p[i/2] = p[i];
+		char *p = (char*)myBanner.titles[bnrtitlenum];
+		for (i = 0; i < size; i = i+2) {
+			p[i/2] = p[i];
 		}
+		
+		savedtext = malloc(256);
+		strncpy(savedtext, p, strlen(p)+1);
 
-		return p;
+		return savedtext;
+	} else {
+		return "No Text";
 	}
 }
 
