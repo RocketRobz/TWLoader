@@ -191,7 +191,7 @@ typedef struct {
 } sNDSBanner;
 
 char* grabTID(FILE* ndsFile);
-char* grabText(FILE* ndsFile);
+char* grabText(FILE* ndsFile, int titleLanguaje);
 sf2d_texture* grabIcon(FILE* ndsFile);
 sf2d_texture* grabandstoreIcon(FILE* ndsFile);
 
