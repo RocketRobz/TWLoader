@@ -272,6 +272,20 @@ Result ptmsysmSetInfoLedPattern(RGBLedPattern pattern)
     if(ret < 0) return ret;
     return ipc[1];
 }
+
+bool checkWifiStatus() {
+	acInit();
+	u32 wifiStatus;
+	ACU_GetWifiStatus(&wifiStatus);
+	
+	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {	
+		return true;
+	}
+	
+	acExit();
+	return false;
+}
+
 void downloadfile(const char* url, const char* file){
 	acInit();
 	httpcInit(0x1000);
@@ -2134,7 +2148,7 @@ int main()
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
 	
-	if(settings_autodlvalue == 1){
+	if(settings_autodlvalue == 1 && checkWifiStatus()){
 		DownloadTWLoaderCIAs();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -3444,8 +3458,8 @@ int main()
 					if(settingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajevaluetext);
-						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the");
-						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "desire languaje (Only some).");
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desire languaje.");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "(Only some)");
 						settingsYpos += 12;
 					} else {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguajetext);
@@ -4199,7 +4213,7 @@ int main()
 						}
 					} else if (settingscursorPosition == 5) {
 						settings_titlelanguajevalue++; // Title languaje
-						if(settings_titlelanguajevalue == 9) {
+						if(settings_titlelanguajevalue == 8) {
 							settings_titlelanguajevalue = 0;
 						}						
 					} else if (settingscursorPosition == 6) {
@@ -4229,6 +4243,11 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
+					if (settingscursorPosition == 5) {
+						settings_titlelanguajevalue--; // Title languaje
+						if(settings_titlelanguajevalue == -1) 
+							settings_titlelanguajevalue = 7;
+					}		
 				} else if((hDown & KEY_DOWN) && settingscursorPosition != 8){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
@@ -4241,11 +4260,11 @@ int main()
 						sfx_switch.stop();	// Prevent freezing
 						sfx_switch.play();
 					}
-				} else if(hDown & KEY_X){
+				} else if(hDown & KEY_X && checkWifiStatus()){
 					UpdateBootstrapRelease();
-				} else if(hDown & KEY_Y){
+				} else if(hDown & KEY_Y && checkWifiStatus()){
 					UpdateBootstrapUnofficial();
-				} else if(hDown & KEY_START){
+				} else if(hDown & KEY_START && checkWifiStatus()){
 					DownloadTWLoaderCIAs();
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
