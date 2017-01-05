@@ -67,26 +67,6 @@ sf2d_texture *bnricontex20;
 
 const char* ba_TID;
 const char* ba_region;
-/* const char* ba_TID1;
-const char* ba_TID2;
-const char* ba_TID3;
-const char* ba_TID4;
-const char* ba_TID5;
-const char* ba_TID6;
-const char* ba_TID7;
-const char* ba_TID8;
-const char* ba_TID9;
-const char* ba_TID10;
-const char* ba_TID11;
-const char* ba_TID12;
-const char* ba_TID13;
-const char* ba_TID14;
-const char* ba_TID15;
-const char* ba_TID16;
-const char* ba_TID17;
-const char* ba_TID18;
-const char* ba_TID19;
-const char* ba_TID20; */
 
 const char* boxartpath1;
 const char* boxartpath2;

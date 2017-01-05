@@ -19,7 +19,7 @@ u32 colorConvert(u32 iconPixel, u16 indice) {
 }
 
 char* grabTID(FILE* ndsFile) {
-    sNDSHeader NDSHeader;
+    sNDSHeadertitlecodeonly NDSHeader;
 	
 	fseek ( ndsFile , 0 , SEEK_SET );
     fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);

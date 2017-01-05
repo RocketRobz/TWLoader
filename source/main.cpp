@@ -60,11 +60,10 @@ int boxartnum = 0;
 int pagenum = 0;
 const char* temphttp;
 const char* tempfile_fullpath;
+const char* tempfile_fullpath2;
 FILE* tempfilepath;
 const char* tempfile;
 const char* tempimagepath;
-const char* bnriconfile;
-const char* boxartfile;
 const char* topbgloc;
 const char* bottomloc;
 const char* dotcircleloc;
@@ -2275,10 +2274,10 @@ int main()
 					sf2d_swapbuffers(); */
 					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < files.size()) {
-							bnriconfile = files.at(bnriconnum).c_str();
+							tempfile = files.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-							strcat(tempfile_fullpath, bnriconfile);
+							strcat(tempfile_fullpath, tempfile);
 							tempimagepath = tempfile_fullpath;
 						} else {
 							tempfile_fullpath = malloc(256);
@@ -2295,16 +2294,31 @@ int main()
 					sf2d_swapbuffers(); */
 					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < files.size()) {
-							boxartfile = files.at(boxartnum).c_str();
+							tempfile = files.at(boxartnum).c_str();
+							tempfile_fullpath = malloc(256);
+							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+							strcat(tempfile_fullpath, tempfile);
+							tempfilepath = fopen(tempfile_fullpath,"rb");
+							ba_TID = grabTID(tempfilepath);
+							fclose(tempfilepath);
+
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, boxartfolder);
-							strcat(tempfile_fullpath, boxartfile);
+							strncat(tempfile_fullpath, ba_TID, 4);
 							strcat(tempfile_fullpath, ".png");
 						
 							if( access( tempfile_fullpath, F_OK ) != -1 ) {
 								tempimagepath = tempfile_fullpath;
 							} else {
-								tempimagepath = "romfs:/graphics/boxart_unknown.png";
+								tempfile_fullpath2 = malloc(256);
+								strcpy(tempfile_fullpath2, boxartfolder);
+								strcat(tempfile_fullpath2, tempfile);
+								strcat(tempfile_fullpath2, ".png");
+								if( access( tempfile_fullpath2, F_OK ) != -1 ) {
+									tempimagepath = tempfile_fullpath2;
+								} else {
+									tempimagepath = "romfs:/graphics/boxart_unknown.png";
+								}
 							}
 						} else {
 							tempimagepath = "romfs:/graphics/boxart_unknown.png";
@@ -2359,10 +2373,10 @@ int main()
 					sf2d_swapbuffers(); */
 					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < fcfiles.size()) {
-							bnriconfile = fcfiles.at(bnriconnum).c_str();
+							tempfile = fcfiles.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, fcbnriconfolder);
-							strcat(tempfile_fullpath, bnriconfile);
+							strcat(tempfile_fullpath, tempfile);
 							strcat(tempfile_fullpath, ".png");
 
 							if( access( tempfile_fullpath, F_OK ) != -1 ) {
@@ -2382,10 +2396,10 @@ int main()
 					sf2d_swapbuffers(); */
 					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < fcfiles.size()) {
-							boxartfile = fcfiles.at(boxartnum).c_str();
+							tempfile = fcfiles.at(boxartnum).c_str();
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, fcboxartfolder);
-							strcat(tempfile_fullpath, boxartfile);
+							strcat(tempfile_fullpath, tempfile);
 							strcat(tempfile_fullpath, ".png");
 						
 							if( access( tempfile_fullpath, F_OK ) != -1 ) {
@@ -3079,9 +3093,9 @@ int main()
 								}
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-								sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.7, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.7, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.7, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3118,7 +3132,7 @@ int main()
 								}
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);

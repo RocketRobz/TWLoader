@@ -168,6 +168,11 @@ typedef struct {
 	u8 zero[0x90];
 } sNDSHeader;
 
+typedef struct {
+	char gameTitle[12];			//!< 12 characters for the game title.
+	char gameCode[4];			//!< 4 characters for the game code.
+} sNDSHeadertitlecodeonly;
+
 
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
