@@ -4220,7 +4220,7 @@ int main()
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
 					} 
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 7){
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 8){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
