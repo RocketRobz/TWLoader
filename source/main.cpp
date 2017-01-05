@@ -82,7 +82,6 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 // Settings .ini file
 const char* settingsini_frontend = "FRONTEND";
 //const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
-const char* settingsini_frontend_gotboxart = "GOT_BOXART";
 const char* settingsini_frontend_color = "COLOR";
 const char* settingsini_frontend_filename = "SHOW_FILENAME";
 const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
@@ -154,8 +153,6 @@ const char* settings_autodlvaluetext;
 const char* settings_lrpicktext = "Left/Right: Pick";
 const char* settings_absavereturn = "A/B: Save and Return";
 // End
-
-int gotboxartvalue;
 
 int settings_colorvalue;
 int settings_filenamevalue;
@@ -1737,7 +1734,6 @@ void LoadBoxArt() {
 
 
 void LoadSettings() {
-	gotboxartvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_gotboxart, 0);
 	settings_colorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
 	settings_filenamevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
@@ -1773,7 +1769,6 @@ void LoadSettings() {
 }
 
 void SaveSettings() {
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_gotboxart, gotboxartvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings_colorvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings_filenamevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
@@ -2018,50 +2013,47 @@ int main()
 	std::sprintf(str3, "%d", files.size());
 	romsel_counter2sd = str3;
 	
-	if (gotboxartvalue == 0) {
-		// Download box art
-		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
-			char str[20] = {0};
-			std::sprintf(str, "%d", boxartnum+1);
-			romsel_counter1 = str;
-			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
-			sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-			
-			tempfile = files.at(boxartnum).c_str();
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-			strcat(tempfile_fullpath, tempfile);
-			tempfilepath = fopen(tempfile_fullpath,"rb");
-			ba_TID = grabTID(tempfilepath);
-			fclose(tempfilepath);
-			
-			temphttp = malloc(256);
-			strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
-			ba_region = "US/"; // default
-			if (ba_TID+3 == "J")
-				ba_region = "JA/";
-			else if (ba_TID+3 == "P")
-				ba_region = "EN/";
-			strcat(temphttp, ba_region);
-			strncat(temphttp, ba_TID, 4);
-			strcat(temphttp, ".png");
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
-			strncat(tempfile_fullpath, ba_TID, 4);
-			strcat(tempfile_fullpath, ".png");
-			downloadfile(temphttp, tempfile_fullpath);
-		}
+	// Download box art
+	for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
+		char str[20] = {0};
+		std::sprintf(str, "%d", boxartnum+1);
+		romsel_counter1 = str;
+		sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
+		sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
+		sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		gotboxartvalue = 1;
-		SaveSettings();
+		
+		tempfile = files.at(boxartnum).c_str();
+		tempfile_fullpath = malloc(256);
+		strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+		strcat(tempfile_fullpath, tempfile);
+		tempfilepath = fopen(tempfile_fullpath,"rb");
+		ba_TID = grabTID(tempfilepath);
+		fclose(tempfilepath);
+		
+		temphttp = malloc(256);
+		strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
+		ba_region = "US/"; // default
+		if (ba_TID+3 == "J")
+			ba_region = "JA/";
+		else if (ba_TID+3 == "P")
+			ba_region = "EN/";
+		strcat(temphttp, ba_region);
+		strncat(temphttp, ba_TID, 4);
+		strcat(temphttp, ".png");
+		tempfile_fullpath = malloc(256);
+		strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
+		strncat(tempfile_fullpath, ba_TID, 4);
+		strcat(tempfile_fullpath, ".png");
+		if( access( tempfile_fullpath, F_OK ) == -1 )
+			downloadfile(temphttp, tempfile_fullpath);
 	}
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 	
 	if ((flashcarddir = opendir ("sdmc:/roms/flashcard/nds")) != NULL) {
 	/* print all the files and directories within directory */
@@ -2302,20 +2294,23 @@ int main()
 							ba_TID = grabTID(tempfilepath);
 							fclose(tempfilepath);
 
+							// example: ASME.png
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, boxartfolder);
 							strncat(tempfile_fullpath, ba_TID, 4);
 							strcat(tempfile_fullpath, ".png");
 						
-							if( access( tempfile_fullpath, F_OK ) != -1 ) {
-								tempimagepath = tempfile_fullpath;
+							// example: SuperMario64DS.nds.png
+							tempfile_fullpath2 = malloc(256);
+							strcpy(tempfile_fullpath2, boxartfolder);
+							strcat(tempfile_fullpath2, tempfile);
+							strcat(tempfile_fullpath2, ".png");
+								
+							if( access( tempfile_fullpath2, F_OK ) != -1 ) {
+								tempimagepath = tempfile_fullpath2;
 							} else {
-								tempfile_fullpath2 = malloc(256);
-								strcpy(tempfile_fullpath2, boxartfolder);
-								strcat(tempfile_fullpath2, tempfile);
-								strcat(tempfile_fullpath2, ".png");
-								if( access( tempfile_fullpath2, F_OK ) != -1 ) {
-									tempimagepath = tempfile_fullpath2;
+								if( access( tempfile_fullpath, F_OK ) != -1 ) {
+									tempimagepath = tempfile_fullpath;
 								} else {
 									tempimagepath = "romfs:/graphics/boxart_unknown.png";
 								}
