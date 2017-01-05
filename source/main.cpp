@@ -58,6 +58,7 @@ int bnriconnum = 0;
 int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
+const char* temphttp;
 const char* tempfile_fullpath;
 FILE* tempfilepath;
 const char* tempfile;
@@ -82,6 +83,7 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 // Settings .ini file
 const char* settingsini_frontend = "FRONTEND";
 //const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
+const char* settingsini_frontend_gotboxart = "GOT_BOXART";
 const char* settingsini_frontend_color = "COLOR";
 const char* settingsini_frontend_filename = "SHOW_FILENAME";
 const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
@@ -153,6 +155,8 @@ const char* settings_autodlvaluetext;
 const char* settings_lrpicktext = "Left/Right: Pick";
 const char* settings_absavereturn = "A/B: Save and Return";
 // End
+
+int gotboxartvalue;
 
 int settings_colorvalue;
 int settings_filenamevalue;
@@ -331,7 +335,7 @@ void DownloadTWLoaderCIAs() {
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
-	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
+	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
@@ -339,7 +343,7 @@ void DownloadTWLoaderCIAs() {
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
-	sftd_draw_textf(font, 2, 12, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
+	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
@@ -1734,6 +1738,7 @@ void LoadBoxArt() {
 
 
 void LoadSettings() {
+	gotboxartvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_gotboxart, 0);
 	settings_colorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
 	settings_filenamevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
@@ -1769,6 +1774,7 @@ void LoadSettings() {
 }
 
 void SaveSettings() {
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_gotboxart, gotboxartvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings_colorvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings_filenamevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
@@ -1863,13 +1869,6 @@ int main()
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(1);
 
-	// Font loading
-	sftd_init();
-	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
-	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
-	sftd_draw_textf(font, 0, 0, RGBA8(255, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
-	sftd_draw_textf(font_b, 0, 0, RGBA8(255, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
-
 	// Clear logo screen
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_end_frame();
@@ -1878,6 +1877,13 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
+
+	// Font loading
+	sftd_init();
+	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
+	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
+	sftd_draw_textf(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+	sftd_draw_textf(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
 
 	LoadSettings();
 
@@ -1948,7 +1954,7 @@ int main()
 	sound sfx_switch("romfs:/sounds/switch.wav",2,false);
 	sound sfx_wrong("romfs:/sounds/wrong.wav",2,false);
 	sound sfx_back("romfs:/sounds/back.wav",2,false);
-
+	
 	const std::string& path = std::string();
 	std::vector<std::string> files = {};
 	std::vector<std::string> fcfiles = {};
@@ -2007,6 +2013,55 @@ int main()
 		}
 		closedir (dir);
 		std::sort( files.begin(), files.end() );
+	}
+	
+	char str3[20] = {0};
+	std::sprintf(str3, "%d", files.size());
+	romsel_counter2sd = str3;
+	
+	if (gotboxartvalue == 0) {
+		// Download box art
+		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
+			char str[20] = {0};
+			std::sprintf(str, "%d", boxartnum+1);
+			romsel_counter1 = str;
+			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
+			sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			
+			tempfile = files.at(boxartnum).c_str();
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+			strcat(tempfile_fullpath, tempfile);
+			tempfilepath = fopen(tempfile_fullpath,"rb");
+			ba_TID = grabTID(tempfilepath);
+			fclose(tempfilepath);
+			
+			temphttp = malloc(256);
+			strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
+			ba_region = "US/"; // default
+			if (ba_TID+3 == "J")
+				ba_region = "JA/";
+			else if (ba_TID+3 == "P")
+				ba_region = "EN/";
+			strcat(temphttp, ba_region);
+			strncat(temphttp, ba_TID, 4);
+			strcat(temphttp, ".png");
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
+			strncat(tempfile_fullpath, ba_TID, 4);
+			strcat(tempfile_fullpath, ".png");
+			downloadfile(temphttp, tempfile_fullpath);
+		}
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		gotboxartvalue = 1;
+		SaveSettings();
 	}
 	
 	if ((flashcarddir = opendir ("sdmc:/roms/flashcard/nds")) != NULL) {
@@ -2101,9 +2156,6 @@ int main()
 	char str2[20] = {0};
 	std::sprintf(str2, "%d", fcfiles.size());
 	romsel_counter2fc = str2;
-	char str3[20] = {0};
-	std::sprintf(str3, "%d", files.size());
-	romsel_counter2sd = str3;
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;

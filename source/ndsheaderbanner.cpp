@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <malloc.h>
 
-const char* savedtext;
-
 u32 * storedtextureData = (u32*) linearAlloc(1024*sizeof(u32));  
 
 u32 colorConvert(u32 iconPixel, u16 indice) {
@@ -18,6 +16,20 @@ u32 colorConvert(u32 iconPixel, u16 indice) {
     u8 b = (((iconPixel >> 10) & 0x1F) * 255) / 31;
     
     return RGBA8(r, g, b, a) ;
+}
+
+char* grabTID(FILE* ndsFile) {
+    sNDSHeader NDSHeader;
+	
+	fseek ( ndsFile , 0 , SEEK_SET );
+    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+	
+	const char* savedtid;
+
+	savedtid = malloc(4);
+	strncpy(savedtid, NDSHeader.gameCode, 4);
+	
+	return savedtid;
 }
 
 char* grabText(FILE* ndsFile) {
@@ -39,9 +51,14 @@ char* grabText(FILE* ndsFile) {
 		int i;
 		char *p = (char*)myBanner.titles[bnrtitlenum];
 		for (i = 0; i < size; i = i+2) {
-			p[i/2] = p[i];
+			/* if ((p[i] == 0x0A) || (p[i] == 0xFF))
+				p[i/2] = 0;
+			else */
+				p[i/2] = p[i];
 		}
 		
+		const char* savedtext;
+
 		savedtext = malloc(256);
 		strncpy(savedtext, p, strlen(p)+1);
 
