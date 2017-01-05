@@ -32,7 +32,7 @@ char* grabTID(FILE* ndsFile) {
 	return savedtid;
 }
 
-char* grabText(FILE* ndsFile) {
+char* grabText(FILE* ndsFile, int titleLanguaje) {
     sNDSHeader NDSHeader;
     sNDSBanner myBanner;
 	
@@ -44,7 +44,7 @@ char* grabText(FILE* ndsFile) {
         
         fread(&myBanner,1,sizeof(myBanner),ndsFile);
 		
-		int bnrtitlenum = 1;
+		int bnrtitlenum = titleLanguaje;
 		int size = sizeof(myBanner.titles[bnrtitlenum]);
 		
 		// turn unicode into ascii (kind of)
