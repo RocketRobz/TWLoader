@@ -2143,6 +2143,9 @@ int main()
 
 	//char* nickname = "Nickname";
 	
+	int textWidth = 0;
+	int textHeight = 0;
+	
 	int boxartXpos;
 	int boxartXmovepos = 0;
 	
@@ -3024,9 +3027,9 @@ int main()
 								}
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								sftd_draw_textf(font_b, 10, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-								sftd_draw_textf(font_b, 10, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3063,7 +3066,7 @@ int main()
 								}
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
