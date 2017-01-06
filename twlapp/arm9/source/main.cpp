@@ -145,13 +145,6 @@ int main(int argc, char **argv) {
 			REG_SCFG_CLK = 0x80;
 			fifoSendValue32(FIFO_USER_04, 1);
 		}
-		
-		if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) {
-			REG_SCFG_EXT |= 0x2000;
-			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-				printf("TWL_VRAM ON\n");		
-			}
-		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
 			if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
@@ -198,6 +191,14 @@ int main(int argc, char **argv) {
 				REG_SCFG_EXT = 0x83000000;
 			}
 		}
+		
+		if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) {
+			REG_SCFG_EXT |= 0x2000;
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("TWL_VRAM ON\n");		
+			}
+		}
+		
 		// Tell Arm7 to apply changes.
 		fifoSendValue32(FIFO_USER_07, 1);
 
