@@ -18,7 +18,7 @@ u32 colorConvert(u32 iconPixel, u16 indice) {
     return RGBA8(r, g, b, a) ;
 }
 
-char* grabTID(FILE* ndsFile) {
+char* grabTID(FILE* ndsFile, int letter) {
     sNDSHeadertitlecodeonly NDSHeader;
 	
 	fseek ( ndsFile , 0 , SEEK_SET );
@@ -27,7 +27,10 @@ char* grabTID(FILE* ndsFile) {
 	const char* savedtid;
 
 	savedtid = malloc(4);
-	strncpy(savedtid, NDSHeader.gameCode, 4);
+	if (letter != 1)
+		strncpy(savedtid, NDSHeader.gameCode, 4);
+	else
+		strncpy(savedtid, NDSHeader.gameCode+3, 1);
 	
 	return savedtid;
 }
@@ -51,10 +54,10 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 		int i2;
 		int i3;
 		char *p = (char*)myBanner.titles[bnrtitlenum];
-		char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
-		char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
+		// char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
+		// char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
 		for (i = 0; i < size; i = i+2) {
-			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
+			/* if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
 				if (line >= 1) {
 					for (i2 = 0; i2 < size; i2 = i2+2) {
 						if ((p2[i2] == 0x0A) || (p2[i2] == 0xFF)) {
@@ -72,9 +75,9 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 					}
 				} else
 					p[i/2] = 0;
-			} else {
+			} else { */
 				p[i/2] = p[i];	// write to line 0
-			}
+			// }
 		}
 		
 		const char* savedtext;
@@ -82,15 +85,19 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 		savedtext = malloc(256);
 		if (line == 0)
 			strncpy(savedtext, p, strlen(p)+1);
-		else if (line == 1)
+		/* else if (line == 1)
 			strncpy(savedtext, p2, strlen(p2)+1);
 		else if (line == 2)
-			strncpy(savedtext, p3, strlen(p3)+1);
+			strncpy(savedtext, p3, strlen(p3)+1); */
 
 		return savedtext;
 	} else {
-		if (line == 1)
-			return "No Text";
+		if (line == 0)
+			return "No Info";
+		else if (line == 1)
+			return " ";
+		else if (line == 2)
+			return " ";
 	}
 }
 

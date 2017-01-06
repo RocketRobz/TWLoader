@@ -193,7 +193,7 @@ typedef struct {
   u16 titles[8][128];	//!< title of the game in 8 different languages.
 } sNDSBanner;
 
-char* grabTID(FILE* ndsFile);
+char* grabTID(FILE* ndsFile, int letter);
 char* grabText(FILE* ndsFile, int bnrtitlenum, int line);
 sf2d_texture* grabIcon(FILE* ndsFile);
 sf2d_texture* grabandstoreIcon(FILE* ndsFile);
