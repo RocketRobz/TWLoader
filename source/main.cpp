@@ -297,61 +297,60 @@ bool checkWifiStatus() {
 }
 
 void downloadfile(const char* url, const char* file){
-	acInit();
-	httpcInit(0x1000);
-	u32 wifistatuts;
-	ACU_GetWifiStatus(&wifistatuts);
-	if(wifistatuts > 0 && wifistatuts < 3){ //Checks if wifi is on
-	u8 method = 0;
-	httpcContext context;
-	u32 statuscode=0;
-	HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
-	if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
+	if(checkWifiStatus()){ //Checks if wifi is on
+		acInit();
+		httpcInit(0x1000);
+		u8 method = 0;
+		httpcContext context;
+		u32 statuscode=0;
+		HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
-	do {
-		if (statuscode >= 301 && statuscode <= 308) {
-			char newurl[4096];
-			httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
-			url = &newurl[0];
+		if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
 
-			httpcCloseContext(&context);
-		}
+		do {
+			if (statuscode >= 301 && statuscode <= 308) {
+				char newurl[4096];
+				httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
+				url = &newurl[0];
 
-		Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
-		httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-
-		if(ret==0){
-			httpcBeginRequest(&context);
-			u32 contentsize=0;
-			httpcGetResponseStatusCode(&context, &statuscode);
-			if (statuscode == 200){
-				u32 readSize = 0;
-				long int bytesWritten = 0;
-				u8* buf = (u8*)malloc(0x1000);
-				memset(buf, 0, 0x1000);
-
-				Handle fileHandle;
-				FS_Path filePath=fsMakePath(PATH_ASCII, file);
-				FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
-
-				do {
-					ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
-					FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
-					bytesWritten += readSize;
-				} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
-
-				FSFILE_Close(fileHandle);
-				svcCloseHandle(fileHandle);
-				free(buf);
+				httpcCloseContext(&context);
 			}
-		}
-	} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
-	httpcCloseContext(&context);
+
+			Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
+			httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+
+			if(ret==0){
+				httpcBeginRequest(&context);
+				u32 contentsize=0;
+				httpcGetResponseStatusCode(&context, &statuscode);
+				if (statuscode == 200){
+					u32 readSize = 0;
+					long int bytesWritten = 0;
+					u8* buf = (u8*)malloc(0x1000);
+					memset(buf, 0, 0x1000);
+
+					Handle fileHandle;
+					FS_Path filePath=fsMakePath(PATH_ASCII, file);
+					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
+
+					do {
+						ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
+						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
+						bytesWritten += readSize;
+					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
+
+					FSFILE_Close(fileHandle);
+					svcCloseHandle(fileHandle);
+					free(buf);
+				}
+			}
+		} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
+		httpcCloseContext(&context);
 		
+		httpcExit();
+		acExit();
 	}
-	httpcExit();
-	acExit();
 }
 
 void DownloadTWLoaderCIAs() {
@@ -2602,7 +2601,7 @@ int main()
 					case 5:
 						if (batteryChargeState){
 							batteryIcon = battery5tex;
-						}							
+						}											
 					case 4:
 						batteryIcon = battery4tex;
 						break;
@@ -2673,7 +2672,7 @@ int main()
 				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
 					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 1); // No slide = volume0 texture
 					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 1); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel < 42) sf2d_draw_texture(vol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 1); // about 50% = volume2 texture
 					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 1); // above 75% = volume3 texture
 				}
 			}				
@@ -2824,7 +2823,7 @@ int main()
 				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
 					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 1); // No slide = volume0 texture
 					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 1); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel < 42) sf2d_draw_texture(setvol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 1); // about 50% = volume2 texture
 					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 1); // above 75% = volume3 texture
 				}
 			}		
