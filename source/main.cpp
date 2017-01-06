@@ -4512,6 +4512,16 @@ int main()
 	aptExit();
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
+	sf2d_free_texture(vol0tex);
+	sf2d_free_texture(vol1tex);
+	sf2d_free_texture(vol2tex);
+	sf2d_free_texture(vol3tex);
+	sf2d_free_texture(vol4tex);
+	sf2d_free_texture(setvol0tex);
+	sf2d_free_texture(setvol1tex);
+	sf2d_free_texture(setvol2tex);
+	sf2d_free_texture(setvol3tex);
+	sf2d_free_texture(setvol4tex);
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
 	sf2d_free_texture(batterychrgtex);
