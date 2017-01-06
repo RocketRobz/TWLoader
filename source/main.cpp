@@ -2007,10 +2007,16 @@ int main()
 	LoadBottomImage();
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
-	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM);
+	sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
+	sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
+	sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
+	sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
+	sf2d_texture *vol4tex = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
+	sf2d_texture *setvol0tex = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
+	sf2d_texture *setvol1tex = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
+	sf2d_texture *setvol2tex = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
+	sf2d_texture *setvol3tex = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)
+	sf2d_texture *setvol4tex = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
 	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
 	sf2d_texture *shoulderYtex = sfil_load_PNG_file("romfs:/graphics/shoulder_Y.png", SF2D_PLACE_RAM); // Y button
@@ -2375,9 +2381,11 @@ int main()
 		u8 batteryLevel = 0;
 		u32 batteryIcon = 0;
 		
+		u8 volumeLevel = 0;
+		
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
-		
+	
 		if(screenmode == 0) {
 			if (colortexloaded == false) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
@@ -2586,6 +2594,7 @@ int main()
 				noromtext1 = "No ROMs found!";
 				noromtext2 = "Put .nds ROMs in 'sdmc:/roms/nds'.";
 			}
+						
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
   				batteryIcon = batterychrgtex;
   			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
@@ -2609,7 +2618,7 @@ int main()
 				}
 			}
 
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
 			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
@@ -2658,6 +2667,16 @@ int main()
 			} else {
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(vol4tex, 5, 1); // No DSP Firm
+			}else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 1); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 1); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel < 42) sf2d_draw_texture(vol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 1); // above 75% = volume3 texture
+				}
+			}				
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			// sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
@@ -2799,6 +2818,16 @@ int main()
 			}
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(setvol4tex, 5, 1); // No DSP Firm 
+			}else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 1); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 1); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel < 42) sf2d_draw_texture(setvol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 1); // above 75% = volume3 texture
+				}
+			}		
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
