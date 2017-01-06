@@ -53,6 +53,21 @@ sf2d_texture *bnricontex7;
 sf2d_texture *bnricontex8;
 sf2d_texture *bnricontex9;
 sf2d_texture *bnricontex10;
+// Below is for .nds icons only
+sf2d_texture *bnricontex11;
+sf2d_texture *bnricontex12;
+sf2d_texture *bnricontex13;
+sf2d_texture *bnricontex14;
+sf2d_texture *bnricontex15;
+sf2d_texture *bnricontex16;
+sf2d_texture *bnricontex17;
+sf2d_texture *bnricontex18;
+sf2d_texture *bnricontex19;
+sf2d_texture *bnricontex20;
+
+const char* ba_TID;
+const char* ba_TIDr;
+const char* ba_region;
 
 const char* boxartpath1;
 const char* boxartpath2;
