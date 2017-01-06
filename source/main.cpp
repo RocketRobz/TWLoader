@@ -129,7 +129,7 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.1.2";
+const char* settings_vertext = "Ver. 2.2";
 
 const char* settingstext_bot;
 
@@ -138,7 +138,7 @@ const char* settings_filenametext = "Show filename";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
-const char* settings_titlelanguajetext = "Title languaje";
+const char* settings_titlelanguajetext = "Title language";
 const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
@@ -2034,46 +2034,48 @@ int main()
 	romsel_counter2sd = str3;
 	
 	// Download box art
-	for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+	if (checkWifiStatus()) {
+		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
+			char str[20] = {0};
+			std::sprintf(str, "%d", boxartnum+1);
+			romsel_counter1 = str;
+			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
+			sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			
+			tempfile = files.at(boxartnum).c_str();
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+			strcat(tempfile_fullpath, tempfile);
+			tempfilepath = fopen(tempfile_fullpath,"rb");
+			ba_TID = grabTID(tempfilepath);
+			fclose(tempfilepath);
+			
+			temphttp = malloc(256);
+			strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
+			ba_region = "US/"; // default
+			if (ba_TID+3 == "J")
+				ba_region = "JA/";
+			else if (ba_TID+3 == "P")
+				ba_region = "EN/";
+			strcat(temphttp, ba_region);
+			strncat(temphttp, ba_TID, 4);
+			strcat(temphttp, ".png");
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
+			strncat(tempfile_fullpath, ba_TID, 4);
+			strcat(tempfile_fullpath, ".png");
+			if( access( tempfile_fullpath, F_OK ) == -1 )
+				downloadfile(temphttp, tempfile_fullpath);
+		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
-		char str[20] = {0};
-		std::sprintf(str, "%d", boxartnum+1);
-		romsel_counter1 = str;
-		sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
-		sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		
-		tempfile = files.at(boxartnum).c_str();
-		tempfile_fullpath = malloc(256);
-		strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-		strcat(tempfile_fullpath, tempfile);
-		tempfilepath = fopen(tempfile_fullpath,"rb");
-		ba_TID = grabTID(tempfilepath);
-		fclose(tempfilepath);
-		
-		temphttp = malloc(256);
-		strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
-		ba_region = "US/"; // default
-		if (ba_TID+3 == "J")
-			ba_region = "JA/";
-		else if (ba_TID+3 == "P")
-			ba_region = "EN/";
-		strcat(temphttp, ba_region);
-		strncat(temphttp, ba_TID, 4);
-		strcat(temphttp, ".png");
-		tempfile_fullpath = malloc(256);
-		strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
-		strncat(tempfile_fullpath, ba_TID, 4);
-		strcat(tempfile_fullpath, ".png");
-		if( access( tempfile_fullpath, F_OK ) == -1 )
-			downloadfile(temphttp, tempfile_fullpath);
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
 	
 	if ((flashcarddir = opendir ("sdmc:/roms/flashcard/nds")) != NULL) {
 	/* print all the files and directories within directory */
@@ -2155,9 +2157,9 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
-	if(settings_autoupdatevalue == 2){
+	if(settings_autoupdatevalue == 2 && checkWifiStatus()){
 		UpdateBootstrapUnofficial();
-	} else if(settings_autoupdatevalue == 1){
+	} else if(settings_autoupdatevalue == 1 && checkWifiStatus()){
 		UpdateBootstrapRelease();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -3106,11 +3108,16 @@ int main()
 									strcpy(cstr3, romsel_gameline3.c_str());
 									bannertextloaded = true;
 								}
-								if (settings_filenamevalue == 1)
+								if (settings_filenamevalue == 1) {
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.7, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.7, 40, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-								sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.7, 56, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.8, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								} else {
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*4.4, 16, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
+								}
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3139,15 +3146,28 @@ int main()
 									strcat(tempfile_fullpath, tempfile);
 									bnriconnum = cursorPosition;
 									OpenBNRIconTemp();
-									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguajevalue);
+									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguajevalue, 0);
+									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguajevalue, 1);
+									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguajevalue, 2);
 									char *cstr1 = new char[romsel_gameline1.length() + 1];
 									strcpy(cstr1, romsel_gameline1.c_str());
+									char *cstr2 = new char[romsel_gameline2.length() + 1];
+									strcpy(cstr2, romsel_gameline2.c_str());
+									char *cstr3 = new char[romsel_gameline3.length() + 1];
+									strcpy(cstr3, romsel_gameline3.c_str());
 									fclose(tempfilepath);
 									bannertextloaded = true;
 								}
-								if (settings_filenamevalue == 1)
+								if (settings_filenamevalue == 1) {
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								sftd_draw_textf(font_b, 10, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.8, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								} else {
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*4.4, 16, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
+								}
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
@@ -3458,7 +3478,7 @@ int main()
 					if(settingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajevaluetext);
-						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desire languaje.");
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desired language.");
 						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "(Only some)");
 						settingsYpos += 12;
 					} else {
@@ -4242,12 +4262,11 @@ int main()
 						}
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
-					} 
-					if (settingscursorPosition == 5) {
+					} else if (settingscursorPosition == 5) {
 						settings_titlelanguajevalue--; // Title languaje
 						if(settings_titlelanguajevalue == -1) 
 							settings_titlelanguajevalue = 7;
-					}		
+					}	
 				} else if((hDown & KEY_DOWN) && settingscursorPosition != 8){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
