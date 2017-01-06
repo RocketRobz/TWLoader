@@ -151,9 +151,6 @@ int main(int argc, char **argv) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_VRAM ON\n");		
 			}
-		} else {
-			REG_SCFG_CLK = 0x80;
-			fifoSendValue32(FIFO_USER_04, 1);
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
