@@ -96,7 +96,7 @@ const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
 const char* settingsini_frontend_counter = "COUNTER";
-const char* settingsini_frontend_titlelanguaje = "TITLE_LANGUAJE";
+const char* settingsini_frontend_titlelanguage = "TITLE_LANGUAGE";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
 	
@@ -146,7 +146,7 @@ const char* settings_filenametext = "Show filename";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
-const char* settings_titlelanguajetext = "Title language";
+const char* settings_titlelanguagetext = "Title language";
 const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
@@ -157,7 +157,7 @@ const char* settings_filenamevaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
-const char* settings_titlelanguajevaluetext;
+const char* settings_titlelanguagevaluetext;
 const char* settings_custombotvaluetext;
 const char* settings_autoupdatevaluetext;
 const char* settings_autodlvaluetext;
@@ -172,7 +172,7 @@ int settings_filenamevalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
-int settings_titlelanguajevalue;
+int settings_titlelanguagevalue;
 int settings_custombotvalue;
 int settings_autoupdatevalue;
 int settings_autodlvalue;
@@ -1857,7 +1857,7 @@ void LoadSettings() {
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
-	settings_titlelanguajevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_titlelanguaje, 0);
+	settings_titlelanguagevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_titlelanguage, 0);
 	settings_custombotvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
@@ -1894,7 +1894,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguaje, settings_titlelanguajevalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguage, settings_titlelanguagevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
@@ -3255,9 +3255,9 @@ int main()
 									strcat(tempfile_fullpath, tempfile);
 									bnriconnum = cursorPosition;
 									OpenBNRIconTemp();
-									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguajevalue, 0);
-									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguajevalue, 1);
-									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguajevalue, 2);
+									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguagevalue, 0);
+									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguagevalue, 1);
+									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguagevalue, 2);
 									char *cstr1 = new char[romsel_gameline1.length() + 1];
 									strcpy(cstr1, romsel_gameline1.c_str());
 									/* char *cstr2 = new char[romsel_gameline2.length() + 1];
@@ -3533,22 +3533,22 @@ int main()
 					} else if (settings_countervalue == 1) {
 						settings_countervaluetext = "On";
 					}
-					if (settings_titlelanguajevalue == 0) {
-						settings_titlelanguajevaluetext = "Japanese";
-					} else if (settings_titlelanguajevalue == 1) {
-						settings_titlelanguajevaluetext = "English";
-					} else if (settings_titlelanguajevalue == 2) {
-						settings_titlelanguajevaluetext = "French";
-					} else if (settings_titlelanguajevalue == 3) {
-						settings_titlelanguajevaluetext = "German";
-					} else if (settings_titlelanguajevalue == 4) {
-						settings_titlelanguajevaluetext = "Italian";
-					} else if (settings_titlelanguajevalue == 5) {
-						settings_titlelanguajevaluetext = "Spanish";
-					} else if (settings_titlelanguajevalue == 6) {
-						settings_titlelanguajevaluetext = "Chinese";
-					} else if (settings_titlelanguajevalue == 7) {
-						settings_titlelanguajevaluetext = "Korean";
+					if (settings_titlelanguagevalue == 0) {
+						settings_titlelanguagevaluetext = "Japanese";
+					} else if (settings_titlelanguagevalue == 1) {
+						settings_titlelanguagevaluetext = "English";
+					} else if (settings_titlelanguagevalue == 2) {
+						settings_titlelanguagevaluetext = "French";
+					} else if (settings_titlelanguagevalue == 3) {
+						settings_titlelanguagevaluetext = "German";
+					} else if (settings_titlelanguagevalue == 4) {
+						settings_titlelanguagevaluetext = "Italian";
+					} else if (settings_titlelanguagevalue == 5) {
+						settings_titlelanguagevaluetext = "Spanish";
+					} else if (settings_titlelanguagevalue == 6) {
+						settings_titlelanguagevaluetext = "Chinese";
+					} else if (settings_titlelanguagevalue == 7) {
+						settings_titlelanguagevaluetext = "Korean";
 					}
 					if (settings_custombotvalue == 0) {
 						settings_custombotvaluetext = "Off";
@@ -3634,14 +3634,14 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 6) {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajevaluetext);
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desired language.");
 						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "(Only some)");
 						settingsYpos += 12;
 					} else {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguajetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguajevaluetext);
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagevaluetext);
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 7) {
@@ -4396,9 +4396,9 @@ int main()
 							settings_countervalue = 0;
 						}
 					} else if (settingscursorPosition == 6) {
-						settings_titlelanguajevalue++; // Title languaje
-						if(settings_titlelanguajevalue == 8) {
-							settings_titlelanguajevalue = 0;
+						settings_titlelanguagevalue++; // Title language
+						if(settings_titlelanguagevalue == 8) {
+							settings_titlelanguagevalue = 0;
 						}						
 					} else if (settingscursorPosition == 7) {
 						settings_custombotvalue++; // Custom bottom image
@@ -4433,9 +4433,9 @@ int main()
 						}
 						LoadMenuColor();
 					} else if (settingscursorPosition == 6) {
-						settings_titlelanguajevalue--; // Title languaje
-						if(settings_titlelanguajevalue == -1) 
-							settings_titlelanguajevalue = 7;
+						settings_titlelanguagevalue--; // Title language
+						if(settings_titlelanguagevalue == -1) 
+							settings_titlelanguagevalue = 7;
 					}	
 				} else if((hDown & KEY_DOWN) && settingscursorPosition != 9){
 					settingscursorPosition++;
