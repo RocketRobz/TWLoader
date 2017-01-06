@@ -96,7 +96,7 @@ const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
 const char* settingsini_frontend_counter = "COUNTER";
-const char* settingsini_frontend_titlelanguaje = "TITLE_LANGUAJE";
+const char* settingsini_frontend_titlelanguage = "TITLE_LANGUAGE";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
 	
@@ -146,7 +146,7 @@ const char* settings_filenametext = "Show filename";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
-const char* settings_titlelanguajetext = "Title language";
+const char* settings_titlelanguagetext = "Title language";
 const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
@@ -157,7 +157,7 @@ const char* settings_filenamevaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
-const char* settings_titlelanguajevaluetext;
+const char* settings_titlelanguagevaluetext;
 const char* settings_custombotvaluetext;
 const char* settings_autoupdatevaluetext;
 const char* settings_autodlvaluetext;
@@ -172,7 +172,7 @@ int settings_filenamevalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
-int settings_titlelanguajevalue;
+int settings_titlelanguagevalue;
 int settings_custombotvalue;
 int settings_autoupdatevalue;
 int settings_autodlvalue;
@@ -297,61 +297,60 @@ bool checkWifiStatus() {
 }
 
 void downloadfile(const char* url, const char* file){
-	acInit();
-	httpcInit(0x1000);
-	u32 wifistatuts;
-	ACU_GetWifiStatus(&wifistatuts);
-	if(wifistatuts > 0 && wifistatuts < 3){ //Checks if wifi is on
-	u8 method = 0;
-	httpcContext context;
-	u32 statuscode=0;
-	HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
-	if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
+	if(checkWifiStatus()){ //Checks if wifi is on
+		acInit();
+		httpcInit(0x1000);
+		u8 method = 0;
+		httpcContext context;
+		u32 statuscode=0;
+		HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
-	do {
-		if (statuscode >= 301 && statuscode <= 308) {
-			char newurl[4096];
-			httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
-			url = &newurl[0];
+		if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
 
-			httpcCloseContext(&context);
-		}
+		do {
+			if (statuscode >= 301 && statuscode <= 308) {
+				char newurl[4096];
+				httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
+				url = &newurl[0];
 
-		Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
-		httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-
-		if(ret==0){
-			httpcBeginRequest(&context);
-			u32 contentsize=0;
-			httpcGetResponseStatusCode(&context, &statuscode);
-			if (statuscode == 200){
-				u32 readSize = 0;
-				long int bytesWritten = 0;
-				u8* buf = (u8*)malloc(0x1000);
-				memset(buf, 0, 0x1000);
-
-				Handle fileHandle;
-				FS_Path filePath=fsMakePath(PATH_ASCII, file);
-				FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
-
-				do {
-					ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
-					FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
-					bytesWritten += readSize;
-				} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
-
-				FSFILE_Close(fileHandle);
-				svcCloseHandle(fileHandle);
-				free(buf);
+				httpcCloseContext(&context);
 			}
-		}
-	} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
-	httpcCloseContext(&context);
+
+			Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
+			httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+
+			if(ret==0){
+				httpcBeginRequest(&context);
+				u32 contentsize=0;
+				httpcGetResponseStatusCode(&context, &statuscode);
+				if (statuscode == 200){
+					u32 readSize = 0;
+					long int bytesWritten = 0;
+					u8* buf = (u8*)malloc(0x1000);
+					memset(buf, 0, 0x1000);
+
+					Handle fileHandle;
+					FS_Path filePath=fsMakePath(PATH_ASCII, file);
+					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
+
+					do {
+						ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
+						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
+						bytesWritten += readSize;
+					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
+
+					FSFILE_Close(fileHandle);
+					svcCloseHandle(fileHandle);
+					free(buf);
+				}
+			}
+		} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
+		httpcCloseContext(&context);
 		
+		httpcExit();
+		acExit();
 	}
-	httpcExit();
-	acExit();
 }
 
 void DownloadTWLoaderCIAs() {
@@ -1857,7 +1856,7 @@ void LoadSettings() {
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
-	settings_titlelanguajevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_titlelanguaje, 0);
+	settings_titlelanguagevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_titlelanguage, 0);
 	settings_custombotvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
@@ -1894,7 +1893,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguaje, settings_titlelanguajevalue);
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguage, settings_titlelanguagevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
@@ -2007,10 +2006,16 @@ int main()
 	LoadBottomImage();
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
-	//sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM);
-	//sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM);
+	sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
+	sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
+	sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
+	sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
+	sf2d_texture *vol4tex = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
+	sf2d_texture *setvol0tex = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
+	sf2d_texture *setvol1tex = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
+	sf2d_texture *setvol2tex = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
+	sf2d_texture *setvol3tex = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)
+	sf2d_texture *setvol4tex = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
 	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
 	sf2d_texture *shoulderYtex = sfil_load_PNG_file("romfs:/graphics/shoulder_Y.png", SF2D_PLACE_RAM); // Y button
@@ -2375,9 +2380,11 @@ int main()
 		u8 batteryLevel = 0;
 		u32 batteryIcon = 0;
 		
+		u8 volumeLevel = 0;
+		
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
-		
+	
 		if(screenmode == 0) {
 			if (colortexloaded == false) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
@@ -2586,6 +2593,7 @@ int main()
 				noromtext1 = "No ROMs found!";
 				noromtext2 = "Put .nds ROMs in 'sdmc:/roms/nds'.";
 			}
+						
 			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
   				batteryIcon = batterychrgtex;
   			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
@@ -2593,7 +2601,7 @@ int main()
 					case 5:
 						if (batteryChargeState){
 							batteryIcon = battery5tex;
-						}							
+						}											
 					case 4:
 						batteryIcon = battery4tex;
 						break;
@@ -2609,7 +2617,7 @@ int main()
 				}
 			}
 
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
 			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
@@ -2658,6 +2666,16 @@ int main()
 			} else {
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(vol4tex, 5, 1); // No DSP Firm
+			}else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 1); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 1); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 1); // above 75% = volume3 texture
+				}
+			}				
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			// sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
@@ -2799,6 +2817,16 @@ int main()
 			}
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(setvol4tex, 5, 1); // No DSP Firm 
+			}else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 1); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 1); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 1); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 1); // above 75% = volume3 texture
+				}
+			}		
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
@@ -3255,9 +3283,9 @@ int main()
 									strcat(tempfile_fullpath, tempfile);
 									bnriconnum = cursorPosition;
 									OpenBNRIconTemp();
-									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguajevalue, 0);
-									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguajevalue, 1);
-									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguajevalue, 2);
+									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguagevalue, 0);
+									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguagevalue, 1);
+									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguagevalue, 2);
 									char *cstr1 = new char[romsel_gameline1.length() + 1];
 									strcpy(cstr1, romsel_gameline1.c_str());
 									/* char *cstr2 = new char[romsel_gameline2.length() + 1];
@@ -3533,22 +3561,22 @@ int main()
 					} else if (settings_countervalue == 1) {
 						settings_countervaluetext = "On";
 					}
-					if (settings_titlelanguajevalue == 0) {
-						settings_titlelanguajevaluetext = "Japanese";
-					} else if (settings_titlelanguajevalue == 1) {
-						settings_titlelanguajevaluetext = "English";
-					} else if (settings_titlelanguajevalue == 2) {
-						settings_titlelanguajevaluetext = "French";
-					} else if (settings_titlelanguajevalue == 3) {
-						settings_titlelanguajevaluetext = "German";
-					} else if (settings_titlelanguajevalue == 4) {
-						settings_titlelanguajevaluetext = "Italian";
-					} else if (settings_titlelanguajevalue == 5) {
-						settings_titlelanguajevaluetext = "Spanish";
-					} else if (settings_titlelanguajevalue == 6) {
-						settings_titlelanguajevaluetext = "Chinese";
-					} else if (settings_titlelanguajevalue == 7) {
-						settings_titlelanguajevaluetext = "Korean";
+					if (settings_titlelanguagevalue == 0) {
+						settings_titlelanguagevaluetext = "Japanese";
+					} else if (settings_titlelanguagevalue == 1) {
+						settings_titlelanguagevaluetext = "English";
+					} else if (settings_titlelanguagevalue == 2) {
+						settings_titlelanguagevaluetext = "French";
+					} else if (settings_titlelanguagevalue == 3) {
+						settings_titlelanguagevaluetext = "German";
+					} else if (settings_titlelanguagevalue == 4) {
+						settings_titlelanguagevaluetext = "Italian";
+					} else if (settings_titlelanguagevalue == 5) {
+						settings_titlelanguagevaluetext = "Spanish";
+					} else if (settings_titlelanguagevalue == 6) {
+						settings_titlelanguagevaluetext = "Chinese";
+					} else if (settings_titlelanguagevalue == 7) {
+						settings_titlelanguagevaluetext = "Korean";
 					}
 					if (settings_custombotvalue == 0) {
 						settings_custombotvaluetext = "Off";
@@ -3634,14 +3662,14 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 6) {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguajevaluetext);
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desired language.");
 						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "(Only some)");
 						settingsYpos += 12;
 					} else {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguajetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguajevaluetext);
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagetext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagevaluetext);
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 7) {
@@ -4396,9 +4424,9 @@ int main()
 							settings_countervalue = 0;
 						}
 					} else if (settingscursorPosition == 6) {
-						settings_titlelanguajevalue++; // Title languaje
-						if(settings_titlelanguajevalue == 8) {
-							settings_titlelanguajevalue = 0;
+						settings_titlelanguagevalue++; // Title language
+						if(settings_titlelanguagevalue == 8) {
+							settings_titlelanguagevalue = 0;
 						}						
 					} else if (settingscursorPosition == 7) {
 						settings_custombotvalue++; // Custom bottom image
@@ -4433,9 +4461,9 @@ int main()
 						}
 						LoadMenuColor();
 					} else if (settingscursorPosition == 6) {
-						settings_titlelanguajevalue--; // Title languaje
-						if(settings_titlelanguajevalue == -1) 
-							settings_titlelanguajevalue = 7;
+						settings_titlelanguagevalue--; // Title language
+						if(settings_titlelanguagevalue == -1) 
+							settings_titlelanguagevalue = 7;
 					}	
 				} else if((hDown & KEY_DOWN) && settingscursorPosition != 9){
 					settingscursorPosition++;
@@ -4484,6 +4512,16 @@ int main()
 	aptExit();
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
+	sf2d_free_texture(vol0tex);
+	sf2d_free_texture(vol1tex);
+	sf2d_free_texture(vol2tex);
+	sf2d_free_texture(vol3tex);
+	sf2d_free_texture(vol4tex);
+	sf2d_free_texture(setvol0tex);
+	sf2d_free_texture(setvol1tex);
+	sf2d_free_texture(setvol2tex);
+	sf2d_free_texture(setvol3tex);
+	sf2d_free_texture(setvol4tex);
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
 	sf2d_free_texture(batterychrgtex);
