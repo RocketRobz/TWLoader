@@ -103,6 +103,7 @@ const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
 const char* settingsini_twlmode = "TWL-MODE";
 const char* settingsini_twl_rainbowled = "RAINBOW_LED";
 const char* settingsini_twl_clock = "TWL_CLOCK";
+const char* settingsini_twl_vram = "TWL_VRAM";
 const char* settingsini_twl_bootani = "BOOT_ANIMATION";
 const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
 const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
@@ -210,6 +211,7 @@ const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
 const char* twlsettings_flashcardtext = "Flashcard(s) select";
 const char* twlsettings_rainbowledtext = "Rainbow LED";
 const char* twlsettings_cpuspeedtext = "ARM9 CPU Speed";
+const char* twlsettings_extvramtext = "VRAM boost";
 const char* twlsettings_bootscreentext = "DS/DSi Boot Screen";
 const char* twlsettings_healthsafetytext = "Health and Safety message";
 const char* twlsettings_resetslot1text = "Reset Slot-1";
@@ -218,6 +220,7 @@ const char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
 	
 const char* twlsettings_rainbowledvaluetext;
 const char* twlsettings_cpuspeedvaluetext;
+const char* twlsettings_extvramvaluetext;
 const char* twlsettings_flashcardvaluetext1;
 const char* twlsettings_flashcardvaluetext2;
 const char* twlsettings_flashcardvaluetext3;
@@ -233,6 +236,7 @@ const char* twlsettings_lockarm9scfgextvaluetext;
 	
 int twlsettings_rainbowledvalue;
 int twlsettings_cpuspeedvalue;
+int twlsettings_extvramvalue;
 int twlsettings_forwardervalue;
 int twlsettings_flashcardvalue;
 /* Flashcard value
@@ -1864,6 +1868,7 @@ void LoadSettings() {
 	// romselect_layout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0);
 	twlsettings_rainbowledvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0);
 	twlsettings_cpuspeedvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0);
+	twlsettings_extvramvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_vram, 0);
 	twlsettings_bootscreenvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_bootani, 0);
 	twlsettings_healthsafetyvalue = settingsini.GetInt(settingsini_twlmode, settingsini_twl_hsmsg, 0);
 	twlsettings_resetslot1value = settingsini.GetInt(settingsini_twlmode, settingsini_twl_resetslot1, 0);
@@ -1901,6 +1906,7 @@ void SaveSettings() {
 	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, twlsettings_rainbowledvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, twlsettings_cpuspeedvalue);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_vram, twlsettings_extvramvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, twlsettings_bootscreenvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
@@ -2667,13 +2673,13 @@ int main()
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
 			if(!dspfirmfound) { 
-				sf2d_draw_texture(vol4tex, 5, 1); // No DSP Firm
-			}else {
+				sf2d_draw_texture(vol4tex, 5, 2); // No DSP Firm
+			} else {
 				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 1); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 1); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 1); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 1); // above 75% = volume3 texture
+					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 2); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 2); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 2); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 2); // above 75% = volume3 texture
 				}
 			}				
 			sf2d_draw_texture(batteryIcon, 371, 2);
@@ -2738,6 +2744,16 @@ int main()
 				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
 			} else {
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
+			}
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(vol4tex, 5, 2); // No DSP Firm
+			} else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 2); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 2); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 2); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 2); // above 75% = volume3 texture
+				}
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			// sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
@@ -2818,13 +2834,13 @@ int main()
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 			if(!dspfirmfound) { 
-				sf2d_draw_texture(setvol4tex, 5, 1); // No DSP Firm 
-			}else {
+				sf2d_draw_texture(setvol4tex, 5, 2); // No DSP Firm 
+			} else {
 				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 1); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 1); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 1); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 1); // above 75% = volume3 texture
+					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 2); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 2); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 2); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 2); // above 75% = volume3 texture
 				}
 			}		
 			sf2d_draw_texture(batteryIcon, 371, 2);
@@ -2862,6 +2878,16 @@ int main()
 			}
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			if(!dspfirmfound) { 
+				sf2d_draw_texture(setvol4tex, 5, 2); // No DSP Firm 
+			} else {
+				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
+					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 2); // No slide = volume0 texture
+					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 2); // 25% or less = volume1 texture
+					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 2); // about 50% = volume2 texture
+					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 2); // above 75% = volume3 texture
+				}
+			}	
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
@@ -3719,6 +3745,11 @@ int main()
 					} else {
 						twlsettings_cpuspeedvaluetext = "67mhz (NTR)";
 					}
+					if (twlsettings_extvramvalue == 1) {
+						twlsettings_extvramvaluetext = "On";
+					} else {
+						twlsettings_extvramvaluetext = "Off";
+					}
 					if (twlsettings_bootscreenvalue == 1) {
 						twlsettings_bootscreenvaluetext = "On";
 					} else {
@@ -3779,6 +3810,17 @@ int main()
 						settingsYpos += 12;
 					}
 					if(twlsettingscursorPosition == 3) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_extvramtext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_extvramvaluetext);
+						settingsYpos += 12;
+						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Allows 8 bit VRAM writes");
+						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and expands the bus to 32 bit.");
+					} else {
+						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_extvramtext);
+						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_extvramvaluetext);
+						settingsYpos += 12;
+					}
+					if(twlsettingscursorPosition == 4) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreentext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
@@ -3789,7 +3831,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootscreenvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 4) {
+					if(twlsettingscursorPosition == 5) {
 						sftd_draw_textf(font, settingsXpos+16, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetytext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
@@ -3800,7 +3842,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_healthsafetyvaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 5) {
+					if(twlsettingscursorPosition == 6) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1text);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
@@ -3811,7 +3853,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_resetslot1valuetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 6) {
+					if(twlsettingscursorPosition == 7) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consoletext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
@@ -3821,7 +3863,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, twlsettings_consolevaluetext);
 						settingsYpos += 12;
 					}
-					if(twlsettingscursorPosition == 7) {
+					if(twlsettingscursorPosition == 8) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgexttext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, twlsettings_lockarm9scfgextvaluetext);
 						settingsYpos += 12;
@@ -4343,26 +4385,31 @@ int main()
 							twlsettings_cpuspeedvalue = 0;
 						}
 					} else if (twlsettingscursorPosition == 3) {
+						twlsettings_extvramvalue++; // VRAM boost
+						if(twlsettings_extvramvalue == 2) {
+							twlsettings_extvramvalue = 0;
+						}
+					} else if (twlsettingscursorPosition == 4) {
 						twlsettings_bootscreenvalue++; // Boot screen
 						if(twlsettings_bootscreenvalue == 2) {
 							twlsettings_bootscreenvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 4) {
+					} else if (twlsettingscursorPosition == 5) {
 						twlsettings_healthsafetyvalue++; // H&S message
 						if(twlsettings_healthsafetyvalue == 2) {
 							twlsettings_healthsafetyvalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 5) {
+					} else if (twlsettingscursorPosition == 6) {
 						twlsettings_resetslot1value++; // Reset Slot-1
 						if(twlsettings_resetslot1value == 2) {
 							twlsettings_resetslot1value = 0;
 						}
-					} else if (twlsettingscursorPosition == 6) {
+					} else if (twlsettingscursorPosition == 7) {
 						twlsettings_consolevalue++; // Console output
 						if(twlsettings_consolevalue == 3) {
 							twlsettings_consolevalue = 0;
 						}
-					} else if (twlsettingscursorPosition == 7) {
+					} else if (twlsettingscursorPosition == 8) {
 						twlsettings_lockarm9scfgextvalue++; // Lock ARM9 SCFG_EXT
 						if(twlsettings_lockarm9scfgextvalue == 2) {
 							twlsettings_lockarm9scfgextvalue = 0;
@@ -4566,6 +4613,16 @@ int main()
 	sf2d_free_texture(bnricontex8);
 	sf2d_free_texture(bnricontex9);
 	sf2d_free_texture(bnricontex10);
+	sf2d_free_texture(bnricontex11);
+	sf2d_free_texture(bnricontex12);
+	sf2d_free_texture(bnricontex13);
+	sf2d_free_texture(bnricontex14);
+	sf2d_free_texture(bnricontex15);
+	sf2d_free_texture(bnricontex16);
+	sf2d_free_texture(bnricontex17);
+	sf2d_free_texture(bnricontex18);
+	sf2d_free_texture(bnricontex19);
+	sf2d_free_texture(bnricontex20);
 	sf2d_free_texture(boxarttex1);
 	sf2d_free_texture(boxarttex2);
 	sf2d_free_texture(boxarttex3);

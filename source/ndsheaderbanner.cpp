@@ -54,42 +54,48 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 		int i2;
 		int i3;
 		char *p = (char*)myBanner.titles[bnrtitlenum];
-		// char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
-		// char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
+		char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
+		char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
+		
 		for (i = 0; i < size; i = i+2) {
 			/* if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
-				if (line >= 1) {
+				if (line == 0)
+					p[i/2] = 0;
+				else if (line >= 1) {
 					for (i2 = 0; i2 < size; i2 = i2+2) {
-						if ((p2[i2] == 0x0A) || (p2[i2] == 0xFF)) {
-							if (line == 2) {
+						if ((p2[i2+i] == 0x0A) || (p2[i2+i] == 0xFF)) {
+							if (line == 1)
+								p2[i2/2] = 0;
+							else if (line == 2) {
 								for (i3 = 0; i3 < size; i3 = i3+2) {
-									if ((p3[i3] == 0x0A) || (p3[i3] == 0xFF) || (p3[i3] == 0x00))
-										p3[i3/2] = 0;
+									if ((p3[i3+i] == 0x0A) || (p3[i3+i] == 0xFF))
+										p3[i3/2] = 0;									
 									else
 										p3[i3/2] = p3[i3+i];	// write to line 2
 								}
-							} else
-								p2[i2/2] = 0;
-						} else
-							p2[i2/2] = p2[i2+i];	// write to line 1
+							}
+						} else {
+							if (line == 1)
+								p2[i2/2] = p2[i2+i];	// write to line 1
+						}
 					}
-				} else
-					p[i/2] = 0;
-			} else { */
-				p[i/2] = p[i];	// write to line 0
+				}
+			} else {
+				if (line == 0) */
+					p[i/2] = p[i];	// write to line 0
 			// }
 		}
 		
 		const char* savedtext;
 
 		savedtext = malloc(256);
-		if (line == 0)
+		if (line == 0) {
 			strncpy(savedtext, p, strlen(p)+1);
-		/* else if (line == 1)
+		} else if (line == 1) {
 			strncpy(savedtext, p2, strlen(p2)+1);
-		else if (line == 2)
-			strncpy(savedtext, p3, strlen(p3)+1); */
-
+		} else if (line == 2) {
+			strncpy(savedtext, p3, strlen(p3)+1);
+		}
 		return savedtext;
 	} else {
 		if (line == 0)
