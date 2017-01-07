@@ -137,7 +137,7 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.2";
+const char* settings_vertext = "Ver. 2.2.1";
 
 const char* settingstext_bot;
 
@@ -380,7 +380,7 @@ void UpdateBootstrapUnofficial() {
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Unofficial)...");
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Unofficial)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
@@ -390,17 +390,10 @@ void UpdateBootstrapRelease() {
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-card (Release)...");
+	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Release)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1)
-		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap-dldi (Release)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-	downloadfile("https://www.dropbox.com/s/prbs8b96fyb3zcb/bootstrap-dldi.nds?dl=1","/_nds/bootstrap-dldi.nds");
 }
 
 void RainbowLED() {
