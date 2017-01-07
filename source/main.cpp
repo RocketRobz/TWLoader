@@ -411,7 +411,8 @@ void UpdateBootstrapUnofficial() {
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Unofficial)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+	remove("sdmc:/_nds/bootstrap.nds");
+	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds");
 }
 
 void UpdateBootstrapRelease() {
@@ -421,7 +422,8 @@ void UpdateBootstrapRelease() {
 	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Release)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap-card.nds?dl=1","/_nds/bootstrap-card.nds");
+	remove("sdmc:/_nds/bootstrap.nds");
+	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds");
 }
 
 void RainbowLED() {
