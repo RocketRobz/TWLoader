@@ -291,19 +291,20 @@ bool checkWifiStatus() {
 	acInit();
 	u32 wifiStatus;
 	ACU_GetWifiStatus(&wifiStatus);
+	bool res = false;
 	
-	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {	
-		return true;
-	}
-	
+	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
+		res = true;
+	}	
 	acExit();
-	return false;
+	return res;
 }
 
 void downloadfile(const char* url, const char* file){
 
 	if(checkWifiStatus()){ //Checks if wifi is on
 		acInit();
+		fsInit();
 		httpcInit(0x1000);
 		u8 method = 0;
 		httpcContext context;
@@ -354,6 +355,7 @@ void downloadfile(const char* url, const char* file){
 		
 		httpcExit();
 		acExit();
+		fsExit();
 	}
 }
 
