@@ -163,7 +163,7 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.2.1";
+const char* settings_vertext = "Ver. 2.2.2";
 
 const char* settingstext_bot;
 
