@@ -34,6 +34,8 @@ CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
+u8 language;
+
 sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *settingstex;
@@ -88,6 +90,7 @@ const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
 // Settings .ini file
 const char* settingsini_frontend = "FRONTEND";
 //const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
+const char* settingsini_frontend_name = "NAME";
 const char* settingsini_frontend_color = "COLOR";
 const char* settingsini_frontend_menucolor = "MENU_COLOR";
 const char* settingsini_frontend_filename = "SHOW_FILENAME";
@@ -96,7 +99,6 @@ const char* settingsini_frontend_topborder = "TOP_BORDER";
 const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
 const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
 const char* settingsini_frontend_counter = "COUNTER";
-const char* settingsini_frontend_titlelanguage = "TITLE_LANGUAGE";
 const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
 const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
 	
@@ -124,6 +126,30 @@ const char* bootstrapini_debug = "DEBUG";
 const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 // End
 
+const char* text_returntohomemenu()
+{
+	const char *languages[] = 
+	{
+		": Return to HOME Menu",		// Japanese
+		": Return to HOME Menu",		// English
+		": Retour au menu HOME",		// French
+		": Zurück zum HOME-Menü",		// German
+		": Ritorna alla Home Menu",		// Italian
+		": Regresar al menú HOME",		// Spanish
+		": Return to HOME Menu",		// Simplified Chinese
+		": Return to HOME Menu",		// Korean
+		": Keer terug naar HOME-menu",	// Dutch
+		": Retornar ao Menu HOME",		// Portugese
+		": Return to HOME Menu",		// Russian
+		": Return to HOME Menu"			// Traditional Chinese
+	};
+	
+	if (language < 11)
+		return languages[language];
+	else
+		return languages[11];
+}
+
 const char* Lshouldertext;
 const char* Rshouldertext;
 
@@ -147,7 +173,6 @@ const char* settings_filenametext = "Show filename";
 const char* settings_locswitchtext = "Game location switcher";
 const char* settings_topbordertext = "Top border";
 const char* settings_countertext = "Game counter";
-const char* settings_titlelanguagetext = "Title language";
 const char* settings_custombottext = "Custom bottom image";
 const char* settings_autoupdatetext = "Auto-update bootstrap";
 const char* settings_autodltext = "Auto-download latest TWLoader";
@@ -158,7 +183,6 @@ const char* settings_filenamevaluetext;
 const char* settings_locswitchvaluetext;
 const char* settings_topbordervaluetext;
 const char* settings_countervaluetext;
-const char* settings_titlelanguagevaluetext;
 const char* settings_custombotvaluetext;
 const char* settings_autoupdatevaluetext;
 const char* settings_autodlvaluetext;
@@ -173,7 +197,6 @@ int settings_filenamevalue;
 int settings_locswitchvalue;
 int settings_topbordervalue;
 int settings_countervalue;
-int settings_titlelanguagevalue;
 int settings_custombotvalue;
 int settings_autoupdatevalue;
 int settings_autodlvalue;
@@ -181,6 +204,8 @@ int settings_autodlvalue;
 int romselect_toplayout;
 //	0: Show box art
 //	1: Hide box art
+
+std::string name;
 
 const char* romsel_filename;
 std::string romsel_gameline1;
@@ -293,9 +318,10 @@ bool checkWifiStatus() {
 	ACU_GetWifiStatus(&wifiStatus);
 	bool res = false;
 	
-	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
+	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {	
 		res = true;
-	}	
+	}
+	
 	acExit();
 	return res;
 }
@@ -1849,13 +1875,15 @@ void LoadBoxArt() {
 
 
 void LoadSettings() {
+	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
+	char *cstr = new char[name.length() + 1];
+	strcpy(cstr, name.c_str());
 	settings_colorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
 	settings_menucolorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_menucolor, 0);
 	settings_filenamevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
 	settings_locswitchvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
 	settings_topbordervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
 	settings_countervalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
-	settings_titlelanguagevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_titlelanguage, 0);
 	settings_custombotvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
 	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
 	settings_autoupdatevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
@@ -1893,7 +1921,6 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings_locswitchvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings_topbordervalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings_countervalue);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_titlelanguage, settings_titlelanguagevalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings_custombotvalue);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings_autoupdatevalue);
@@ -1950,6 +1977,7 @@ void screenon()
 int main()
 {
 	aptInit();
+	cfguInit();
 	amInit();
 	ptmuInit();	// For battery status
 	sdmcInit();
@@ -1999,6 +2027,8 @@ int main()
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
 	sftd_draw_textf(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
 	sftd_draw_textf(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+
+    CFGU_GetSystemLanguage(&language);
 
 	LoadSettings();
 
@@ -2140,6 +2170,22 @@ int main()
 	std::sprintf(str3, "%d", files.size());
 	romsel_counter2sd = str3;
 	
+	const char *ba_langs_eur[] = 
+		{
+			"EN/",					// Japanese (English used in place)
+			"EN/",					// English
+			"FR/",					// French
+			"GE/",					// German
+			"IT/",					// Italian
+			"SP/",					// Spanish
+			"SP/",					// Simplified Chinese (Spanish used in place)
+			"SP/",					// Korean (Spanish used in place)
+			"SP/",					// Dutch (Spanish used in place)
+			"SP/",					// Portugese (Spanish used in place)
+			"SP/",					// Russian (Spanish used in place)
+			"SP/"					// Traditional Chinese (Spanish used in place)
+		};
+
 	// Download box art
 	if (checkWifiStatus()) {
 		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
@@ -2173,7 +2219,7 @@ int main()
 			if (temptext+1 == "J")
 				ba_region = "JA/";
 			else if (temptext+1 == "P")
-				ba_region = "EN/";
+				ba_region = ba_langs_eur[language];
 			strcat(temphttp, ba_region);
 			strncat(temphttp, ba_TID, 4);
 			strcat(temphttp, ".png");
@@ -2317,8 +2363,6 @@ int main()
 	float rad = 0.0f;
 	u16 touch_x = 320/2;
 	u16 touch_y = 240/2;
-
-	//char* nickname = "Nickname";
 	
 	int textWidth = 0;
 	int textHeight = 0;
@@ -2678,7 +2722,7 @@ int main()
 				}
 			}				
 			sf2d_draw_texture(batteryIcon, 371, 2);
-			// sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
+			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -2751,7 +2795,7 @@ int main()
 				}
 			}
 			sf2d_draw_texture(batteryIcon, 371, 2);
-			// sftd_draw_textf(font, 24, 2, RGBA8(0, 0, 0, 255), 12, nickname);
+			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
 			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -2839,6 +2883,7 @@ int main()
 				}
 			}		
 			sf2d_draw_texture(batteryIcon, 371, 2);
+			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
 			
@@ -2884,6 +2929,7 @@ int main()
 				}
 			}	
 			sf2d_draw_texture(batteryIcon, 371, 2);
+			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			sf2d_end_frame();
 		}
@@ -3304,9 +3350,9 @@ int main()
 									strcat(tempfile_fullpath, tempfile);
 									bnriconnum = cursorPosition;
 									OpenBNRIconTemp();
-									romsel_gameline1 = grabText(tempfilepath, settings_titlelanguagevalue, 0);
-									romsel_gameline2 = grabText(tempfilepath, settings_titlelanguagevalue, 1);
-									romsel_gameline3 = grabText(tempfilepath, settings_titlelanguagevalue, 2);
+									romsel_gameline1 = grabText(tempfilepath, language, 0);
+									romsel_gameline2 = grabText(tempfilepath, language, 1);
+									romsel_gameline3 = grabText(tempfilepath, language, 2);
 									char *cstr1 = new char[romsel_gameline1.length() + 1];
 									strcpy(cstr1, romsel_gameline1.c_str());
 									/* char *cstr2 = new char[romsel_gameline2.length() + 1];
@@ -3342,7 +3388,7 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
-					sftd_draw_textf(font, 98, 221, RGBA8(0, 0, 0, 255), 13, ": Return to HOME Menu");
+					sftd_draw_textf(font, 98, 221, RGBA8(0, 0, 0, 255), 13, text_returntohomemenu());
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 					if (twlsettings_forwardervalue == 0) {
@@ -3482,7 +3528,7 @@ int main()
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sf2d_draw_texture(settingstex, 0, 0);
 				sf2d_draw_texture(whomeicontex, 81, 220); // Draw HOME icon
-				sftd_draw_textf(font, 98, 221, RGBA8(255, 255, 255, 255), 13, ": Return to HOME Menu");
+				sftd_draw_textf(font, 98, 221, RGBA8(255, 255, 255, 255), 13, text_returntohomemenu());
 				if (settings_subscreenmode == 0) {
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
@@ -3582,23 +3628,6 @@ int main()
 					} else if (settings_countervalue == 1) {
 						settings_countervaluetext = "On";
 					}
-					if (settings_titlelanguagevalue == 0) {
-						settings_titlelanguagevaluetext = "Japanese";
-					} else if (settings_titlelanguagevalue == 1) {
-						settings_titlelanguagevaluetext = "English";
-					} else if (settings_titlelanguagevalue == 2) {
-						settings_titlelanguagevaluetext = "French";
-					} else if (settings_titlelanguagevalue == 3) {
-						settings_titlelanguagevaluetext = "German";
-					} else if (settings_titlelanguagevalue == 4) {
-						settings_titlelanguagevaluetext = "Italian";
-					} else if (settings_titlelanguagevalue == 5) {
-						settings_titlelanguagevaluetext = "Spanish";
-					} else if (settings_titlelanguagevalue == 6) {
-						settings_titlelanguagevaluetext = "Chinese";
-					} else if (settings_titlelanguagevalue == 7) {
-						settings_titlelanguagevaluetext = "Korean";
-					}
 					if (settings_custombotvalue == 0) {
 						settings_custombotvaluetext = "Off";
 					} else if (settings_custombotvalue == 1) {
@@ -3683,17 +3712,6 @@ int main()
 						settingsYpos += 12;
 					}
 					if(settingscursorPosition == 6) {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_titlelanguagevaluetext);
-						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Show title name in the desired language.");
-						sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "(Only some)");
-						settingsYpos += 12;
-					} else {
-						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagetext);
-						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_titlelanguagevaluetext);
-						settingsYpos += 12;
-					}
-					if(settingscursorPosition == 7) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombottext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_custombotvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
@@ -3704,7 +3722,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_custombotvaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 8) {
+					if(settingscursorPosition == 7) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatetext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autoupdatevaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -3714,7 +3732,7 @@ int main()
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatevaluetext);
 						settingsYpos += 12;
 					}
-					if(settingscursorPosition == 9) {
+					if(settingscursorPosition == 8) {
 						sftd_draw_textf(font, settingsXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodltext);
 						sftd_draw_textf(font, settingsvalueXpos, settingsYpos, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, settings_autodlvaluetext);
 						sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -4464,24 +4482,19 @@ int main()
 						settings_countervalue++; // Game counter
 						if(settings_countervalue == 2) {
 							settings_countervalue = 0;
-						}
+						}					
 					} else if (settingscursorPosition == 6) {
-						settings_titlelanguagevalue++; // Title language
-						if(settings_titlelanguagevalue == 8) {
-							settings_titlelanguagevalue = 0;
-						}						
-					} else if (settingscursorPosition == 7) {
 						settings_custombotvalue++; // Custom bottom image
 						if(settings_custombotvalue == 2) {
 							settings_custombotvalue = 0;
 						}
 						LoadBottomImage();
-					} else if (settingscursorPosition == 8) {
+					} else if (settingscursorPosition == 7) {
 						settings_autoupdatevalue++; // Enable or disable autoupdate
 						if(settings_autoupdatevalue == 3) {
 							settings_autoupdatevalue = 0;
 						}
-					} else if (settingscursorPosition == 9) {
+					} else if (settingscursorPosition == 8) {
 						settings_autodlvalue++; // Enable or disable autodownload
 						if(settings_autodlvalue == 2) {
 							settings_autodlvalue = 0;
@@ -4502,12 +4515,8 @@ int main()
 							settings_menucolorvalue = 16;
 						}
 						LoadMenuColor();
-					} else if (settingscursorPosition == 6) {
-						settings_titlelanguagevalue--; // Title language
-						if(settings_titlelanguagevalue == -1) 
-							settings_titlelanguagevalue = 7;
-					}	
-				} else if((hDown & KEY_DOWN) && settingscursorPosition != 9){
+					}
+				} else if((hDown & KEY_DOWN) && settingscursorPosition != 8){
 					settingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && settingscursorPosition != 0){
@@ -4552,6 +4561,7 @@ int main()
 	romfsExit();
 	sdmcExit();
 	aptExit();
+	cfguExit();
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
 	sf2d_free_texture(vol0tex);

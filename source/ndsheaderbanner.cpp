@@ -39,6 +39,11 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
     sNDSHeader NDSHeader;
     sNDSBanner myBanner;
 	
+	if (bnrtitlenum == 8 || bnrtitlenum == 9 || bnrtitlenum == 10)	// If language is Dutch, Portugese, or Russian
+		bnrtitlenum = 5;	// set to Spanish
+	else if (bnrtitlenum == 12)		// If language is Traditional Chinese
+		bnrtitlenum = 6;	// set to (Simplified) Chinese
+	
 	fseek ( ndsFile , 0 , SEEK_SET );
     fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
 	
@@ -47,6 +52,11 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
         
         fread(&myBanner,1,sizeof(myBanner),ndsFile);
 		
+		if (myBanner.version == 0x0100) {
+			if (bnrtitlenum == 6 || bnrtitlenum == 7)
+				bnrtitlenum = 0;	// Use Japanese language if title has no Chinese and/or Korean text
+		}
+
 		int size = sizeof(myBanner.titles[bnrtitlenum]);
 		
 		// turn unicode into ascii (kind of)
