@@ -4416,7 +4416,7 @@ int main()
 						}
 					}
 					if (dspfirmfound) { sfx_select.play(); }
-				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 7){
+				} else if((hDown & KEY_DOWN) && twlsettingscursorPosition != 8){
 					twlsettingscursorPosition++;
 					if (dspfirmfound) { sfx_select.play(); }
 				} else if((hDown & KEY_UP) && twlsettingscursorPosition != 0){

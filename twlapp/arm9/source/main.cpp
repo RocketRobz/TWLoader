@@ -267,7 +267,11 @@ int main(int argc, char **argv) {
 		break;
 		}
 		
-		sNDSHeader NDSHeader;
+		struct sNDSHeadersmall {
+			char gameTitle[12];			//!< 12 characters for the game title.
+			char gameCode[4];			//!< 4 characters for the game code.
+			u16 makercode;			//!< identifies the (commercial) developer.
+		} NDSHeader;
 		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		gamename = bootstrapini.GetString("NDS-BOOTSTRAP", "NDS_PATH","");
