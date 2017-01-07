@@ -240,7 +240,6 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 
 	std::string filename;
-	std::string gamename;
 
 	if (!fatInitDefault()) {
 		// Subscreen as a console
@@ -267,27 +266,10 @@ int main(int argc, char **argv) {
 		break;
 		}
 		
-		struct sNDSHeadersmall {
-			char gameTitle[12];			//!< 12 characters for the game title.
-			char gameCode[4];			//!< 4 characters for the game code.
-			u16 makercode;			//!< identifies the (commercial) developer.
-		} NDSHeader;
-		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		gamename = bootstrapini.GetString("NDS-BOOTSTRAP", "NDS_PATH","");
-		gamename = ReplaceAll( gamename, "fat:/", "sd:/");
-		ndsfile = fopen(gamename.c_str(),"rb");
-		fread(&NDSHeader,1,sizeof(NDSHeader),ndsfile);
-		
-		if (NDSHeader.makercode != 0x0000) {	// if the launched game is a retail ROM
-			filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-			filename = ReplaceAll( filename, "fat:/", "sd:/");
-			runFile(filename);
-		} else {	// or if the launched game is a homebrew ROM
-			filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH_HB","");
-			filename = ReplaceAll( filename, "fat:/", "sd:/");
-			runFile(filename);
-		}
+		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+		filename = ReplaceAll( filename, "fat:/", "sd:/");
+		runFile(filename);
 		
 		// Subscreen as a console
 		videoSetModeSub(MODE_0_2D);
