@@ -163,7 +163,7 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.2.2";
+const char* settings_vertext = "Ver. debug";
 
 const char* settingstext_bot;
 
@@ -326,7 +326,7 @@ bool checkWifiStatus() {
 	return res;
 }
 
-void downloadfile(const char* url, const char* file){
+void downloadFile(const char* url, const char* file, int mediaType){
 
 	if(checkWifiStatus()){ //Checks if wifi is on
 		acInit();
@@ -357,22 +357,39 @@ void downloadfile(const char* url, const char* file){
 				httpcGetResponseStatusCode(&context, &statuscode);
 				if (statuscode == 200){
 					u32 readSize = 0;
-					long int bytesWritten = 0;
-					u8* buf = (u8*)malloc(0x1000);
-					memset(buf, 0, 0x1000);
+					long int bytesWritten = 0;								
 
 					Handle fileHandle;
 					FS_Path filePath=fsMakePath(PATH_ASCII, file);
 					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
 
+					httpcGetDownloadSizeState(&context, NULL, &contentsize);
+					u8* buf = (u8*)malloc(contentsize);
+					memset(buf, 0, contentsize);		
+					
 					do {
-						ret = httpcDownloadData(&context, buf, 0x1000, &readSize);
+						ret = httpcDownloadData(&context, buf, contentsize, &readSize);
 						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
-						bytesWritten += readSize;
+						bytesWritten += readSize;						
 					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
-
+					
 					FSFILE_Close(fileHandle);
 					svcCloseHandle(fileHandle);
+
+					if(mediaType != NULL){
+						amInit();
+						Handle handle;
+						AM_QueryAvailableExternalTitleDatabase(NULL);
+						if (mediaType == 0) {
+							AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
+						}else{
+							AM_StartCiaInstall(MEDIATYPE_SD, &handle);
+						}
+						FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
+						AM_FinishCiaInstall(handle);
+						amExit();						
+					}
+					
 					free(buf);
 				}
 			}
@@ -393,7 +410,7 @@ void DownloadTWLoaderCIAs() {
 	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	downloadfile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia");
+	downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -401,7 +418,8 @@ void DownloadTWLoaderCIAs() {
 	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	downloadfile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia");
+	//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
+	downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL); //Working on it
 }
 
 void UpdateBootstrapUnofficial() {
@@ -412,7 +430,7 @@ void UpdateBootstrapUnofficial() {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadfile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds");
+	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
 }
 
 void UpdateBootstrapRelease() {
@@ -423,7 +441,7 @@ void UpdateBootstrapRelease() {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadfile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds");
+	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
 }
 
 void RainbowLED() {
@@ -2230,7 +2248,7 @@ int main()
 			strncat(tempfile_fullpath, ba_TID, 4);
 			strcat(tempfile_fullpath, ".png");
 			if( access( tempfile_fullpath, F_OK ) == -1 )
-				downloadfile(temphttp, tempfile_fullpath);
+				downloadFile(temphttp, tempfile_fullpath, NULL);
 		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_end_frame();
