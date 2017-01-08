@@ -133,9 +133,9 @@ const char* text_returntohomemenu()
 		": Return to HOME Menu",		// Japanese
 		": Return to HOME Menu",		// English
 		": Retour au menu HOME",		// French
-		": Zurück zum HOME-Menü",		// German
-		": Ritorna alla Home Menu",		// Italian
-		": Regresar al menú HOME",		// Spanish
+		": ZurÃ¼ck zum HOME-MenÃ¼",		// German
+		": Ritorna al Menu Home",		// Italian
+		": Regresar al menÃº HOME",		// Spanish
 		": Return to HOME Menu",		// Simplified Chinese
 		": Return to HOME Menu",		// Korean
 		": Keer terug naar HOME-menu",	// Dutch
