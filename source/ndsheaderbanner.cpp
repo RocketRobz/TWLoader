@@ -32,6 +32,7 @@ char* grabTID(FILE* ndsFile, int letter) {
 	else
 		strncpy(savedtid, NDSHeader.gameCode+3, 1);
 	
+	fclose(ndsFile);
 	return savedtid;
 }
 
@@ -106,8 +107,10 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 		} else if (line == 2) {
 			strncpy(savedtext, p3, strlen(p3)+1);
 		}
+		fclose(ndsFile);
 		return savedtext;
 	} else {
+		fclose(ndsFile);
 		if (line == 0)
 			return "No Info";
 		else if (line == 1)
@@ -152,10 +155,12 @@ sf2d_texture* grabIcon(FILE* ndsFile) {
 
                         offset++;
                     }
-      
+		
+		fclose(ndsFile);
         return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
     } else {
-        return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
+ 		fclose(ndsFile);
+		return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
     }
 }
 
@@ -194,8 +199,10 @@ sf2d_texture* grabandstoreIcon(FILE* ndsFile) {
                         offset++;
                     }
       
+		fclose(ndsFile);
         return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
     } else {
+		fclose(ndsFile);
         return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
     }
 }
