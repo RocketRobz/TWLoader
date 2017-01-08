@@ -383,10 +383,10 @@ int downloadFile(const char* url, const char* file, int mediaType){
 					if(mediaType != NULL){
 						amInit();
 						Handle handle;
-						AM_QueryAvailableExternalTitleDatabase(NULL);
 						if (mediaType == 0) {
 							AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
 						}else{
+							AM_QueryAvailableExternalTitleDatabase(NULL);
 							AM_StartCiaInstall(MEDIATYPE_SD, &handle);
 						}
 						FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
