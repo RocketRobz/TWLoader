@@ -126,6 +126,10 @@ const char* bootstrapini_debug = "DEBUG";
 const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
 // End
 
+// Run
+bool run = true;
+// End
+
 const char* text_returntohomemenu()
 {
 	const char *languages[] = 
@@ -326,7 +330,7 @@ bool checkWifiStatus() {
 	return res;
 }
 
-void downloadFile(const char* url, const char* file, int mediaType){
+int downloadFile(const char* url, const char* file, int mediaType){
 
 	if(checkWifiStatus()){ //Checks if wifi is on
 		acInit();
@@ -399,7 +403,9 @@ void downloadFile(const char* url, const char* file, int mediaType){
 		httpcExit();
 		acExit();
 		fsExit();
+		return 0;
 	}
+	return -1;
 }
 
 void DownloadTWLoaderCIAs() {
@@ -410,16 +416,21 @@ void DownloadTWLoaderCIAs() {
 	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI CIA)...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1)
-		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
-	sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-	//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
-	downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL); //Working on it
+	int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
+	if (res == 0) {	
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == 1)
+			sf2d_draw_texture(settingstex, 0, 0);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version");
+		sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
+		res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL); //Working on it
+		if (res == 0) {
+			run = false;
+		}
+	}
 }
 
 void UpdateBootstrapUnofficial() {
@@ -2327,7 +2338,7 @@ int main()
 		closedir (fcboxartdir);
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
-	
+		
 	if(settings_autodlvalue == 1 && checkWifiStatus()){
 		DownloadTWLoaderCIAs();
 	}
@@ -2416,8 +2427,6 @@ int main()
 	int settingsvalueXpos = 236;
 	int settingsYpos;
 	
-	bool run = true;
-
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
 	u8 hmac[0x20];
