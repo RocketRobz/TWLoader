@@ -2273,12 +2273,12 @@ int main()
 			"GE/",					// German
 			"IT/",					// Italian
 			"SP/",					// Spanish
-			"SP/",					// Simplified Chinese (Spanish used in place)
-			"SP/",					// Korean (Spanish used in place)
-			"SP/",					// Dutch (Spanish used in place)
-			"SP/",					// Portugese (Spanish used in place)
-			"SP/",					// Russian (Spanish used in place)
-			"SP/"					// Traditional Chinese (Spanish used in place)
+			"ZH/",					// Simplified Chinese
+			"KO/",					// Korean
+			"NL/",					// Dutch
+			"PT/",					// Portugese
+			"RU/",					// Russian
+			"TW/"					// Traditional Chinese
 		};
 
 	// Download box art
