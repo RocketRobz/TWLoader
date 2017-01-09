@@ -167,7 +167,7 @@ const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
 const char* settings_ybuttontext = "Y: Update bootstrap (Unofficial build)";
 const char* settings_startbuttontext = "START: Download TWLoader CIA files";
 
-const char* settings_vertext = "Ver. 2.2.2";
+const char* settings_vertext = "Ver. 2.2.3";
 
 const char* settingstext_bot;
 
@@ -2220,15 +2220,14 @@ int main()
 	// Download box art
 	if (checkWifiStatus()) {
 		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
 			char str[20] = {0};
 			std::sprintf(str, "%d", boxartnum+1);
 			romsel_counter1 = str;
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking box art if exists (SD Card)...");
 			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
 			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
 			sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
-			// sftd_draw_textf(font, 8, 28, RGBA8(255, 255, 255, 255), 12, temptext);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			
@@ -2258,8 +2257,16 @@ int main()
 			strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
 			strncat(tempfile_fullpath, ba_TID, 4);
 			strcat(tempfile_fullpath, ".png");
-			if( access( tempfile_fullpath, F_OK ) == -1 )
+			if( access( tempfile_fullpath, F_OK ) == -1 ) {
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
+				sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
+				sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
+				sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+				sf2d_end_frame();
+				sf2d_swapbuffers();
 				downloadFile(temphttp, tempfile_fullpath, NULL);
+			}
 		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_end_frame();
