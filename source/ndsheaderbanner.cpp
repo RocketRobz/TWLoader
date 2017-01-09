@@ -53,9 +53,12 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
         
         fread(&myBanner,1,sizeof(myBanner),ndsFile);
 		
-		if (myBanner.version == 0x0100) {
+		if (myBanner.version == 0x0200) {
+			if (bnrtitlenum == 7)
+				bnrtitlenum = 0;	// Use Japanese language if title has no Korean text
+		} else if (myBanner.version == 0x0100) {
 			if (bnrtitlenum == 6 || bnrtitlenum == 7)
-				bnrtitlenum = 0;	// Use Japanese language if title has no Chinese and/or Korean text
+				bnrtitlenum = 0;	// Use Japanese language if title has no Chinese and Korean text
 		}
 
 		int size = sizeof(myBanner.titles[bnrtitlenum]);
