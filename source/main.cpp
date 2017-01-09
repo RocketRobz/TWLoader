@@ -3422,10 +3422,16 @@ int main()
 								if (settings_countervalue == 1) {
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
-									romsel_counter1 = str;
-									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-									sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+									romsel_counter1 = str;									
+									if(romsel_counter2fc < 100) {
+										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+									}else{
+										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+										sftd_draw_textf(font, 28, 96, RGBA8(0, 0, 0, 255), 12, "/");
+										sftd_draw_textf(font, 33, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+									}
 								} else {
 									bannertextloaded = true;
 								}
@@ -3473,9 +3479,15 @@ int main()
 									char str[20] = {0};
 									std::sprintf(str, "%d", storedcursorPosition+1);
 									romsel_counter1 = str;
-									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-									sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+									if(romsel_counter2sd < 100) {
+										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+									}else{
+										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+										sftd_draw_textf(font, 28, 96, RGBA8(0, 0, 0, 255), 12, "/");
+										sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+									}
 								} else {
 									bannertextloaded = true;
 								}
