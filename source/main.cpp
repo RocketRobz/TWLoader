@@ -413,7 +413,7 @@ int downloadFile(const char* url, const char* file, int mediaType){
 	return -1;
 }
 
-void DownloadTWLoaderCIAs() {
+int checkUpdate(){
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -423,71 +423,68 @@ void DownloadTWLoaderCIAs() {
 	
 	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", NULL);
 	
-	if (res == 0){
-	
+	if (res == 0) {
 		sVerfile Verfile;
-		
-		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
+			
+		FILE* VerFile = fopen("romfs:/ver", "r");
 		fread(&Verfile,1,sizeof(Verfile),VerFile);
 		strcpy(settings_latestvertext, Verfile.text);
 		fclose(VerFile);
-		
+			
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
 			sf2d_draw_texture(settingstex, 0, 0);
-		if (settings_latestvertext[1] == settings_vertext[1] && 
-			settings_latestvertext[2] == settings_vertext[2] && 
-			settings_latestvertext[3] == settings_vertext[3] && 
-			settings_latestvertext[4] == settings_vertext[4] && 
-			settings_latestvertext[5] == settings_vertext[5] && 
-			settings_latestvertext[6] == settings_vertext[6] && 
-			settings_latestvertext[7] == settings_vertext[7] && 
-			settings_latestvertext[8] == settings_vertext[8] && 
-			settings_latestvertext[9] == settings_vertext[9] && 
-			settings_latestvertext[10] == settings_vertext[10] && 
-			settings_latestvertext[11] == settings_vertext[11] && 
-			settings_latestvertext[12] == settings_vertext[12] && 
-			settings_latestvertext[13] == settings_vertext[13]) {
+		
+		if (strcmp(settings_latestvertext, settings_vertext) == 0){
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "TWLoader is up-to-date.");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-		} else {
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating TWLoader to latest version...");
-			sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI)");
+			return -1;
+		}
+		return 0;
+	}
+	return -1;
+}
+
+void DownloadTWLoaderCIAs() {
+	
+	
+	//if (checkUpdate() == 0){		 
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating TWLoader to latest version...");
+		sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI)");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+			
+		int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == 1)
+			sf2d_draw_texture(settingstex, 0, 0);
+		if (res == 0) {	
+			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version...");
+			sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			
-			res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
+			//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
+			res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL);//Working on it
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == 1)
 				sf2d_draw_texture(settingstex, 0, 0);
-			if (res == 0) {	
-				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version...");
-				sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)");
+			if (res == 0) {
+				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now returning to HOME Menu...");
 				sf2d_end_frame();
 				sf2d_swapbuffers();
-				//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
-				res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL); //Working on it
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				if (screenmode == 1)
-					sf2d_draw_texture(settingstex, 0, 0);
-				if (res == 0) {
-					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now returning to HOME Menu...");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
-					run = false;
-				} else {
-					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Download failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
-				}
+				run = false;
 			} else {
-				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Update failed.");
+				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Download failed.");
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 			}
+		} else {
+			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Update failed.");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
 		}
-	}
+	//}
 }
 
 void UpdateBootstrapUnofficial() {
@@ -2410,7 +2407,7 @@ int main()
 		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
 	}
 		
-	if(settings_autodlvalue == 1 && checkWifiStatus()){
+	if(settings_autodlvalue == 1 && checkWifiStatus() && (checkUpdate() == 0)){
 		DownloadTWLoaderCIAs();
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -4632,7 +4629,7 @@ int main()
 					UpdateBootstrapRelease();
 				} else if(hDown & KEY_Y && checkWifiStatus()){
 					UpdateBootstrapUnofficial();
-				} else if(hDown & KEY_START && checkWifiStatus()){
+				} else if(hDown & KEY_START && checkWifiStatus() && (checkUpdate() == 0)){
 					DownloadTWLoaderCIAs();
 				} else if(hDown & KEY_B){
 					titleboxXmovetimer = 1;
