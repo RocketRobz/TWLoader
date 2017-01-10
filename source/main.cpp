@@ -631,6 +631,7 @@ void RainbowLED() {
 	if(ptmsysmInit() < 0) return 1;
     ptmsysmSetInfoLedPattern(pat);
     ptmsysmExit();
+	LogFM("Main.RainbowLED", "Rainbow LED is on");
 }
 
 void LoadColor() {
@@ -1322,83 +1323,123 @@ void StoreBoxArtPath() {
 void LoadBNRIcon() {
 	if (bnriconnum == 0+pagenum*20) {
 		sf2d_free_texture(bnricontex1);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath1);
 		bnricontex1 = grabIcon(ndsFile1); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath1);
 		fclose(ndsFile1);
 	} else if (bnriconnum == 1+pagenum*20) {
 		sf2d_free_texture(bnricontex2);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath2);
 		bnricontex2 = grabIcon(ndsFile2); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath2);
 		fclose(ndsFile2);
 	} else if (bnriconnum == 2+pagenum*20) {
 		sf2d_free_texture(bnricontex3);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath3);
 		bnricontex3 = grabIcon(ndsFile3); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath3);
 		fclose(ndsFile3);
 	} else if (bnriconnum == 3+pagenum*20) {
 		sf2d_free_texture(bnricontex4);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath4);
 		bnricontex4 = grabIcon(ndsFile4); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath4);
 		fclose(ndsFile4);
 	} else if (bnriconnum == 4+pagenum*20) {
 		sf2d_free_texture(bnricontex5);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath5);
 		bnricontex5 = grabIcon(ndsFile5); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath5);
 		fclose(ndsFile5);
 	} else if (bnriconnum == 5+pagenum*20) {
 		sf2d_free_texture(bnricontex6);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath6);
 		bnricontex6 = grabIcon(ndsFile6); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath6);
 		fclose(ndsFile6);
 	} else if (bnriconnum == 6+pagenum*20) {
 		sf2d_free_texture(bnricontex7);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath7);
 		bnricontex7 = grabIcon(ndsFile7); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath7);
 		fclose(ndsFile7);
 	} else if (bnriconnum == 7+pagenum*20) {
 		sf2d_free_texture(bnricontex8);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath8);
 		bnricontex8 = grabIcon(ndsFile8); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath8);
 		fclose(ndsFile8);
 	} else if (bnriconnum == 8+pagenum*20) {
 		sf2d_free_texture(bnricontex9);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath9);
 		bnricontex9 = grabIcon(ndsFile9); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath9);
 		fclose(ndsFile9);
 	} else if (bnriconnum == 9+pagenum*20) {
 		sf2d_free_texture(bnricontex10);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath10);
 		bnricontex10 = grabIcon(ndsFile10); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath10);
 		fclose(ndsFile10);
 	} else if (bnriconnum == 10+pagenum*20) {
 		sf2d_free_texture(bnricontex11);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath11);
 		bnricontex11 = grabIcon(ndsFile11); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath11);
 		fclose(ndsFile11);
 	} else if (bnriconnum == 11+pagenum*20) {
 		sf2d_free_texture(bnricontex12);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath12);
 		bnricontex12 = grabIcon(ndsFile12); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath12);
 		fclose(ndsFile12);
 	} else if (bnriconnum == 12+pagenum*20) {
 		sf2d_free_texture(bnricontex13);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath13);
 		bnricontex13 = grabIcon(ndsFile13); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath13);
 		fclose(ndsFile13);
 	} else if (bnriconnum == 13+pagenum*20) {
 		sf2d_free_texture(bnricontex14);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath14);
 		bnricontex14 = grabIcon(ndsFile14); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath14);
 		fclose(ndsFile14);
 	} else if (bnriconnum == 14+pagenum*20) {
 		sf2d_free_texture(bnricontex15);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath15);
 		bnricontex15 = grabIcon(ndsFile15); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath15);
 		fclose(ndsFile15);
 	} else if (bnriconnum == 15+pagenum*20) {
 		sf2d_free_texture(bnricontex16);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath16);
 		bnricontex16 = grabIcon(ndsFile16); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath16);
 		fclose(ndsFile16);
 	} else if (bnriconnum == 16+pagenum*20) {
 		sf2d_free_texture(bnricontex17);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath17);
 		bnricontex17 = grabIcon(ndsFile17); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath17);
 		fclose(ndsFile17);
 	} else if (bnriconnum == 17+pagenum*20) {
 		sf2d_free_texture(bnricontex18);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath18);
 		bnricontex18 = grabIcon(ndsFile18); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath18);
 		fclose(ndsFile18);
 	} else if (bnriconnum == 18+pagenum*20) {
 		sf2d_free_texture(bnricontex19);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath19);
 		bnricontex19 = grabIcon(ndsFile19); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath19);
 		fclose(ndsFile19);
 	} else if (bnriconnum == 19+pagenum*20) {
 		sf2d_free_texture(bnricontex20);
+		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath20);
 		bnricontex20 = grabIcon(ndsFile20); // Banner icon
+		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath20);
 		fclose(ndsFile20);
 	}
 }
@@ -2231,7 +2272,29 @@ int main()
 		std::sort( fcfiles.begin(), fcfiles.end() );
 	}
 
-	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
+	// Cache banner data
+	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+		char str[20] = {0};
+		std::sprintf(str, "%d", bnriconnum+1);
+		romsel_counter1 = str;
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking if banner data exists (SD Card)...");
+		sftd_draw_textf(font, 8, 32, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
+		sftd_draw_textf(font, 27, 32, RGBA8(255, 255, 255, 255), 12, "/");
+		sftd_draw_textf(font, 32, 32, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+		tempfile = files.at(bnriconnum).c_str();
+		tempfile_fullpath = malloc(256);
+		strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+		strcat(tempfile_fullpath, tempfile);
+		tempfilepath = fopen(tempfile_fullpath, "rb");
+		cacheBanner(tempfilepath, tempfile, font);
+		fclose(tempfilepath);
+	}
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+		
+	if ((bnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
 		while ((namelist = readdir (bnricondir)) != NULL) {
 			std::string bifname = (namelist->d_name);
 			if(bifname.find(extension_UCpng, (bifname.length() - extension_UCpng.length())) != std::string::npos)
@@ -2434,15 +2497,13 @@ int main()
 						if (bnriconnum < files.size()) {
 							tempfile = files.at(bnriconnum).c_str();
 							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+							strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
 							strcat(tempfile_fullpath, tempfile);
-							tempfilepath = fopen(tempfile_fullpath, "rb");
-							grabandsaveBanner(tempfilepath, tempfile);
-							fclose(tempfilepath);
+							strcat(tempfile_fullpath, ".bin");
 							tempimagepath = tempfile_fullpath;
 						} else {
 							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, "romfs:/emptyheader.nds");
+							strcpy(tempfile_fullpath, "romfs:/notextbanner");
 							tempimagepath = tempfile_fullpath;
 						}
 						StoreBNRIconPath();
@@ -3019,8 +3080,9 @@ int main()
 					}
 					gbarunnervalue = 1;
 					SaveSettings();
-					if (twlsettings_rainbowledvalue == 1) {
-						RainbowLED(); }
+					if (twlsettings_rainbowledvalue == 1)
+						RainbowLED();
+					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
 			}
@@ -3255,8 +3317,9 @@ int main()
 						}
 					}
 					SaveSettings();
-					if (twlsettings_rainbowledvalue == 1) {
-						RainbowLED(); }
+					if (twlsettings_rainbowledvalue == 1)
+						RainbowLED();
+					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
 			}
@@ -3372,10 +3435,11 @@ int main()
 										romsel_filename = files.at(storedcursorPosition).c_str();
 									tempfile = files.at(cursorPosition).c_str();
 									tempfile_fullpath = malloc(256);
-									strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
+									strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
 									strcat(tempfile_fullpath, tempfile);
+									strcat(tempfile_fullpath, ".bin");
 									bnriconnum = cursorPosition;
-									OpenBNRIconTemp();
+									tempfilepath = fopen(tempfile_fullpath,"rb");
 									romsel_gameline1 = grabText(tempfilepath, language, 0);
 									romsel_gameline2 = grabText(tempfilepath, language, 1);
 									romsel_gameline3 = grabText(tempfilepath, language, 2);

@@ -79,6 +79,7 @@
 //#endif
 
 #include <sf2d.h>
+#include <sftd.h>
 #include <sfil.h>
 #include <stdio.h>
 
@@ -230,10 +231,10 @@ typedef struct {
 } sNDSBannersize3;
 
 char* grabTID(FILE* ndsFile, int letter);
-char* grabText(FILE* ndsFile, int bnrtitlenum, int line);
-void grabandsaveBanner(FILE* ndsFile, const char* filename);
-sf2d_texture* grabIcon(FILE* ndsFile);
-sf2d_texture* grabandstoreIcon(FILE* ndsFile);
+char* grabText(FILE* binFile, int bnrtitlenum, int line);
+void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
+sf2d_texture* grabIcon(FILE* binFile);
+sf2d_texture* grabandstoreIcon(FILE* binFile);
 
 
 #endif // NDS_HEADER

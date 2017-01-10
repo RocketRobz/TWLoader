@@ -5,6 +5,8 @@
 #include <malloc.h>
 #include <unistd.h>
 
+#include "log.h"
+
 u32 * storedtextureData = (u32*) linearAlloc(1024*sizeof(u32));  
 
 u32 colorConvert(u32 iconPixel, u16 indice) {
@@ -28,16 +30,18 @@ char* grabTID(FILE* ndsFile, int letter) {
 	const char* savedtid;
 
 	savedtid = malloc(4);
-	if (letter != 1)
+	if (letter != 1) {
 		strncpy(savedtid, NDSHeader.gameCode, 4);
-	else
+		LogFMA("NDSBannerHeader.grabTID", "Got TID", savedtid);
+	}else{
 		strncpy(savedtid, NDSHeader.gameCode+3, 1);
+		LogFMA("NDSBannerHeader.grabTID", "Got last letter of TID", savedtid);
+	}
 	
 	return savedtid;
 }
 
-char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
-    sNDSHeader NDSHeader;
+char* grabText(FILE* binFile, int bnrtitlenum, int line) {
     sNDSBanner myBanner;
 	
 	if (bnrtitlenum == 8 || bnrtitlenum == 9 || bnrtitlenum == 10)	// If language is Dutch, Portugese, or Russian
@@ -45,18 +49,15 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 	else if (bnrtitlenum == 12)		// If language is Traditional Chinese
 		bnrtitlenum = 6;	// set to (Simplified) Chinese
 	
-	fseek ( ndsFile , 0 , SEEK_SET );
-    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
-	
-	if (NDSHeader.bannerOffset != 0x00000000) {
-        fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
+	fseek ( binFile , 0 , SEEK_SET );
         
-        fread(&myBanner,1,sizeof(myBanner),ndsFile);
-		
-		if (myBanner.version == 0x0200) {
+	fread(&myBanner,1,sizeof(myBanner),binFile);
+	
+	if (myBanner.version != 0x0000) {
+        if (myBanner.version == 0x0002) {
 			if (bnrtitlenum == 7)
 				bnrtitlenum = 0;	// Use Japanese language if title has no Korean text
-		} else if (myBanner.version == 0x0100) {
+		} else if (myBanner.version == 0x0001) {
 			if (bnrtitlenum == 6 || bnrtitlenum == 7)
 				bnrtitlenum = 0;	// Use Japanese language if title has no Chinese and Korean text
 		}
@@ -121,7 +122,7 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 	}
 }
 
-void grabandsaveBanner(FILE* ndsFile, const char* filename) {
+void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 	const char* tempfile_fullpath = malloc(256);
 	strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
 	strcat(tempfile_fullpath, filename);
@@ -135,109 +136,113 @@ void grabandsaveBanner(FILE* ndsFile, const char* filename) {
 		sNDSBannersize2 myBannersize2;
 		sNDSBannersize3 myBanner;
 		
+		LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 		fseek ( ndsFile , 0 , SEEK_SET );
 		fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+		LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
 		
 		if (NDSHeader.bannerOffset != 0x00000000) {
 			fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
 			
 			fread(&myBanner,1,sizeof(myBanner),ndsFile);
 			
-			if (myBanner.version == 0x0301 || myBanner.version == 0x0300) {
+			sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Now caching banner data (SD Card)...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", tempfile_fullpath);
+			if (myBanner.version == 0x0103 || myBanner.version == 0x0003) {
 				fwrite(&myBanner,1,sizeof(myBanner),filetosave);
-			} else if (myBanner.version == 0x0200) {
+			} else if (myBanner.version == 0x0002) {
 				fwrite(&myBanner,1,sizeof(myBannersize2),filetosave);
 			} else {
 				fwrite(&myBanner,1,sizeof(myBannersize1),filetosave);
 			}
 
+			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", tempfile_fullpath);
 			fclose(filetosave);
 		} else {
-			fwrite(0,1,sizeof(myBanner),filetosave);
+			FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
+			
+			sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Now caching banner data (SD Card)...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", tempfile_fullpath);
+			fread(&myBanner,1,sizeof(myBanner),nobannerFile);
+			fwrite(&myBanner,1,sizeof(myBanner),filetosave);
+			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached (empty):", tempfile_fullpath);
+			fclose(nobannerFile);
 			fclose(filetosave);
 		}
+	}else{
+		sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Banner data already exists.");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 	}
 }
 
-sf2d_texture* grabIcon(FILE* ndsFile) {
-    sNDSHeader NDSHeader;
+sf2d_texture* grabIcon(FILE* binFile) {
     sNDSBanner myBanner;
     
     u32 * textureData = (u32*) linearAlloc(1024*sizeof(u32));    
     
-    fseek ( ndsFile , 0 , SEEK_SET );
-    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+    fseek ( binFile , 0 , SEEK_SET );
+        
+    fread(&myBanner,1,sizeof(myBanner),binFile);    
+        
+    //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
+    //u16 palette[16];      // color 0 is transparent, ABGR
+        
+    int offset = 0;
     
-    if (NDSHeader.bannerOffset != 0x00000000) {
-        fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
-        
-        fread(&myBanner,1,sizeof(myBanner),ndsFile);    
-        
-        //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
-        //u16 palette[16];      // color 0 is transparent, ABGR
-        
-        int offset = 0;
-        
-        for(int y = 0; y < 32; y += 8)
-            for(int x = 0; x < 32; x += 8)
-                for(int y2 = 0; y2 < 8; y2++)
-                    for(int x2 = 0; x2 < 8; x2+=2)
-                    {
-                        u8 twopixel = myBanner.icon[offset];
-                        
-                        u32 firstPixel = twopixel & 0x0F;
-                        u32 secondPixel = (twopixel & 0xF0) >> 4; 
-                        
-                        textureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-                        
-                        textureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+    for(int y = 0; y < 32; y += 8)
+        for(int x = 0; x < 32; x += 8)
+            for(int y2 = 0; y2 < 8; y2++)
+                for(int x2 = 0; x2 < 8; x2+=2)
+                {
+                    u8 twopixel = myBanner.icon[offset];
+                    
+                    u32 firstPixel = twopixel & 0x0F;
+                    u32 secondPixel = (twopixel & 0xF0) >> 4; 
+                    
+                    textureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
+                    
+                    textureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
 
-                        offset++;
-                    }
-		
-        return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
-    } else {
-		return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
-    }
+                    offset++;
+                }
+	
+    return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
 
 // Duplicate of grabIcon, but stores icon in memory, needed for when the launching game moves up
-sf2d_texture* grabandstoreIcon(FILE* ndsFile) {
-    sNDSHeader NDSHeader;
+sf2d_texture* grabandstoreIcon(FILE* binFile) {
     sNDSBanner myBanner;   
     
-    fseek ( ndsFile , 0 , SEEK_SET );
-    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+    fseek ( binFile , 0 , SEEK_SET );
+        
+    fread(&myBanner,1,sizeof(myBanner),binFile);    
+        
+    //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
+    //u16 palette[16];      // color 0 is transparent, ABGR
+        
+    int offset = 0;
     
-    if (NDSHeader.bannerOffset != 0x00000000) {
-        fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
-        
-        fread(&myBanner,1,sizeof(myBanner),ndsFile);    
-        
-        //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
-        //u16 palette[16];      // color 0 is transparent, ABGR
-        
-        int offset = 0;
-        
-        for(int y = 0; y < 32; y += 8)
-            for(int x = 0; x < 32; x += 8)
-                for(int y2 = 0; y2 < 8; y2++)
-                    for(int x2 = 0; x2 < 8; x2+=2)
-                    {
-                        u8 twopixel = myBanner.icon[offset];
-                        
-                        u32 firstPixel = twopixel & 0x0F;
-                        u32 secondPixel = (twopixel & 0xF0) >> 4; 
-                        
-                        storedtextureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-                        
-                        storedtextureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+    for(int y = 0; y < 32; y += 8)
+        for(int x = 0; x < 32; x += 8)
+            for(int y2 = 0; y2 < 8; y2++)
+                for(int x2 = 0; x2 < 8; x2+=2)
+                {
+                    u8 twopixel = myBanner.icon[offset];
+                    
+                    u32 firstPixel = twopixel & 0x0F;
+                    u32 secondPixel = (twopixel & 0xF0) >> 4; 
+                    
+                    storedtextureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
+                    
+                    storedtextureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
 
-                        offset++;
-                    }
-      
-        return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
-    } else {
-        return sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // use this if banner offset is 0
-    }
+                    offset++;
+                }
+	
+    return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
