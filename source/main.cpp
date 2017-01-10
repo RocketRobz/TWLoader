@@ -2403,6 +2403,9 @@ int main()
 							tempfile_fullpath = malloc(256);
 							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 							strcat(tempfile_fullpath, tempfile);
+							tempfilepath = fopen(tempfile_fullpath, "rb");
+							grabandsaveBanner(tempfilepath, tempfile);
+							fclose(tempfilepath);
 							tempimagepath = tempfile_fullpath;
 						} else {
 							tempfile_fullpath = malloc(256);

@@ -3,6 +3,7 @@
 #include "ndsheaderbanner.h"
 #include <stdio.h>
 #include <malloc.h>
+#include <unistd.h>
 
 u32 * storedtextureData = (u32*) linearAlloc(1024*sizeof(u32));  
 
@@ -117,6 +118,44 @@ char* grabText(FILE* ndsFile, int bnrtitlenum, int line) {
 			return " ";
 		else if (line == 2)
 			return " ";
+	}
+}
+
+void grabandsaveBanner(FILE* ndsFile, const char* filename) {
+	const char* tempfile_fullpath = malloc(256);
+	strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
+	strcat(tempfile_fullpath, filename);
+	strcat(tempfile_fullpath, ".bin");
+	
+	if( access( tempfile_fullpath, F_OK ) == -1 ) {
+		FILE* filetosave = fopen(tempfile_fullpath, "wb");
+
+		sNDSHeader NDSHeader;
+		sNDSBannersize1 myBannersize1;
+		sNDSBannersize2 myBannersize2;
+		sNDSBannersize3 myBanner;
+		
+		fseek ( ndsFile , 0 , SEEK_SET );
+		fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
+		
+		if (NDSHeader.bannerOffset != 0x00000000) {
+			fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
+			
+			fread(&myBanner,1,sizeof(myBanner),ndsFile);
+			
+			if (myBanner.version == 0x0301 || myBanner.version == 0x0300) {
+				fwrite(&myBanner,1,sizeof(myBanner),filetosave);
+			} else if (myBanner.version == 0x0200) {
+				fwrite(&myBanner,1,sizeof(myBannersize2),filetosave);
+			} else {
+				fwrite(&myBanner,1,sizeof(myBannersize1),filetosave);
+			}
+
+			fclose(filetosave);
+		} else {
+			fwrite(0,1,sizeof(myBanner),filetosave);
+			fclose(filetosave);
+		}
 	}
 }
 

@@ -193,8 +193,45 @@ typedef struct {
   u16 titles[8][128];	//!< title of the game in 8 different languages.
 } sNDSBanner;
 
+typedef struct {
+  u16 version;			//!< version of the banner.
+  u16 crc;				//!< 16 bit crc/checksum of the banner.
+  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
+  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
+  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
+  u8 reserved[22];
+  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
+  u16 palette[16];		//!< the pallete of the icon.
+  u8 titles[256*6];		//!< title of the game in 6 different languages.
+} sNDSBannersize1;
+
+typedef struct {
+  u16 version;			//!< version of the banner.
+  u16 crc;				//!< 16 bit crc/checksum of the banner.
+  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
+  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
+  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
+  u8 reserved[22];
+  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
+  u16 palette[16];		//!< the pallete of the icon.
+  u8 titles[256*7];		//!< title of the game in 7 different languages.
+} sNDSBannersize2;
+
+typedef struct {
+  u16 version;			//!< version of the banner.
+  u16 crc;				//!< 16 bit crc/checksum of the banner.
+  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
+  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
+  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
+  u8 reserved[22];
+  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
+  u16 palette[16];		//!< the pallete of the icon.
+  u8 titles[256*8];		//!< title of the game in 8 different languages.
+} sNDSBannersize3;
+
 char* grabTID(FILE* ndsFile, int letter);
 char* grabText(FILE* ndsFile, int bnrtitlenum, int line);
+void grabandsaveBanner(FILE* ndsFile, const char* filename);
 sf2d_texture* grabIcon(FILE* ndsFile);
 sf2d_texture* grabandstoreIcon(FILE* ndsFile);
 
