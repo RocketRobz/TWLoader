@@ -4,6 +4,8 @@
 
 #include "date.h"
 
+int chartimer;
+
 //This returns the date as a c string
 char *GetDate(int Format)
 {
@@ -40,8 +42,15 @@ std::string RetTime()
     tm *Time = localtime(&Raw);
 
     char Tmp[32];
+	
+	chartimer++;
+	if (chartimer >= 120*2)
+		chartimer = 0;
 
-    sprintf(Tmp, "%02d:%02d", Time->tm_hour, Time->tm_min);
+	if (chartimer >= 120)
+		sprintf(Tmp, "%02d %02d", Time->tm_hour, Time->tm_min);
+	else
+		sprintf(Tmp, "%02d:%02d", Time->tm_hour, Time->tm_min);
 
     Ret = Tmp;
 
