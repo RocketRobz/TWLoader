@@ -440,17 +440,18 @@ int checkUpdate(){
 		
 		int equals = strcmp(settings_latestvertext, settings_vertext);
 		
-		LogFMA("checkUpdate", "Comparing...", (char) equals);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
 			sf2d_draw_texture(settingstex, 0, 0);		
 		if (equals == 0){
+			LogFMA("checkUpdate", "Comparing...", "Are equals");
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "TWLoader is up-to-date.");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
 			return -1;
 		}
+		LogFMA("checkUpdate", "Comparing...", "NO equals");
 		return 0;
 	}
 	
