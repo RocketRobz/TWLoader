@@ -21,6 +21,7 @@
 #include "sound.h"
 #include "inifile.h"
 #include "date.h"
+#include "log.h"
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
@@ -327,8 +328,11 @@ bool checkWifiStatus() {
 	ACU_GetWifiStatus(&wifiStatus);
 	bool res = false;
 	
-	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {	
+	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
+		LogFMA("WifiStatus", "Internet connetion active found", RetTime().c_str());
 		res = true;
+	}else {
+		LogFMA("WifiStatus", "No Internet connetion active found", RetTime().c_str());
 	}
 	
 	acExit();
@@ -414,6 +418,7 @@ int downloadFile(const char* url, const char* file, int mediaType){
 }
 
 int checkUpdate(){
+	LogFM("checkUpdate", "Checking updates...");
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -430,19 +435,26 @@ int checkUpdate(){
 		fread(&Verfile,1,sizeof(Verfile),VerFile);
 		strcpy(settings_latestvertext, Verfile.text);
 		fclose(VerFile);
-			
+		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
+		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
+		
+		int equals = strcmp(settings_latestvertext, settings_vertext);
+		
+		LogFMA("checkUpdate", "Comparing...", (char) equals);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
-			sf2d_draw_texture(settingstex, 0, 0);
-		
-		if (strcmp(settings_latestvertext, settings_vertext) == 0){
+			sf2d_draw_texture(settingstex, 0, 0);		
+		if (equals == 0){
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "TWLoader is up-to-date.");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
+			LogFM("checkUpdate", "TWLoader is up-to-date!");
 			return -1;
 		}
 		return 0;
 	}
+	
+	LogFM("checkUpdate", "Problem downloading ver file!");
 	return -1;
 }
 
@@ -755,6 +767,7 @@ void LoadColor() {
 		color_Gvalue = 255;
 		color_Bvalue = 0;
 	}
+	LogFM("LoadColor()", "Colors load successfully");
 }
 
 void LoadMenuColor() {
@@ -844,6 +857,7 @@ void LoadMenuColor() {
 		menucolor_Bvalue = 127;
 		menucolor_alpha = 195;
 	}
+	LogFM("LoadMenuColor()", "Menu color load successfully");
 }
 
 void LoadBottomImage() {
@@ -852,8 +866,10 @@ void LoadBottomImage() {
 	if (settings_custombotvalue == 1) {
 		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
 			bottomloc = "sdmc:/_nds/twloader/bottom.png";
+			LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully");
 		} else {
 			bottomloc = "romfs:/graphics/bottom.png";
+			LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully");
 		}
 	}
 }
@@ -1837,6 +1853,7 @@ void LoadSettings() {
 		twlsettings_consolevalue = 0;
 	}
 	twlsettings_lockarm9scfgextvalue = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
+	LogFM("Main.LoadSettings", "Settings load successfully");
 }
 
 void SaveSettings() {
@@ -1909,6 +1926,7 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
+	createLog();
 
 	// make folders if they don't exist
 	mkdir("sdmc:/roms/nds", 0777);
@@ -1951,7 +1969,8 @@ int main()
 	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
 	sftd_draw_textf(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
-	sftd_draw_textf(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+	sftd_draw_textf(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
+	LogFM("Main.Font loading", "Fonts load correctly");
 	
 	sVerfile Verfile;
 	
@@ -1959,7 +1978,8 @@ int main()
 	fread(&Verfile,1,sizeof(Verfile),VerFile);
 	strcpy(settings_vertext, Verfile.text);
 	fclose(VerFile);
-
+	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
+	
 	CFGU_GetSystemLanguage(&language);
 
 	LoadSettings();
@@ -2017,15 +2037,23 @@ int main()
 	sf2d_texture *whitescrtex; // White screen in settings
 	sf2d_texture *disabledtex; // Red circle with line
 
+	LogFM("Main.sf2d_textures", "Textures load successfully");
+	
 	bool dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
+		LogFM("Main.dspfirm", "DSP Firm found!");
+	}else{
+		LogFM("Main.dspfirm", "DSP Firm not found");
 	}
 
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
+		LogFM("Main.music", "Custom music file found!");
+	}else {
+		LogFM("Main.dspfirm", "No music file found");
 	}
 
 	sound bgm_menu(musicpath);
@@ -2124,6 +2152,7 @@ int main()
 			std::sprintf(str, "%d", boxartnum+1);
 			romsel_counter1 = str;
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			LogFMA("Main.downloadBoxArt", "Checking box art:", romsel_counter1);
 			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking box art if exists (SD Card)...");
 			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
 			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
@@ -2158,6 +2187,7 @@ int main()
 			strncat(tempfile_fullpath, ba_TID, 4);
 			strcat(tempfile_fullpath, ".png");
 			if( access( tempfile_fullpath, F_OK ) == -1 ) {
+				LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
 				sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
@@ -2172,6 +2202,8 @@ int main()
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
+	
+	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
 	
 	if ((flashcarddir = opendir ("sdmc:/roms/flashcard/nds")) != NULL) {
 	/* print all the files and directories within directory */
