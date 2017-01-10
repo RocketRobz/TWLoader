@@ -27,7 +27,8 @@ char* grabTID(FILE* ndsFile, int letter) {
 	fseek ( ndsFile , 0 , SEEK_SET );
     fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
 	
-	char* savedtid = (char*)malloc(4*sizeof(char));		
+	char* savedtid = (char*)malloc(4*sizeof(char));
+	memset(savedtid, '\0', sizeof(savedtid)); // Clean memory before writing on it
 	if (letter != 1) {
 		strncpy(savedtid, NDSHeader.gameCode, 4);
 		LogFMA("NDSBannerHeader.grabTID", "Got TID", savedtid);
@@ -36,7 +37,7 @@ char* grabTID(FILE* ndsFile, int letter) {
 		LogFMA("NDSBannerHeader.grabTID", "Got last letter of TID", savedtid);
 	}
 	
-	free(savedtid);	
+	free(savedtid);
 	return savedtid;
 }
 
