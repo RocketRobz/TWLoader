@@ -40,6 +40,7 @@ u8 language;
 
 sftd_font *font;
 sftd_font *font_b;
+sf2d_texture *dialogueboxtex; // Dialogue box
 sf2d_texture *settingstex; // Bottom of settings screen
 
 int screenmode = 0;
@@ -155,6 +156,9 @@ const char* text_returntohomemenu()
 	else
 		return languages[11];
 }
+
+bool showdialoguebox = false;
+const char* dialoguetext;
 
 const char* Lshouldertext;
 const char* Rshouldertext;
@@ -323,6 +327,43 @@ Result ptmsysmSetInfoLedPattern(RGBLedPattern pattern)
     return ipc[1];
 }
 
+void DialogueBoxAppear() {
+	if (!showdialoguebox) {
+		int movespeed = 22;
+		for (int i = 0; i < 240; i+=movespeed) {
+			if (movespeed <= 1)
+				movespeed = 1;
+			else
+				movespeed -= 0.2;
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == 1)
+				sf2d_draw_texture(settingstex, 0, 0);
+			sf2d_draw_texture(dialogueboxtex, 0, i-240);
+			sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		}
+		showdialoguebox = true;
+	}
+}
+
+void DialogueBoxDisappear() {
+	if (showdialoguebox) {
+		int movespeed = 1;
+		for (int i = 0; i < 240; i+=movespeed) {
+			movespeed += 1;
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == 1)
+				sf2d_draw_texture(settingstex, 0, 0);
+			sf2d_draw_texture(dialogueboxtex, 0, i);
+			sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		}
+		showdialoguebox = false;
+	}
+}
+
 bool checkWifiStatus() {
 	acInit();
 	u32 wifiStatus;
@@ -420,10 +461,13 @@ int downloadFile(const char* url, const char* file, int mediaType){
 
 int checkUpdate(){
 	LogFM("checkUpdate", "Checking updates...");
+	dialoguetext = "Now checking TWLoader version...";
+	DialogueBoxAppear();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking TWLoader version...");
+	sf2d_draw_texture(dialogueboxtex, 0, 0);
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
@@ -439,17 +483,17 @@ int checkUpdate(){
 		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
 		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
 		
-		int equals = strcmp(settings_latestvertext, settings_vertext);
+		int updtequals = strcmp(settings_latestvertext, settings_vertext);
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
 			sf2d_draw_texture(settingstex, 0, 0);		
-		if (equals == 0){
+		sf2d_draw_texture(dialogueboxtex, 0, 0);
+		if (updtequals == 0){
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "TWLoader is up-to-date.");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
+			dialoguetext = "TWLoader is up-to-date.";
+			DialogueBoxDisappear();
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
@@ -464,8 +508,8 @@ void DownloadTWLoaderCIAs() {
 	
 	
 	//if (checkUpdate() == 0){		 
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating TWLoader to latest version...");
-		sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(GUI)");
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
+		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 			
@@ -473,9 +517,10 @@ void DownloadTWLoaderCIAs() {
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
 			sf2d_draw_texture(settingstex, 0, 0);
+		sf2d_draw_texture(dialogueboxtex, 0, 0);
 		if (res == 0) {	
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading latest TWLoader version...");
-			sftd_draw_textf(font, 2, 14, RGBA8(255, 255, 255, 255), 12, "(TWLNAND side CIA)");
+			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
+			sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
@@ -483,44 +528,54 @@ void DownloadTWLoaderCIAs() {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == 1)
 				sf2d_draw_texture(settingstex, 0, 0);
+			sf2d_draw_texture(dialogueboxtex, 0, 0);
 			if (res == 0) {
-				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now returning to HOME Menu...");
+				sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 				run = false;
 			} else {
-				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Download failed.");
-				sf2d_end_frame();
-				sf2d_swapbuffers();
+				dialoguetext = "Download failed.";
+				DialogueBoxDisappear();
 			}
 		} else {
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Update failed.");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			dialoguetext = "Update failed.";
+			DialogueBoxDisappear();
 		}
 	//}
 }
 
 void UpdateBootstrapUnofficial() {
+	dialoguetext = "Now updating bootstrap (Unofficial)...";
+	DialogueBoxAppear();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Unofficial)...");
+	sf2d_draw_texture(dialogueboxtex, 0, 0);
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
+	dialoguetext = "Done!";
+	if (screenmode == 1)
+		DialogueBoxDisappear();
 }
 
 void UpdateBootstrapRelease() {
+	dialoguetext = "Now updating bootstrap (Release)...";
+	DialogueBoxAppear();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1)
 		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now updating bootstrap (Release)...");
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
+	dialoguetext = "Done!";
+	if (screenmode == 1)
+		DialogueBoxDisappear();
 }
 
 void RainbowLED() {
@@ -1324,123 +1379,123 @@ void StoreBoxArtPath() {
 void LoadBNRIcon() {
 	if (bnriconnum == 0+pagenum*20) {
 		sf2d_free_texture(bnricontex1);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath1);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath1);
 		bnricontex1 = grabIcon(ndsFile1); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath1);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath1);
 		fclose(ndsFile1);
 	} else if (bnriconnum == 1+pagenum*20) {
 		sf2d_free_texture(bnricontex2);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath2);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath2);
 		bnricontex2 = grabIcon(ndsFile2); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath2);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath2);
 		fclose(ndsFile2);
 	} else if (bnriconnum == 2+pagenum*20) {
 		sf2d_free_texture(bnricontex3);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath3);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath3);
 		bnricontex3 = grabIcon(ndsFile3); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath3);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath3);
 		fclose(ndsFile3);
 	} else if (bnriconnum == 3+pagenum*20) {
 		sf2d_free_texture(bnricontex4);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath4);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath4);
 		bnricontex4 = grabIcon(ndsFile4); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath4);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath4);
 		fclose(ndsFile4);
 	} else if (bnriconnum == 4+pagenum*20) {
 		sf2d_free_texture(bnricontex5);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath5);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath5);
 		bnricontex5 = grabIcon(ndsFile5); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath5);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath5);
 		fclose(ndsFile5);
 	} else if (bnriconnum == 5+pagenum*20) {
 		sf2d_free_texture(bnricontex6);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath6);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath6);
 		bnricontex6 = grabIcon(ndsFile6); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath6);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath6);
 		fclose(ndsFile6);
 	} else if (bnriconnum == 6+pagenum*20) {
 		sf2d_free_texture(bnricontex7);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath7);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath7);
 		bnricontex7 = grabIcon(ndsFile7); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath7);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath7);
 		fclose(ndsFile7);
 	} else if (bnriconnum == 7+pagenum*20) {
 		sf2d_free_texture(bnricontex8);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath8);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath8);
 		bnricontex8 = grabIcon(ndsFile8); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath8);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath8);
 		fclose(ndsFile8);
 	} else if (bnriconnum == 8+pagenum*20) {
 		sf2d_free_texture(bnricontex9);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath9);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath9);
 		bnricontex9 = grabIcon(ndsFile9); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath9);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath9);
 		fclose(ndsFile9);
 	} else if (bnriconnum == 9+pagenum*20) {
 		sf2d_free_texture(bnricontex10);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath10);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath10);
 		bnricontex10 = grabIcon(ndsFile10); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath10);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath10);
 		fclose(ndsFile10);
 	} else if (bnriconnum == 10+pagenum*20) {
 		sf2d_free_texture(bnricontex11);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath11);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath11);
 		bnricontex11 = grabIcon(ndsFile11); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath11);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath11);
 		fclose(ndsFile11);
 	} else if (bnriconnum == 11+pagenum*20) {
 		sf2d_free_texture(bnricontex12);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath12);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath12);
 		bnricontex12 = grabIcon(ndsFile12); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath12);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath12);
 		fclose(ndsFile12);
 	} else if (bnriconnum == 12+pagenum*20) {
 		sf2d_free_texture(bnricontex13);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath13);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath13);
 		bnricontex13 = grabIcon(ndsFile13); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath13);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath13);
 		fclose(ndsFile13);
 	} else if (bnriconnum == 13+pagenum*20) {
 		sf2d_free_texture(bnricontex14);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath14);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath14);
 		bnricontex14 = grabIcon(ndsFile14); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath14);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath14);
 		fclose(ndsFile14);
 	} else if (bnriconnum == 14+pagenum*20) {
 		sf2d_free_texture(bnricontex15);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath15);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath15);
 		bnricontex15 = grabIcon(ndsFile15); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath15);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath15);
 		fclose(ndsFile15);
 	} else if (bnriconnum == 15+pagenum*20) {
 		sf2d_free_texture(bnricontex16);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath16);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath16);
 		bnricontex16 = grabIcon(ndsFile16); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath16);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath16);
 		fclose(ndsFile16);
 	} else if (bnriconnum == 16+pagenum*20) {
 		sf2d_free_texture(bnricontex17);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath17);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath17);
 		bnricontex17 = grabIcon(ndsFile17); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath17);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath17);
 		fclose(ndsFile17);
 	} else if (bnriconnum == 17+pagenum*20) {
 		sf2d_free_texture(bnricontex18);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath18);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath18);
 		bnricontex18 = grabIcon(ndsFile18); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath18);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath18);
 		fclose(ndsFile18);
 	} else if (bnriconnum == 18+pagenum*20) {
 		sf2d_free_texture(bnricontex19);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath19);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath19);
 		bnricontex19 = grabIcon(ndsFile19); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath19);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath19);
 		fclose(ndsFile19);
 	} else if (bnriconnum == 19+pagenum*20) {
 		sf2d_free_texture(bnricontex20);
-		LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath20);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath20);
 		bnricontex20 = grabIcon(ndsFile20); // Banner icon
-		LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath20);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath20);
 		fclose(ndsFile20);
 	}
 }
@@ -2030,6 +2085,7 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
+	dialogueboxtex = sfil_load_PNG_file("romfs:/graphics/dialoguebox.png", SF2D_PLACE_RAM); // Dialogue box
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
 	sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
@@ -2081,7 +2137,7 @@ int main()
 	sf2d_texture *disabledtex; // Red circle with line
 
 	LogFM("Main.sf2d_textures", "Textures load successfully");
-	
+
 	bool dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
@@ -2190,16 +2246,19 @@ int main()
 
 	// Download box art
 	if (checkWifiStatus()) {
+		LogFM("Main.downloadBoxArt", "Checking box art.");
 		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+			dialoguetext = "Now checking box art if exists (SD Card)...";
 			char str[20] = {0};
 			std::sprintf(str, "%d", boxartnum+1);
 			romsel_counter1 = str;
+			DialogueBoxAppear();
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			LogFMA("Main.downloadBoxArt", "Checking box art:", romsel_counter1);
-			sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking box art if exists (SD Card)...");
-			sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
-			sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+			sf2d_draw_texture(dialogueboxtex, 0, 0);
+			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			
@@ -2261,18 +2320,16 @@ int main()
 			if( access( tempfile_fullpath, F_OK ) == -1 ) {
 				LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now downloading box art (SD Card)...");
-				sftd_draw_textf(font, 8, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-				sftd_draw_textf(font, 27, 16, RGBA8(255, 255, 255, 255), 12, "/");
-				sftd_draw_textf(font, 32, 16, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
+				sf2d_draw_texture(dialogueboxtex, 0, 0);
+				sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
+				sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+				sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+				sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 				downloadFile(temphttp, tempfile_fullpath, NULL);
 			}
 		}
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
 	}
 	
 	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
@@ -2304,15 +2361,19 @@ int main()
 
 	// Cache banner data
 	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+		dialoguetext = "Now checking if banner data exists (SD Card)...";
 		char str[20] = {0};
 		std::sprintf(str, "%d", bnriconnum+1);
 		romsel_counter1 = str;
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now checking if banner data exists (SD Card)...");
-		sftd_draw_textf(font, 8, 32, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 27, 32, RGBA8(255, 255, 255, 255), 12, "/");
-		sftd_draw_textf(font, 32, 32, RGBA8(255, 255, 255, 255), 12, romsel_counter2sd);
 		tempfile = files.at(bnriconnum).c_str();
+		DialogueBoxAppear();
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_draw_texture(dialogueboxtex, 0, 0);
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sftd_draw_textf(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_textf(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_textf(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile);
 		tempfile_fullpath = malloc(256);
 		strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
 		strcat(tempfile_fullpath, tempfile);
@@ -2320,9 +2381,6 @@ int main()
 		cacheBanner(tempfilepath, tempfile, font);
 		fclose(tempfilepath);
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
 		
 	if ((bnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
 		while ((namelist = readdir (bnricondir)) != NULL) {
@@ -2375,15 +2433,13 @@ int main()
 	if(settings_autodlvalue == 1 && checkWifiStatus() && (checkUpdate() == 0)){
 		DownloadTWLoaderCIAs();
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
 	
 	if(settings_autoupdatevalue == 2 && checkWifiStatus()){
 		UpdateBootstrapUnofficial();
 	} else if(settings_autoupdatevalue == 1 && checkWifiStatus()){
 		UpdateBootstrapRelease();
 	}
+	DialogueBoxDisappear();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();

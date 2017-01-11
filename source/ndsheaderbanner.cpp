@@ -145,7 +145,7 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 			
 			fread(&myBanner,1,sizeof(myBanner),ndsFile);
 			
-			sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Now caching banner data (SD Card)...");
+			sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", tempfile_fullpath);
@@ -162,7 +162,7 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 		} else {
 			FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
 			
-			sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Now caching banner data (SD Card)...");
+			sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", tempfile_fullpath);
@@ -173,7 +173,7 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 			fclose(filetosave);
 		}
 	}else{
-		sftd_draw_textf(setfont, 2, 16, RGBA8(255, 255, 255, 255), 12, "Banner data already exists.");
+		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
