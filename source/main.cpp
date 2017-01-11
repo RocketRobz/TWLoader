@@ -493,7 +493,7 @@ int checkUpdate(){
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
 			dialoguetext = "TWLoader is up-to-date.";
-			DialogueBoxDisappear();
+			//DialogueBoxDisappear(); <-- this is causing a freeze only in this function.
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
