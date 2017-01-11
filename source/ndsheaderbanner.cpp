@@ -37,7 +37,6 @@ char* grabTID(FILE* ndsFile, int letter) {
 		LogFMA("NDSBannerHeader.grabTID", "Got last letter of TID", savedtid);
 	}
 	
-	free(savedtid);
 	return savedtid;
 }
 

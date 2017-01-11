@@ -35,6 +35,7 @@ CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
+int equals;
 u8 language;
 
 sftd_font *font;
@@ -2216,11 +2217,40 @@ int main()
 			temptext = malloc(1);
 			strcpy(temptext, " ");
 			strncat(temptext, ba_TIDr, 1);
-			ba_region = "US/"; // default
-			if (temptext+1 == "J")
-				ba_region = "JA/";
-			else if (temptext+1 == "P")
+			ba_region = "US/"; // USA (default)
+			
+			equals = strcmp(temptext+1, "D");
+			if (equals == 0)
+				ba_region = "DE/"; // Desutch?
+				
+			equals = strcmp(temptext+1, "F");
+			if (equals == 0)
+				ba_region = "FR/";	// French
+				
+			equals = strcmp(temptext+1, "I");
+			if (equals == 0)
+				ba_region = "IT/";	// Italian
+
+			equals = strcmp(temptext+1, "J");
+			if (equals == 0)
+				ba_region = "JA/";	// Japanese
+								
+			equals = strcmp(temptext+1, "K");
+			if (equals == 0)
+				ba_region = "KO/";	// Korean
+				
+			equals = strcmp(temptext+1, "O");
+			if (equals == 0)
 				ba_region = ba_langs_eur[language];
+				
+			equals = strcmp(temptext+1, "P");
+			if (equals == 0)
+				ba_region = ba_langs_eur[language];
+				
+			equals = strcmp(temptext+1, "S");
+			if (equals == 0)
+				ba_region = "ES/";	// Spanish
+				
 			strcat(temphttp, ba_region);
 			strncat(temphttp, ba_TID, 4);
 			strcat(temphttp, ".png");
