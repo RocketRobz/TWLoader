@@ -493,7 +493,7 @@ int checkUpdate(){
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
 			dialoguetext = "TWLoader is up-to-date.";
-			DialogueBoxDisappear();
+			//DialogueBoxDisappear(); <-- this is causing a freeze only in this function.
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
@@ -2029,8 +2029,8 @@ int main()
 	// make folders if they don't exist
 	mkdir("sdmc:/roms/nds", 0777);
 	mkdir("sdmc:/roms/flashcard/nds", 0777);
-	mkdir("sdmc:/_dsttfwd", 0777);
-	mkdir("sdmc:/_dstwofwd", 0777);
+	mkdir("sdmc:/_nds/dsttfwd", 0777);
+	mkdir("sdmc:/_nds/dstwofwd", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
@@ -3147,9 +3147,9 @@ int main()
 					screenoff();
 					if (twlsettings_forwardervalue == 1) {
 						if (twlsettings_flashcardvalue == 0) {
-							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
 						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
@@ -3159,9 +3159,9 @@ int main()
 							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
 						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dstwofwd/autoboot.ini" );
 							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwofwd/autoboot.ini" );
 						}
 					}
 					gbarunnervalue = 1;
@@ -3381,10 +3381,10 @@ int main()
 					if (twlsettings_forwardervalue == 1) {
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						if (twlsettings_flashcardvalue == 0) {
-							CIniFile fcrompathini( "sdmc:/_dsttfwd/YSMenu.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_dsttfwd/YSMenu.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
 						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
@@ -3396,10 +3396,10 @@ int main()
 							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
 						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_dstwofwd/autoboot.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dstwofwd/autoboot.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_dstwofwd/autoboot.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwofwd/autoboot.ini" );
 						}
 					}
 					SaveSettings();
