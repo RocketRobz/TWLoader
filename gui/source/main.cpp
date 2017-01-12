@@ -494,6 +494,7 @@ int checkUpdate(){
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
 			dialoguetext = "TWLoader is up-to-date.";
 			//DialogueBoxDisappear(); <-- this is causing a freeze only in this function.
+			showdialoguebox = false;	// <-- so do this instead.
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
@@ -2024,13 +2025,28 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
+	
+	sf2d_init();
+	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
+	sf2d_set_3D(0);
+
+	sf2d_texture *settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on top screen
+
+	sf2d_start_frame(GFX_TOP, GFX_LEFT);
+	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+	sf2d_end_frame();
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	
 	createLog();
 
 	// make folders if they don't exist
 	mkdir("sdmc:/roms/nds", 0777);
 	mkdir("sdmc:/roms/flashcard/nds", 0777);
-	mkdir("sdmc:/_nds/dsttfwd", 0777);
-	mkdir("sdmc:/_nds/dstwofwd", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
@@ -2038,30 +2054,8 @@ int main()
 	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
-	//if (bootstrapini.GetInt(settingsini_frontend, settingsini_frontend_twlappinstalled, 0) == 0) {
-	//	ctr::app::install(ctr::fs::NAND, "sdmc:/_nds/twloader/cia/twlapp.cia", 0, 1287328);
-	//	bootstrapini.SetInt(settingsini_frontend, settingsini_frontend_twlappinstalled, 1);
-	//	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
-	//}
-
-	// We might need a way to install the SRL CIA from romfs
-	//	ctr::app::install(ctr::fs::NAND, "romfs:/twloader-twl.cia", 0, u64 size);
-
 	std::string	bootstrapPath = "";
 	
-    sf2d_init();
-	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
-	sf2d_set_3D(1);
-
-	// Clear logo screen
-	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-	sf2d_end_frame();
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
 	// Font loading
 	sftd_init();
 	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
@@ -2128,7 +2122,6 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
-	sf2d_texture *settingslogotex; // TWLoader logo on bottom screen
 	sf2d_texture *dsboottex; // DS boot screen in settings
 	sf2d_texture *dsiboottex; // DSi boot screen in settings
 	sf2d_texture *dshstex; // DS H&S screen in settings
@@ -2517,6 +2510,8 @@ int main()
 	int settingsXpos = 24;
 	int settingsvalueXpos = 236;
 	int settingsYpos;
+	
+	sf2d_set_3D(1);
 	
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
@@ -2970,7 +2965,6 @@ int main()
 				setbattery3tex = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
 				setbattery4tex = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
 				setbattery5tex = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
-				settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 				dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 				dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
 				dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
@@ -3146,11 +3140,7 @@ int main()
 					// run = false;
 					screenoff();
 					if (twlsettings_forwardervalue == 1) {
-						if (twlsettings_flashcardvalue == 0) {
-							CIniFile fcrompathini( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
-							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
+						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
@@ -3159,9 +3149,9 @@ int main()
 							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
 						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_nds/dstwofwd/autoboot.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dstwoautoboot.ini" );
 							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwofwd/autoboot.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwoautoboot.ini" );
 						}
 					}
 					gbarunnervalue = 1;
@@ -3380,12 +3370,7 @@ int main()
 					screenoff();
 					if (twlsettings_forwardervalue == 1) {
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
-						if (twlsettings_flashcardvalue == 0) {
-							CIniFile fcrompathini( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
-							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dsttfwd/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
+						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
@@ -3396,10 +3381,10 @@ int main()
 							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
 							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
 						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_nds/dstwofwd/autoboot.ini" );
+							CIniFile fcrompathini( "sdmc:/_nds/dstwoautoboot.ini" );
 							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwofwd/autoboot.ini" );
+							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwoautoboot.ini" );
 						}
 					}
 					SaveSettings();

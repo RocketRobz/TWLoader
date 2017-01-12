@@ -221,7 +221,7 @@ int main(int argc, char **argv) {
 		}
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0) {
-				runFile("sd:/_nds/dsttfwd/loadcard.nds");
+				runFile("sd:/_nds/twloader/loadflashcard/dstt.nds");
 			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1) {
 				runFile("sd:/_nds/twloader/loadflashcard/r4.nds");
 			} else if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2) {
