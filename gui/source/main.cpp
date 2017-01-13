@@ -70,10 +70,6 @@ int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
 const char* temptext;
-const char* tempfile_fullpath;
-const char* tempfile_fullpath2;
-FILE* tempfilepath;
-const char* tempfile;
 const char* bottomloc;
 const char* musicpath = "romfs:/null.wav";
 
@@ -1076,36 +1072,31 @@ void SaveSettings() {
 	if (applaunchprep == true) {
 		// Set ROM path if ROM is selected
 		if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "fat:/");
-			strcat(tempfile_fullpath, romfolder.c_str());
-			strcat(tempfile_fullpath, rom);
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, tempfile_fullpath);
-			const char* tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, tempfile_fullpathsav);
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "sdmc:/");
-			strcat(tempfile_fullpath, romfolder.c_str());
-			strcat(tempfile_fullpath, rom);
-			tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
-			if(access (tempfile_fullpathsav, F_OK) == -1) {
+			char path[256];
+			snprintf(path, sizeof(path), "fat:/%s%s", romfolder.c_str(), rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, path);
+			char* path_sav = strrep(path, ".nds", ".sav");
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, path_sav);
+
+			snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), rom);
+			path_sav = strrep(path, ".nds", ".sav");
+			if (access(path_sav, F_OK) == -1) {
 				// Create a save file if it doesn't exist
-				const int BUFFER_SIZE = 64;
-				char buffer [BUFFER_SIZE + 1];
-				int i;
-				for(i = 0; i < BUFFER_SIZE; i++)
-					buffer[i] = (char)('ÿ');
-				buffer[BUFFER_SIZE] = '\0';
+				static const int BUFFER_SIZE = 64;
+				char buffer[BUFFER_SIZE];
+				memset(buffer, 0xFF, sizeof(buffer));
 
-				FILE *pFile = fopen (tempfile_fullpathsav, "w");
-				for (i = 0; i < 0x2000; i++)
-				fprintf(pFile, buffer);
-
-				fclose(pFile);	
+				FILE *pFile = fopen(path_sav, "wb");
+				if (pFile) {
+					for (int i = 0; i < 0x2000; i++) {
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+					}
+					fclose(pFile);
+				}
 			}
 		}
 	}
-	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
+	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
 	if (twlsettings_consolevalue == 0) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
@@ -1115,7 +1106,7 @@ void SaveSettings() {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 	}
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, twlsettings_lockarm9scfgextvalue);
-	bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
+	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
 void screenoff()
@@ -1505,7 +1496,7 @@ int main()
 		dialoguetext = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
-		tempfile = files.at(bnriconnum).c_str();
+		const char *tempfile = files.at(bnriconnum).c_str();
 		DialogueBoxAppear();
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogueboxtex, 0, 0);
@@ -1514,12 +1505,12 @@ int main()
 		sftd_draw_textf(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
 		sftd_draw_textf(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile);
-		tempfile_fullpath = malloc(256);
-		strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-		strcat(tempfile_fullpath, tempfile);
-		tempfilepath = fopen(tempfile_fullpath, "rb");
-		cacheBanner(tempfilepath, tempfile, font);
-		fclose(tempfilepath);
+
+		char nds_path[256];
+		snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", tempfile);
+		FILE *f_nds_file = fopen(nds_path, "rb");
+		cacheBanner(f_nds_file, tempfile, font);
+		fclose(f_nds_file);
 	}
 
 	// Scan the banner icon directory for images.
@@ -2436,23 +2427,21 @@ int main()
 								if (bannertextloaded == false) {
 									if (files.size() != 0)
 										romsel_filename = files.at(storedcursorPosition).c_str();
-									tempfile = files.at(cursorPosition).c_str();
-									tempfile_fullpath = malloc(256);
-									strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
-									strcat(tempfile_fullpath, tempfile);
-									strcat(tempfile_fullpath, ".bin");
+									const char *tempfile = files.at(cursorPosition).c_str();
+									char path[256];
+									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									bnriconnum = cursorPosition;
-									tempfilepath = fopen(tempfile_fullpath,"rb");
-									romsel_gameline1 = grabText(tempfilepath, language, 0);
-									romsel_gameline2 = grabText(tempfilepath, language, 1);
-									romsel_gameline3 = grabText(tempfilepath, language, 2);
+									FILE *f_bnr = fopen(path,"rb");
+									romsel_gameline1 = grabText(f_bnr, language, 0);
+									romsel_gameline2 = grabText(f_bnr, language, 1);
+									romsel_gameline3 = grabText(f_bnr, language, 2);
 									char *cstr1 = new char[romsel_gameline1.length() + 1];
 									strcpy(cstr1, romsel_gameline1.c_str());
 									/* char *cstr2 = new char[romsel_gameline2.length() + 1];
 									strcpy(cstr2, romsel_gameline2.c_str());
 									char *cstr3 = new char[romsel_gameline3.length() + 1];
 									strcpy(cstr3, romsel_gameline3.c_str()); */
-									fclose(tempfilepath);
+									fclose(f_bnr);
 									bannertextloaded = true;
 								}
 								if (settings_filenamevalue == 1) {
