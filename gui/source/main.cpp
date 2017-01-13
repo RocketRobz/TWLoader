@@ -224,6 +224,10 @@ int romselect_toplayout;
 
 bool applaunchprep = false;
 
+int fadealpha = 255;
+bool fadein = true;
+bool fadeout = false;
+
 std::string name;
 
 const char* romsel_filename;
@@ -335,6 +339,21 @@ char * strrep(char *str, char *o_s, char *n_s)
 }
 
 
+void screenoff()
+{
+    gspLcdInit();\
+    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdExit();
+}
+
+void screenon()
+{
+    gspLcdInit();\
+    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdExit();
+}
+
+
 Handle ptmsysmHandle = 0;
 
 Result ptmsysmInit()
@@ -400,6 +419,25 @@ void DialogueBoxDisappear() {
 		}
 		showdialoguebox = false;
 	}
+}
+
+void CreateGameSave() {
+	dialoguetext = "Creating save file...";
+	DialogueBoxAppear();
+	const int BUFFER_SIZE = 64;
+	char buffer [BUFFER_SIZE + 1];
+	int i;
+	for(i = 0; i < BUFFER_SIZE; i++)
+		buffer[i] = (char)('ÿ');
+	buffer[BUFFER_SIZE] = '\0';
+	
+	FILE *pFile = fopen (tempfile_fullpath, "w");
+	for (i = 0; i < 0x2000; i++)
+		fprintf(pFile, buffer);
+	
+	fclose(pFile);
+	dialoguetext = "Done!";
+	DialogueBoxDisappear();
 }
 
 bool checkWifiStatus() {
@@ -2023,39 +2061,25 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
-	if (applaunchprep == true) {
+	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
+	if (applaunchprep == true || fadeout == true) {
 		// Set ROM path if ROM is selected
 		if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "fat:/");
-			strcat(tempfile_fullpath, romfolder.c_str());
-			strcat(tempfile_fullpath, rom);
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, tempfile_fullpath);
-			const char* tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, tempfile_fullpathsav);
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "sdmc:/");
-			strcat(tempfile_fullpath, romfolder.c_str());
-			strcat(tempfile_fullpath, rom);
-			tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
-			if(access (tempfile_fullpathsav, F_OK) == -1) {
-				// Create a save file if it doesn't exist
-				const int BUFFER_SIZE = 64;
-				char buffer [BUFFER_SIZE + 1];
-				int i;
-				for(i = 0; i < BUFFER_SIZE; i++)
-					buffer[i] = (char)('ÿ');
-				buffer[BUFFER_SIZE] = '\0';
-
-				FILE *pFile = fopen (tempfile_fullpathsav, "w");
-				for (i = 0; i < 0x2000; i++)
-				fprintf(pFile, buffer);
-
-				fclose(pFile);	
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+			if (gbarunnervalue == 0) {
+				const char* sav = strrep(rom, ".nds", ".sav");
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+				tempfile_fullpath = malloc(256);
+				strcpy(tempfile_fullpath, "sdmc:/");
+				strcat(tempfile_fullpath, romfolder.c_str());
+				strcat(tempfile_fullpath, sav);
+				if(access (tempfile_fullpath, F_OK) != -1) {} else {
+					// Create a save file if it doesn't exist
+					CreateGameSave();
+				}
 			}
 		}
 	}
-	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
 	if (twlsettings_consolevalue == 0) {
 		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
@@ -2066,20 +2090,6 @@ void SaveSettings() {
 	}
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, twlsettings_lockarm9scfgextvalue);
 	bootstrapini.SaveIniFile( "sdmc:/_nds/nds-bootstrap.ini");
-}
-
-void screenoff()
-{
-    gspLcdInit();\
-    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);\
-    gspLcdExit();
-}
-
-void screenon()
-{
-    gspLcdInit();\
-    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);\
-    gspLcdExit();
 }
 
 int main()
@@ -2519,10 +2529,6 @@ int main()
 
 	sf2d_texture *batteryIcon;
 	
-	int fadealpha = 255;
-	bool fadein = true;
-	bool fadeout = false;
-		
 	bool colortexloaded = false;
 	bool colortexloaded_bot = false;
 	bool bannertextloaded = false;
@@ -3204,7 +3210,6 @@ int main()
 					fadein = true;
 				} else {
 					// run = false;
-					screenoff();
 					if (twlsettings_forwardervalue == 1) {
 						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
 							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
@@ -3222,6 +3227,7 @@ int main()
 					}
 					gbarunnervalue = 1;
 					SaveSettings();
+					screenoff();
 					if (twlsettings_rainbowledvalue == 1)
 						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
@@ -3433,7 +3439,6 @@ int main()
 					screenmodeswitch = false;
 					applaunchprep = false;
 				} else {
-					screenoff();
 					if (twlsettings_forwardervalue == 1) {
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
@@ -3454,6 +3459,7 @@ int main()
 						}
 					}
 					SaveSettings();
+					screenoff();
 					if (twlsettings_rainbowledvalue == 1)
 						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
