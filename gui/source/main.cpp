@@ -231,8 +231,6 @@ std::string romsel_gameline3;
 char *cstr1;
 char *cstr2;
 char *cstr3;
-const char* romsel_counter2fc;
-const char* romsel_counter2sd;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
@@ -2281,9 +2279,8 @@ int main()
 		std::sort( files.begin(), files.end() );
 	}
 	
-	char str3[20] = {0};
-	std::sprintf(str3, "%d", files.size());
-	romsel_counter2sd = str3;
+	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
+	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
 	
 	static const char *const ba_langs_eur[] =
 		{
@@ -2486,10 +2483,9 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-		
-	char str2[20] = {0};
-	std::sprintf(str2, "%d", fcfiles.size());
-	romsel_counter2fc = str2;
+
+	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;
