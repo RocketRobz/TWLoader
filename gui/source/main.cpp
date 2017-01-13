@@ -113,6 +113,7 @@ const char* settingsini_twl_bootani = "BOOT_ANIMATION";
 const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
 const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
 const char* settingsini_twl_resetslot1 = "RESET_SLOT1";
+const char* settingsini_twl_keepsd = "SLOT1_KEEPSD";
 const char* settingsini_twl_debug = "DEBUG";
 const char* settingsini_twl_gbarunner = "GBARUNNER";
 const char* settingsini_twl_forwarder = "FORWARDER";
@@ -124,6 +125,7 @@ const char* settingsini_twl_flashcard = "FLASHCARD";
 // Bootstrap .ini file
 const char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
 const char* bootstrapini_ndspath = "NDS_PATH";
+const char* bootstrapini_savpath = "SAV_PATH";
 const char* bootstrapini_boostcpu = "BOOST_CPU";
 const char* bootstrapini_debug = "DEBUG";
 const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
@@ -220,6 +222,8 @@ int romselect_toplayout;
 //	0: Show box art
 //	1: Hide box art
 
+bool applaunchprep = false;
+
 std::string name;
 
 const char* romsel_filename;
@@ -294,7 +298,41 @@ int twlsettings_launchslot1value;
 int twlsettings_resetslot1value;
 int twlsettings_consolevalue;
 int twlsettings_lockarm9scfgextvalue;
+int keepsdvalue = 0;
 int gbarunnervalue = 0;
+
+
+std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+}
+
+char * strrep(char *str, char *o_s, char *n_s) 
+{
+    char *newstr = NULL;
+    char *c = NULL;
+
+    /* no substring found */
+    if ((c = strstr(str, o_s)) == NULL) {
+        return str;
+    }
+
+    if ((newstr = (char *) malloc((int) sizeof(str) -
+                                  (int) sizeof(o_s) +
+                                  (int) sizeof(n_s) + 1)) == NULL) {
+        printf("ERROR: unable to allocate memory\n");
+        return NULL;
+    }
+
+    strncpy(newstr, str, c-str);  
+    sprintf(newstr+(c-str), "%s%s", n_s, c+strlen(o_s));
+
+    return newstr;
+}
 
 
 Handle ptmsysmHandle = 0;
@@ -1974,6 +2012,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, twlsettings_healthsafetyvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, twlsettings_launchslot1value);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, twlsettings_resetslot1value);
+	settingsini.SetInt(settingsini_twlmode, settingsini_twl_keepsd, keepsdvalue);
 	if (twlsettings_consolevalue == 0) {
 		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, -1);
 	} else if (twlsettings_consolevalue == 1) {
@@ -1984,9 +2023,37 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, twlsettings_forwardervalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
-	// Set ROM path if ROM is selected
-	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
-		bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath,fat+romfolder+rom);
+	if (applaunchprep == true) {
+		// Set ROM path if ROM is selected
+		if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "fat:/");
+			strcat(tempfile_fullpath, romfolder.c_str());
+			strcat(tempfile_fullpath, rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, tempfile_fullpath);
+			const char* tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, tempfile_fullpathsav);
+			tempfile_fullpath = malloc(256);
+			strcpy(tempfile_fullpath, "sdmc:/");
+			strcat(tempfile_fullpath, romfolder.c_str());
+			strcat(tempfile_fullpath, rom);
+			tempfile_fullpathsav = strrep(tempfile_fullpath, ".nds", ".sav");
+			if(access (tempfile_fullpathsav, F_OK) == -1) {
+				// Create a save file if it doesn't exist
+				const int BUFFER_SIZE = 64;
+				char buffer [BUFFER_SIZE + 1];
+				int i;
+				for(i = 0; i < BUFFER_SIZE; i++)
+					buffer[i] = (char)('ÿ');
+				buffer[BUFFER_SIZE] = '\0';
+
+				FILE *pFile = fopen (tempfile_fullpathsav, "w");
+				for (i = 0; i < 0x2000; i++)
+				fprintf(pFile, buffer);
+
+				fclose(pFile);	
+			}
+		}
 	}
 	settingsini.SaveIniFile( "sdmc:/_nds/twloader/settings.ini");
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, twlsettings_cpuspeedvalue);
@@ -2464,7 +2531,6 @@ int main()
 
 	bool updatebotscreen = true;
 	bool screenmodeswitch = false;
-	bool applaunchprep = false;
 	bool applaunchicon = false;
 	bool applaunchon = false;
 		
