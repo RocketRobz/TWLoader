@@ -305,27 +305,33 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-char * strrep(char *str, char *o_s, char *n_s) 
+/**
+ * Replace a substring in a C string.
+ * @param str Original string.
+ * @param o_s Substring to search for.
+ * @param n_s New substring.
+ * @return Newly allocated string with the replaced substring. (Must be free()'d!)
+ */
+char *strrep(const char *str, const char *o_s, const char *n_s) 
 {
-    char *newstr = NULL;
-    char *c = NULL;
+	char *newstr = NULL;
+	char *c = NULL;
 
-    /* no substring found */
-    if ((c = strstr(str, o_s)) == NULL) {
-        return str;
-    }
+	// Look for the substring.
+	if ((c = strstr(str, o_s)) == NULL) {
+		// Substring not found.
+		return strdup(str);
+	}
 
-    if ((newstr = (char *) malloc((int) sizeof(str) -
-                                  (int) sizeof(o_s) +
-                                  (int) sizeof(n_s) + 1)) == NULL) {
-        printf("ERROR: unable to allocate memory\n");
-        return NULL;
-    }
+	newstr = (char*)malloc(strlen(str) - strlen(o_s) + strlen(n_s) + 1);
+	if (!newstr) {
+		printf("ERROR: unable to allocate memory\n");
+		return NULL;
+	}
 
-    strncpy(newstr, str, c-str);  
-    sprintf(newstr+(c-str), "%s%s", n_s, c+strlen(o_s));
-
-    return newstr;
+	strncpy(newstr, str, c-str);  
+	sprintf(newstr+(c-str), "%s%s", n_s, c+strlen(o_s));
+	return newstr;
 }
 
 
@@ -1077,6 +1083,7 @@ void SaveSettings() {
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, path);
 			char* path_sav = strrep(path, ".nds", ".sav");
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, path_sav);
+			free(path_sav);
 
 			snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), rom);
 			path_sav = strrep(path, ".nds", ".sav");
@@ -1094,6 +1101,7 @@ void SaveSettings() {
 					fclose(pFile);
 				}
 			}
+			free(path_sav);
 		}
 	}
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
