@@ -63,7 +63,17 @@ int menucolor_alpha;
 sf2d_texture *bnricontexnum;
 sf2d_texture *bnricontexlaunch;
 sf2d_texture *boxarttexnum;
-#include "bannerandboxart.h"
+
+// Banners and boxart. (formerly bannerandboxart.h)
+// TODO: Some of this still needs reworking to fix
+// memory leaks, but switching to arrays is a start.
+static FILE* ndsFile[20] = { };
+static char* bnriconpath[20] = { };
+// bnricontex[]: 0-9 == regular; 10-19 == .nds icons only
+static sf2d_texture *bnricontex[20] = { };
+static char* boxartpath[20] = { };
+static sf2d_texture *boxarttex[6] = { };
+
 int bnriconnum = 0;
 int bnriconframenum = 0;
 int boxartnum = 0;
@@ -73,7 +83,6 @@ const char* tempfile_fullpath;
 const char* tempfile_fullpath2;
 FILE* tempfilepath;
 const char* tempfile;
-const char* tempimagepath = NULL;
 const char* topbgloc;
 const char* bottomloc;
 const char* dotcircleloc;
@@ -966,986 +975,115 @@ void LoadBottomImage() {
 	}
 }
 
-void ChangeBNRIconNo() {
-	if ( bnriconnum == 0+pagenum*20 ) {
-		bnricontexnum = bnricontex1;
-	} else if ( bnriconnum == 1+pagenum*20 ) {
-		bnricontexnum = bnricontex2;
-	} else if ( bnriconnum == 2+pagenum*20 ) {
-		bnricontexnum = bnricontex3;
-	} else if ( bnriconnum == 3+pagenum*20 ) {
-		bnricontexnum = bnricontex4;
-	} else if ( bnriconnum == 4+pagenum*20 ) {
-		bnricontexnum = bnricontex5;
-	} else if ( bnriconnum == 5+pagenum*20 ) {
-		bnricontexnum = bnricontex6;
-	} else if ( bnriconnum == 6+pagenum*20 ) {
-		bnricontexnum = bnricontex7;
-	} else if ( bnriconnum == 7+pagenum*20 ) {
-		bnricontexnum = bnricontex8;
-	} else if ( bnriconnum == 8+pagenum*20 ) {
-		bnricontexnum = bnricontex9;
-	} else if ( bnriconnum == 9+pagenum*20 ) {
-		bnricontexnum = bnricontex10;
-	} else if ( bnriconnum == 10+pagenum*20 ) {
-		bnricontexnum = bnricontex11;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex1;
-	} else if ( bnriconnum == 11+pagenum*20 ) {
-		bnricontexnum = bnricontex12;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex2;
-	} else if ( bnriconnum == 12+pagenum*20 ) {
-		bnricontexnum = bnricontex13;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex3;
-	} else if ( bnriconnum == 13+pagenum*20 ) {
-		bnricontexnum = bnricontex14;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex4;
-	} else if ( bnriconnum == 14+pagenum*20 ) {
-		bnricontexnum = bnricontex15;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex5;
-	} else if ( bnriconnum == 15+pagenum*20 ) {
-		bnricontexnum = bnricontex16;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex6;
-	} else if ( bnriconnum == 16+pagenum*20 ) {
-		bnricontexnum = bnricontex17;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex7;
-	} else if ( bnriconnum == 17+pagenum*20 ) {
-		bnricontexnum = bnricontex18;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex8;
-	} else if ( bnriconnum == 18+pagenum*20 ) {
-		bnricontexnum = bnricontex19;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex9;
-	} else if ( bnriconnum == 19+pagenum*20 ) {
-		bnricontexnum = bnricontex20;
-		if (twlsettings_forwardervalue == 1)
-			bnricontexnum = bnricontex10;
+static void ChangeBNRIconNo(void) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected banner icon is on the current page.
+		if (idx >= 10 && twlsettings_forwardervalue == 1) {
+			// Flash cart forwarder.
+			bnricontexnum = bnricontex[idx-10];
+		} else {
+			// SD card.
+			bnricontexnum = bnricontex[idx];
+		}
 	}
 }
 
-void ChangeBoxArtNo() {
-	if ( boxartnum == 0+pagenum*20 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 1+pagenum*20 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 2+pagenum*20 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 3+pagenum*20 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 4+pagenum*20 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 5+pagenum*20 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 6+pagenum*20 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 7+pagenum*20 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 8+pagenum*20 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 9+pagenum*20 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 10+pagenum*20 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 11+pagenum*20 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 12+pagenum*20 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 13+pagenum*20 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 14+pagenum*20 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 15+pagenum*20 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 16+pagenum*20 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 17+pagenum*20 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 18+pagenum*20 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 19+pagenum*20 ) {
-		boxarttexnum = boxarttex2;
-	} /* else if ( boxartnum == 20 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 21 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 22 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 23 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 24 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 25 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 26 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 27 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 28 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 29 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 30 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 31 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 32 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 33 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 34 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 35 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 36 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 37 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 38 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 39 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 40 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 41 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 42 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 43 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 44 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 45 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 46 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 47 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 48 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 49 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 50 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 51 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 52 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 53 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 54 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 55 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 56 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 57 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 58 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 59 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 60 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 61 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 62 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 63 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 64 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 65 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 66 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 67 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 68 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 69 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 70 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 71 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 72 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 73 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 74 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 75 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 76 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 77 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 78 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 79 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 80 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 81 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 82 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 83 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 84 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 85 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 86 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 87 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 88 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 89 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 90 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 91 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 92 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 93 ) {
-		boxarttexnum = boxarttex4;
-	} else if ( boxartnum == 94 ) {
-		boxarttexnum = boxarttex5;
-	} else if ( boxartnum == 95 ) {
-		boxarttexnum = boxarttex6;
-	} else if ( boxartnum == 96 ) {
-		boxarttexnum = boxarttex1;
-	} else if ( boxartnum == 97 ) {
-		boxarttexnum = boxarttex2;
-	} else if ( boxartnum == 98 ) {
-		boxarttexnum = boxarttex3;
-	} else if ( boxartnum == 99 ) {
-		boxarttexnum = boxarttex4;
-	} */
-}
-
-void OpenBNRIcon() {
-	if (bnriconnum == 0+pagenum*20) {
-		ndsFile1 = fopen(bnriconpath1,"rb");
-	} else if (bnriconnum == 1+pagenum*20) {
-		ndsFile2 = fopen(bnriconpath2,"rb");
-	} else if (bnriconnum == 2+pagenum*20) {
-		ndsFile3 = fopen(bnriconpath3,"rb");
-	} else if (bnriconnum == 3+pagenum*20) {
-		ndsFile4 = fopen(bnriconpath4,"rb");
-	} else if (bnriconnum == 4+pagenum*20) {
-		ndsFile5 = fopen(bnriconpath5,"rb");
-	} else if (bnriconnum == 5+pagenum*20) {
-		ndsFile6 = fopen(bnriconpath6,"rb");
-	} else if (bnriconnum == 6+pagenum*20) {
-		ndsFile7 = fopen(bnriconpath7,"rb");
-	} else if (bnriconnum == 7+pagenum*20) {
-		ndsFile8 = fopen(bnriconpath8,"rb");
-	} else if (bnriconnum == 8+pagenum*20) {
-		ndsFile9 = fopen(bnriconpath9,"rb");
-	} else if (bnriconnum == 9+pagenum*20) {
-		ndsFile10 = fopen(bnriconpath10,"rb");
-	} else if (bnriconnum == 10+pagenum*20) {
-		ndsFile11 = fopen(bnriconpath11,"rb");
-	} else if (bnriconnum == 11+pagenum*20) {
-		ndsFile12 = fopen(bnriconpath12,"rb");
-	} else if (bnriconnum == 12+pagenum*20) {
-		ndsFile13 = fopen(bnriconpath13,"rb");
-	} else if (bnriconnum == 13+pagenum*20) {
-		ndsFile14 = fopen(bnriconpath14,"rb");
-	} else if (bnriconnum == 14+pagenum*20) {
-		ndsFile15 = fopen(bnriconpath15,"rb");
-	} else if (bnriconnum == 15+pagenum*20) {
-		ndsFile16 = fopen(bnriconpath16,"rb");
-	} else if (bnriconnum == 16+pagenum*20) {
-		ndsFile17 = fopen(bnriconpath17,"rb");
-	} else if (bnriconnum == 17+pagenum*20) {
-		ndsFile18 = fopen(bnriconpath18,"rb");
-	} else if (bnriconnum == 18+pagenum*20) {
-		ndsFile19 = fopen(bnriconpath19,"rb");
-	} else if (bnriconnum == 19+pagenum*20) {
-		ndsFile20 = fopen(bnriconpath20,"rb");
+static void ChangeBoxArtNo(void) {
+	// Get the boxartnum relative to the current page.
+	const int idx = boxartnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected boxart is on the current page.
+		// NOTE: Only 6 slots for boxart.
+		boxarttexnum = boxarttex[idx % 6];
 	}
 }
 
-void OpenBNRIconTemp() {
-	if (bnriconnum == 0+pagenum*20) {
-		tempfilepath = fopen(bnriconpath1,"rb");
-	} else if (bnriconnum == 1+pagenum*20) {
-		tempfilepath = fopen(bnriconpath2,"rb");
-	} else if (bnriconnum == 2+pagenum*20) {
-		tempfilepath = fopen(bnriconpath3,"rb");
-	} else if (bnriconnum == 3+pagenum*20) {
-		tempfilepath = fopen(bnriconpath4,"rb");
-	} else if (bnriconnum == 4+pagenum*20) {
-		tempfilepath = fopen(bnriconpath5,"rb");
-	} else if (bnriconnum == 5+pagenum*20) {
-		tempfilepath = fopen(bnriconpath6,"rb");
-	} else if (bnriconnum == 6+pagenum*20) {
-		tempfilepath = fopen(bnriconpath7,"rb");
-	} else if (bnriconnum == 7+pagenum*20) {
-		tempfilepath = fopen(bnriconpath8,"rb");
-	} else if (bnriconnum == 8+pagenum*20) {
-		tempfilepath = fopen(bnriconpath9,"rb");
-	} else if (bnriconnum == 9+pagenum*20) {
-		tempfilepath = fopen(bnriconpath10,"rb");
-	} else if (bnriconnum == 10+pagenum*20) {
-		tempfilepath = fopen(bnriconpath11,"rb");
-	} else if (bnriconnum == 11+pagenum*20) {
-		tempfilepath = fopen(bnriconpath12,"rb");
-	} else if (bnriconnum == 12+pagenum*20) {
-		tempfilepath = fopen(bnriconpath13,"rb");
-	} else if (bnriconnum == 13+pagenum*20) {
-		tempfilepath = fopen(bnriconpath14,"rb");
-	} else if (bnriconnum == 14+pagenum*20) {
-		tempfilepath = fopen(bnriconpath15,"rb");
-	} else if (bnriconnum == 15+pagenum*20) {
-		tempfilepath = fopen(bnriconpath16,"rb");
-	} else if (bnriconnum == 16+pagenum*20) {
-		tempfilepath = fopen(bnriconpath17,"rb");
-	} else if (bnriconnum == 17+pagenum*20) {
-		tempfilepath = fopen(bnriconpath18,"rb");
-	} else if (bnriconnum == 18+pagenum*20) {
-		tempfilepath = fopen(bnriconpath19,"rb");
-	} else if (bnriconnum == 19+pagenum*20) {
-		tempfilepath = fopen(bnriconpath20,"rb");
+static void OpenBNRIcon(void) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected banner icon is on the current page.
+		if (ndsFile[idx]) {
+			fclose(ndsFile[idx]);
+		}
+		ndsFile[idx] = fopen(bnriconpath[idx], "rb");
 	}
 }
 
-void StoreBNRIconPath() {
-	if (bnriconnum == 0+pagenum*20) {
-		bnriconpath1 = tempimagepath;
-	} else if (bnriconnum == 1+pagenum*20) {
-		bnriconpath2 = tempimagepath;
-	} else if (bnriconnum == 2+pagenum*20) {
-		bnriconpath3 = tempimagepath;
-	} else if (bnriconnum == 3+pagenum*20) {
-		bnriconpath4 = tempimagepath;
-	} else if (bnriconnum == 4+pagenum*20) {
-		bnriconpath5 = tempimagepath;
-	} else if (bnriconnum == 5+pagenum*20) {
-		bnriconpath6 = tempimagepath;
-	} else if (bnriconnum == 6+pagenum*20) {
-		bnriconpath7 = tempimagepath;
-	} else if (bnriconnum == 7+pagenum*20) {
-		bnriconpath8 = tempimagepath;
-	} else if (bnriconnum == 8+pagenum*20) {
-		bnriconpath9 = tempimagepath;
-	} else if (bnriconnum == 9+pagenum*20) {
-		bnriconpath10 = tempimagepath;
-	} else if (bnriconnum == 10+pagenum*20) {
-		bnriconpath11 = tempimagepath;
-	} else if (bnriconnum == 11+pagenum*20) {
-		bnriconpath12 = tempimagepath;
-	} else if (bnriconnum == 12+pagenum*20) {
-		bnriconpath13 = tempimagepath;
-	} else if (bnriconnum == 13+pagenum*20) {
-		bnriconpath14 = tempimagepath;
-	} else if (bnriconnum == 14+pagenum*20) {
-		bnriconpath15 = tempimagepath;
-	} else if (bnriconnum == 15+pagenum*20) {
-		bnriconpath16 = tempimagepath;
-	} else if (bnriconnum == 16+pagenum*20) {
-		bnriconpath17 = tempimagepath;
-	} else if (bnriconnum == 17+pagenum*20) {
-		bnriconpath18 = tempimagepath;
-	} else if (bnriconnum == 18+pagenum*20) {
-		bnriconpath19 = tempimagepath;
-	} else if (bnriconnum == 19+pagenum*20) {
-		bnriconpath20 = tempimagepath;
+/**
+ * Store a banner icon path.
+ * @param path Banner icon path. (will be strdup()'d)
+ */
+static void StoreBNRIconPath(const char *path) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected banner icon is on the current page.
+		free(bnriconpath[idx]);
+		bnriconpath[idx] = strdup(path);
 	}
 }
 
-void StoreBoxArtPath() {
-	if (boxartnum == 0+pagenum*20) {
-		boxartpath1 = tempimagepath;
-	} else if (boxartnum == 1+pagenum*20) {
-		boxartpath2 = tempimagepath;
-	} else if (boxartnum == 2+pagenum*20) {
-		boxartpath3 = tempimagepath;
-	} else if (boxartnum == 3+pagenum*20) {
-		boxartpath4 = tempimagepath;
-	} else if (boxartnum == 4+pagenum*20) {
-		boxartpath5 = tempimagepath;
-	} else if (boxartnum == 5+pagenum*20) {
-		boxartpath6 = tempimagepath;
-	} else if (boxartnum == 6+pagenum*20) {
-		boxartpath7 = tempimagepath;
-	} else if (boxartnum == 7+pagenum*20) {
-		boxartpath8 = tempimagepath;
-	} else if (boxartnum == 8+pagenum*20) {
-		boxartpath9 = tempimagepath;
-	} else if (boxartnum == 9+pagenum*20) {
-		boxartpath10 = tempimagepath;
-	} else if (boxartnum == 10+pagenum*20) {
-		boxartpath11 = tempimagepath;
-	} else if (boxartnum == 11+pagenum*20) {
-		boxartpath12 = tempimagepath;
-	} else if (boxartnum == 12+pagenum*20) {
-		boxartpath13 = tempimagepath;
-	} else if (boxartnum == 13+pagenum*20) {
-		boxartpath14 = tempimagepath;
-	} else if (boxartnum == 14+pagenum*20) {
-		boxartpath15 = tempimagepath;
-	} else if (boxartnum == 15+pagenum*20) {
-		boxartpath16 = tempimagepath;
-	} else if (boxartnum == 16+pagenum*20) {
-		boxartpath17 = tempimagepath;
-	} else if (boxartnum == 17+pagenum*20) {
-		boxartpath18 = tempimagepath;
-	} else if (boxartnum == 18+pagenum*20) {
-		boxartpath19 = tempimagepath;
-	} else if (boxartnum == 19+pagenum*20) {
-		boxartpath20 = tempimagepath;
+/**
+ * Store a boxart path.
+ * @param path Boxart path. (will be strdup()'d)
+ */
+static void StoreBoxArtPath(const char *path) {
+	// Get the boxartnum relative to the current page.
+	const int idx = boxartnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected boxart is on the current page.
+		free(boxartpath[idx]);
+		boxartpath[idx] = strdup(path);
 	}
 }
 
-void LoadBNRIcon() {
-	if (bnriconnum == 0+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath1);
-		bnricontex1 = grabIcon(ndsFile1); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath1);
-		fclose(ndsFile1);
-	} else if (bnriconnum == 1+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath2);
-		bnricontex2 = grabIcon(ndsFile2); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath2);
-		fclose(ndsFile2);
-	} else if (bnriconnum == 2+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath3);
-		bnricontex3 = grabIcon(ndsFile3); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath3);
-		fclose(ndsFile3);
-	} else if (bnriconnum == 3+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath4);
-		bnricontex4 = grabIcon(ndsFile4); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath4);
-		fclose(ndsFile4);
-	} else if (bnriconnum == 4+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath5);
-		bnricontex5 = grabIcon(ndsFile5); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath5);
-		fclose(ndsFile5);
-	} else if (bnriconnum == 5+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath6);
-		bnricontex6 = grabIcon(ndsFile6); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath6);
-		fclose(ndsFile6);
-	} else if (bnriconnum == 6+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath7);
-		bnricontex7 = grabIcon(ndsFile7); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath7);
-		fclose(ndsFile7);
-	} else if (bnriconnum == 7+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath8);
-		bnricontex8 = grabIcon(ndsFile8); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath8);
-		fclose(ndsFile8);
-	} else if (bnriconnum == 8+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath9);
-		bnricontex9 = grabIcon(ndsFile9); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath9);
-		fclose(ndsFile9);
-	} else if (bnriconnum == 9+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath10);
-		bnricontex10 = grabIcon(ndsFile10); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath10);
-		fclose(ndsFile10);
-	} else if (bnriconnum == 10+pagenum*20) {
-		sf2d_free_texture(bnricontex11);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath11);
-		bnricontex11 = grabIcon(ndsFile11); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath11);
-		fclose(ndsFile11);
-	} else if (bnriconnum == 11+pagenum*20) {
-		sf2d_free_texture(bnricontex12);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath12);
-		bnricontex12 = grabIcon(ndsFile12); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath12);
-		fclose(ndsFile12);
-	} else if (bnriconnum == 12+pagenum*20) {
-		sf2d_free_texture(bnricontex13);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath13);
-		bnricontex13 = grabIcon(ndsFile13); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath13);
-		fclose(ndsFile13);
-	} else if (bnriconnum == 13+pagenum*20) {
-		sf2d_free_texture(bnricontex14);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath14);
-		bnricontex14 = grabIcon(ndsFile14); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath14);
-		fclose(ndsFile14);
-	} else if (bnriconnum == 14+pagenum*20) {
-		sf2d_free_texture(bnricontex15);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath15);
-		bnricontex15 = grabIcon(ndsFile15); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath15);
-		fclose(ndsFile15);
-	} else if (bnriconnum == 15+pagenum*20) {
-		sf2d_free_texture(bnricontex16);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath16);
-		bnricontex16 = grabIcon(ndsFile16); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath16);
-		fclose(ndsFile16);
-	} else if (bnriconnum == 16+pagenum*20) {
-		sf2d_free_texture(bnricontex17);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath17);
-		bnricontex17 = grabIcon(ndsFile17); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath17);
-		fclose(ndsFile17);
-	} else if (bnriconnum == 17+pagenum*20) {
-		sf2d_free_texture(bnricontex18);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath18);
-		bnricontex18 = grabIcon(ndsFile18); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath18);
-		fclose(ndsFile18);
-	} else if (bnriconnum == 18+pagenum*20) {
-		sf2d_free_texture(bnricontex19);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath19);
-		bnricontex19 = grabIcon(ndsFile19); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath19);
-		fclose(ndsFile19);
-	} else if (bnriconnum == 19+pagenum*20) {
-		sf2d_free_texture(bnricontex20);
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath20);
-		bnricontex20 = grabIcon(ndsFile20); // Banner icon
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath20);
-		fclose(ndsFile20);
+static void LoadBNRIcon(void) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected bnriconnum is on the current page.
+		sf2d_free_texture(bnricontex[idx]);
+		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
+		bnricontex[idx] = grabIcon(ndsFile[idx]);
+		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath[idx]);
+		fclose(ndsFile[idx]);
+		ndsFile[idx] = NULL;
 	}
 }
 
-void LoadFCBNRIcon() {
-	if (bnriconnum == 0+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath1, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 1+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath2, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 2+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath3, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 3+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath4, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 4+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath5, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 5+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath6, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 6+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath7, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 7+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath8, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 8+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath9, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 9+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath10, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 10+pagenum*20) {
-		sf2d_free_texture(bnricontex1);
-		bnricontex1 = sfil_load_PNG_file(bnriconpath11, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 11+pagenum*20) {
-		sf2d_free_texture(bnricontex2);
-		bnricontex2 = sfil_load_PNG_file(bnriconpath12, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 12+pagenum*20) {
-		sf2d_free_texture(bnricontex3);
-		bnricontex3 = sfil_load_PNG_file(bnriconpath13, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 13+pagenum*20) {
-		sf2d_free_texture(bnricontex4);
-		bnricontex4 = sfil_load_PNG_file(bnriconpath14, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 14+pagenum*20) {
-		sf2d_free_texture(bnricontex5);
-		bnricontex5 = sfil_load_PNG_file(bnriconpath15, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 15+pagenum*20) {
-		sf2d_free_texture(bnricontex6);
-		bnricontex6 = sfil_load_PNG_file(bnriconpath16, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 16+pagenum*20) {
-		sf2d_free_texture(bnricontex7);
-		bnricontex7 = sfil_load_PNG_file(bnriconpath17, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 17+pagenum*20) {
-		sf2d_free_texture(bnricontex8);
-		bnricontex8 = sfil_load_PNG_file(bnriconpath18, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 18+pagenum*20) {
-		sf2d_free_texture(bnricontex9);
-		bnricontex9 = sfil_load_PNG_file(bnriconpath19, SF2D_PLACE_RAM); // Banner icon
-	} else if (bnriconnum == 19+pagenum*20) {
-		sf2d_free_texture(bnricontex10);
-		bnricontex10 = sfil_load_PNG_file(bnriconpath20, SF2D_PLACE_RAM); // Banner icon
+static void LoadFCBNRIcon(void) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected bnriconnum is on the current page.
+		sf2d_free_texture(bnricontex[idx]);
+		bnricontex[idx] = sfil_load_PNG_file(bnriconpath[idx], SF2D_PLACE_RAM); // Banner icon
 	}
 }
 
-void LoadBNRIconatLaunch() {
-	if (bnriconnum == 0+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile1); // Banner icon
-	} else if (bnriconnum == 1+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile2); // Banner icon
-	} else if (bnriconnum == 2+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile3); // Banner icon
-	} else if (bnriconnum == 3+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile4); // Banner icon
-	} else if (bnriconnum == 4+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile5); // Banner icon
-	} else if (bnriconnum == 5+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile6); // Banner icon
-	} else if (bnriconnum == 6+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile7); // Banner icon
-	} else if (bnriconnum == 7+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile8); // Banner icon
-	} else if (bnriconnum == 8+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile9); // Banner icon
-	} else if (bnriconnum == 9+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile10); // Banner icon
-	} else if (bnriconnum == 10+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile11); // Banner icon
-	} else if (bnriconnum == 11+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile12); // Banner icon
-	} else if (bnriconnum == 12+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile13); // Banner icon
-	} else if (bnriconnum == 13+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile14); // Banner icon
-	} else if (bnriconnum == 14+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile15); // Banner icon
-	} else if (bnriconnum == 15+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile16); // Banner icon
-	} else if (bnriconnum == 16+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile17); // Banner icon
-	} else if (bnriconnum == 17+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile18); // Banner icon
-	} else if (bnriconnum == 18+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile19); // Banner icon
-	} else if (bnriconnum == 19+pagenum*20) {
-		bnricontexlaunch = grabandstoreIcon(ndsFile20); // Banner icon
+static void LoadBNRIconatLaunch(void) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = bnriconnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected bnriconnum is on the current page.
+		sf2d_free_texture(bnricontexlaunch);	// TODO: Is this needed?
+		bnricontexlaunch = grabandstoreIcon(ndsFile[idx]); // Banner icon
 	}
 }
 
-void LoadBoxArt() {
-	if ( boxartnum == 0+pagenum*20 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath1, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 1+pagenum*20 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath2, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 2+pagenum*20 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath3, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 3+pagenum*20 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath4, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 4+pagenum*20 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath5, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 5+pagenum*20 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath6, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 6+pagenum*20 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath7, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 7+pagenum*20 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath8, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 8+pagenum*20 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath9, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 9+pagenum*20 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath10, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 10+pagenum*20 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath11, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 11+pagenum*20 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath12, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 12+pagenum*20 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath13, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 13+pagenum*20 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath14, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 14+pagenum*20 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath15, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 15+pagenum*20 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath16, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 16+pagenum*20 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath17, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 17+pagenum*20 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath18, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 18+pagenum*20 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath19, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 19+pagenum*20 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath20, SF2D_PLACE_RAM); // Box art
-	} /* else if ( boxartnum == 20 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath21, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 21 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath22, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 22 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath23, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 23 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath24, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 24 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath25, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 25 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath26, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 26 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath27, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 27 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath28, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 28 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath29, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 29 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath30, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 30 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath31, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 31 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath32, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 32 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath33, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 33 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath34, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 34 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath35, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 35 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath36, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 36 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath37, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 37 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath38, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 38 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath39, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 39 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath40, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 40 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath41, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 41 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath42, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 42 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath43, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 43 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath44, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 44 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath45, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 45 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath46, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 46 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath47, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 47 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath48, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 48 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath49, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 49 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath50, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 50 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath51, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 51 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath52, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 52 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath53, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 53 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath54, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 54 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath55, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 55 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath56, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 56 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath57, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 57 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath58, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 58 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath59, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 59 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath60, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 60 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath61, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 61 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath62, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 62 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath63, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 63 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath64, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 64 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath65, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 65 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath66, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 66 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath67, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 67 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath68, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 68 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath69, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 69 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath70, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 70 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath71, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 71 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath72, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 72 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath73, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 73 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath74, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 74 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath75, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 75 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath76, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 76 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath77, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 77 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath78, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 78 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath79, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 79 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath80, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 80 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath81, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 81 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath82, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 82 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath83, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 83 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath84, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 84 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath85, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 85 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath86, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 86 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath87, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 87 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath88, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 88 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath89, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 89 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath90, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 90 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath91, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 91 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath92, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 92 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath93, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 93 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath94, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 94 ) {
-		sf2d_free_texture(boxarttex5);
-		boxarttex5 = sfil_load_PNG_file(boxartpath95, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 95 ) {
-		sf2d_free_texture(boxarttex6);
-		boxarttex6 = sfil_load_PNG_file(boxartpath96, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 96 ) {
-		sf2d_free_texture(boxarttex1);
-		boxarttex1 = sfil_load_PNG_file(boxartpath97, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 97 ) {
-		sf2d_free_texture(boxarttex2);
-		boxarttex2 = sfil_load_PNG_file(boxartpath98, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 98 ) {
-		sf2d_free_texture(boxarttex3);
-		boxarttex3 = sfil_load_PNG_file(boxartpath99, SF2D_PLACE_RAM); // Box art
-	} else if ( boxartnum == 99 ) {
-		sf2d_free_texture(boxarttex4);
-		boxarttex4 = sfil_load_PNG_file(boxartpath100, SF2D_PLACE_RAM); // Box art
-	} */
+static void LoadBoxArt(void) {
+	// Get the boxartnum relative to the current page.
+	const int idx = boxartnum - (pagenum * 20);
+	if (idx >= 0 && idx < 20) {
+		// Selected boxart is on the current page.
+		// NOTE: Only 6 slots for boxart.
+		sf2d_free_texture(boxarttex[idx % 6]);
+		boxarttex[idx % 6] = sfil_load_PNG_file(boxartpath[idx], SF2D_PLACE_RAM); // Box art
+	}
 }
-
 
 void LoadSettings() {
 	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
@@ -2681,20 +1819,15 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
+					char path[256];
+					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < files.size()) {
-							tempfile = files.at(bnriconnum).c_str();
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
-							strcat(tempfile_fullpath, tempfile);
-							strcat(tempfile_fullpath, ".bin");
-							tempimagepath = tempfile_fullpath;
+							const char *tempfile = files.at(bnriconnum).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+							StoreBNRIconPath(path);
 						} else {
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, "romfs:/notextbanner");
-							tempimagepath = tempfile_fullpath;
+							StoreBNRIconPath("romfs:/notextbanner");
 						}
-						StoreBNRIconPath();
 						OpenBNRIcon();
 					}
 
@@ -2743,23 +1876,19 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
+					char path[256];
+					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < fcfiles.size()) {
-							tempfile = fcfiles.at(bnriconnum).c_str();
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, fcbnriconfolder);
-							strcat(tempfile_fullpath, tempfile);
-							strcat(tempfile_fullpath, ".png");
-
-							if( access( tempfile_fullpath, F_OK ) != -1 ) {
-								tempimagepath = tempfile_fullpath;
+							const char *tempfile = fcfiles.at(bnriconnum).c_str();
+							snprintf(path, sizeof(path), "%s%s.png", fcbnriconfolder, tempfile);
+							if (access(path, F_OK) != -1 ) {
+								StoreBNRIconPath(path);
 							} else {
-								tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+								StoreBNRIconPath("romfs:/graphics/icon_unknown.png");	// Prevent crashing
 							}
 						} else {
-							tempimagepath = "romfs:/graphics/icon_unknown.png";	// Prevent crashing
+							StoreBNRIconPath("romfs:/graphics/icon_unknown.png");	// Prevent crashing
 						}
-						StoreBNRIconPath();
 					}
 
 					bnriconnum = 0+pagenum*20;
@@ -2792,12 +1921,12 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
+					char path[256];
 					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < files.size()) {
-							char path[256];
-							tempfile = files.at(boxartnum).c_str();
+							const char *tempfile = files.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
-							FILE *f_nds_file = fopen(path,"rb");
+							FILE *f_nds_file = fopen(path, "rb");
 
 							char ba_TID[5];
 							grabTID(f_nds_file, ba_TID);
@@ -2807,47 +1936,40 @@ int main()
 							// example: SuperMario64DS.nds.png
 							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
-								tempimagepath = strdup(path);
+								StoreBoxArtPath(path);
 							} else {
 								// example: ASME.png
 								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
 								if (access(path, F_OK) != -1) {
-									tempimagepath = strdup(path);
+									StoreBoxArtPath(path);
 								} else {
-									tempimagepath = "romfs:/graphics/boxart_unknown.png";
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 								}
 							}
 						} else {
-							tempimagepath = "romfs:/graphics/boxart_unknown.png";
+							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 						}
-						StoreBoxArtPath();
 					}
-				
 				} else {
-
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (Flashcard)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
+					char path[256];
+					for (boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < fcfiles.size()) {
-							tempfile = fcfiles.at(boxartnum).c_str();
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, fcboxartfolder);
-							strcat(tempfile_fullpath, tempfile);
-							strcat(tempfile_fullpath, ".png");
-						
-							if( access( tempfile_fullpath, F_OK ) != -1 ) {
-								tempimagepath = tempfile_fullpath;
+							const char *tempfile = fcfiles.at(boxartnum).c_str();
+							snprintf(path, sizeof(path), "%s%s.png", fcboxartfolder, tempfile);
+
+							if (access(path, F_OK) != -1 ) {
+								StoreBoxArtPath(path);
 							} else {
-								tempimagepath = "romfs:/graphics/boxart_unknown.png";
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 							}
 						} else {
-							tempimagepath = "romfs:/graphics/boxart_unknown.png";
+							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 						}
-						StoreBoxArtPath();
 					}
-			
 				}
 				
 				boxartnum = 0+pagenum*20;
@@ -4769,6 +3891,7 @@ int main()
 	sdmcExit();
 	aptExit();
 	cfguExit();
+
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
 	for (int i = 0; i < 5; i++) {
@@ -4812,40 +3935,24 @@ int main()
 		sf2d_free_texture(whitescrtex);
 		sf2d_free_texture(disabledtex);
 	}
-	if (bnricontexloaded == true) {
-		sf2d_free_texture(bnricontex1);
-		sf2d_free_texture(bnricontex2);
-		sf2d_free_texture(bnricontex3);
-		sf2d_free_texture(bnricontex4);
-		sf2d_free_texture(bnricontex5);
-		sf2d_free_texture(bnricontex6);
-		sf2d_free_texture(bnricontex7);
-		sf2d_free_texture(bnricontex8);
-		sf2d_free_texture(bnricontex9);
-		sf2d_free_texture(bnricontex10);
-		sf2d_free_texture(bnricontex11);
-		sf2d_free_texture(bnricontex12);
-		sf2d_free_texture(bnricontex13);
-		sf2d_free_texture(bnricontex14);
-		sf2d_free_texture(bnricontex15);
-		sf2d_free_texture(bnricontex16);
-		sf2d_free_texture(bnricontex17);
-		sf2d_free_texture(bnricontex18);
-		sf2d_free_texture(bnricontex19);
-		sf2d_free_texture(bnricontex20);
+
+	// Free the arrays.
+	for (int i = 0; i < 20; i++) {
+		if (ndsFile[i]) {
+			fclose(ndsFile[i]);
+		}
+		free(bnriconpath[i]);
+		sf2d_free_texture(bnricontex[i]);
+		free(boxartpath[i]);
 	}
-	if (boxarttexloaded == true) {
-		sf2d_free_texture(boxarttex1);
-		sf2d_free_texture(boxarttex2);
-		sf2d_free_texture(boxarttex3);
-		sf2d_free_texture(boxarttex4);
-		sf2d_free_texture(boxarttex5);
-		sf2d_free_texture(boxarttex6);
+	for (int i = 0; i < 6; i++) {
+		sf2d_free_texture(boxarttex[i]);
 	}
+
 	if (dspfirmfound) { ndspExit(); }
 	sftd_free_font(font);
 	sftd_free_font(font_b);
 	sf2d_fini();
 
-    return 0;
+	return 0;
 }
