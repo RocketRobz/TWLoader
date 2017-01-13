@@ -1294,6 +1294,50 @@ static void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]
 	}
 }
 
+/**
+ * Scan a directory for matching files.
+ * @param path Directory path.
+ * @param ext File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param files Vector to append files to.
+ * @return Number of files matched. (-1 if the directory could not be opened.)
+ */
+static int scan_dir_for_files(const char *path, const char *ext, std::vector<std::string>& files)
+{
+	files.clear();
+
+	DIR *dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *namelist;
+	const int extlen = (ext ? strlen(ext) : 0);
+	while ((namelist = readdir(dir)) != NULL) {
+		std::string fname = (namelist->d_name);
+		if (extlen > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&namelist->d_name[lastdotpos], ext) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	// Sort the vector and we're done.
+	std::sort(files.begin(), files.end());
+	return (int)files.size();
+}
+
 int main()
 {
 	aptInit();
@@ -1437,32 +1481,8 @@ int main()
 	std::vector<std::string> boxartfiles;
 	std::vector<std::string> fcboxartfiles;
 
-	DIR *dir;
-	DIR *flashcarddir;
-	DIR *bnricondir;
-	DIR *fcbnricondir;
-	DIR *boxartdir;
-	DIR *fcboxartdir;
-	struct dirent *namelist;
-
-	if ((dir = opendir("sdmc:/roms/nds")) != NULL) {
-	/* print all the files and directories within directory */
-		while ((namelist = readdir(dir)) != NULL) {
-			std::string fname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = fname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > fname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".nds")) {
-				// ".nds" extension is present.
-				files.push_back(fname);
-			}
-		}
-		closedir(dir);
-		std::sort(files.begin(), files.end());
-	}
+	// Scan the ROMs directory for ".nds" files.
+	scan_dir_for_files("sdmc:/roms/nds", ".nds", files);
 	
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
@@ -1560,24 +1580,8 @@ int main()
 	
 	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
 	
-	if ((flashcarddir = opendir("sdmc:/roms/flashcard/nds")) != NULL) {
-	/* print all the files and directories within directory */
-		while ((namelist = readdir(flashcarddir)) != NULL) {
-			std::string fcfname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = fcfname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > fcfname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".ini")) {
-				// ".ini" extension is present.
-				fcfiles.push_back(fcfname);
-			}
-		}
-		closedir(flashcarddir);
-		std::sort(fcfiles.begin(), fcfiles.end());
-	}
+	// Scan the flashcard directory for configuration files.
+	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	// Cache banner data
 	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
@@ -1600,79 +1604,16 @@ int main()
 		cacheBanner(tempfilepath, tempfile, font);
 		fclose(tempfilepath);
 	}
-		
-	if ((bnricondir = opendir("sdmc:/_nds/twloader/bnricons/")) != NULL) {
-		while ((namelist = readdir(bnricondir)) != NULL) {
-			std::string bifname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = bifname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > bifname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
-				// ".png" extension is present.
-				bnriconfiles.push_back(bifname);
-			}
-		}
-		closedir(bnricondir);
-		std::sort(bnriconfiles.begin(), bnriconfiles.end());
-	}
 
-	if ((fcbnricondir = opendir("sdmc:/_nds/twloader/bnricons/flashcard/")) != NULL) {
-		while ((namelist = readdir(fcbnricondir)) != NULL) {
-			std::string fcbifname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = fcbifname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > fcbifname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
-				// ".png" extension is present.
-				fcbnriconfiles.push_back(fcbifname);
-			}
-		}
-		closedir(fcbnricondir);
-		std::sort(fcbnriconfiles.begin(), fcbnriconfiles.end());
-	}
+	// Scan the banner icon directory for images.
+	scan_dir_for_files("sdmc:/_nds/twloader/bnricons", ".png", bnriconfiles);
+	// Scan the flashcard banner icon directory for images.
+	scan_dir_for_files("sdmc:/_nds/twloader/bnricons/flashcard", ".png", fcbnriconfiles);
+	// Scan the boxart directory for images.
+	scan_dir_for_files("sdmc:/_nds/twloader/boxart", ".png", boxartfiles);
+	// Scan the flashcard boxart icon directory for images.
+	scan_dir_for_files("sdmc:/_nds/twloader/boxart/flashcard", ".png", fcboxartfiles);
 
-	if ((boxartdir = opendir("sdmc:/_nds/twloader/boxart/")) != NULL) {
-		while ((namelist = readdir(boxartdir)) != NULL) {
-			std::string bafname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = bafname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > bafname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
-				// ".png" extension is present.
-				boxartfiles.push_back(bafname);
-			}
-		}
-		closedir(boxartdir);
-		std::sort(boxartfiles.begin(), boxartfiles.end());
-	}
-
-	if ((fcboxartdir = opendir("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
-		while ((namelist = readdir(fcboxartdir)) != NULL) {
-			std::string fcbafname = (namelist->d_name);
-			// Check the file extension.
-			size_t lastdotpos = fcbafname.find_last_of('.');
-			if (lastdotpos == string::npos || lastdotpos + 4 > fcbafname.size()) {
-				// Invalid file extension.
-				continue;
-			}
-			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
-				// ".png" extension is present.
-				fcboxartfiles.push_back(fcbafname);
-			}
-		}
-		closedir(fcboxartdir);
-		std::sort(fcboxartfiles.begin(), fcboxartfiles.end());
-	}
-		
 	if(settings_autodlvalue == 1 && checkWifiStatus() && (checkUpdate() == 0)){
 		DownloadTWLoaderCIAs();
 	}
