@@ -68,13 +68,12 @@ int bnriconnum = 0;
 int bnriconframenum = 0;
 int boxartnum = 0;
 int pagenum = 0;
-const char* temphttp;
 const char* temptext;
 const char* tempfile_fullpath;
 const char* tempfile_fullpath2;
 FILE* tempfilepath;
 const char* tempfile;
-const char* tempimagepath;
+const char* tempimagepath = NULL;
 const char* topbgloc;
 const char* bottomloc;
 const char* dotcircleloc;
@@ -2288,20 +2287,20 @@ int main()
 	std::sprintf(str3, "%d", files.size());
 	romsel_counter2sd = str3;
 	
-	const char *ba_langs_eur[] = 
+	static const char *const ba_langs_eur[] =
 		{
-			"EN/",					// Japanese (English used in place)
-			"EN/",					// English
-			"FR/",					// French
-			"GE/",					// German
-			"IT/",					// Italian
-			"SP/",					// Spanish
-			"ZH/",					// Simplified Chinese
-			"KO/",					// Korean
-			"NL/",					// Dutch
-			"PT/",					// Portugese
-			"RU/",					// Russian
-			"TW/"					// Traditional Chinese
+			"EN",					// Japanese (English used in place)
+			"EN",					// English
+			"FR",					// French
+			"GE",					// German
+			"IT",					// Italian
+			"SP",					// Spanish
+			"ZH",					// Simplified Chinese
+			"KO",					// Korean
+			"NL",					// Dutch
+			"PT",					// Portugese
+			"RU",					// Russian
+			"TW"					// Traditional Chinese
 		};
 
 	// Download box art
@@ -2322,62 +2321,50 @@ int main()
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			
-			tempfile = files.at(boxartnum).c_str();
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-			strcat(tempfile_fullpath, tempfile);
-			tempfilepath = fopen(tempfile_fullpath,"rb");
-			ba_TID = grabTID(tempfilepath, 0);
-			ba_TIDr = grabTID(tempfilepath, 1);
-			fclose(tempfilepath);
-			
-			temphttp = malloc(256);
-			strcpy(temphttp, "http://art.gametdb.com/ds/coverS/");
-			temptext = malloc(1);
-			strcpy(temptext, " ");
-			strncat(temptext, ba_TIDr, 1);
-			ba_region = "US/"; // USA (default)
-			
-			equals = strcmp(temptext+1, "D");
-			if (equals == 0)
-				ba_region = "DE/"; // Desutch?
-				
-			equals = strcmp(temptext+1, "F");
-			if (equals == 0)
-				ba_region = "FR/";	// French
-				
-			equals = strcmp(temptext+1, "I");
-			if (equals == 0)
-				ba_region = "IT/";	// Italian
+			const char *tempfile = files.at(boxartnum).c_str();
+			char path[256];
+			snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+			FILE *f_nds_file = fopen(path, "rb");
 
-			equals = strcmp(temptext+1, "J");
-			if (equals == 0)
-				ba_region = "JA/";	// Japanese
-								
-			equals = strcmp(temptext+1, "K");
-			if (equals == 0)
-				ba_region = "KO/";	// Korean
-				
-			equals = strcmp(temptext+1, "O");
-			if (equals == 0)
-				ba_region = ba_langs_eur[language];
-				
-			equals = strcmp(temptext+1, "P");
-			if (equals == 0)
-				ba_region = ba_langs_eur[language];
-				
-			equals = strcmp(temptext+1, "S");
-			if (equals == 0)
-				ba_region = "ES/";	// Spanish
-				
-			strcat(temphttp, ba_region);
-			strncat(temphttp, ba_TID, 4);
-			strcat(temphttp, ".png");
-			tempfile_fullpath = malloc(256);
-			strcpy(tempfile_fullpath, "/_nds/twloader/boxart/");
-			strncat(tempfile_fullpath, ba_TID, 4);
-			strcat(tempfile_fullpath, ".png");
-			if( access( tempfile_fullpath, F_OK ) == -1 ) {
+			char ba_TID[5];
+			grabTID(f_nds_file, ba_TID);
+			ba_TID[4] = 0;
+			fclose(f_nds_file);
+
+			const char *ba_region;
+			switch (ba_TID[3]) {
+				case 'E':
+				default:
+					ba_region = "US";	// USA (default)
+					break;
+				case 'O':			// USA/Europe
+				case 'P':			// Europe
+					ba_region = ba_langs_eur[language];
+					break;
+				case 'D':
+					ba_region = "DE";	// German
+					break;
+				case 'F':
+					ba_region = "FR";	// French
+					break;
+				case 'I':
+					ba_region = "IT";	// Italian
+					break;
+				case 'J':
+					ba_region = "JA";	// Japanese
+					break;
+				case 'K':
+					ba_region = "KO";	// Korean
+					break;
+				case 'S':
+					ba_region = "ES";	// Spanish
+					break;
+			}
+
+			char http_url[256];
+			snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
+			snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+			if (access(path, F_OK) == -1) {
 				LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sf2d_draw_texture(dialogueboxtex, 0, 0);
@@ -2387,7 +2374,7 @@ int main()
 				sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 				sf2d_end_frame();
 				sf2d_swapbuffers();
-				downloadFile(temphttp, tempfile_fullpath, NULL);
+				downloadFile(http_url, path, NULL);
 			}
 		}
 	}
@@ -2753,31 +2740,25 @@ int main()
 					sf2d_swapbuffers(); */
 					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < files.size()) {
+							char path[256];
 							tempfile = files.at(boxartnum).c_str();
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, "sdmc:/roms/nds/");
-							strcat(tempfile_fullpath, tempfile);
-							tempfilepath = fopen(tempfile_fullpath,"rb");
-							ba_TID = grabTID(tempfilepath, 0);
-							fclose(tempfilepath);
+							snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+							FILE *f_nds_file = fopen(path,"rb");
 
-							// example: ASME.png
-							tempfile_fullpath = malloc(256);
-							strcpy(tempfile_fullpath, boxartfolder);
-							strncat(tempfile_fullpath, ba_TID, 4);
-							strcat(tempfile_fullpath, ".png");
-						
+							char ba_TID[5];
+							grabTID(f_nds_file, ba_TID);
+							ba_TID[4] = 0;
+							fclose(f_nds_file);
+
 							// example: SuperMario64DS.nds.png
-							tempfile_fullpath2 = malloc(256);
-							strcpy(tempfile_fullpath2, boxartfolder);
-							strcat(tempfile_fullpath2, tempfile);
-							strcat(tempfile_fullpath2, ".png");
-								
-							if( access( tempfile_fullpath2, F_OK ) != -1 ) {
-								tempimagepath = tempfile_fullpath2;
+							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
+							if (access(path, F_OK ) != -1 ) {
+								tempimagepath = strdup(path);
 							} else {
-								if( access( tempfile_fullpath, F_OK ) != -1 ) {
-									tempimagepath = tempfile_fullpath;
+								// example: ASME.png
+								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								if (access(path, F_OK) != -1) {
+									tempimagepath = strdup(path);
 								} else {
 									tempimagepath = "romfs:/graphics/boxart_unknown.png";
 								}

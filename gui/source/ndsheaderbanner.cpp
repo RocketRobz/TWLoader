@@ -21,23 +21,14 @@ u32 colorConvert(u32 iconPixel, u16 indice) {
     return RGBA8(r, g, b, a) ;
 }
 
-char* grabTID(FILE* ndsFile, int letter) {
-    sNDSHeadertitlecodeonly NDSHeader;
-	
-	fseek ( ndsFile , 0 , SEEK_SET );
-    fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
-	
-	char* savedtid = (char*)malloc(4*sizeof(char));
-	memset(savedtid, '\0', sizeof(savedtid)); // Clean memory before writing on it
-	if (letter != 1) {
-		strncpy(savedtid, NDSHeader.gameCode, 4);
-		LogFMA("NDSBannerHeader.grabTID", "Got TID", savedtid);
-	}else{
-		strncpy(savedtid, NDSHeader.gameCode+3, 1);
-		LogFMA("NDSBannerHeader.grabTID", "Got last letter of TID", savedtid);
-	}
-	
-	return savedtid;
+/**
+ * Get the title ID.
+ * @param ndsFile DS ROM image.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ */
+void grabTID(FILE* ndsFile, char *buf) {
+	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fread(buf, 1, 4, ndsFile);
 }
 
 char* grabText(FILE* binFile, int bnrtitlenum, int line) {

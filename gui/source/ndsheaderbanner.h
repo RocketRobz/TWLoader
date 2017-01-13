@@ -230,7 +230,13 @@ typedef struct {
   u8 titles[256*8];		//!< title of the game in 8 different languages.
 } sNDSBannersize3;
 
-char* grabTID(FILE* ndsFile, int letter);
+/**
+ * Get the title ID.
+ * @param ndsFile DS ROM image.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ */
+void grabTID(FILE* ndsFile, char *buf);
+
 char* grabText(FILE* binFile, int bnrtitlenum, int line);
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);

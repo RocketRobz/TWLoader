@@ -65,10 +65,6 @@ sf2d_texture *bnricontex18;
 sf2d_texture *bnricontex19;
 sf2d_texture *bnricontex20;
 
-const char* ba_TID;
-const char* ba_TIDr;
-const char* ba_region;
-
 const char* boxartpath1;
 const char* boxartpath2;
 const char* boxartpath3;
