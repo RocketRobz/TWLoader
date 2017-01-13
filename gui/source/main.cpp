@@ -1679,48 +1679,8 @@ int main()
 							StoreBNRIconPath("romfs:/notextbanner");
 						}
 						OpenBNRIcon();
+						LoadBNRIcon();
 					}
-
-					bnriconnum = 0+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 1+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 2+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 3+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 4+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 5+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 6+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 7+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 8+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 9+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 10+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 11+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 12+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 13+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 14+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 15+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 16+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 17+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 18+pagenum*20;
-					LoadBNRIcon();
-					bnriconnum = 19+pagenum*20;
-					LoadBNRIcon();	
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
@@ -1741,26 +1701,10 @@ int main()
 						}
 					}
 
-					bnriconnum = 0+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 1+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 2+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 3+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 4+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 5+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 6+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 7+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 8+pagenum*20;
-					LoadFCBNRIcon();
-					bnriconnum = 9+pagenum*20;
-					LoadFCBNRIcon();		
+					// Load up to 10 FCBNR.
+					for (bnriconnum = pagenum*20; bnriconnum < 10+pagenum*20; bnriconnum++) {
+						LoadFCBNRIcon();
+					}
 				}
 				bnricontexloaded = true;
 				bnriconnum = 0+pagenum*20;
@@ -1822,19 +1766,10 @@ int main()
 					}
 				}
 				
-				boxartnum = 0+pagenum*20;
-				LoadBoxArt();
-				boxartnum = 1+pagenum*20;
-				LoadBoxArt();
-				boxartnum = 2+pagenum*20;
-				LoadBoxArt();
-				boxartnum = 3+pagenum*20;
-				LoadBoxArt();
-				boxartnum = 4+pagenum*20;
-				LoadBoxArt();
-				boxartnum = 5+pagenum*20;
-				LoadBoxArt();
-				
+				// Load up to 6 boxarts.
+				for (boxartnum = pagenum*20; boxartnum < 6+pagenum*20; boxartnum++) {
+					LoadBoxArt();
+				}
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
