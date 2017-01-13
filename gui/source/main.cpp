@@ -3690,7 +3690,7 @@ int main()
 					if (settingscursorPosition == 0) {
 						settings_colorvalue--; // Color
 						if(settings_colorvalue == -1) {
-							settings_colorvalue = 16;
+							settings_colorvalue = 18;
 						}
 						LoadColor();
 						if (dspfirmfound) { sfx_select.play(); }
