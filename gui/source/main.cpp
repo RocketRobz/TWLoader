@@ -2077,6 +2077,85 @@ void screenon()
     gspLcdExit();
 }
 
+static bool dspfirmfound = false;
+static sf2d_texture *voltex[5] = { };		// Main screen.
+static sf2d_texture *setvoltex[5] = { };	// Settings screen.
+
+/**
+ * Draw the volume slider.
+ * @param texarray Texture array to use, (voltex or setvoltex)
+ */
+static void draw_volume_slider(sf2d_texture *texarray[])
+{
+	u8 volumeLevel = 0;
+	if (!dspfirmfound) {
+		// No DSP Firm.
+		sf2d_draw_texture(texarray[4], 5, 2);
+	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
+		u8 voltex_id = 0;
+		if (volumeLevel == 0) {
+			voltex_id = 0;	// No slide = volume0 texture
+		} else if (volumeLevel <= 21) {
+			voltex_id = 1;	// 25% or less = volume1 texture
+		} else if (volumeLevel <= 42) {
+			voltex_id = 2;	// about 50% = volume2 texture
+		} else if (volumeLevel >= 43) {
+			voltex_id = 3;	// above 75% = volume3 texture
+		}
+		sf2d_draw_texture(texarray[voltex_id], 5, 2);
+	}
+}
+
+static sf2d_texture *batteryIcon = NULL;	// Current battery level icon.
+static sf2d_texture *batterychrgtex = NULL;	// Main screen. (fully charged)
+static sf2d_texture *setbatterychrgtex = NULL;	// Settings screen. (fully charged)
+static sf2d_texture *batterytex[6] = { };	// Main screen.
+static sf2d_texture *setbatterytex[6] = { };	// Settings screen.
+
+/**
+ * Update the battery level icon.
+ * @param texchrg Texture for "battery is charging". (batterychrgtex or setbatterychrgtex)
+ * @param texarray Texture array for other levels. (batterytex or setbatterytex)
+ * The global variable batteryIcon will be updated.
+ */
+static void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[])
+{
+	u8 batteryChargeState = 0;
+	u8 batteryLevel = 0;
+	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
+		batteryIcon = batterychrgtex;
+	} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
+		switch (batteryLevel){
+			case 5:
+				// FIXME: This doesn't seem to be right...
+				// (It never shows "plugged in and full, not charging".)
+				// Also, it never switches to "fully charged" while
+				// TWLoader is running; going back to the Home Menu
+				// causes the state to change.
+				batteryIcon = (batteryChargeState ? texarray[5] : texarray[4]);
+				break;
+			case 4:
+				batteryIcon = texarray[4];
+				break;
+			case 3:
+				batteryIcon = texarray[3];
+				break;
+			case 2:
+				batteryIcon = texarray[2];
+				break;
+			case 1:
+			default:
+				batteryIcon = texarray[1];
+				break;
+		}
+	}
+
+	if (!batteryIcon) {
+		// No battery icon...
+		batteryIcon = texarray[0];
+	}
+}
+
 int main()
 {
 	aptInit();
@@ -2144,34 +2223,28 @@ int main()
 	dialogueboxtex = sfil_load_PNG_file("romfs:/graphics/dialoguebox.png", SF2D_PLACE_RAM); // Dialogue box
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
-	sf2d_texture *vol0tex = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
-	sf2d_texture *vol1tex = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
-	sf2d_texture *vol2tex = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
-	sf2d_texture *vol3tex = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
-	sf2d_texture *vol4tex = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
-	sf2d_texture *setvol0tex; // Show no volume (settings)
-	sf2d_texture *setvol1tex; // Volume low above 0 (settings)
-	sf2d_texture *setvol2tex; // Volume medium (settings)
-	sf2d_texture *setvol3tex; // Hight volume (settings)
-	sf2d_texture *setvol4tex; // No DSP firm found (settings)
+
+	// Volume slider textures.
+	voltex[0] = sfil_load_PNG_file("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
+	voltex[1] = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
+	voltex[2] = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
+	voltex[3] = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
+	voltex[4] = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
+
 	sf2d_texture *shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	sf2d_texture *shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
 	sf2d_texture *shoulderYtex = sfil_load_PNG_file("romfs:/graphics/shoulder_Y.png", SF2D_PLACE_RAM); // Y button
 	sf2d_texture *shoulderXtex = sfil_load_PNG_file("romfs:/graphics/shoulder_X.png", SF2D_PLACE_RAM); // X button
-	sf2d_texture *batterychrgtex = sfil_load_PNG_file("romfs:/graphics/battery_charging.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery0tex = sfil_load_PNG_file("romfs:/graphics/battery0.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery1tex = sfil_load_PNG_file("romfs:/graphics/battery1.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery2tex = sfil_load_PNG_file("romfs:/graphics/battery2.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery3tex = sfil_load_PNG_file("romfs:/graphics/battery3.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery4tex = sfil_load_PNG_file("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
-	sf2d_texture *battery5tex = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
-	sf2d_texture *setbatterychrgtex;
-	sf2d_texture *setbattery0tex;
-	sf2d_texture *setbattery1tex;
-	sf2d_texture *setbattery2tex;
-	sf2d_texture *setbattery3tex;
-	sf2d_texture *setbattery4tex;
-	sf2d_texture *setbattery5tex;
+
+	// Battery level textures.
+	batterychrgtex = sfil_load_PNG_file("romfs:/graphics/battery_charging.png", SF2D_PLACE_RAM);
+	batterytex[0] = sfil_load_PNG_file("romfs:/graphics/battery0.png", SF2D_PLACE_RAM);
+	batterytex[1] = sfil_load_PNG_file("romfs:/graphics/battery1.png", SF2D_PLACE_RAM);
+	batterytex[2] = sfil_load_PNG_file("romfs:/graphics/battery2.png", SF2D_PLACE_RAM);
+	batterytex[3] = sfil_load_PNG_file("romfs:/graphics/battery3.png", SF2D_PLACE_RAM);
+	batterytex[4] = sfil_load_PNG_file("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
+	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
+
 	sf2d_texture *bottomtex; // Bottom of menu
 	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_placeholder.png", SF2D_PLACE_RAM); // Icon placeholder at bottom of menu
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
@@ -2193,7 +2266,7 @@ int main()
 
 	LogFM("Main.sf2d_textures", "Textures load successfully");
 
-	bool dspfirmfound = false;
+	dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
@@ -2496,8 +2569,6 @@ int main()
 	int soundwaittimer = 0;
 	bool playwrongsounddone = false;
 
-	sf2d_texture *batteryIcon;
-	
 	int fadealpha = 255;
 	bool fadein = true;
 	bool fadeout = false;
@@ -2581,30 +2652,21 @@ int main()
 		offset3dl_disabled = CONFIG_3D_SLIDERSTATE * -3.0f;
 		offset3dr_disabled = CONFIG_3D_SLIDERSTATE * 3.0f;
 
-		u8 batteryChargeState = 0;
-		u8 batteryLevel = 0;
-		u32 batteryIcon = 0;
-		
-		u8 volumeLevel = 0;
-		
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
 	
 		if(screenmode == 0) {
 			if (!colortexloaded) {
 				topbgtex = sfil_load_PNG_file(topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
-				sf2d_free_texture(setvol0tex);
-				sf2d_free_texture(setvol1tex);
-				sf2d_free_texture(setvol2tex);
-				sf2d_free_texture(setvol3tex);
-				sf2d_free_texture(setvol4tex);
+				for (int i = 0; i < 5; i++) {
+					sf2d_free_texture(setvoltex[i]);
+					setvoltex[i] = NULL;
+				}
 				sf2d_free_texture(setbatterychrgtex);
-				sf2d_free_texture(setbattery0tex);
-				sf2d_free_texture(setbattery1tex);
-				sf2d_free_texture(setbattery2tex);
-				sf2d_free_texture(setbattery3tex);
-				sf2d_free_texture(setbattery4tex);
-				sf2d_free_texture(setbattery5tex);
+				for (int i = 0; i < 6; i++) {
+					sf2d_free_texture(setbatterytex[i]);
+					setbatterytex[i] = NULL;
+				}
 				sf2d_free_texture(dsboottex);
 				sf2d_free_texture(dsiboottex);
 				sf2d_free_texture(dshstex);
@@ -2816,30 +2878,8 @@ int main()
 				noromtext1 = "No ROMs found!";
 				noromtext2 = "Put .nds ROMs in 'sdmc:/roms/nds'.";
 			}
-						
-			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
-  				batteryIcon = batterychrgtex;
-  			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
-				switch (batteryLevel){
-					case 5:
-						if (batteryChargeState){
-							batteryIcon = battery5tex;
-						}											
-					case 4:
-						batteryIcon = battery4tex;
-						break;
-					case 3:
-						batteryIcon = battery3tex;
-						break;
-					case 2:
-						batteryIcon = battery2tex;
-						break;	
-					case 1:
-						batteryIcon = battery1tex;
-						break;
-				}
-			}
 
+			update_battery_level(batterychrgtex, batterytex);
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
 			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
@@ -2889,16 +2929,8 @@ int main()
 			} else {
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
-			if(!dspfirmfound) { 
-				sf2d_draw_texture(vol4tex, 5, 2); // No DSP Firm
-			} else {
-				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 2); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 2); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 2); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 2); // above 75% = volume3 texture
-				}
-			}				
+
+			draw_volume_slider(voltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
@@ -2962,16 +2994,8 @@ int main()
 			} else {
 				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			}
-			if(!dspfirmfound) { 
-				sf2d_draw_texture(vol4tex, 5, 2); // No DSP Firm
-			} else {
-				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(vol0tex, 5, 2); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(vol1tex, 5, 2); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(vol2tex, 5, 2); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(vol3tex, 5, 2); // above 75% = volume3 texture
-				}
-			}
+
+			draw_volume_slider(voltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
@@ -2992,18 +3016,18 @@ int main()
 			} */
 			if (colortexloaded == true) {
 				sf2d_free_texture(topbgtex);
-				setvol0tex = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
-				setvol1tex = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
-				setvol2tex = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
-				setvol3tex = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)
-				setvol4tex = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
+				setvoltex[0] = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
+				setvoltex[1] = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
+				setvoltex[2] = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
+				setvoltex[3] = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)
+				setvoltex[4] = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
 				setbatterychrgtex = sfil_load_PNG_file("romfs:/graphics/settings/battery_charging.png", SF2D_PLACE_RAM);
-				setbattery0tex = sfil_load_PNG_file("romfs:/graphics/settings/battery0.png", SF2D_PLACE_RAM);
-				setbattery1tex = sfil_load_PNG_file("romfs:/graphics/settings/battery1.png", SF2D_PLACE_RAM);
-				setbattery2tex = sfil_load_PNG_file("romfs:/graphics/settings/battery2.png", SF2D_PLACE_RAM);
-				setbattery3tex = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
-				setbattery4tex = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
-				setbattery5tex = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
+				setbatterytex[0] = sfil_load_PNG_file("romfs:/graphics/settings/battery0.png", SF2D_PLACE_RAM);
+				setbatterytex[1] = sfil_load_PNG_file("romfs:/graphics/settings/battery1.png", SF2D_PLACE_RAM);
+				setbatterytex[2] = sfil_load_PNG_file("romfs:/graphics/settings/battery2.png", SF2D_PLACE_RAM);
+				setbatterytex[3] = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
+				setbatterytex[4] = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
+				setbatterytex[5] = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
 				dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 				dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
 				dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
@@ -3012,28 +3036,8 @@ int main()
 				disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM); // Red circle with line
 				colortexloaded = false;
 			}
-			if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
-  				batteryIcon = setbatterychrgtex;
-  			} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
-				switch (batteryLevel){
-					case 5:
-						if (batteryChargeState){
-							batteryIcon = setbattery5tex;
-						}							
-					case 4:
-						batteryIcon = setbattery4tex;
-						break;
-					case 3:
-						batteryIcon = setbattery3tex;
-						break;
-					case 2:
-						batteryIcon = setbattery2tex;
-						break;	
-					case 1:
-						batteryIcon = setbattery1tex;
-						break;
-				}
-			}
+
+			update_battery_level(setbatterychrgtex, setbatterytex);
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);
 			sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 			if (settings_subscreenmode == 1) {
@@ -3065,16 +3069,8 @@ int main()
 			}
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
-			if(!dspfirmfound) { 
-				sf2d_draw_texture(setvol4tex, 5, 2); // No DSP Firm 
-			} else {
-				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 2); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 2); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 2); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 2); // above 75% = volume3 texture
-				}
-			}		
+
+			draw_volume_slider(setvoltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
@@ -3111,16 +3107,7 @@ int main()
 			}
 			sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 			sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
-			if(!dspfirmfound) { 
-				sf2d_draw_texture(setvol4tex, 5, 2); // No DSP Firm 
-			} else {
-				if(R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))){
-					if (volumeLevel == 0) sf2d_draw_texture(setvol0tex, 5, 2); // No slide = volume0 texture
-					if (volumeLevel > 0 && volumeLevel <= 21) sf2d_draw_texture(setvol1tex, 5, 2); // 25% or less = volume1 texture
-					if (volumeLevel >= 22 && volumeLevel <= 42) sf2d_draw_texture(setvol2tex, 5, 2); // about 50% = volume2 texture
-					if (volumeLevel >= 43) sf2d_draw_texture(setvol3tex, 5, 2); // above 75% = volume3 texture
-				}
-			}	
+			draw_volume_slider(setvoltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
 			sftd_draw_textf(font, 32, 2, RGBA8(color_Rvalue, color_Gvalue, color_Bvalue, 255), 12, name.c_str());
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
@@ -4784,35 +4771,25 @@ int main()
 	cfguExit();
 	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
-	sf2d_free_texture(vol0tex);
-	sf2d_free_texture(vol1tex);
-	sf2d_free_texture(vol2tex);
-	sf2d_free_texture(vol3tex);
-	sf2d_free_texture(vol4tex);
+	for (int i = 0; i < 5; i++) {
+		sf2d_free_texture(voltex[i]);
+	}
 	if (screenmode == 1) {
-		sf2d_free_texture(setvol0tex);
-		sf2d_free_texture(setvol1tex);
-		sf2d_free_texture(setvol2tex);
-		sf2d_free_texture(setvol3tex);
-		sf2d_free_texture(setvol4tex);
+		for (int i = 0; i < 5; i++) {
+			sf2d_free_texture(setvoltex[i]);
+		}
 	}
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
 	sf2d_free_texture(batterychrgtex);
-	sf2d_free_texture(battery0tex);
-	sf2d_free_texture(battery1tex);
-	sf2d_free_texture(battery2tex);
-	sf2d_free_texture(battery3tex);
-	sf2d_free_texture(battery4tex);
-	sf2d_free_texture(battery5tex);
+	for (int i = 0; i < 6; i++) {
+		sf2d_free_texture(batterytex[i]);
+	}
 	if (screenmode == 1) {
 		sf2d_free_texture(setbatterychrgtex);
-		sf2d_free_texture(setbattery0tex);
-		sf2d_free_texture(setbattery1tex);
-		sf2d_free_texture(setbattery2tex);
-		sf2d_free_texture(setbattery3tex);
-		sf2d_free_texture(setbattery4tex);
-		sf2d_free_texture(setbattery5tex);
+		for (int i = 0; i < 6; i++) {
+			sf2d_free_texture(setbatterytex[i]);
+		}
 	}
 	if (colortexloaded == true) { sf2d_free_texture(bottomtex); }
 	sf2d_free_texture(iconunktex);
