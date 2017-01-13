@@ -269,12 +269,6 @@ const char* twlsettings_lockarm9scfgexttext = "Lock ARM9 SCFG_EXT";
 const char* twlsettings_rainbowledvaluetext;
 const char* twlsettings_cpuspeedvaluetext;
 const char* twlsettings_extvramvaluetext;
-const char* twlsettings_flashcardvaluetext1;
-const char* twlsettings_flashcardvaluetext2;
-const char* twlsettings_flashcardvaluetext3;
-const char* twlsettings_flashcardvaluetext4;
-const char* twlsettings_flashcardvaluetext5;
-const char* twlsettings_flashcardvaluetext6;
 const char* twlsettings_bootscreenvaluetext;
 const char* twlsettings_healthsafetyvaluetext;
 const char* twlsettings_resetslot1valuetext;
@@ -2710,117 +2704,51 @@ int main()
 					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
 					sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 					sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-					if (settings_colorvalue == 0) {
-						settings_colorvaluetext = "Gray";
-					} else if (settings_colorvalue == 1) {
-						settings_colorvaluetext = "Brown";
-					} else if (settings_colorvalue == 2) {
-						settings_colorvaluetext = "Red";
-					} else if (settings_colorvalue == 3) {
-						settings_colorvaluetext = "Pink";
-					} else if (settings_colorvalue == 4) {
-						settings_colorvaluetext = "Orange";
-					} else if (settings_colorvalue == 5) {
-						settings_colorvaluetext = "Yellow";
-					} else if (settings_colorvalue == 6) {
-						settings_colorvaluetext = "Yellow-Green";
-					} else if (settings_colorvalue == 7) {
-						settings_colorvaluetext = "Green 1";
-					} else if (settings_colorvalue == 8) {
-						settings_colorvaluetext = "Green 2";
-					} else if (settings_colorvalue == 9) {
-						settings_colorvaluetext = "Light Green";
-					} else if (settings_colorvalue == 10) {
-						settings_colorvaluetext = "Sky Blue";
-					} else if (settings_colorvalue == 11) {
-						settings_colorvaluetext = "Light Blue";
-					} else if (settings_colorvalue == 12) {
-						settings_colorvaluetext = "Blue";
-					} else if (settings_colorvalue == 13) {
-						settings_colorvaluetext = "Violet";
-					} else if (settings_colorvalue == 14) {
-						settings_colorvaluetext = "Purple";
-					} else if (settings_colorvalue == 15) {
-						settings_colorvaluetext = "Fuchsia";
-					} else if (settings_colorvalue == 16) {
-						settings_colorvaluetext = "Red & Blue";
-					} else if (settings_colorvalue == 17) {
-						settings_colorvaluetext = "Green & Yellow";
-					} else if (settings_colorvalue == 18) {
-						settings_colorvaluetext = "Christmas";
+
+					// Color text.
+					static const char *const color_text[] = {
+						"Gray", "Brown", "Red", "Pink",
+						"Orange", "Yellow", "Yellow-Green", "Green 1",
+						"Green 2", "Light Green", "Sky Blue", "Light Blue",
+						"Blue", "Violet", "Purple", "Fuchsia",
+						"Red & Blue", "Green & Yellow", "Christmas"
+					};
+					if (settings_colorvalue < 0 || settings_colorvalue > 18)
+						settings_colorvalue = 0;
+					settings_colorvaluetext = color_text[settings_colorvalue];
+
+					// Menu color text.
+					static const char *const menu_color_text[] = {
+						"White", "Black", "Brown", "Red",
+						"Pink", "Orange", "Yellow", "Yellow-Green",
+						"Green 1", "Green 2", "Light Green", "Sky Blue",
+						"Light Blue", "Blue", "Violet", "Purple",
+						"Fuchsia"
+					};
+					if (settings_menucolorvalue < 0 || settings_menucolorvalue > 18)
+						settings_menucolorvalue = 0;
+					settings_menucolorvaluetext = menu_color_text[settings_menucolorvalue];
+
+					settings_filenamevaluetext = (settings_filenamevalue ? "On" : "Off");
+					settings_locswitchvaluetext = (settings_locswitchvalue ? "On" : "Off");
+					settings_topbordervaluetext = (settings_topbordervalue ? "On" : "Off");
+					settings_countervaluetext = (settings_countervalue ? "On" : "Off");
+					settings_custombotvaluetext = (settings_custombotvalue ? "On" : "Off");
+
+					switch (settings_autoupdatevalue) {
+						case 0:
+						default:
+							settings_autoupdatevaluetext = "Off";
+							break;
+						case 1:
+							settings_autoupdatevaluetext = "Release";
+							break;
+						case 2:
+							settings_autoupdatevaluetext = "Unofficial";
+							break;
 					}
-					if (settings_menucolorvalue == 0) {
-						settings_menucolorvaluetext = "White";
-					} else if (settings_menucolorvalue == 1) {
-						settings_menucolorvaluetext = "Black";
-					} else if (settings_menucolorvalue == 2) {
-						settings_menucolorvaluetext = "Brown";
-					} else if (settings_menucolorvalue == 3) {
-						settings_menucolorvaluetext = "Red";
-					} else if (settings_menucolorvalue == 4) {
-						settings_menucolorvaluetext = "Pink";
-					} else if (settings_menucolorvalue == 5) {
-						settings_menucolorvaluetext = "Orange";
-					} else if (settings_menucolorvalue == 6) {
-						settings_menucolorvaluetext = "Yellow";
-					} else if (settings_menucolorvalue == 7) {
-						settings_menucolorvaluetext = "Yellow-Green";
-					} else if (settings_menucolorvalue == 8) {
-						settings_menucolorvaluetext = "Green 1";
-					} else if (settings_menucolorvalue == 9) {
-						settings_menucolorvaluetext = "Green 2";
-					} else if (settings_menucolorvalue == 10) {
-						settings_menucolorvaluetext = "Light Green";
-					} else if (settings_menucolorvalue == 11) {
-						settings_menucolorvaluetext = "Sky Blue";
-					} else if (settings_menucolorvalue == 12) {
-						settings_menucolorvaluetext = "Light Blue";
-					} else if (settings_menucolorvalue == 13) {
-						settings_menucolorvaluetext = "Blue";
-					} else if (settings_menucolorvalue == 14) {
-						settings_menucolorvaluetext = "Violet";
-					} else if (settings_menucolorvalue == 15) {
-						settings_menucolorvaluetext = "Purple";
-					} else if (settings_menucolorvalue == 16) {
-						settings_menucolorvaluetext = "Fuchsia";
-					}
-					if (settings_filenamevalue == 0) {
-						settings_filenamevaluetext = "Off";
-					} else if (settings_filenamevalue == 1) {
-						settings_filenamevaluetext = "On";
-					}
-					if (settings_locswitchvalue == 0) {
-						settings_locswitchvaluetext = "Off";
-					} else if (settings_locswitchvalue == 1) {
-						settings_locswitchvaluetext = "On";
-					}
-					if (settings_topbordervalue == 0) {
-						settings_topbordervaluetext = "Off";
-					} else if (settings_topbordervalue == 1) {
-						settings_topbordervaluetext = "On";
-					}
-					if (settings_countervalue == 0) {
-						settings_countervaluetext = "Off";
-					} else if (settings_countervalue == 1) {
-						settings_countervaluetext = "On";
-					}
-					if (settings_custombotvalue == 0) {
-						settings_custombotvaluetext = "Off";
-					} else if (settings_custombotvalue == 1) {
-						settings_custombotvaluetext = "On";
-					}
-					if (settings_autoupdatevalue == 2) {
-						settings_autoupdatevaluetext = "Unofficial";
-					} else if (settings_autoupdatevalue == 1) {
-						settings_autoupdatevaluetext = "Release";
-					} else if (settings_autoupdatevalue == 0){
-						settings_autoupdatevaluetext = "Off";
-					}
-					if (settings_autodlvalue == 1) {
-						settings_autodlvaluetext = "On";
-					} else if (settings_autodlvalue == 0){
-						settings_autodlvaluetext = "Off";
-					}
+					settings_autodlvaluetext = (settings_autodlvalue ? "On" : "Off");
+
 					settingstext_bot = "Settings: GUI";
 					settingsYpos = 40;
 					if(settingscursorPosition == 0) {
@@ -2924,48 +2852,29 @@ int main()
 					sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
 					sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 					sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-					if (twlsettings_rainbowledvalue == 1) {
-						twlsettings_rainbowledvaluetext = "On";
-					} else {
-						twlsettings_rainbowledvaluetext = "Off";
+
+					twlsettings_rainbowledvaluetext = (twlsettings_rainbowledvalue ? "On" : "Off");
+					twlsettings_cpuspeedvaluetext = (twlsettings_cpuspeedvalue ? "133mhz (TWL)" : "67mhz (NTR)");
+					twlsettings_extvramvaluetext = (twlsettings_extvramvalue ? "On" : "Off");
+					twlsettings_bootscreenvaluetext = (twlsettings_bootscreenvalue ? "On" : "Off");
+					twlsettings_healthsafetyvaluetext = (twlsettings_healthsafetyvalue ? "On" : "Off");
+					twlsettings_resetslot1valuetext = (twlsettings_resetslot1value ? "On" : "Off");
+
+					switch (twlsettings_consolevalue) {
+						case 0:
+						default:
+							twlsettings_consolevaluetext = "Off";
+							break;
+						case 1:
+							twlsettings_consolevaluetext = "On";
+							break;
+						case 2:
+							twlsettings_consolevaluetext = "On (Debug)";
+							break;
 					}
-					if (twlsettings_cpuspeedvalue == 1) {
-						twlsettings_cpuspeedvaluetext = "133mhz (TWL)";
-					} else {
-						twlsettings_cpuspeedvaluetext = "67mhz (NTR)";
-					}
-					if (twlsettings_extvramvalue == 1) {
-						twlsettings_extvramvaluetext = "On";
-					} else {
-						twlsettings_extvramvaluetext = "Off";
-					}
-					if (twlsettings_bootscreenvalue == 1) {
-						twlsettings_bootscreenvaluetext = "On";
-					} else {
-						twlsettings_bootscreenvaluetext = "Off";
-					}
-					if (twlsettings_healthsafetyvalue == 1) {
-						twlsettings_healthsafetyvaluetext = "On";
-					} else {
-						twlsettings_healthsafetyvaluetext = "Off";
-					}
-					if (twlsettings_resetslot1value == 1) {
-						twlsettings_resetslot1valuetext = "On";
-					} else {
-						twlsettings_resetslot1valuetext = "Off";
-					}
-					if (twlsettings_consolevalue == 1) {
-						twlsettings_consolevaluetext = "On";
-					} else if (twlsettings_consolevalue == 2) {
-						twlsettings_consolevaluetext = "On (Debug)";
-					} else {
-						twlsettings_consolevaluetext = "Off";
-					}
-					if (twlsettings_lockarm9scfgextvalue == 1) {
-						twlsettings_lockarm9scfgextvaluetext = "On";
-					} else {
-						twlsettings_lockarm9scfgextvaluetext = "Off";
-					}
+
+					twlsettings_lockarm9scfgextvaluetext = (twlsettings_lockarm9scfgextvalue ? "On" : "Off");
+
 					settingstext_bot = "Settings: NTR/TWL-mode";
 					settingsYpos = 40;
 					if(twlsettingscursorPosition == 0) {
@@ -3064,69 +2973,29 @@ int main()
 						settingsYpos += 12;
 					}
 				} else if (settings_subscreenmode == 2) {
-					if (twlsettings_flashcardvalue == 0) {
-						twlsettings_flashcardvaluetext1 = "DSTT";
-						twlsettings_flashcardvaluetext2 = "R4i Gold";
-						twlsettings_flashcardvaluetext3 = "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)";
-						twlsettings_flashcardvaluetext4 = "R4 SDHC Dual-Core";
-						twlsettings_flashcardvaluetext5 = "R4 SDHC Upgrade";
-						twlsettings_flashcardvaluetext6 = "SuperCard DSONE";
-					} else if (twlsettings_flashcardvalue == 1) {
-						twlsettings_flashcardvaluetext1 = "Original R4";
-						twlsettings_flashcardvaluetext2 = "M3 Simply";
-						twlsettings_flashcardvaluetext3 = " ";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
-					} else if (twlsettings_flashcardvalue == 2) {
-						twlsettings_flashcardvaluetext1 = "R4iDSN";
-						twlsettings_flashcardvaluetext2 = "R4i Gold RTS";
-						twlsettings_flashcardvaluetext3 = " ";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
-					} else if (twlsettings_flashcardvalue == 3) {
-						twlsettings_flashcardvaluetext1 = "Acekard 2(i)";
-						twlsettings_flashcardvaluetext2 = "M3DS Real";
-						twlsettings_flashcardvaluetext3 = " ";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
-					} else if (twlsettings_flashcardvalue == 4) {
-						twlsettings_flashcardvaluetext1 = "Acekard RPG";
-						twlsettings_flashcardvaluetext2 = " ";
-						twlsettings_flashcardvaluetext3 = " ";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
-					} else if (twlsettings_flashcardvalue == 5) {
-						twlsettings_flashcardvaluetext1 = "Ace 3DS+";
-						twlsettings_flashcardvaluetext2 = "Gateway Blue Card";
-						twlsettings_flashcardvaluetext3 = "R4iTT";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
-					} else if (twlsettings_flashcardvalue == 6) {
-						twlsettings_flashcardvaluetext1 = "SuperCard DSTWO";
-						twlsettings_flashcardvaluetext2 = " ";
-						twlsettings_flashcardvaluetext3 = " ";
-						twlsettings_flashcardvaluetext4 = " ";
-						twlsettings_flashcardvaluetext5 = " ";
-						twlsettings_flashcardvaluetext6 = " ";
+					// Flash card options.
+					static const char *const flash_card_options[][6] = {
+						{"DSTT", "R4i Gold", "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)",
+						 "R4 SDHC Dual-Core", "R4 SDHC Upgrade", "SuperCard DSONE"},
+						{"Original R4", "M3 Simply", " ", " ", " ", " "},
+						{"R4iDSN", "R4i Gold RTS", " ", " ", " ", " "},
+						{"Acekard 2(i)", "M3DS Real", " ", " ", " ", " "},
+						{"Acekard RPG", " ", " ", " ", " ", " "},
+						{"Ace 3DS+", "Gateway Blue Card", "R4iTT", " ", " ", " "},
+						{"SuperCard DSTWO", " ", " ", " ", " ", " "},
+					};
+
+					if (twlsettings_flashcardvalue < 0 || twlsettings_flashcardvalue > 6) {
+						twlsettings_flashcardvalue = 0;
 					}
+					const char *const *fctext = flash_card_options[twlsettings_flashcardvalue];
 					settingstext_bot = twlsettings_flashcardtext;
 					settingsYpos = 40;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext1);
-					settingsYpos += 12;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext2);
-					settingsYpos += 12;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext3);
-					settingsYpos += 12;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext4);
-					settingsYpos += 12;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext5);
-					settingsYpos += 12;
-					sftd_draw_textf(font, settingsXpos, settingsYpos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardvaluetext6);
+					for (int i = 0; i < 6; i++, settingsYpos += 12) {
+						sftd_draw_textf(font, settingsXpos, settingsYpos,
+							SET_ALPHA(color_data->color, 255), 12,
+							flash_card_options[twlsettings_flashcardvalue][i]);
+					}
 					sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, settings_lrpicktext);
 					sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, settings_absavereturn);
 				}
