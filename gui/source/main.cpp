@@ -1430,33 +1430,13 @@ int main()
 	sound sfx_wrong("romfs:/sounds/wrong.wav",2,false);
 	sound sfx_back("romfs:/sounds/back.wav",2,false);
 	
-	const std::string& path = std::string();
-	std::vector<std::string> files = {};
-	std::vector<std::string> fcfiles = {};
-	std::vector<std::string> bnriconfiles = {};
-	std::vector<std::string> fcbnriconfiles = {};
-	std::vector<std::string> boxartfiles = {};
-	std::vector<std::string> fcboxartfiles = {};
-	
-	std::string extension_UCnds = ".NDS";
-	std::string extension_LCnds = ".nds";
-	std::string extension_oddnds1 = ".Nds";
-	std::string extension_oddnds2 = ".nDs";
-	std::string extension_oddnds3 = ".ndS";
-	std::string extension_oddnds4 = ".NDs";
-	std::string extension_oddnds5 = ".nDS";
-	std::string extension_oddnds6 = ".NdS";
-	std::string extension_UCini = ".INI";
-	std::string extension_LCini = ".ini";
-	std::string extension_oddini1 = ".Ini";
-	std::string extension_oddini2 = ".iNi";
-	std::string extension_oddini3 = ".inI";
-	std::string extension_oddini4 = ".INi";
-	std::string extension_oddini5 = ".iNi";
-	std::string extension_oddini6 = ".InI";
-	std::string extension_UCpng = ".PNG";
-	std::string extension_LCpng = ".png";
-		
+	std::vector<std::string> files;
+	std::vector<std::string> fcfiles;
+	std::vector<std::string> bnriconfiles;
+	std::vector<std::string> fcbnriconfiles;
+	std::vector<std::string> boxartfiles;
+	std::vector<std::string> fcboxartfiles;
+
 	DIR *dir;
 	DIR *flashcarddir;
 	DIR *bnricondir;
@@ -1465,29 +1445,23 @@ int main()
 	DIR *fcboxartdir;
 	struct dirent *namelist;
 
-	if ((dir = opendir (path.empty() ? "sdmc:/roms/nds" : path.c_str())) != NULL) {
+	if ((dir = opendir("sdmc:/roms/nds")) != NULL) {
 	/* print all the files and directories within directory */
-		while ((namelist = readdir (dir)) != NULL) {
+		while ((namelist = readdir(dir)) != NULL) {
 			std::string fname = (namelist->d_name);
-			if(fname.find(extension_UCnds, (fname.length() - extension_UCnds.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_LCnds, (fname.length() - extension_LCnds.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds1, (fname.length() - extension_oddnds1.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds2, (fname.length() - extension_oddnds2.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds3, (fname.length() - extension_oddnds3.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds4, (fname.length() - extension_oddnds4.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds5, (fname.length() - extension_oddnds5.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
-			if(fname.find(extension_oddnds6, (fname.length() - extension_oddnds6.length())) != std::string::npos)
-				files.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".nds")) {
+				// ".nds" extension is present.
+				files.push_back(fname);
+			}
 		}
-		closedir (dir);
-		std::sort( files.begin(), files.end() );
+		closedir(dir);
+		std::sort(files.begin(), files.end());
 	}
 	
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
@@ -1586,29 +1560,23 @@ int main()
 	
 	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
 	
-	if ((flashcarddir = opendir ("sdmc:/roms/flashcard/nds")) != NULL) {
+	if ((flashcarddir = opendir("sdmc:/roms/flashcard/nds")) != NULL) {
 	/* print all the files and directories within directory */
-		while ((namelist = readdir (flashcarddir)) != NULL) {
+		while ((namelist = readdir(flashcarddir)) != NULL) {
 			std::string fcfname = (namelist->d_name);
-			if(fcfname.find(extension_UCini, (fcfname.length() - extension_UCini.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_LCini, (fcfname.length() - extension_LCini.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini1, (fcfname.length() - extension_oddini1.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini2, (fcfname.length() - extension_oddini2.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini3, (fcfname.length() - extension_oddini3.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini4, (fcfname.length() - extension_oddini4.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini5, (fcfname.length() - extension_oddini5.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
-			if(fcfname.find(extension_oddini6, (fcfname.length() - extension_oddini6.length())) != std::string::npos)
-				fcfiles.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = fcfname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > fcfname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".ini")) {
+				// ".ini" extension is present.
+				fcfiles.push_back(fcfname);
+			}
 		}
-		closedir (flashcarddir);
-		std::sort( fcfiles.begin(), fcfiles.end() );
+		closedir(flashcarddir);
+		std::sort(fcfiles.begin(), fcfiles.end());
 	}
 
 	// Cache banner data
@@ -1633,52 +1601,76 @@ int main()
 		fclose(tempfilepath);
 	}
 		
-	if ((bnricondir = opendir ("sdmc:/_nds/twloader/bnricons/")) != NULL) {
-		while ((namelist = readdir (bnricondir)) != NULL) {
+	if ((bnricondir = opendir("sdmc:/_nds/twloader/bnricons/")) != NULL) {
+		while ((namelist = readdir(bnricondir)) != NULL) {
 			std::string bifname = (namelist->d_name);
-			if(bifname.find(extension_UCpng, (bifname.length() - extension_UCpng.length())) != std::string::npos)
-				bnriconfiles.push_back(namelist->d_name);
-			if(bifname.find(extension_LCpng, (bifname.length() - extension_LCpng.length())) != std::string::npos)
-				bnriconfiles.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = bifname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > bifname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
+				// ".png" extension is present.
+				bnriconfiles.push_back(bifname);
+			}
 		}
-		closedir (bnricondir);
-		std::sort( bnriconfiles.begin(), bnriconfiles.end() );
+		closedir(bnricondir);
+		std::sort(bnriconfiles.begin(), bnriconfiles.end());
 	}
 
-	if ((fcbnricondir = opendir ("sdmc:/_nds/twloader/bnricons/flashcard/")) != NULL) {
-		while ((namelist = readdir (fcbnricondir)) != NULL) {
+	if ((fcbnricondir = opendir("sdmc:/_nds/twloader/bnricons/flashcard/")) != NULL) {
+		while ((namelist = readdir(fcbnricondir)) != NULL) {
 			std::string fcbifname = (namelist->d_name);
-			if(fcbifname.find(extension_UCpng, (fcbifname.length() - extension_UCpng.length())) != std::string::npos)
-				fcbnriconfiles.push_back(namelist->d_name);
-			if(fcbifname.find(extension_LCpng, (fcbifname.length() - extension_LCpng.length())) != std::string::npos)
-				fcbnriconfiles.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = fcbifname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > fcbifname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
+				// ".png" extension is present.
+				fcbnriconfiles.push_back(fcbifname);
+			}
 		}
-		closedir (fcbnricondir);
-		std::sort( fcbnriconfiles.begin(), fcbnriconfiles.end() );
+		closedir(fcbnricondir);
+		std::sort(fcbnriconfiles.begin(), fcbnriconfiles.end());
 	}
 
-	if ((boxartdir = opendir ("sdmc:/_nds/twloader/boxart/")) != NULL) {
-		while ((namelist = readdir (boxartdir)) != NULL) {
+	if ((boxartdir = opendir("sdmc:/_nds/twloader/boxart/")) != NULL) {
+		while ((namelist = readdir(boxartdir)) != NULL) {
 			std::string bafname = (namelist->d_name);
-			if(bafname.find(extension_UCpng, (bafname.length() - extension_UCpng.length())) != std::string::npos)
-				boxartfiles.push_back(namelist->d_name);
-			if(bafname.find(extension_LCpng, (bafname.length() - extension_LCpng.length())) != std::string::npos)
-				boxartfiles.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = bafname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > bafname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
+				// ".png" extension is present.
+				boxartfiles.push_back(bafname);
+			}
 		}
-		closedir (boxartdir);
-		std::sort( boxartfiles.begin(), boxartfiles.end() );
+		closedir(boxartdir);
+		std::sort(boxartfiles.begin(), boxartfiles.end());
 	}
 
-	if ((fcboxartdir = opendir ("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
-		while ((namelist = readdir (fcboxartdir)) != NULL) {
+	if ((fcboxartdir = opendir("sdmc:/_nds/twloader/boxart/flashcard/")) != NULL) {
+		while ((namelist = readdir(fcboxartdir)) != NULL) {
 			std::string fcbafname = (namelist->d_name);
-			if(fcbafname.find(extension_UCpng, (fcbafname.length() - extension_UCpng.length())) != std::string::npos)
-				fcboxartfiles.push_back(namelist->d_name);
-			if(fcbafname.find(extension_LCpng, (fcbafname.length() - extension_LCpng.length())) != std::string::npos)
-				fcboxartfiles.push_back(namelist->d_name);
+			// Check the file extension.
+			size_t lastdotpos = fcbafname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + 4 > fcbafname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (!strcasecmp(&namelist->d_name[lastdotpos], ".png")) {
+				// ".png" extension is present.
+				fcboxartfiles.push_back(fcbafname);
+			}
 		}
-		closedir (fcboxartdir);
-		std::sort( fcboxartfiles.begin(), fcboxartfiles.end() );
+		closedir(fcboxartdir);
+		std::sort(fcboxartfiles.begin(), fcboxartfiles.end());
 	}
 		
 	if(settings_autodlvalue == 1 && checkWifiStatus() && (checkUpdate() == 0)){
