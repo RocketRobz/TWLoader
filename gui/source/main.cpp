@@ -136,7 +136,7 @@ bool run = true;
 
 const char* text_returntohomemenu()
 {
-	const char *languages[] = 
+	static const char *const languages[] =
 	{
 		": Return to HOME Menu",		// Japanese
 		": Return to HOME Menu",		// English
@@ -152,10 +152,11 @@ const char* text_returntohomemenu()
 		": Return to HOME Menu"			// Traditional Chinese
 	};
 	
-	if (language < 11)
+	if (language < 11) {
 		return languages[language];
-	else
-		return languages[11];
+	} else {
+		return languages[1];
+	}
 }
 
 bool showdialoguebox = false;
@@ -166,8 +167,6 @@ const char* Rshouldertext;
 
 const char* noromtext1;
 const char* noromtext2;
-
-const char* batterytext;
 
 // Settings text
 const char* settings_xbuttontext = "X: Update bootstrap (Official Release)";
@@ -232,7 +231,6 @@ std::string romsel_gameline3;
 char *cstr1;
 char *cstr2;
 char *cstr3;
-const char* romsel_counter1;
 const char* romsel_counter2fc;
 const char* romsel_counter2sd;
 
@@ -2308,9 +2306,8 @@ int main()
 		LogFM("Main.downloadBoxArt", "Checking box art.");
 		for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
 			dialoguetext = "Now checking box art if exists (SD Card)...";
-			char str[20] = {0};
-			std::sprintf(str, "%d", boxartnum+1);
-			romsel_counter1 = str;
+			char romsel_counter1[16];
+			snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
 			DialogueBoxAppear();
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogueboxtex, 0, 0);
@@ -2409,9 +2406,8 @@ int main()
 	// Cache banner data
 	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
 		dialoguetext = "Now checking if banner data exists (SD Card)...";
-		char str[20] = {0};
-		std::sprintf(str, "%d", bnriconnum+1);
-		romsel_counter1 = str;
+		char romsel_counter1[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 		tempfile = files.at(bnriconnum).c_str();
 		DialogueBoxAppear();
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -3524,9 +3520,8 @@ int main()
 									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
 								}
 								if (settings_countervalue == 1) {
-									char str[20] = {0};
-									std::sprintf(str, "%d", storedcursorPosition+1);
-									romsel_counter1 = str;									
+									char romsel_counter1[16];
+									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 									if(romsel_counter2fc < 100) {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
@@ -3581,9 +3576,8 @@ int main()
 									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str()); */
 								}
 								if (settings_countervalue == 1) {
-									char str[20] = {0};
-									std::sprintf(str, "%d", storedcursorPosition+1);
-									romsel_counter1 = str;
+									char romsel_counter1[16] = {0};
+									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 									if(romsel_counter2sd < 100) {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
