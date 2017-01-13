@@ -91,9 +91,7 @@ char* grabText(FILE* binFile, int bnrtitlenum, int line) {
 			// }
 		}
 		
-		const char* savedtext;
-
-		savedtext = malloc(256);
+		char *savedtext = (char*)malloc(256);
 		if (line == 0) {
 			strncpy(savedtext, p, strlen(p)+1);
 		} else if (line == 1) {
@@ -113,13 +111,11 @@ char* grabText(FILE* binFile, int bnrtitlenum, int line) {
 }
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
-	const char* tempfile_fullpath = malloc(256);
-	strcpy(tempfile_fullpath, "sdmc:/_nds/twloader/bnricons/");
-	strcat(tempfile_fullpath, filename);
-	strcat(tempfile_fullpath, ".bin");
+	char path[256];
+	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 	
-	if( access( tempfile_fullpath, F_OK ) == -1 ) {
-		FILE* filetosave = fopen(tempfile_fullpath, "wb");
+	if (access(path, F_OK ) == -1) {
+		FILE* filetosave = fopen(path, "wb");
 
 		sNDSHeader NDSHeader;
 		sNDSBannersize1 myBannersize1;
@@ -139,7 +135,7 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 			sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", tempfile_fullpath);
+			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data: ", path);
 			if (myBanner.version == 0x0103 || myBanner.version == 0x0003) {
 				fwrite(&myBanner,1,sizeof(myBanner),filetosave);
 			} else if (myBanner.version == 0x0002) {
@@ -148,21 +144,20 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 				fwrite(&myBanner,1,sizeof(myBannersize1),filetosave);
 			}
 
-			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", tempfile_fullpath);
-			fclose(filetosave);
+			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached: ", path);
 		} else {
 			FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
 			
 			sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", tempfile_fullpath);
+			LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty): ", path);
 			fread(&myBanner,1,sizeof(myBanner),nobannerFile);
 			fwrite(&myBanner,1,sizeof(myBanner),filetosave);
-			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached (empty):", tempfile_fullpath);
+			LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached (empty): ", path);
 			fclose(nobannerFile);
-			fclose(filetosave);
 		}
+		fclose(filetosave);
 	}else{
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
 		sf2d_end_frame();

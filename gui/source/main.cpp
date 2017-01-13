@@ -765,7 +765,7 @@ void RainbowLED() {
     int l;
     for(l = 0; l != 32; l++) {}
 	
-	if(ptmsysmInit() < 0) return 1;
+	if(ptmsysmInit() < 0) return;
     ptmsysmSetInfoLedPattern(pat);
     ptmsysmExit();
 	LogFM("Main.RainbowLED", "Rainbow LED is on");
@@ -2427,11 +2427,11 @@ int main()
 								if (settings_countervalue == 1) {
 									char romsel_counter1[16];
 									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-									if(romsel_counter2fc < 100) {
+									if (fcfiles.size() < 100) {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
 										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
-									}else{
+									} else {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
 										sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
@@ -2481,11 +2481,11 @@ int main()
 								if (settings_countervalue == 1) {
 									char romsel_counter1[16] = {0};
 									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-									if(romsel_counter2sd < 100) {
+									if (files.size() < 100) {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
 										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-									}else{
+									} else {
 										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 										sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
 										sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
