@@ -737,10 +737,16 @@ static void LoadBNRIcon(void) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
 		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
-		bnricontex[idx] = grabIcon(ndsFile[idx]);
+		if (ndsFile[idx]) {
+			bnricontex[idx] = grabIcon(ndsFile[idx]);
+			fclose(ndsFile[idx]);
+			ndsFile[idx] = NULL;
+		} else {
+			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
+			bnricontex[idx] = grabIcon(f_nobnr);
+			fclose(f_nobnr);
+		}
 		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath[idx]);
-		fclose(ndsFile[idx]);
-		ndsFile[idx] = NULL;
 	}
 }
 
@@ -760,7 +766,13 @@ static void LoadBNRIconatLaunch(void) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontexlaunch);
-		bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
+		if (ndsFile[idx]) {
+			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
+		} else {
+			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
+			bnricontexlaunch = grabIcon(f_nobnr);
+			fclose(f_nobnr);
+		}
 	}
 }
 
@@ -2076,30 +2088,24 @@ int main()
 									if (fcfiles.size() != 0) {
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 									}
-									romsel_gameline.clear();
 									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
-									if (access(path, F_OK) == -1) {
-										// Banner file is not available.
-										strcpy(path, "romfs:/notextbanner");
-									}
-									bnriconnum = cursorPosition;
-									FILE *f_bnr = fopen(path, "rb");
-									romsel_gameline = grabText(f_bnr, language);
-									fclose(f_bnr);
-									bannertextloaded = true;
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
 									}
 									const char *tempfile = files.at(cursorPosition).c_str();
-									char path[256];
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-									bnriconnum = cursorPosition;
-									FILE *f_bnr = fopen(path, "rb");
-									romsel_gameline = grabText(f_bnr, language);
-									fclose(f_bnr);
-									bannertextloaded = true;
 								}
+
+								if (access(path, F_OK) == -1) {
+									// Banner file is not available.
+									strcpy(path, "romfs:/notextbanner");
+								}
+								bnriconnum = cursorPosition;
+								FILE *f_bnr = fopen(path, "rb");
+								romsel_gameline = grabText(f_bnr, language);
+								fclose(f_bnr);
+								bannertextloaded = true;
 							}
 
 							int y, dy;
