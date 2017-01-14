@@ -7,16 +7,24 @@
 
 #include "log.h"
 
-u32 colorConvert(u32 iconPixel, u16 indice) {
-    u8 a = 255;
-    if(!indice) {
-        a = 0;
-    }
-    u8 r = ((iconPixel & 0x1F ) * 255) / 31;
-    u8 g = (((iconPixel >> 5) & 0x1F) * 255) / 31;
-    u8 b = (((iconPixel >> 10) & 0x1F) * 255) / 31;
-    
-    return RGBA8(r, g, b, a) ;
+/**
+ * Convert a color from BGR555 to RGBA8.
+ * @param px16 BGR555 color value.
+ * @return RGBA8 color.
+ */
+static inline u32 BGR555_to_RGBA8(u32 px16) {
+	u32 px32;
+
+	// BGR555: xBBBBBGG GGGRRRRR
+	//  RGBA8: AAAAAAAA BBBBBBBB GGGGGGGG RRRRRRRR
+	// TODO: verify this
+	px32 = ((((px16 << 3) & 0x0000F8) | ((px16 >> 2) & 0x000007))) |	// Red
+	       ((((px16 << 6) & 0x00F800) | ((px16 << 1) & 0x000700))) |	// Green
+	       ((((px16 << 9) & 0xF80000) | ((px16 << 4) & 0x070000)));		// Blue
+
+	// No alpha channel.
+	px32 |= 0xFF000000U;
+	return px32;
 }
 
 /**
@@ -165,24 +173,29 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 
 sf2d_texture* grabIcon(FILE* binFile) {
 	sNDSBanner myBanner;
-	u32 *textureData = (u32*)linearAlloc(1024*sizeof(u32));
 	fseek(binFile, 0, SEEK_SET);
 	fread(&myBanner, 1, sizeof(myBanner), binFile);    
 
-	int offset = 0;
+	// Convert the palette first.
+	u32 palette[16];
+	palette[0] = 0;	// Color 0 is always transparent.
+	for (int i = 16; i > 0; i--) {
+		palette[i] = BGR555_to_RGBA8(myBanner.palette[i]);
+	}
+
+	// Un-tile the icon.
+	// FIXME: Why are we allocating 64x32?
+	u32 *textureData = (u32*)linearAlloc(32*64*sizeof(u32));
+	const u8 *offset = myBanner.icon;
 	for (int y = 0; y < 32; y += 8) {
 		for (int x = 0; x < 32; x += 8) {
 			for (int y2 = 0; y2 < 8; y2++) {
+				u32 *texptr = &textureData[x + ((y + y2) * 64)];
 				for (int x2 = 0; x2 < 8; x2 += 2) {
-					u8 twopixel = myBanner.icon[offset];
-
-					u32 firstPixel = twopixel & 0x0F;
-					u32 secondPixel = (twopixel & 0xF0) >> 4; 
-
-					textureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-					textureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
-
+					texptr[0] = palette[*offset & 0x0F];
+					texptr[1] = palette[*offset >> 4];
 					offset++;
+					texptr += 2;
 				}
 			}
 		}
