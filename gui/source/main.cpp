@@ -425,13 +425,13 @@ void DialogueBoxDisappear() {
 static void CreateGameSave(const char *filename) {
 	dialoguetext = "Creating save file...";
 	DialogueBoxAppear();
-	static const int BUFFER_SIZE = 64;
+	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0xFF, sizeof(buffer));
 
 	FILE *pFile = fopen(filename, "wb");
 	if (pFile) {
-		for (int i = 0; i < 0x2000; i++) {
+		for (int i = 524288; i > 0; i -= BUFFER_SIZE) {
 			fwrite(buffer, 1, sizeof(buffer), pFile);
 		}
 		fclose(pFile);
