@@ -183,52 +183,34 @@ typedef struct {
 	See gbatek for more information.
 */
 typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u16 titles[8][128];	//!< title of the game in 8 different languages.
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[8][128];	//!< title of the game in 8 different languages.
+
+	// DSi-specific.
+	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
+	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
+	u16 dsi_seq[64];	//!< DSi animated icon sequence.
 } sNDSBanner;
 
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*6];		//!< title of the game in 6 different languages.
-} sNDSBannersize1;
+// sNDSBanner version.
+typedef enum {
+	NDS_BANNER_VER_ORIGINAL	= 0x0001,
+	NDS_BANNER_VER_ZH	= 0x0002,
+	NDS_BANNER_VER_ZH_KO	= 0x0003,
+	NDS_BANNER_VER_DSi	= 0x0103,
+} sNDSBannerVersion;
 
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*7];		//!< title of the game in 7 different languages.
-} sNDSBannersize2;
-
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*8];		//!< title of the game in 8 different languages.
-} sNDSBannersize3;
+// sNDSBanner sizes.
+typedef enum {
+	NDS_BANNER_SIZE_ORIGINAL	= 0x0840,
+	NDS_BANNER_SIZE_ZH		= 0x0940,
+	NDS_BANNER_SIZE_ZH_KO		= 0x0A40,
+	NDS_BANNER_SIZE_DSi		= 0x23C0,
+} sNDSBannerSize;
 
 /**
  * Get the title ID.
