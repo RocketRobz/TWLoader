@@ -10,14 +10,13 @@
 #include <sftd.h>
 
 // Functions and variables defined in main.cpp.
-extern void DialogueBoxAppear(void);
-extern void DialogueBoxDisappear(void);
+extern void DialogBoxAppear(const char *text);
+extern void DialogBoxDisappear(const char *text);
 extern sftd_font *font;
 extern sftd_font *font_b;
-extern sf2d_texture *dialogueboxtex; // Dialogue box
+extern sf2d_texture *dialogboxtex; // Dialog box
 extern sf2d_texture *settingstex; // Bottom of settings screen
-extern bool showdialoguebox;
-extern const char* dialoguetext;
+extern bool showdialogbox;
 extern bool run;	// Set to false to exit to the Home Menu.
 
 extern int screenmode;
@@ -151,14 +150,14 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
  */
 int checkUpdate(void) {
 	LogFM("checkUpdate", "Checking updates...");
-	dialoguetext = "Now checking TWLoader version...";
-	DialogueBoxAppear();
+	static const char title[] = "Now checking TWLoader version...";
+	DialogBoxAppear(title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
-	sf2d_draw_texture(dialogueboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+	sf2d_draw_texture(dialogboxtex, 0, 0);
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
@@ -180,13 +179,14 @@ int checkUpdate(void) {
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (updtequals == 0){
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
 			LogFM("checkUpdate", "TWLoader is up-to-date!");
-			dialoguetext = "TWLoader is up-to-date.";
-			//DialogueBoxDisappear(); <-- this is causing a freeze only in this function.
-			showdialoguebox = false;	// <-- so do this instead.
+			// FIXME: DialogBoxDiappear is freezing here,
+			// so just hide the dialog.
+			//DialogBoxDisappear("TWLoader is up-to-date.");
+			showdialogbox = false;	// <-- so do this instead.
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
@@ -211,7 +211,7 @@ void DownloadTWLoaderCIAs(void) {
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
-	sf2d_draw_texture(dialogueboxtex, 0, 0);
+	sf2d_draw_texture(dialogboxtex, 0, 0);
 	if (res == 0) {
 		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
@@ -223,19 +223,17 @@ void DownloadTWLoaderCIAs(void) {
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (res == 0) {
 			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			run = false;
 		} else {
-			dialoguetext = "Download failed.";
-			DialogueBoxDisappear();
+			DialogBoxDisappear("Download failed.");
 		}
 	} else {
-		dialoguetext = "Update failed.";
-		DialogueBoxDisappear();
+		DialogBoxDisappear("Update failed.");
 	}
 }
 
@@ -243,21 +241,20 @@ void DownloadTWLoaderCIAs(void) {
  * Update nds-bootstrap to the latest unofficial build.
  */
 void UpdateBootstrapUnofficial(void) {
-	dialoguetext = "Now updating bootstrap (Unofficial)...";
-	DialogueBoxAppear();
+	static const char title[] = "Now updating bootstrap (Unofficial)...";
+	DialogBoxAppear(title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
-	sf2d_draw_texture(dialogueboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+	sf2d_draw_texture(dialogboxtex, 0, 0);
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
-	dialoguetext = "Done!";
 	if (screenmode == 1) {
-		DialogueBoxDisappear();
+		DialogBoxDisappear("Done!");
 	}
 }
 
@@ -265,19 +262,18 @@ void UpdateBootstrapUnofficial(void) {
  * Update nds-bootstrap to the latest release build.
  */
 void UpdateBootstrapRelease(void) {
-	dialoguetext = "Now updating bootstrap (Release)...";
-	DialogueBoxAppear();
+	static const char title[] = "Now updating bootstrap (Release)...";
+	DialogBoxAppear(title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
-	dialoguetext = "Done!";
 	if (screenmode == 1) {
-		DialogueBoxDisappear();
+		DialogBoxDisappear("Done!");
 	}
 }

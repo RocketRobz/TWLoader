@@ -46,7 +46,7 @@ u8 language;
 
 sftd_font *font;
 sftd_font *font_b;
-sf2d_texture *dialogueboxtex; // Dialogue box
+sf2d_texture *dialogboxtex; // Dialog box
 sf2d_texture *settingstex; // Bottom of settings screen
 
 int screenmode = 0;
@@ -170,8 +170,7 @@ const char* text_returntohomemenu()
 	}
 }
 
-bool showdialoguebox = false;
-const char* dialoguetext;
+bool showdialogbox = false;
 
 const char* Lshouldertext;
 const char* Rshouldertext;
@@ -385,9 +384,21 @@ static Result ptmsysmSetInfoLedPattern(const RGBLedPattern* pattern)
     return ipc[1];
 }
 
-void DialogueBoxAppear(void) {
-	if (showdialoguebox)
+static string dialog_text;
+
+/**
+ * Make the dialog box appear.
+ * @param text Dialog box text.
+ */
+void DialogBoxAppear(const char *text) {
+	if (showdialogbox)
 		return;
+
+	// Save the dialog text so we can make
+	// use if it if nullptr is specified.
+	if (text) {
+		dialog_text = text;
+	}
 
 	int movespeed = 22;
 	for (int i = 0; i < 240; i += movespeed) {
@@ -400,17 +411,27 @@ void DialogueBoxAppear(void) {
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
-		sf2d_draw_texture(dialogueboxtex, 0, i-240);
-		sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_draw_texture(dialogboxtex, 0, i-240);
+		sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
-	showdialoguebox = true;
+	showdialogbox = true;
 }
 
-void DialogueBoxDisappear(void) {
-	if (!showdialoguebox)
+/**
+ * Make the dialog box disappear.
+ * @param text Dialog box text.
+ */
+void DialogBoxDisappear(const char *text) {
+	if (!showdialogbox)
 		return;
+
+	// Save the dialog text so we can make
+	// use if it if nullptr is specified.
+	if (text) {
+		dialog_text = text;
+	}
 
 	int movespeed = 1;
 	for (int i = 0; i < 240; i += movespeed) {
@@ -419,12 +440,12 @@ void DialogueBoxDisappear(void) {
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
-		sf2d_draw_texture(dialogueboxtex, 0, i);
-		sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_draw_texture(dialogboxtex, 0, i);
+		sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
-	showdialoguebox = false;
+	showdialogbox = false;
 }
 
 /**
@@ -432,8 +453,7 @@ void DialogueBoxDisappear(void) {
  * @param filename Filename.
  */
 static void CreateGameSave(const char *filename) {
-	dialoguetext = "Creating save file...";
-	DialogueBoxAppear();
+	DialogBoxAppear("Creating save file...");
 	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0xFF, sizeof(buffer));
@@ -446,8 +466,7 @@ static void CreateGameSave(const char *filename) {
 		fclose(pFile);
 	}
 
-	dialoguetext = "Done!";
-	DialogueBoxDisappear();
+	DialogBoxDisappear("Done!");
 }
 
 /**
@@ -1008,13 +1027,13 @@ static void downloadBoxArt(void)
 
 	LogFM("Main.downloadBoxArt", "Checking box art.");
 	for (boxartnum = 0; boxartnum < files.size(); boxartnum++) {
-		dialoguetext = "Now checking box art if exists (SD Card)...";
+		static const char title[] = "Now checking box art if exists (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
-		DialogueBoxAppear();
+		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 		sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
 		sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
@@ -1067,7 +1086,7 @@ static void downloadBoxArt(void)
 		if (access(path, F_OK) == -1) {
 			LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogueboxtex, 0, 0);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
 			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
 			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
@@ -1145,7 +1164,7 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
-	dialogueboxtex = sfil_load_PNG_file("romfs:/graphics/dialoguebox.png", SF2D_PLACE_RAM); // Dialogue box
+	dialogboxtex = sfil_load_PNG_file("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
 
@@ -1233,14 +1252,14 @@ int main()
 
 	// Cache banner data
 	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
-		dialoguetext = "Now checking if banner data exists (SD Card)...";
+		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 		const char *tempfile = files.at(bnriconnum).c_str();
-		DialogueBoxAppear();
+		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 		sftd_draw_textf(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 		sftd_draw_textf(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
 		sftd_draw_textf(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
@@ -1262,7 +1281,7 @@ int main()
 	} else if(settings_autoupdatevalue == 1 && checkWifiStatus()){
 		UpdateBootstrapRelease();
 	}
-	DialogueBoxDisappear();
+	DialogBoxDisappear(nullptr);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
