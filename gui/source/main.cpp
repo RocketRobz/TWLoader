@@ -51,9 +51,9 @@ int settings_subscreenmode = 0;
 // 0: Frontend settings
 // 1: NTR/TWL-mode settings
 
-sf2d_texture *bnricontexnum;
-sf2d_texture *bnricontexlaunch;
-sf2d_texture *boxarttexnum;
+static sf2d_texture *bnricontexnum = NULL;
+static sf2d_texture *bnricontexlaunch = NULL;
+static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
 // TODO: Some of this still needs reworking to fix
@@ -946,8 +946,8 @@ static void LoadBNRIconatLaunch(void) {
 	const int idx = bnriconnum - (pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
-		sf2d_free_texture(bnricontexlaunch);	// TODO: Is this needed?
-		bnricontexlaunch = grabandstoreIcon(ndsFile[idx]); // Banner icon
+		sf2d_free_texture(bnricontexlaunch);
+		bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
 	}
 }
 
@@ -3522,6 +3522,9 @@ int main()
 		sf2d_free_texture(whitescrtex);
 		sf2d_free_texture(disabledtex);
 	}
+
+	// Launch banner.
+	sf2d_free_texture(bnricontexlaunch);
 
 	// Free the arrays.
 	for (int i = 0; i < 20; i++) {

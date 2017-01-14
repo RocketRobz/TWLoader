@@ -240,7 +240,6 @@ void grabTID(FILE* ndsFile, char *buf);
 char* grabText(FILE* binFile, int bnrtitlenum, int line);
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);
-sf2d_texture* grabandstoreIcon(FILE* binFile);
 
 
 #endif // NDS_HEADER

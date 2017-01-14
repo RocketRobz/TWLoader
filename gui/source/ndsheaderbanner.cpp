@@ -7,8 +7,6 @@
 
 #include "log.h"
 
-u32 * storedtextureData = (u32*) linearAlloc(1024*sizeof(u32));  
-
 u32 colorConvert(u32 iconPixel, u16 indice) {
     u8 a = 255;
     if(!indice) {
@@ -190,33 +188,7 @@ sf2d_texture* grabIcon(FILE* binFile) {
 		}
 	}
 
-	return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
-}
-
-// Duplicate of grabIcon, but stores icon in memory, needed for when the launching game moves up
-sf2d_texture* grabandstoreIcon(FILE* binFile) {
-	sNDSBanner myBanner;   
-	fseek(binFile, 0, SEEK_SET);
-	fread(&myBanner, 1, sizeof(myBanner), binFile);    
-
-	int offset = 0;
-	for (int y = 0; y < 32; y += 8) {
-		for (int x = 0; x < 32; x += 8) {
-			for (int y2 = 0; y2 < 8; y2++) {
-				for (int x2 = 0; x2 < 8; x2 += 2) {
-					u8 twopixel = myBanner.icon[offset];
-
-					u32 firstPixel = twopixel & 0x0F;
-					u32 secondPixel = (twopixel & 0xF0) >> 4; 
-
-					storedtextureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-					storedtextureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
-
-					offset++;
-				}
-			}
-		}
-	}
-	
-	return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	sf2d_texture *tex = sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	linearFree(textureData);
+	return tex;
 }
