@@ -298,19 +298,19 @@ void UpdateBootstrapRelease(void) {
 void downloadBoxArt(void)
 {
 	// European boxart languages.
-	static const char ba_langs_eur[][4] = {
+	static const char *const ba_langs_eur[] = {
 		"EN",	// Japanese (English used in place)
 		"EN",	// English
 		"FR",	// French
 		"DE",	// German
 		"IT",	// Italian
 		"ES",	// Spanish
-		"ZH",	// Simplified Chinese
+		"ZHCN",	// Simplified Chinese
 		"KO",	// Korean
 		"NL",	// Dutch
 		"PT",	// Portugese
 		"RU",	// Russian
-		"TW"	// Traditional Chinese
+		"ZHTW"	// Traditional Chinese
 	};
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
