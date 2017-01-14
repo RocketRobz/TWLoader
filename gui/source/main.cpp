@@ -225,11 +225,11 @@ int romselect_toplayout;
 //	0: Show box art
 //	1: Hide box art
 
-bool applaunchprep = false;
+static bool applaunchprep = false;
 
-int fadealpha = 255;
-bool fadein = true;
-bool fadeout = false;
+static int fadealpha = 255;
+static bool fadein = true;
+static bool fadeout = false;
 
 std::string name;
 
@@ -1497,10 +1497,6 @@ int main()
 	
 	int soundwaittimer = 0;
 	bool playwrongsounddone = false;
-
-	int fadealpha = 255;
-	bool fadein = true;
-	bool fadeout = false;
 
 	bool colortexloaded = false;
 	bool colortexloaded_bot = false;
