@@ -1187,10 +1187,6 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 // Files
 static std::vector<std::string> files;
 static std::vector<std::string> fcfiles;
-static std::vector<std::string> bnriconfiles;
-static std::vector<std::string> fcbnriconfiles;
-static std::vector<std::string> boxartfiles;
-static std::vector<std::string> fcboxartfiles;
 
 /**
  * Download boxart.
@@ -1462,15 +1458,6 @@ int main()
 		cacheBanner(f_nds_file, tempfile, font);
 		fclose(f_nds_file);
 	}
-
-	// Scan the banner icon directory for images.
-	scan_dir_for_files("sdmc:/_nds/twloader/bnricons", ".png", bnriconfiles);
-	// Scan the flashcard banner icon directory for images.
-	scan_dir_for_files("sdmc:/_nds/twloader/bnricons/flashcard", ".png", fcbnriconfiles);
-	// Scan the boxart directory for images.
-	scan_dir_for_files("sdmc:/_nds/twloader/boxart", ".png", boxartfiles);
-	// Scan the flashcard boxart icon directory for images.
-	scan_dir_for_files("sdmc:/_nds/twloader/boxart/flashcard", ".png", fcboxartfiles);
 
 	if(settings_autodlvalue == 1 && checkWifiStatus() && (checkUpdate() == 0)){
 		DownloadTWLoaderCIAs();
