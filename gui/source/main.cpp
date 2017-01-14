@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <string>
-#include <vector>
-
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
@@ -17,6 +13,12 @@
 //#include <citrus/battery.hpp>
 //#include <citrus/core.hpp>
 //#include <citrus/fs.hpp>
+
+#include <algorithm>
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 #include "sound.h"
 #include "inifile.h"
@@ -234,9 +236,7 @@ static bool fadeout = false;
 std::string name;
 
 const char* romsel_filename;
-std::string romsel_gameline1;
-std::string romsel_gameline2;
-std::string romsel_gameline3;
+vector<string> romsel_gameline;	// from banner (TODO: wstring?)
 
 static const char* rom = "";		// Selected ROM image.
 static const char* flashcardrom = "";
@@ -2354,9 +2354,10 @@ int main()
 									}
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
 									CIniFile setfcrompathini( sdmc+flashcardfolder+flashcardrom );
-									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
-									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
-									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
+									romsel_gameline.clear();
+									romsel_gameline.push_back(setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, ""));
+									romsel_gameline.push_back(setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, ""));
+									romsel_gameline.push_back(setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, ""));
 									bannertextloaded = true;
 								} else {
 									if (files.size() != 0) {
@@ -2367,32 +2368,25 @@ int main()
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									bnriconnum = cursorPosition;
 									FILE *f_bnr = fopen(path, "rb");
-									romsel_gameline1 = grabText(f_bnr, language, 0);
-									romsel_gameline2 = grabText(f_bnr, language, 1);
-									romsel_gameline3 = grabText(f_bnr, language, 2);
+									romsel_gameline = grabText(f_bnr, language);
 									fclose(f_bnr);
 									bannertextloaded = true;
 								}
 							}
 
-							// FIXME: .nds only has gameline1.
+							int y, dy;
 							if (settings_filenamevalue == 1) {
+								// TODO: Convert romsel_filename from UTF-8?
 								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-								if (twlsettings_forwardervalue == 1) {
-									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.8, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
-								} else {
-									sftd_draw_textf(font_b, 18, 26, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-								}
+								y = 24; dy = 19;
 							} else {
-								if (twlsettings_forwardervalue == 1) {
-									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*4.4, 16, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
-								} else {
-									sftd_draw_textf(font_b, 18, 18, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
-								}
+								y = 16; dy = 22;
+							}
+
+							// TODO: Proper text centering.
+							const size_t banner_lines = std::min(3U, romsel_gameline.size());
+							for (size_t i = 0; i < banner_lines; i++, y += dy) {
+								sftd_draw_textf(font_b, 160-romsel_gameline[i].length()*3.8, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
 							if (settings_countervalue == 1) {

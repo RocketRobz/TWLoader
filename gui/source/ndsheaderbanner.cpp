@@ -1,9 +1,12 @@
-#include <string>
-
 #include "ndsheaderbanner.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 #include "log.h"
 
@@ -41,10 +44,9 @@ void grabTID(FILE* ndsFile, char *buf) {
  * Get text from a cached banner file.
  * @param binFile Banner file.
  * @param bnrtitlenum Title number. (aka language)
- * @param line Line number.
- * @return Allocated buffer containing the text.
+ * @return Vector containing each line as a wide string.
  */
-char* grabText(FILE* binFile, int bnrtitlenum, int line) {
+vector<string> grabText(FILE* binFile, int bnrtitlenum) {
 	// Check for unsupported languages.
 	switch (bnrtitlenum-1) {
 		case N3DS_LANG_DUTCH:
@@ -99,62 +101,48 @@ char* grabText(FILE* binFile, int bnrtitlenum, int line) {
 		case 0:
 		default:
 			// Unsupported banner version.
-			if (line == 0) {
-				return strdup("No Info");
-			} else {
-				return strdup(" ");
-			}
+			vector<string> vec_str;
+			vec_str.push_back("No Info");
+			return vec_str;
 	}
 
-	// FIXME: This needs reworking.
-	int size = sizeof(myBanner.titles[bnrtitlenum]);
+	// UTF-16 text from the banner.
+	const u16 *u16text = myBanner.titles[bnrtitlenum];
 
-	// turn unicode into ascii (kind of)
-	int i;
-	int i2;
-	int i3;
-	char *p = (char*)myBanner.titles[bnrtitlenum];
-	char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
-	char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
+	// Buffers for the strings.
+	// TODO: Return vector<wstring> for Unicode.
+	vector<string> vec_str;
+	vec_str.reserve(3);
+	string str;
+	str.reserve(64);
 
-	for (i = 0; i < size; i = i+2) {
-		/* if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
-			if (line == 0)
-				p[i/2] = 0;
-			else if (line >= 1) {
-				for (i2 = 0; i2 < size; i2 = i2+2) {
-					if ((p2[i2+i] == 0x0A) || (p2[i2+i] == 0xFF)) {
-						if (line == 1)
-							p2[i2/2] = 0;
-						else if (line == 2) {
-							for (i3 = 0; i3 < size; i3 = i3+2) {
-								if ((p3[i3+i] == 0x0A) || (p3[i3+i] == 0xFF))
-									p3[i3/2] = 0;									
-								else
-									p3[i3/2] = p3[i3+i];	// write to line 2
-							}
-						}
-					} else {
-						if (line == 1)
-							p2[i2/2] = p2[i2+i];	// write to line 1
-					}
-				}
-			}
-		} else {
-			if (line == 0) */
-				p[i/2] = p[i];	// write to line 0
-		// }
+	for (int i = sizeof(myBanner.titles[bnrtitlenum])/sizeof(myBanner.titles[bnrtitlenum][0]);
+	     *u16text != 0 && i > 0; i--, u16text++)
+	{
+		// Quick and dirty Unicode to "ASCII" conversion.
+		// TODO: Proper UTF-16 to UTF-32 conversion.
+		switch (*u16text) {
+			case L'\r':
+				// Skip carriage returns.
+				break;
+			case L'\n':
+				// Newline.
+				vec_str.push_back(str);
+				str.clear();
+				break;
+			default:
+				// Add the character.
+				str += (char)(*u16text & 0xFF);
+				break;
+		}
 	}
 
-	char* savedtext = (char*)malloc(256);
-	if (line == 0) {
-		strncpy(savedtext, p, strlen(p)+1);
-	} else if (line == 1) {
-		strncpy(savedtext, p2, strlen(p2)+1);
-	} else if (line == 2) {
-		strncpy(savedtext, p3, strlen(p3)+1);
+	// Add the last line if it's not empty.
+	if (!str.empty()) {
+		vec_str.push_back(str);
 	}
-	return savedtext;
+
+	return vec_str;
 }
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {

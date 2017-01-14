@@ -26,62 +26,19 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file ndsheaderbanner.h
-\brief Defines for many of the regions of memory on the DS as well as a few control functions for memory bus access
+\brief Defines the Nintendo DS file header and icon/title structs.
 */
 
 #ifndef NDS_HEADER
 #define NDS_HEADER
 
-//#include "ndstypes.h"
-
-
-//#ifdef ARM9
-//#define REG_EXMEMCNT (*(vu16*)0x04000204)
-//#else
-//#define REG_EXMEMSTAT (*(vu16*)0x04000204)
-//#endif
-
-//#define ARM7_MAIN_RAM_PRIORITY BIT(15)
-//#define ARM7_OWNS_CARD BIT(11)
-//#define ARM7_OWNS_ROM  BIT(7)
-
-
-// Protection register (write-once sadly)
-//#ifdef ARM7
-//#define PROTECTION    (*(vu32*)0x04000308)
-//#endif
-
-//! 8 bit pointer to the start of all the ram.
-//#define ALLRAM        ((u8*)0x00000000)
-
-//! 8 bit pointer to main ram.
-//#define MAINRAM8      ((u8*)0x02000000)
-//! 16 bit pointer to main ram.
-//#define MAINRAM16     ((u16*)0x02000000)
-//! 32 bit pointer to main ram.
-//#define MAINRAM32     ((u32*)0x02000000)
-
-
-// TODO: fixme: shared RAM
-
-// GBA_BUS is volatile, while GBAROM is not
-//! 16 bit volatile pointer to the GBA slot bus.
-//#define GBA_BUS       ((vu16 *)(0x08000000))
-//! 16 bit pointer to the GBA slot ROM.
-//#define GBAROM        ((u16*)0x08000000)
-
-//! 8 bit pointer to GBA slot Save ram.
-//#define SRAM          ((u8*)0x0A000000)
-
-
-//#ifdef ARM7
-//#define VRAM          ((u16*)0x06000000)
-//#endif
-
 #include <sf2d.h>
 #include <sftd.h>
 #include <sfil.h>
 #include <stdio.h>
+
+#include <string>
+#include <vector>
 
 /*!
 	\brief the GBA file header format.
@@ -243,10 +200,9 @@ void grabTID(FILE* ndsFile, char *buf);
  * Get text from a cached banner file.
  * @param binFile Banner file.
  * @param bnrtitlenum Title number. (aka language)
- * @param line Line number.
- * @return Allocated buffer containing the text.
+ * @return Vector containing each line as a wide string.
  */
-char* grabText(FILE* binFile, int bnrtitlenum, int line);
+std::vector<std::string> grabText(FILE* binFile, int bnrtitlenum);
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);
