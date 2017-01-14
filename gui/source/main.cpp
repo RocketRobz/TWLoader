@@ -239,7 +239,7 @@ std::string romsel_gameline2;
 std::string romsel_gameline3;
 
 static const char* rom = "";		// Selected ROM image.
-const char* flashcardrom;
+static const char* flashcardrom = "";
 std::string sdmc = "sdmc:/";
 std::string fat = "fat:/";
 std::string slashchar = "/";
