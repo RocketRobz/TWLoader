@@ -426,15 +426,14 @@ void CreateGameSave() {
 	dialoguetext = "Creating save file...";
 	DialogueBoxAppear();
 	const int BUFFER_SIZE = 64;
-	char buffer [BUFFER_SIZE + 1];
+	char buffer [BUFFER_SIZE];
 	int i;
 	for(i = 0; i < BUFFER_SIZE; i++)
-		buffer[i] = (char)('ÿ');
-	buffer[BUFFER_SIZE] = '\0';
+		buffer[i] = (char)('\0'); 
 	
 	FILE *pFile = fopen (tempfile_fullpath, "w");
 	for (i = 0; i < 0x2000; i++)
-		fprintf(pFile, buffer);
+		fwrite (buffer , sizeof(char), sizeof(buffer), pFile);
 	
 	fclose(pFile);
 	dialoguetext = "Done!";
