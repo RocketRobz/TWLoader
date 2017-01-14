@@ -2339,97 +2339,85 @@ int main()
 					if (fadealpha == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// if (dspfirmfound) { sfx_menuselect.play(); }
-						if (twlsettings_forwardervalue == 1) {
-							if (cursorPosition == -2) {
-								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-								sftd_draw_textf(font_b, 128, 40, RGBA8(0, 0, 0, 255), 16, "Settings");
-							} else if (cursorPosition == -1) {
-								if (settings_filenamevalue == 1)
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
-							} else {
-								if (!bannertextloaded) {
-									if (fcfiles.size() != 0)
+						if (cursorPosition == -2) {
+							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
+							sftd_draw_textf(font_b, 128, 40, RGBA8(0, 0, 0, 255), 16, "Settings");
+						} else if (cursorPosition == -1) {
+							if (settings_filenamevalue == 1) {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
+							}
+						} else {
+							if (!bannertextloaded) {
+								if (twlsettings_forwardervalue == 1) {
+									if (fcfiles.size() != 0) {
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+									}
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
 									CIniFile setfcrompathini( sdmc+flashcardfolder+flashcardrom );
 									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
 									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
 									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
 									bannertextloaded = true;
-								}
-								if (settings_filenamevalue == 1) {
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
-									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.8, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
 								} else {
-									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*4.4, 16, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
-								}
-								if (settings_countervalue == 1) {
-									char romsel_counter1[16];
-									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-									if (fcfiles.size() < 100) {
-										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
-									} else {
-										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-										sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
-										sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
-									}
-								} else {
-									bannertextloaded = true;
-								}
-							}
-						} else {
-							if (cursorPosition == -2) {
-								// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-								sftd_draw_textf(font_b, 128, 40, RGBA8(0, 0, 0, 255), 16, "Settings");
-							} else if (cursorPosition == -1) {
-								if (settings_filenamevalue == 1)
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
-							} else {
-								if (!bannertextloaded) {
-									if (files.size() != 0)
+									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
+									}
 									const char *tempfile = files.at(cursorPosition).c_str();
 									char path[256];
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									bnriconnum = cursorPosition;
-									FILE *f_bnr = fopen(path,"rb");
+									FILE *f_bnr = fopen(path, "rb");
 									romsel_gameline1 = grabText(f_bnr, language, 0);
 									romsel_gameline2 = grabText(f_bnr, language, 1);
 									romsel_gameline3 = grabText(f_bnr, language, 2);
 									fclose(f_bnr);
 									bannertextloaded = true;
 								}
-								if (settings_filenamevalue == 1) {
-									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+							}
+
+							// FIXME: .nds only has gameline1.
+							if (settings_filenamevalue == 1) {
+								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								if (twlsettings_forwardervalue == 1) {
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*3.8, 24, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str());
+								} else {
 									sftd_draw_textf(font_b, 18, 26, RGBA8(0, 0, 0, 255), 16, romsel_gameline1.c_str());
-									/* sftd_draw_textf(font_b, 160-romsel_gameline2.length()*3.8, 43, RGBA8(0, 0, 0, 255), 16, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*3.8, 62, RGBA8(0, 0, 0, 255), 16, romsel_gameline3.c_str()); */
+								}
+							} else {
+								if (twlsettings_forwardervalue == 1) {
+									sftd_draw_textf(font_b, 160-romsel_gameline1.length()*4.4, 16, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
+									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str());
 								} else {
 									sftd_draw_textf(font_b, 18, 18, RGBA8(0, 0, 0, 255), 18, romsel_gameline1.c_str());
-									/* sftd_draw_textf(font_b, 160-romsel_gameline2.length()*4.4, 38, RGBA8(0, 0, 0, 255), 18, romsel_gameline2.c_str());
-									sftd_draw_textf(font_b, 160-romsel_gameline3.length()*4.4, 60, RGBA8(0, 0, 0, 255), 18, romsel_gameline3.c_str()); */
 								}
-								if (settings_countervalue == 1) {
-									char romsel_counter1[16] = {0};
-									snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-									if (files.size() < 100) {
-										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-										sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-										sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-									} else {
-										sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-										sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
-										sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-									}
+							}
+
+							if (settings_countervalue == 1) {
+								char romsel_counter1[16];
+								snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
+								size_t file_count;
+								const char *p_romsel_counter;
+								if (twlsettings_forwardervalue == 1) {
+									file_count = fcfiles.size();
+									p_romsel_counter = romsel_counter2fc;
 								} else {
-									bannertextloaded = true;
+									file_count = files.size();
+									p_romsel_counter = romsel_counter2sd;
 								}
+								if (file_count < 100) {
+									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+									sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
+									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+								} else {
+									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+									sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
+									sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+								}
+							} else {
+								bannertextloaded = true;
 							}
 						}
 					} else {
