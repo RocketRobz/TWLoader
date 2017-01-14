@@ -166,68 +166,57 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 }
 
 sf2d_texture* grabIcon(FILE* binFile) {
-    sNDSBanner myBanner;
-    
-    u32 * textureData = (u32*) linearAlloc(1024*sizeof(u32));    
-    
-    fseek ( binFile , 0 , SEEK_SET );
-        
-    fread(&myBanner,1,sizeof(myBanner),binFile);    
-        
-    //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
-    //u16 palette[16];      // color 0 is transparent, ABGR
-        
-    int offset = 0;
-    
-    for(int y = 0; y < 32; y += 8)
-        for(int x = 0; x < 32; x += 8)
-            for(int y2 = 0; y2 < 8; y2++)
-                for(int x2 = 0; x2 < 8; x2+=2)
-                {
-                    u8 twopixel = myBanner.icon[offset];
-                    
-                    u32 firstPixel = twopixel & 0x0F;
-                    u32 secondPixel = (twopixel & 0xF0) >> 4; 
-                    
-                    textureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-                    
-                    textureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+	sNDSBanner myBanner;
+	u32 *textureData = (u32*)linearAlloc(1024*sizeof(u32));
+	fseek(binFile, 0, SEEK_SET);
+	fread(&myBanner, 1, sizeof(myBanner), binFile);    
 
-                    offset++;
-                }
-	
-    return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	int offset = 0;
+	for (int y = 0; y < 32; y += 8) {
+		for (int x = 0; x < 32; x += 8) {
+			for (int y2 = 0; y2 < 8; y2++) {
+				for (int x2 = 0; x2 < 8; x2 += 2) {
+					u8 twopixel = myBanner.icon[offset];
+
+					u32 firstPixel = twopixel & 0x0F;
+					u32 secondPixel = (twopixel & 0xF0) >> 4; 
+
+					textureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
+					textureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+
+					offset++;
+				}
+			}
+		}
+	}
+
+	return sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
 
 // Duplicate of grabIcon, but stores icon in memory, needed for when the launching game moves up
 sf2d_texture* grabandstoreIcon(FILE* binFile) {
-    sNDSBanner myBanner;   
-    
-    fseek ( binFile , 0 , SEEK_SET );
-        
-    fread(&myBanner,1,sizeof(myBanner),binFile);    
-        
-    //u8 icon[512];            //!< 32*32 icon of the game with 4 bit per pixel paletted
-    //u16 palette[16];      // color 0 is transparent, ABGR
-        
-    int offset = 0;
-    
-    for(int y = 0; y < 32; y += 8)
-        for(int x = 0; x < 32; x += 8)
-            for(int y2 = 0; y2 < 8; y2++)
-                for(int x2 = 0; x2 < 8; x2+=2)
-                {
-                    u8 twopixel = myBanner.icon[offset];
-                    
-                    u32 firstPixel = twopixel & 0x0F;
-                    u32 secondPixel = (twopixel & 0xF0) >> 4; 
-                    
-                    storedtextureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
-                    
-                    storedtextureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+	sNDSBanner myBanner;   
+	fseek(binFile, 0, SEEK_SET);
+	fread(&myBanner, 1, sizeof(myBanner), binFile);    
 
-                    offset++;
-                }
+	int offset = 0;
+	for (int y = 0; y < 32; y += 8) {
+		for (int x = 0; x < 32; x += 8) {
+			for (int y2 = 0; y2 < 8; y2++) {
+				for (int x2 = 0; x2 < 8; x2 += 2) {
+					u8 twopixel = myBanner.icon[offset];
+
+					u32 firstPixel = twopixel & 0x0F;
+					u32 secondPixel = (twopixel & 0xF0) >> 4; 
+
+					storedtextureData[x + x2 + (y + y2)*64] = colorConvert(myBanner.palette[firstPixel], firstPixel);
+					storedtextureData[x + x2 + 1 + (y + y2)*64] =  colorConvert(myBanner.palette[secondPixel], secondPixel);
+
+					offset++;
+				}
+			}
+		}
+	}
 	
-    return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	return sf2d_create_texture_mem_RGBA8(storedtextureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
