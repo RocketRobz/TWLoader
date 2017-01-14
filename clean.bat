@@ -1,0 +1,9 @@
+@echo off
+cd twlnand-side
+make clean
+cd ..
+cd NTR_Launcher
+make clean
+cd ..
+cd gui
+make clean
