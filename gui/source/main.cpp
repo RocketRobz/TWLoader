@@ -390,7 +390,7 @@ void DialogueBoxAppear(void) {
 		return;
 
 	int movespeed = 22;
-	for (int i = 0; i < 240; i+=movespeed) {
+	for (int i = 0; i < 240; i += movespeed) {
 		if (movespeed <= 1) {
 			movespeed = 1;
 		} else {
@@ -413,7 +413,7 @@ void DialogueBoxDisappear(void) {
 		return;
 
 	int movespeed = 1;
-	for (int i = 0; i < 240; i+=movespeed) {
+	for (int i = 0; i < 240; i += movespeed) {
 		movespeed += 1;
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
@@ -424,6 +424,7 @@ void DialogueBoxDisappear(void) {
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
+	showdialoguebox = false;
 }
 
 /**
