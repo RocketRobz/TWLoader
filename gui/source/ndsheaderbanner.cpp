@@ -37,83 +37,124 @@ void grabTID(FILE* ndsFile, char *buf) {
 	fread(buf, 1, 4, ndsFile);
 }
 
+/**
+ * Get text from a cached banner file.
+ * @param binFile Banner file.
+ * @param bnrtitlenum Title number. (aka language)
+ * @param line Line number.
+ * @return Allocated buffer containing the text.
+ */
 char* grabText(FILE* binFile, int bnrtitlenum, int line) {
-    sNDSBanner myBanner;
-	
-	if (bnrtitlenum == 8 || bnrtitlenum == 9 || bnrtitlenum == 10)	// If language is Dutch, Portugese, or Russian
-		bnrtitlenum = 5;	// set to Spanish
-	else if (bnrtitlenum == 12)		// If language is Traditional Chinese
-		bnrtitlenum = 6;	// set to (Simplified) Chinese
-	
-	fseek ( binFile , 0 , SEEK_SET );
-        
-	fread(&myBanner,1,sizeof(myBanner),binFile);
-	
-	if (myBanner.version != 0x0000) {
-        if (myBanner.version == 0x0002) {
-			if (bnrtitlenum == 7)
-				bnrtitlenum = 0;	// Use Japanese language if title has no Korean text
-		} else if (myBanner.version == 0x0001) {
-			if (bnrtitlenum == 6 || bnrtitlenum == 7)
-				bnrtitlenum = 0;	// Use Japanese language if title has no Chinese and Korean text
-		}
+	// Check for unsupported languages.
+	switch (bnrtitlenum-1) {
+		case N3DS_LANG_DUTCH:
+		case N3DS_LANG_PORTUGUESE:
+		case N3DS_LANG_RUSSIAN:
+			// Use Spanish.
+			bnrtitlenum = NDS_LANG_SPANISH;
+			break;
+		case N3DS_LANG_CHINESE_TRADITIONAL:
+			// Use simplified Chinese.
+			bnrtitlenum = NDS_LANG_CHINESE;
+			break;
+		default:
+			if (bnrtitlenum > N3DS_LANG_CHINESE_TRADITIONAL) {
+				// Invalid language number.
+				// Default to English.
+				bnrtitlenum = NDS_LANG_ENGLISH;
+			}
+			break;
+	}
 
-		int size = sizeof(myBanner.titles[bnrtitlenum]);
-		
-		// turn unicode into ascii (kind of)
-		int i;
-		int i2;
-		int i3;
-		char *p = (char*)myBanner.titles[bnrtitlenum];
-		char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
-		char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
-		
-		for (i = 0; i < size; i = i+2) {
-			/* if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
-				if (line == 0)
-					p[i/2] = 0;
-				else if (line >= 1) {
-					for (i2 = 0; i2 < size; i2 = i2+2) {
-						if ((p2[i2+i] == 0x0A) || (p2[i2+i] == 0xFF)) {
-							if (line == 1)
-								p2[i2/2] = 0;
-							else if (line == 2) {
-								for (i3 = 0; i3 < size; i3 = i3+2) {
-									if ((p3[i3+i] == 0x0A) || (p3[i3+i] == 0xFF))
-										p3[i3/2] = 0;									
-									else
-										p3[i3/2] = p3[i3+i];	// write to line 2
-								}
+	// Load the banner.
+	// NOTE: myBanner is cleared first in case the banner
+	// file is smaller than NDS_BANNER_SIZE_DSi.
+	sNDSBanner myBanner;
+	memset(&myBanner, 0, sizeof(myBanner));
+	fseek(binFile, 0, SEEK_SET);
+	fread(&myBanner, 1, sizeof(myBanner), binFile);
+
+	// Check the banner version.
+	switch (myBanner.version) {
+		case NDS_BANNER_VER_ORIGINAL:
+			if (bnrtitlenum > NDS_LANG_SPANISH) {
+				// Unsupported language. (Chinese or Korean)
+				// Default to Japanese.
+				bnrtitlenum = NDS_LANG_JAPANESE;
+			}
+			break;
+
+		case NDS_BANNER_VER_ZH:
+			if (bnrtitlenum > NDS_LANG_CHINESE) {
+				// Unsupported language. (Korean)
+				// Default to Japanese.
+				bnrtitlenum = NDS_LANG_JAPANESE;
+			}
+			break;
+
+		case NDS_BANNER_VER_ZH_KO:
+		case NDS_BANNER_VER_DSi:
+			break;
+
+		case 0:
+		default:
+			// Unsupported banner version.
+			if (line == 0) {
+				return strdup("No Info");
+			} else {
+				return strdup(" ");
+			}
+	}
+
+	// FIXME: This needs reworking.
+	int size = sizeof(myBanner.titles[bnrtitlenum]);
+
+	// turn unicode into ascii (kind of)
+	int i;
+	int i2;
+	int i3;
+	char *p = (char*)myBanner.titles[bnrtitlenum];
+	char *p2 = (char*)myBanner.titles[bnrtitlenum]+2;
+	char *p3 = (char*)myBanner.titles[bnrtitlenum]+4;
+
+	for (i = 0; i < size; i = i+2) {
+		/* if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
+			if (line == 0)
+				p[i/2] = 0;
+			else if (line >= 1) {
+				for (i2 = 0; i2 < size; i2 = i2+2) {
+					if ((p2[i2+i] == 0x0A) || (p2[i2+i] == 0xFF)) {
+						if (line == 1)
+							p2[i2/2] = 0;
+						else if (line == 2) {
+							for (i3 = 0; i3 < size; i3 = i3+2) {
+								if ((p3[i3+i] == 0x0A) || (p3[i3+i] == 0xFF))
+									p3[i3/2] = 0;									
+								else
+									p3[i3/2] = p3[i3+i];	// write to line 2
 							}
-						} else {
-							if (line == 1)
-								p2[i2/2] = p2[i2+i];	// write to line 1
 						}
+					} else {
+						if (line == 1)
+							p2[i2/2] = p2[i2+i];	// write to line 1
 					}
 				}
-			} else {
-				if (line == 0) */
-					p[i/2] = p[i];	// write to line 0
-			// }
-		}
-		
-		char *savedtext = (char*)malloc(256);
-		if (line == 0) {
-			strncpy(savedtext, p, strlen(p)+1);
-		} else if (line == 1) {
-			strncpy(savedtext, p2, strlen(p2)+1);
-		} else if (line == 2) {
-			strncpy(savedtext, p3, strlen(p3)+1);
-		}
-		return savedtext;
-	} else {
-		if (line == 0)
-			return "No Info";
-		else if (line == 1)
-			return " ";
-		else if (line == 2)
-			return " ";
+			}
+		} else {
+			if (line == 0) */
+				p[i/2] = p[i];	// write to line 0
+		// }
 	}
+
+	char* savedtext = (char*)malloc(256);
+	if (line == 0) {
+		strncpy(savedtext, p, strlen(p)+1);
+	} else if (line == 1) {
+		strncpy(savedtext, p2, strlen(p2)+1);
+	} else if (line == 2) {
+		strncpy(savedtext, p3, strlen(p3)+1);
+	}
+	return savedtext;
 }
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
@@ -140,7 +181,7 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 
 	sNDSHeader NDSHeader;
 	sNDSBanner myBanner;
-	memset(&myBanner, 0, sizeof(&myBanner));
+	memset(&myBanner, 0, sizeof(myBanner));
 
 	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file: ", filename);
 	fseek(ndsFile, 0, SEEK_SET);

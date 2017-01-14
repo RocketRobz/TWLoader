@@ -212,6 +212,26 @@ typedef enum {
 	NDS_BANNER_SIZE_DSi		= 0x23C0,
 } sNDSBannerSize;
 
+// Language indexes.
+typedef enum {
+	// DS and 3DS
+	NDS_LANG_JAPANESE	= 0,
+	NDS_LANG_ENGLISH	= 1,
+	NDS_LANG_FRENCH		= 2,
+	NDS_LANG_GERMAN		= 3,
+	NDS_LANG_ITALIAN	= 4,
+	NDS_LANG_SPANISH	= 5,
+	NDS_LANG_CHINESE	= 6,
+	NDS_LANG_KOREAN		= 7,
+
+	// 3DS only
+	N3DS_LANG_CHINESE_SIMPLIFIED	= 6,
+	N3DS_LANG_DUTCH			= 8,
+	N3DS_LANG_PORTUGUESE		= 9,
+	N3DS_LANG_RUSSIAN		= 10,
+	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
+} sNDSLanguage;
+
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
@@ -219,7 +239,15 @@ typedef enum {
  */
 void grabTID(FILE* ndsFile, char *buf);
 
+/**
+ * Get text from a cached banner file.
+ * @param binFile Banner file.
+ * @param bnrtitlenum Title number. (aka language)
+ * @param line Line number.
+ * @return Allocated buffer containing the text.
+ */
 char* grabText(FILE* binFile, int bnrtitlenum, int line);
+
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);
 
