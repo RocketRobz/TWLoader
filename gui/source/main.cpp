@@ -86,57 +86,57 @@ static const ColorData *color_data = NULL;
 static u32 menucolor;
 
 
-const char* fcrompathini_flashcardrom = "FLASHCARD-ROM";
-const char* fcrompathini_rompath = "NDS_PATH";
-const char* fcrompathini_bnriconaniseq = "BNR_ICONANISEQ";
-const char* fcrompathini_bnrtext1 = "BNR_TEXT1";
-const char* fcrompathini_bnrtext2 = "BNR_TEXT2";
-const char* fcrompathini_bnrtext3 = "BNR_TEXT3";
+static const char fcrompathini_flashcardrom[] = "FLASHCARD-ROM";
+static const char fcrompathini_rompath[] = "NDS_PATH";
+static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
+static const char fcrompathini_bnrtext1[] = "BNR_TEXT1";
+static const char fcrompathini_bnrtext2[] = "BNR_TEXT2";
+static const char fcrompathini_bnrtext3[] = "BNR_TEXT3";
 	
 
 // Settings .ini file
-const char* settingsini_frontend = "FRONTEND";
-//const char* settingsini_frontend_twlappinstalled = "TWLAPP_INSTALLED";
-const char* settingsini_frontend_name = "NAME";
-const char* settingsini_frontend_color = "COLOR";
-const char* settingsini_frontend_menucolor = "MENU_COLOR";
-const char* settingsini_frontend_filename = "SHOW_FILENAME";
-const char* settingsini_frontend_locswitch = "GAMELOC_SWITCH";
-const char* settingsini_frontend_topborder = "TOP_BORDER";
-const char* settingsini_frontend_toplayout = "TOP_LAYOUT";
-const char* settingsini_frontend_custombot = "CUSTOM_BOTTOM";
-const char* settingsini_frontend_counter = "COUNTER";
-const char* settingsini_frontend_autoupdate = "AUTOUPDATE";
-const char* settingsini_frontend_autodl = "AUTODOWNLOAD";
+static const char settingsini_frontend[] = "FRONTEND";
+//static const char settingsini_frontend_twlappinstalled[] = "TWLAPP_INSTALLED";
+static const char settingsini_frontend_name[] = "NAME";
+static const char settingsini_frontend_color[] = "COLOR";
+static const char settingsini_frontend_menucolor[] = "MENU_COLOR";
+static const char settingsini_frontend_filename[] = "SHOW_FILENAME";
+static const char settingsini_frontend_locswitch[] = "GAMELOC_SWITCH";
+static const char settingsini_frontend_topborder[] = "TOP_BORDER";
+static const char settingsini_frontend_toplayout[] = "TOP_LAYOUT";
+static const char settingsini_frontend_custombot[] = "CUSTOM_BOTTOM";
+static const char settingsini_frontend_counter[] = "COUNTER";
+static const char settingsini_frontend_autoupdate[] = "AUTOUPDATE";
+static const char settingsini_frontend_autodl[] = "AUTODOWNLOAD";
 	
-const char* settingsini_twlmode = "TWL-MODE";
-const char* settingsini_twl_rainbowled = "RAINBOW_LED";
-const char* settingsini_twl_clock = "TWL_CLOCK";
-const char* settingsini_twl_vram = "TWL_VRAM";
-const char* settingsini_twl_bootani = "BOOT_ANIMATION";
-const char* settingsini_twl_hsmsg = "HEALTH&SAFETY_MSG";
-const char* settingsini_twl_launchslot1 = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
-const char* settingsini_twl_resetslot1 = "RESET_SLOT1";
-const char* settingsini_twl_keepsd = "SLOT1_KEEPSD";
-const char* settingsini_twl_debug = "DEBUG";
-const char* settingsini_twl_gbarunner = "GBARUNNER";
-const char* settingsini_twl_forwarder = "FORWARDER";
-const char* settingsini_twl_flashcard = "FLASHCARD";
+static const char settingsini_twlmode[] = "TWL-MODE";
+static const char settingsini_twl_rainbowled[] = "RAINBOW_LED";
+static const char settingsini_twl_clock[] = "TWL_CLOCK";
+static const char settingsini_twl_vram[] = "TWL_VRAM";
+static const char settingsini_twl_bootani[] = "BOOT_ANIMATION";
+static const char settingsini_twl_hsmsg[] = "HEALTH&SAFETY_MSG";
+static const char settingsini_twl_launchslot1[] = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
+static const char settingsini_twl_resetslot1[] = "RESET_SLOT1";
+static const char settingsini_twl_keepsd[] = "SLOT1_KEEPSD";
+static const char settingsini_twl_debug[] = "DEBUG";
+static const char settingsini_twl_gbarunner[] = "GBARUNNER";
+static const char settingsini_twl_forwarder[] = "FORWARDER";
+static const char settingsini_twl_flashcard[] = "FLASHCARD";
 // End
 
 
 
 // Bootstrap .ini file
-const char* bootstrapini_ndsbootstrap = "NDS-BOOTSTRAP";
-const char* bootstrapini_ndspath = "NDS_PATH";
-const char* bootstrapini_savpath = "SAV_PATH";
-const char* bootstrapini_boostcpu = "BOOST_CPU";
-const char* bootstrapini_debug = "DEBUG";
-const char* bootstrapini_lockarm9scfgext = "LOCK_ARM9_SCFG_EXT";
+static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
+static const char bootstrapini_ndspath[] = "NDS_PATH";
+static const char bootstrapini_savpath[] = "SAV_PATH";
+static const char bootstrapini_boostcpu[] = "BOOST_CPU";
+static const char bootstrapini_debug[] = "DEBUG";
+static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 // End
 
 // Run
-bool run = true;
+static bool run = true;
 // End
 
 const char* text_returntohomemenu()
