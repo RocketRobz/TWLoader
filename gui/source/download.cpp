@@ -342,23 +342,10 @@ void downloadBoxArt(void)
 		fclose(f_nds_file);
 
 		const char *ba_region;
+		const char *ba_region_fallback = NULL;
 		switch (ba_TID[3]) {
 			case 'E':
-			default:
 				ba_region = "US";	// USA (default)
-				break;
-			case 'O':			// USA/Europe
-			case 'P':			// Europe
-				ba_region = ba_langs_eur[language];
-				break;
-			case 'D':
-				ba_region = "DE";	// German
-				break;
-			case 'F':
-				ba_region = "FR";	// French
-				break;
-			case 'I':
-				ba_region = "IT";	// Italian
 				break;
 			case 'J':
 				ba_region = "JA";	// Japanese
@@ -366,8 +353,34 @@ void downloadBoxArt(void)
 			case 'K':
 				ba_region = "KO";	// Korean
 				break;
+
+			// PAL titles.
+			case 'O':			// USA/Europe
+			case 'P':			// Europe
+			default:
+				// TODO: Check the system country code for US vs. EU.
+				ba_region = ba_langs_eur[language];
+				if (strcmp(ba_region, "EN") != 0) {
+					// Fallback to EN if the specified language isn't available.
+					ba_region_fallback = "EN";
+				}
+				break;
+
+			case 'D':
+				ba_region = "DE";	// German
+				ba_region_fallback = "EN";
+				break;
+			case 'F':
+				ba_region = "FR";	// French
+				ba_region_fallback = "EN";
+				break;
+			case 'I':
+				ba_region = "IT";	// Italian
+				ba_region_fallback = "EN";
+				break;
 			case 'S':
 				ba_region = "ES";	// Spanish
+				ba_region_fallback = "EN";
 				break;
 		}
 
@@ -375,7 +388,7 @@ void downloadBoxArt(void)
 		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
 		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
 		if (access(path, F_OK) == -1) {
-			LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
+			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
@@ -384,7 +397,13 @@ void downloadBoxArt(void)
 			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			downloadFile(http_url, path, MEDIA_SD_FILE);
+
+			int res = downloadFile(http_url, path, MEDIA_SD_FILE);
+			if (res != 0 && ba_region_fallback != NULL) {
+				// Try the fallback region.
+				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
+				res = downloadFile(http_url, path, MEDIA_SD_FILE);
+			}
 		}
 	}
 
