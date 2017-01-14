@@ -43,4 +43,9 @@ void UpdateBootstrapUnofficial(void);
  */
 void UpdateBootstrapRelease(void);
 
+/**
+ * Download boxart.
+ */
+void downloadBoxArt(void);
+
 #endif /* DOWNLOAD_H */

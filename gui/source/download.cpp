@@ -1,9 +1,16 @@
 #include "download.h"
 #include "date.h"
 #include "log.h"
+#include "ndsheaderbanner.h"
 
 #include <cstdio>
 #include <malloc.h>
+#include <unistd.h>
+
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 #include <3ds.h>
 #include <sf2d.h>
@@ -29,6 +36,13 @@ typedef struct {
 
 extern char settings_vertext[13];
 extern char settings_latestvertext[13];
+
+// Language
+extern u8 language;
+
+// Files
+extern vector<string> files;
+extern vector<string> fcfiles;
 
 /**
  * Check Wi-Fi status.
@@ -276,4 +290,103 @@ void UpdateBootstrapRelease(void) {
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!");
 	}
+}
+
+/**
+ * Download boxart.
+ */
+void downloadBoxArt(void)
+{
+	// European boxart languages.
+	static const char ba_langs_eur[][4] = {
+		"EN",	// Japanese (English used in place)
+		"EN",	// English
+		"FR",	// French
+		"DE",	// German
+		"IT",	// Italian
+		"ES",	// Spanish
+		"ZH",	// Simplified Chinese
+		"KO",	// Korean
+		"NL",	// Dutch
+		"PT",	// Portugese
+		"RU",	// Russian
+		"TW"	// Traditional Chinese
+	};
+
+	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
+	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
+
+	LogFM("Main.downloadBoxArt", "Checking box art.");
+	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
+		static const char title[] = "Now checking box art if exists (SD Card)...";
+		char romsel_counter1[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
+		DialogBoxAppear(title);
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+
+		const char *tempfile = files.at(boxartnum).c_str();
+		char path[256];
+		snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+		FILE *f_nds_file = fopen(path, "rb");
+
+		char ba_TID[5];
+		grabTID(f_nds_file, ba_TID);
+		ba_TID[4] = 0;
+		fclose(f_nds_file);
+
+		const char *ba_region;
+		switch (ba_TID[3]) {
+			case 'E':
+			default:
+				ba_region = "US";	// USA (default)
+				break;
+			case 'O':			// USA/Europe
+			case 'P':			// Europe
+				ba_region = ba_langs_eur[language];
+				break;
+			case 'D':
+				ba_region = "DE";	// German
+				break;
+			case 'F':
+				ba_region = "FR";	// French
+				break;
+			case 'I':
+				ba_region = "IT";	// Italian
+				break;
+			case 'J':
+				ba_region = "JA";	// Japanese
+				break;
+			case 'K':
+				ba_region = "KO";	// Korean
+				break;
+			case 'S':
+				ba_region = "ES";	// Spanish
+				break;
+		}
+
+		char http_url[256];
+		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
+		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+		if (access(path, F_OK) == -1) {
+			LogFMA("Main.downloadBoxArt", "Downloading box art:", romsel_counter1);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
+			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			downloadFile(http_url, path, MEDIA_SD_FILE);
+		}
+	}
+
+	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
 }
