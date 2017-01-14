@@ -54,7 +54,7 @@ enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
 	SCREEN_MODE_SETTINGS = 1,	// Settings
 };
-ScreenMode screenmode = SCREEN_ROM_SELECT;
+ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 	
 int settings_subscreenmode = 0;
 // 0: Frontend settings
@@ -440,7 +440,7 @@ void DialogBoxDisappear(const char *text) {
 	for (int i = 0; i < 240; i += movespeed) {
 		movespeed += 1;
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1) {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i);
