@@ -1107,12 +1107,11 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
-	sf2d_texture *dsboottex; // DS boot screen in settings
-	sf2d_texture *dsiboottex; // DSi boot screen in settings
-	sf2d_texture *dshstex; // DS H&S screen in settings
-	sf2d_texture *dsihstex; // DSi H&S screen in settings
-	sf2d_texture *whitescrtex; // White screen in settings
-	sf2d_texture *disabledtex; // Red circle with line
+	sf2d_texture *dsboottex = NULL;		// DS boot screen in settings
+	sf2d_texture *dsiboottex = NULL;	// DSi boot screen in settings
+	sf2d_texture *dshstex = NULL;		// DS H&S screen in settings
+	sf2d_texture *dsihstex = NULL;		// DSi H&S screen in settings
+	sf2d_texture *disabledtex = NULL;	// Red circle with line
 
 	LogFM("Main.sf2d_textures", "Textures load successfully");
 
@@ -1302,7 +1301,6 @@ int main()
 				sf2d_free_texture(dsiboottex);
 				sf2d_free_texture(dshstex);
 				sf2d_free_texture(dsihstex);
-				sf2d_free_texture(whitescrtex);
 				sf2d_free_texture(disabledtex);
 				colortexloaded = true;
 			}
@@ -1582,7 +1580,6 @@ int main()
 				dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
 				dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 				dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
-				whitescrtex = sfil_load_PNG_file("romfs:/graphics/settings/whitescr.png", SF2D_PLACE_RAM); // White screen in settings
 				disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM); // Red circle with line
 				colortexloaded = false;
 			}
@@ -1603,7 +1600,8 @@ int main()
 						sf2d_draw_texture(dshstex, offset3dl_boxart+136, 124); // Draw H&S screen
 					}
 				} else {
-					sf2d_draw_texture(whitescrtex, offset3dl_boxart+136, 124); // Draw H&S screen
+					// Draw a white screen in place of the H&S screen.
+					sf2d_draw_rectangle(offset3dl_boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 				}
 				if (twlsettings_bootscreenvalue == 0) {
 					sf2d_draw_texture(disabledtex, offset3dl_disabled+136, 20); // Draw disabled texture
@@ -1641,7 +1639,8 @@ int main()
 						sf2d_draw_texture(dshstex, offset3dr_boxart+136, 124); // Draw H&S screen
 					}
 				} else {
-					sf2d_draw_texture(whitescrtex, offset3dr_boxart+136, 124); // Draw H&S screen
+					// Draw a white screen in place of the H&S screen.
+					sf2d_draw_rectangle(offset3dr_boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 				}
 				if (twlsettings_bootscreenvalue == 0) {
 					sf2d_draw_texture(disabledtex, offset3dr_disabled+136, 20); // Draw disabled texture
@@ -3218,7 +3217,6 @@ int main()
 		sf2d_free_texture(dsiboottex);
 		sf2d_free_texture(dshstex);
 		sf2d_free_texture(dsihstex);
-		sf2d_free_texture(whitescrtex);
 		sf2d_free_texture(disabledtex);
 	}
 
