@@ -50,9 +50,11 @@ sftd_font *font_b;
 sf2d_texture *dialogboxtex; // Dialog box
 sf2d_texture *settingstex; // Bottom of settings screen
 
-int screenmode = 0;
-// 0: ROM select
-// 1: Settings
+enum ScreenMode {
+	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
+	SCREEN_MODE_SETTINGS = 1,	// Settings
+};
+ScreenMode screenmode = SCREEN_ROM_SELECT;
 	
 int settings_subscreenmode = 0;
 // 0: Frontend settings
@@ -409,7 +411,7 @@ void DialogBoxAppear(const char *text) {
 			movespeed -= 0.2;
 		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1) {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i-240);
@@ -1284,8 +1286,8 @@ int main()
 
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
-	
-		if(screenmode == 0) {
+
+		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
 				topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				for (int i = 0; i < 5; i++) {
@@ -1557,7 +1559,7 @@ int main()
 			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			
 			sf2d_end_frame();
-		} else if(screenmode == 1) {
+		} else if(screenmode == SCREEN_MODE_SETTINGS) {
 			/* if (!musicbool) {
 				if (dspfirmfound) { bgm_settings.play(); }
 				musicbool = true;
@@ -1707,8 +1709,8 @@ int main()
 			if (fadealpha > 255) {
 				fadealpha = 255;
 				musicbool = false;
-				if(screenmode == 1) {
-					screenmode = 0;
+				if(screenmode == SCREEN_MODE_SETTINGS) {
+					screenmode = SCREEN_MODE_ROM_SELECT;
 					fadeout = false;
 					fadein = true;
 				} else {
@@ -1948,7 +1950,7 @@ int main()
 			if (titleboxYmovepos == -240) {
 				if (screenmodeswitch) {
 					musicbool = false;
-					screenmode = 1;
+					screenmode = SCREEN_MODE_SETTINGS;
 					rad == 0.0f;
 					titleboxYmovepos = 120;
 					ndsiconYmovepos = 133;
@@ -2003,7 +2005,7 @@ int main()
 		}
 
 		//if (updatebotscreen) {
-			if (screenmode == 0) {
+			if (screenmode == SCREEN_MODE_ROM_SELECT) {
 				if (!colortexloaded_bot) {
 					sf2d_free_texture(settingstex);
 					dotcircletex = sfil_load_PNG_file(color_data->dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
@@ -2260,7 +2262,7 @@ int main()
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
 				// }
-			} else if(screenmode == 1) {
+			} else if(screenmode == SCREEN_MODE_SETTINGS) {
 				if (colortexloaded_bot) {
 					sf2d_free_texture(dotcircletex);
 					sf2d_free_texture(startbordertex);
@@ -2585,7 +2587,7 @@ int main()
 		if (titleboxXmovetimer == 0) {
 			updatebotscreen = false;
 		}
-		if (screenmode == 0) {
+		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			Lshouldertext = (romselect_toplayout ? "Box Art" : "Blank");
 			Rshouldertext = (twlsettings_forwardervalue ? "SD Card" : "Flashcard");
 			/* if (filenum == 0) {	// If no ROMs are found
@@ -2653,7 +2655,7 @@ int main()
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
-					screenmode = 1;
+					screenmode = SCREEN_MODE_SETTINGS;
 					updatebotscreen = true;
 				}
 			} else { */
@@ -2979,7 +2981,7 @@ int main()
 					}
 				}
 			//}
-		} else if (screenmode == 1) {
+		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			Lshouldertext = "GUI";
 			Rshouldertext = "NTR/TWL";
 			updatebotscreen = true;
@@ -3182,7 +3184,7 @@ int main()
 	for (int i = 0; i < 5; i++) {
 		sf2d_free_texture(voltex[i]);
 	}
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		for (int i = 0; i < 5; i++) {
 			sf2d_free_texture(setvoltex[i]);
 		}
@@ -3193,7 +3195,7 @@ int main()
 	for (int i = 0; i < 6; i++) {
 		sf2d_free_texture(batterytex[i]);
 	}
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_free_texture(setbatterychrgtex);
 		for (int i = 0; i < 6; i++) {
 			sf2d_free_texture(setbatterytex[i]);
@@ -3210,7 +3212,7 @@ int main()
 	sf2d_free_texture(boxfulltex);
 	if (colortexloaded) { sf2d_free_texture(dotcircletex); }
 	if (colortexloaded) { sf2d_free_texture(startbordertex); }
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_free_texture(settingstex);
 		sf2d_free_texture(settingslogotex);
 		sf2d_free_texture(dsboottex);
