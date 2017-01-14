@@ -237,9 +237,6 @@ const char* romsel_filename;
 std::string romsel_gameline1;
 std::string romsel_gameline2;
 std::string romsel_gameline3;
-char *cstr1;
-char *cstr2;
-char *cstr3;
 
 char* rom = (char*)malloc(256);
 const char* flashcardrom;
@@ -1048,8 +1045,6 @@ static void LoadBoxArt(void) {
 
 void LoadSettings() {
 	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
-	char *cstr = new char[name.length() + 1];
-	strcpy(cstr, name.c_str());
 	settings_colorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
 	settings_menucolorvalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_menucolor, 0);
 	settings_filenamevalue = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
@@ -2406,12 +2401,6 @@ int main()
 									romsel_gameline1 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext1, "");
 									romsel_gameline2 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext2, "");
 									romsel_gameline3 = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_bnrtext3, "");
-									char *cstr1 = new char[romsel_gameline1.length() + 1];
-									strcpy(cstr1, romsel_gameline1.c_str());
-									char *cstr2 = new char[romsel_gameline2.length() + 1];
-									strcpy(cstr2, romsel_gameline2.c_str());
-									char *cstr3 = new char[romsel_gameline3.length() + 1];
-									strcpy(cstr3, romsel_gameline3.c_str());
 									bannertextloaded = true;
 								}
 								if (settings_filenamevalue == 1) {
@@ -2459,12 +2448,6 @@ int main()
 									romsel_gameline1 = grabText(f_bnr, language, 0);
 									romsel_gameline2 = grabText(f_bnr, language, 1);
 									romsel_gameline3 = grabText(f_bnr, language, 2);
-									char *cstr1 = new char[romsel_gameline1.length() + 1];
-									strcpy(cstr1, romsel_gameline1.c_str());
-									/* char *cstr2 = new char[romsel_gameline2.length() + 1];
-									strcpy(cstr2, romsel_gameline2.c_str());
-									char *cstr3 = new char[romsel_gameline3.length() + 1];
-									strcpy(cstr3, romsel_gameline3.c_str()); */
 									fclose(f_bnr);
 									bannertextloaded = true;
 								}
