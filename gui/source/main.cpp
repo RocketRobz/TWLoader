@@ -2383,10 +2383,11 @@ int main()
 								y = 16; dy = 22;
 							}
 
-							// TODO: Proper text centering.
+							// Print the banner text, center-aligned.
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								sftd_draw_textf(font_b, 160-romsel_gameline[i].length()*3.8, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								int text_width = sftd_get_text_width(font_b, 16, romsel_gameline[i].c_str());
+								sftd_draw_textf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
 							if (settings_countervalue == 1) {
