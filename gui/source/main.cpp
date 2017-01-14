@@ -2009,18 +2009,32 @@ int main()
 				} else {
 					// run = false;
 					if (twlsettings_forwardervalue == 1) {
-						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
-							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
-							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 2 || twlsettings_flashcardvalue == 4 || twlsettings_flashcardvalue == 5) {
-							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
-							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
-						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_nds/dstwoautoboot.ini" );
-							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwoautoboot.ini" );
+						switch (twlsettings_flashcardvalue) {
+							case 0:
+							case 1:
+							case 3:
+							default: {
+								CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
+								fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+								fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
+								break;
+							}
+
+							case 2:
+							case 4:
+							case 5: {
+								CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
+								fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
+								fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
+								break;
+							}
+
+							case 6: {
+								CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
+								fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
+								fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
+								break;
+							}
 						}
 					}
 					gbarunnervalue = 1;
@@ -2239,21 +2253,34 @@ int main()
 				} else {
 					if (twlsettings_forwardervalue == 1) {
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
-						if (twlsettings_flashcardvalue == 0 || twlsettings_flashcardvalue == 1 || twlsettings_flashcardvalue == 3) {
-							CIniFile fcrompathini( "sdmc:/_nds/YSMenu.ini" );
-							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/YSMenu.ini" );
-						} else if (twlsettings_flashcardvalue == 2 || twlsettings_flashcardvalue == 4 || twlsettings_flashcardvalue == 5) {
-							CIniFile fcrompathini( "sdmc:/_nds/lastsave.ini" );
-							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/lastsave.ini" );
-						} else if (twlsettings_flashcardvalue == 6) {
-							CIniFile fcrompathini( "sdmc:/_nds/dstwoautoboot.ini" );
-							std::string	rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-							fcrompathini.SaveIniFile( "sdmc:/_nds/dstwoautoboot.ini" );
+						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+						// TODO: Enum values for flash card type.
+						switch (twlsettings_flashcardvalue) {
+							case 0:
+							case 1:
+							case 3:
+							default: {
+								CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
+								fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+								fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
+								break;
+							}
+
+							case 2:
+							case 4:
+							case 5: {
+								CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
+								fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
+								fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
+								break;
+							}
+
+							case 6: {
+								CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
+								fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
+								fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
+								break;
+							}
 						}
 					}
 					SaveSettings();
