@@ -1,14 +1,18 @@
-#include <stdio.h>
+#include "download.h"
+
+#include <cstdio>
+#include <cstring>
 #include <dirent.h>
-#include <string.h>
-#include <3ds.h>
-#include <sf2d.h>
-#include <sfil.h>
-#include <sftd.h>
 #include <malloc.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include <3ds.h>
+#include <sf2d.h>
+#include <sfil.h>
+#include <sftd.h>
+
 //#include <citrus/app.hpp>
 //#include <citrus/battery.hpp>
 //#include <citrus/core.hpp>
@@ -138,7 +142,7 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 // End
 
 // Run
-static bool run = true;
+bool run = true;
 // End
 
 const char* text_returntohomemenu()
@@ -381,40 +385,44 @@ static Result ptmsysmSetInfoLedPattern(const RGBLedPattern* pattern)
     return ipc[1];
 }
 
-void DialogueBoxAppear() {
-	if (!showdialoguebox) {
-		int movespeed = 22;
-		for (int i = 0; i < 240; i+=movespeed) {
-			if (movespeed <= 1)
-				movespeed = 1;
-			else
-				movespeed -= 0.2;
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == 1)
-				sf2d_draw_texture(settingstex, 0, 0);
-			sf2d_draw_texture(dialogueboxtex, 0, i-240);
-			sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialoguetext);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+void DialogueBoxAppear(void) {
+	if (showdialoguebox)
+		return;
+
+	int movespeed = 22;
+	for (int i = 0; i < 240; i+=movespeed) {
+		if (movespeed <= 1) {
+			movespeed = 1;
+		} else {
+			movespeed -= 0.2;
 		}
-		showdialoguebox = true;
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == 1) {
+			sf2d_draw_texture(settingstex, 0, 0);
+		}
+		sf2d_draw_texture(dialogueboxtex, 0, i-240);
+		sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 	}
+	showdialoguebox = true;
 }
 
-void DialogueBoxDisappear() {
-	if (showdialoguebox) {
-		int movespeed = 1;
-		for (int i = 0; i < 240; i+=movespeed) {
-			movespeed += 1;
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == 1)
-				sf2d_draw_texture(settingstex, 0, 0);
-			sf2d_draw_texture(dialogueboxtex, 0, i);
-			sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialoguetext);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+void DialogueBoxDisappear(void) {
+	if (!showdialoguebox)
+		return;
+
+	int movespeed = 1;
+	for (int i = 0; i < 240; i+=movespeed) {
+		movespeed += 1;
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == 1) {
+			sf2d_draw_texture(settingstex, 0, 0);
 		}
-		showdialoguebox = false;
+		sf2d_draw_texture(dialogueboxtex, 0, i);
+		sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialoguetext);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 	}
 }
 
@@ -439,243 +447,6 @@ static void CreateGameSave(const char *filename) {
 
 	dialoguetext = "Done!";
 	DialogueBoxDisappear();
-}
-
-bool checkWifiStatus() {
-	acInit();
-	u32 wifiStatus;
-	ACU_GetWifiStatus(&wifiStatus);
-	bool res = false;
-	
-	if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
-		LogFMA("WifiStatus", "Internet connetion active found", RetTime().c_str());
-		res = true;
-	}else {
-		LogFMA("WifiStatus", "No Internet connetion active found", RetTime().c_str());
-	}
-	
-	acExit();
-	return res;
-}
-
-enum MediaType {
-	MEDIA_SD_FILE = 0,	// Plain old file on the SD card.
-	MEDIA_SD_CIA = 1,	// CIA installed to the SD card.
-	MEDIA_NAND_CIA = 2,	// CIA installed to NAND.
-};
-
-/**
- * Download a file.
- * @param url URL of the file.
- * @param file Local filename.
- * @param mediaType How the file should be handled.
- * @return 0 on success; non-zero on error.
- */
-int downloadFile(const char* url, const char* file, MediaType mediaType) {
-
-	if(checkWifiStatus()){ //Checks if wifi is on
-		acInit();
-		fsInit();
-		httpcInit(0x1000);
-		u8 method = 0;
-		httpcContext context;
-		u32 statuscode=0;
-		HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
-
-		if (method <= 3 && method >= 1) {
-			useMethod = (HTTPC_RequestMethod)method;
-		}
-
-		do {
-			if (statuscode >= 301 && statuscode <= 308) {
-				char newurl[4096];
-				httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
-				url = &newurl[0];
-
-				httpcCloseContext(&context);
-			}
-
-			Result ret = httpcOpenContext(&context, useMethod, (char*)url, 0);
-			httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-
-			if(ret==0){
-				httpcBeginRequest(&context);
-				u32 contentsize=0;
-				httpcGetResponseStatusCode(&context, &statuscode);
-				if (statuscode == 200){
-					u32 readSize = 0;
-					long int bytesWritten = 0;								
-
-					Handle fileHandle;
-					FS_Path filePath=fsMakePath(PATH_ASCII, file);
-					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
-
-					httpcGetDownloadSizeState(&context, NULL, &contentsize);
-					u8* buf = (u8*)malloc(contentsize);
-					memset(buf, 0, contentsize);		
-					
-					do {
-						ret = httpcDownloadData(&context, buf, contentsize, &readSize);
-						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
-						bytesWritten += readSize;						
-					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
-					
-					FSFILE_Close(fileHandle);
-					svcCloseHandle(fileHandle);
-
-					if (mediaType != MEDIA_SD_FILE) {
-						// This is a CIA, so we should install it.
-						amInit();
-						Handle handle;
-						// FIXME: Should check the return values.
-						switch (mediaType) {
-							case MEDIA_SD_CIA:
-								AM_QueryAvailableExternalTitleDatabase(NULL);
-								AM_StartCiaInstall(MEDIATYPE_SD, &handle);
-								break;
-							case MEDIA_NAND_CIA:
-								AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
-								break;
-							default:
-								break;
-						}
-						FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
-						AM_FinishCiaInstall(handle);
-						amExit();
-					}
-
-					free(buf);
-				}
-			}
-		} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
-		httpcCloseContext(&context);
-
-		httpcExit();
-		acExit();
-		fsExit();
-		return 0;
-	}
-	return -1;
-}
-
-int checkUpdate(){
-	LogFM("checkUpdate", "Checking updates...");
-	dialoguetext = "Now checking TWLoader version...";
-	DialogueBoxAppear();
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1)
-		sf2d_draw_texture(settingstex, 0, 0);
-	sf2d_draw_texture(dialogueboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-	
-	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", MEDIA_SD_FILE);
-	
-	if (res == 0) {
-		sVerfile Verfile;
-			
-		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
-		fread(&Verfile,1,sizeof(Verfile),VerFile);
-		strcpy(settings_latestvertext, Verfile.text);
-		fclose(VerFile);
-		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
-		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
-		
-		int updtequals = strcmp(settings_latestvertext, settings_vertext);
-		
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1)
-			sf2d_draw_texture(settingstex, 0, 0);		
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
-		if (updtequals == 0){
-			LogFMA("checkUpdate", "Comparing...", "Are equals");
-			LogFM("checkUpdate", "TWLoader is up-to-date!");
-			dialoguetext = "TWLoader is up-to-date.";
-			//DialogueBoxDisappear(); <-- this is causing a freeze only in this function.
-			showdialoguebox = false;	// <-- so do this instead.
-			return -1;
-		}
-		LogFMA("checkUpdate", "Comparing...", "NO equals");
-		return 0;
-	}
-	
-	LogFM("checkUpdate", "Problem downloading ver file!");
-	return -1;
-}
-
-void DownloadTWLoaderCIAs() {
-	
-	
-	//if (checkUpdate() == 0){		 
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
-		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-			
-		int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1)
-			sf2d_draw_texture(settingstex, 0, 0);
-		sf2d_draw_texture(dialogueboxtex, 0, 0);
-		if (res == 0) {	
-			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
-			sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-			// TODO: Use MEDIA_NAND_CIA.
-			res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == 1)
-				sf2d_draw_texture(settingstex, 0, 0);
-			sf2d_draw_texture(dialogueboxtex, 0, 0);
-			if (res == 0) {
-				sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-				run = false;
-			} else {
-				dialoguetext = "Download failed.";
-				DialogueBoxDisappear();
-			}
-		} else {
-			dialoguetext = "Update failed.";
-			DialogueBoxDisappear();
-		}
-	//}
-}
-
-void UpdateBootstrapUnofficial() {
-	dialoguetext = "Now updating bootstrap (Unofficial)...";
-	DialogueBoxAppear();
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1)
-		sf2d_draw_texture(settingstex, 0, 0);
-	sf2d_draw_texture(dialogueboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
-	dialoguetext = "Done!";
-	if (screenmode == 1)
-		DialogueBoxDisappear();
-}
-
-void UpdateBootstrapRelease() {
-	dialoguetext = "Now updating bootstrap (Release)...";
-	DialogueBoxAppear();
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1)
-		sf2d_draw_texture(settingstex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, dialoguetext);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
-	dialoguetext = "Done!";
-	if (screenmode == 1)
-		DialogueBoxDisappear();
 }
 
 /**
