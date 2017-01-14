@@ -316,6 +316,16 @@ void downloadBoxArt(void)
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
 
+	// Get the system region.
+	// This is needed in order to differentiate the 'O' region code
+	// for USA and Europe.
+	u8 region;
+	int res = CFGU_SecureInfoGetRegion(&region);
+	if (res != 0) {
+		// Can't get the region. Assume USA.
+		region = CFG_REGION_USA;
+	}
+
 	LogFM("Main.downloadBoxArt", "Checking box art.");
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
 		static const char title[] = "Now checking box art if exists (SD Card)...";
@@ -354,11 +364,22 @@ void downloadBoxArt(void)
 				ba_region = "KO";	// Korean
 				break;
 
-			// PAL titles.
 			case 'O':			// USA/Europe
+				if (region == CFG_REGION_USA) {
+					// System is USA region.
+					// Get the USA boxart if it's available.
+					ba_region = "US";
+					ba_region_fallback = "EN";
+					break;
+				}
+				// fall-through
 			case 'P':			// Europe
 			default:
-				// TODO: Check the system country code for US vs. EU.
+				// System is not USA region.
+				// Get the European boxart that matches the system's language.
+				// TODO: Check country code for Australia.
+				// This requires parsing the Config savegame. (GetConfigInfoBlk2())
+				// Reference: https://3dbrew.org/wiki/Config_Savegame
 				ba_region = ba_langs_eur[language];
 				if (strcmp(ba_region, "EN") != 0) {
 					// Fallback to EN if the specified language isn't available.
