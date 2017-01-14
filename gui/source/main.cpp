@@ -12,6 +12,7 @@
 #include <sf2d.h>
 #include <sfil.h>
 #include <sftd.h>
+#include "ptmu_x.h"
 
 //#include <citrus/app.hpp>
 //#include <citrus/battery.hpp>
@@ -921,16 +922,19 @@ static void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]
 	u8 batteryLevel = 0;
 	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
 		batteryIcon = batterychrgtex;
-	} else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
-		switch (batteryLevel){
-			case 5:
-				// FIXME: This doesn't seem to be right...
-				// (It never shows "plugged in and full, not charging".)
-				// Also, it never switches to "fully charged" while
-				// TWLoader is running; going back to the Home Menu
-				// causes the state to change.
-				batteryIcon = (batteryChargeState ? texarray[5] : texarray[4]);
+	} else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
+		switch (batteryLevel) {
+			case 5: {
+				// NOTE: PTMUX_GetAdapterState should be moved into
+				// ctrulib without the 'X' prefix.
+				u8 acAdapter = 0;
+				if (R_SUCCEEDED(PTMUX_GetAdapterState(&acAdapter)) && acAdapter) {
+					batteryIcon = texarray[5];
+				} else {
+					batteryIcon = texarray[4];
+				}
 				break;
+			}
 			case 4:
 				batteryIcon = texarray[4];
 				break;
@@ -1106,6 +1110,7 @@ int main()
 	cfguInit();
 	amInit();
 	ptmuInit();	// For battery status
+	ptmuxInit();	// For AC adapter status
 	sdmcInit();
 	romfsInit();
 	srvInit();
@@ -3260,14 +3265,17 @@ int main()
 	//}	// run
 	}	// aptMainLoop
 
-	
 	SaveSettings();
+
 	hidExit();
 	srvExit();
 	romfsExit();
 	sdmcExit();
-	aptExit();
+	ptmuxExit();
+	ptmuExit();
+	amExit();
 	cfguExit();
+	aptExit();
 
 	if (colortexloaded) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
