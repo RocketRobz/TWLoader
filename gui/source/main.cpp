@@ -1032,7 +1032,7 @@ void SaveSettings() {
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, twlsettings_flashcardvalue);
 	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
-	if (applaunchprep == true || fadeout == true) {
+	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_launchslot1, 0) == 0) {
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
@@ -1600,7 +1600,7 @@ int main()
 				sf2d_free_texture(disabledtex);
 				colortexloaded = true;
 			}
-			if (bnricontexloaded == false) {
+			if (!bnricontexloaded) {
 				if (twlsettings_forwardervalue == 0) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
@@ -1646,7 +1646,7 @@ int main()
 				bnricontexloaded = true;
 				bnriconnum = 0+pagenum*20;
 			}
-			if (boxarttexloaded == false) {
+			if (!boxarttexloaded) {
 				if (twlsettings_forwardervalue == 0) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
@@ -1858,7 +1858,7 @@ int main()
 				if (dspfirmfound) { bgm_settings.play(); }
 				musicbool = true;
 			} */
-			if (colortexloaded == true) {
+			if (colortexloaded) {
 				sf2d_free_texture(topbgtex);
 				setvoltex[0] = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
 				setvoltex[1] = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
@@ -1988,7 +1988,7 @@ int main()
 			{XbuttonYpos -= 1;}
 		}
 		
-		if (fadein == true) {
+		if (fadein) {
 			fadealpha -= 31;
 			if (fadealpha < 0) {
 				fadealpha = 0;
@@ -1997,7 +1997,7 @@ int main()
 			}
 		}
 		
-		if (fadeout == true) {
+		if (fadeout) {
 			fadealpha += 31;
 			if (fadealpha > 255) {
 				fadealpha = 255;
@@ -2034,7 +2034,7 @@ int main()
 			}
 		}
 		
-		if (playwrongsounddone == true) {
+		if (playwrongsounddone) {
 			if (hHeld & KEY_LEFT || hHeld & KEY_RIGHT) {} else {
 				soundwaittimer += 1;
 				if (soundwaittimer == 2) {
@@ -2044,7 +2044,7 @@ int main()
 			}
 		}
 
-		if(titleboxXmoveleft == true) {
+		if (titleboxXmoveleft) {
 			titleboxXmovetimer += 1;
 			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
@@ -2098,7 +2098,7 @@ int main()
 					LoadBoxArt();
 				}
 			} else {
-				if (cursorPositionset == false) {
+				if (!cursorPositionset) {
 					cursorPosition--;
 					if (twlsettings_forwardervalue == 1) {
 						if (cursorPosition == -1)
@@ -2142,7 +2142,7 @@ int main()
 					}
 				}
 			}
-		} else if(titleboxXmoveright == true) {
+		} else if(titleboxXmoveright) {
 			titleboxXmovetimer += 1;
 			if (titleboxXmovetimer == 10) {
 				titleboxXmovetimer = 0;
@@ -2196,7 +2196,7 @@ int main()
 				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
 			} else {
-				if (cursorPositionset == false) {
+				if (!cursorPositionset) {
 					cursorPosition++;
 					if (twlsettings_forwardervalue == 1) {
 						if (cursorPosition == -1)
@@ -2222,12 +2222,12 @@ int main()
 				}
 			}
 		}
-		if(applaunchprep == true) {
+		if (applaunchprep) {
 			rad += 0.50f;
 			titleboxYmovepos -= 6;
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
-				if(screenmodeswitch == true) {
+				if (screenmodeswitch) {
 					musicbool = false;
 					screenmode = 1;
 					rad == 0.0f;
@@ -2270,7 +2270,7 @@ int main()
 			}
 		}
 
-		// if(updatebotscreen == true){
+		//if (updatebotscreen) {
 			if (screenmode == 0) {
 				if (!colortexloaded_bot) {
 					sf2d_free_texture(settingstex);
@@ -2320,7 +2320,7 @@ int main()
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 							} else {
-								if (bannertextloaded == false) {
+								if (!bannertextloaded) {
 									if (fcfiles.size() != 0)
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 									flashcardrom = fcfiles.at(cursorPosition).c_str();
@@ -2364,7 +2364,7 @@ int main()
 								if (settings_filenamevalue == 1)
 									sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Slot-1 cart (NTR carts only)");
 							} else {
-								if (bannertextloaded == false) {
+								if (!bannertextloaded) {
 									if (files.size() != 0)
 										romsel_filename = files.at(storedcursorPosition).c_str();
 									const char *tempfile = files.at(cursorPosition).c_str();
@@ -2510,7 +2510,7 @@ int main()
 						} 
 					}
 					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
-					if (applaunchprep == false) {
+					if (!applaunchprep) {
 						if (titleboxXmovetimer == 0) {
 							startbordermovepos = 0;
 							startborderscalesize = 1.0;
@@ -2546,7 +2546,7 @@ int main()
 					}
 				// }
 			} else if(screenmode == 1) {
-				if (colortexloaded_bot == true) {
+				if (colortexloaded_bot) {
 					sf2d_free_texture(dotcircletex);
 					sf2d_free_texture(startbordertex);
 					sf2d_free_texture(bottomtex);
@@ -2956,7 +2956,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(applaunchprep == false || fadealpha == 255) {
+				if(!applaunchprep || fadealpha == 255) {
 					if (settings_locswitchvalue == 1) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
@@ -2980,7 +2980,7 @@ int main()
 							updatebotscreen = true;
 						}
 					}
-					if (noromsfound == false) {
+					if (!noromsfound) {
 						if (twlsettings_forwardervalue == 1) {	// If no ROMs are found
 							if (fcfiles.size() == 0) {	// If no ROMs are found
 								cursorPosition = -2;
@@ -3181,13 +3181,13 @@ int main()
 							}
 						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
-							if (titleboxXmoveright == false) {
+							if (!titleboxXmoveright) {
 								titleboxXmoveleft = true;
 							}
 							updatebotscreen = true;
 						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
-							if (titleboxXmoveleft == false) {
+							if (!titleboxXmoveleft) {
 								if (twlsettings_forwardervalue == 1) {
 									if (filenum == 0) {
 										if (!playwrongsounddone) {
@@ -3235,7 +3235,7 @@ int main()
 						}
 					} else if(hHeld & KEY_RIGHT){
 						//titleboxXmovepos -= 64;
-						if (titleboxXmoveleft == false) {
+						if (!titleboxXmoveleft) {
 							if (twlsettings_forwardervalue == 1) {
 								if (filenum == 0) {
 									if (!playwrongsounddone) {
@@ -3255,7 +3255,7 @@ int main()
 						updatebotscreen = true;
 					} else if(hHeld & KEY_LEFT){
 						//titleboxXmovepos += 64;
-						if (titleboxXmoveright == false) {
+						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
 						updatebotscreen = true;
@@ -3475,7 +3475,7 @@ int main()
 	aptExit();
 	cfguExit();
 
-	if (colortexloaded == true) { sf2d_free_texture(topbgtex); }
+	if (colortexloaded) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
 	for (int i = 0; i < 5; i++) {
 		sf2d_free_texture(voltex[i]);
@@ -3497,7 +3497,7 @@ int main()
 			sf2d_free_texture(setbatterytex[i]);
 		}
 	}
-	if (colortexloaded == true) { sf2d_free_texture(bottomtex); }
+	if (colortexloaded) { sf2d_free_texture(bottomtex); }
 	sf2d_free_texture(iconunktex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(whomeicontex);
@@ -3506,8 +3506,8 @@ int main()
 	sf2d_free_texture(settingsboxtex);
 	sf2d_free_texture(carttex);
 	sf2d_free_texture(boxfulltex);
-	if (colortexloaded == true) { sf2d_free_texture(dotcircletex); }
-	if (colortexloaded == true) { sf2d_free_texture(startbordertex); }
+	if (colortexloaded) { sf2d_free_texture(dotcircletex); }
+	if (colortexloaded) { sf2d_free_texture(startbordertex); }
 	if (screenmode == 1) {
 		sf2d_free_texture(settingstex);
 		sf2d_free_texture(settingslogotex);
