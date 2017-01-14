@@ -458,7 +458,20 @@ bool checkWifiStatus() {
 	return res;
 }
 
-int downloadFile(const char* url, const char* file, int mediaType){
+enum MediaType {
+	MEDIA_SD_FILE = 0,	// Plain old file on the SD card.
+	MEDIA_SD_CIA = 1,	// CIA installed to the SD card.
+	MEDIA_NAND_CIA = 2,	// CIA installed to NAND.
+};
+
+/**
+ * Download a file.
+ * @param url URL of the file.
+ * @param file Local filename.
+ * @param mediaType How the file should be handled.
+ * @return 0 on success; non-zero on error.
+ */
+int downloadFile(const char* url, const char* file, MediaType mediaType) {
 
 	if(checkWifiStatus()){ //Checks if wifi is on
 		acInit();
@@ -469,7 +482,9 @@ int downloadFile(const char* url, const char* file, int mediaType){
 		u32 statuscode=0;
 		HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
 
-		if(method <= 3 && method >= 1) useMethod = (HTTPC_RequestMethod)method;
+		if (method <= 3 && method >= 1) {
+			useMethod = (HTTPC_RequestMethod)method;
+		}
 
 		do {
 			if (statuscode >= 301 && statuscode <= 308) {
@@ -508,26 +523,33 @@ int downloadFile(const char* url, const char* file, int mediaType){
 					FSFILE_Close(fileHandle);
 					svcCloseHandle(fileHandle);
 
-					if(mediaType != NULL){
+					if (mediaType != MEDIA_SD_FILE) {
+						// This is a CIA, so we should install it.
 						amInit();
 						Handle handle;
-						if (mediaType == 0) {
-							AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
-						}else{
-							AM_QueryAvailableExternalTitleDatabase(NULL);
-							AM_StartCiaInstall(MEDIATYPE_SD, &handle);
+						// FIXME: Should check the return values.
+						switch (mediaType) {
+							case MEDIA_SD_CIA:
+								AM_QueryAvailableExternalTitleDatabase(NULL);
+								AM_StartCiaInstall(MEDIATYPE_SD, &handle);
+								break;
+							case MEDIA_NAND_CIA:
+								AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
+								break;
+							default:
+								break;
 						}
 						FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
 						AM_FinishCiaInstall(handle);
-						amExit();						
+						amExit();
 					}
-					
+
 					free(buf);
 				}
 			}
 		} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
 		httpcCloseContext(&context);
-		
+
 		httpcExit();
 		acExit();
 		fsExit();
@@ -548,7 +570,7 @@ int checkUpdate(){
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
-	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", NULL);
+	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", MEDIA_SD_FILE);
 	
 	if (res == 0) {
 		sVerfile Verfile;
@@ -591,7 +613,7 @@ void DownloadTWLoaderCIAs() {
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 			
-		int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", 1); // 1 = SD
+		int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1)
 			sf2d_draw_texture(settingstex, 0, 0);
@@ -601,8 +623,8 @@ void DownloadTWLoaderCIAs() {
 			sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			//downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", 0); // 0 = NAND
-			res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", NULL);//Working on it
+			// TODO: Use MEDIA_NAND_CIA.
+			res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_SD_FILE);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == 1)
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -634,7 +656,7 @@ void UpdateBootstrapUnofficial() {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
+	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
 	dialoguetext = "Done!";
 	if (screenmode == 1)
 		DialogueBoxDisappear();
@@ -650,7 +672,7 @@ void UpdateBootstrapRelease() {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", NULL);
+	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
 	dialoguetext = "Done!";
 	if (screenmode == 1)
 		DialogueBoxDisappear();
@@ -1280,7 +1302,7 @@ static void downloadBoxArt(void)
 			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			downloadFile(http_url, path, NULL);
+			downloadFile(http_url, path, MEDIA_SD_FILE);
 		}
 	}
 
