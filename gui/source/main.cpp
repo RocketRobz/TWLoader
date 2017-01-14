@@ -2466,21 +2466,21 @@ int main()
 					filenameYpos = 0;
 					if (twlsettings_forwardervalue == 1) {
 						if(fcfiles.size() >= 19+pagenum*20) {
-							for(filenum = pagenum*20; filenum < 20+pagenum*20; filenum++){
+							for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-							}
-							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
+
+								bnriconnum = filenum;
 								ChangeBNRIconNo();
 								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(filenum = pagenum*20; filenum < fcfiles.size(); filenum++){
+							for (filenum = pagenum*20; filenum < fcfiles.size(); filenum++){
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-							}
-							for(bnriconnum = pagenum*20; bnriconnum < fcfiles.size(); bnriconnum++) {
+
+								bnriconnum = filenum;
 								ChangeBNRIconNo();
 								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
@@ -2488,21 +2488,21 @@ int main()
 						}
 					} else {
 						if(files.size() >= 19+pagenum*20) {
-							for(filenum = pagenum*20; filenum < 20+pagenum*20; filenum++){
+							for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-							}
-							for(bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
+
+								bnriconnum = filenum;
 								ChangeBNRIconNo();
 								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
 							}
 						} else {
-							for(filenum = pagenum*20; filenum < files.size(); filenum++){
+							for (filenum = pagenum*20; filenum < files.size(); filenum++) {
 								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 								titleboxXpos += 64;
-							}
-							for(bnriconnum = pagenum*20; bnriconnum < files.size(); bnriconnum++) {
+
+								bnriconnum = filenum;
 								ChangeBNRIconNo();
 								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 								ndsiconXpos += 64;
@@ -2871,26 +2871,14 @@ int main()
 			updatebotscreen = false;
 		}
 		if (screenmode == 0) {
-			if (romselect_toplayout == 1) {
-				Lshouldertext = "Box Art";
-			} else {
-				Lshouldertext = "Blank";
-			}
-			if (twlsettings_forwardervalue == 1) {
-				Rshouldertext = "SD Card";
-			} else {
-				Rshouldertext = "Flashcard";
-			}
+			Lshouldertext = (romselect_toplayout ? "Box Art" : "Blank");
+			Rshouldertext = (twlsettings_forwardervalue ? "SD Card" : "Flashcard");
 			/* if (filenum == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
 			if(hDown & KEY_L) {
-				if (romselect_toplayout == 1) {
-					romselect_toplayout = 0;
-				} else {
-					romselect_toplayout = 1;
-				}
+				romselect_toplayout = !romselect_toplayout;
 				if (dspfirmfound) {
 					sfx_switch.stop();	// Prevent freezing
 					sfx_switch.play();
@@ -2966,11 +2954,7 @@ int main()
 							titleboxXmovepos = 0;
 							boxartXmovepos = 0;
 							noromsfound = false;
-							if (twlsettings_forwardervalue == 1) {
-								twlsettings_forwardervalue = 0;
-							} else {
-								twlsettings_forwardervalue = 1;
-							}
+							twlsettings_forwardervalue = !twlsettings_forwardervalue;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 							if (dspfirmfound) {
