@@ -387,6 +387,13 @@ void downloadBoxArt(void)
 				}
 				break;
 
+			case 'U':
+				// Alternate country code for Australia.
+				ba_region = "AU";
+				ba_region_fallback = "EN";
+				break;
+
+			// European country-specific localizations.
 			case 'D':
 				ba_region = "DE";	// German
 				ba_region_fallback = "EN";
@@ -395,8 +402,16 @@ void downloadBoxArt(void)
 				ba_region = "FR";	// French
 				ba_region_fallback = "EN";
 				break;
+			case 'H':
+				ba_region = "NL";	// Dutch
+				ba_region_fallback = "EN";
+				break;
 			case 'I':
 				ba_region = "IT";	// Italian
+				ba_region_fallback = "EN";
+				break;
+			case 'R':
+				ba_region = "RU";	// Russian
 				ba_region_fallback = "EN";
 				break;
 			case 'S':
