@@ -238,7 +238,7 @@ std::string romsel_gameline1;
 std::string romsel_gameline2;
 std::string romsel_gameline3;
 
-char* rom = (char*)malloc(256);
+static const char* rom = "";		// Selected ROM image.
 const char* flashcardrom;
 std::string sdmc = "sdmc:/";
 std::string fat = "fat:/";
@@ -2996,7 +2996,7 @@ int main()
 				} else if(hDown & KEY_A){
 					twlsettings_launchslot1value = 0;
 					screenoff();
-					rom = (char*)(files.at(cursorPosition)).c_str();
+					rom = files.at(cursorPosition).c_str();
 					SaveSettings();
 					applaunchon = true;
 					updatebotscreen = true;
@@ -3251,10 +3251,10 @@ int main()
 									titleboxXmovetimer = 1;
 									if (twlsettings_forwardervalue == 1) {
 										twlsettings_launchslot1value = 1;
-										rom = (char*)(fcfiles.at(cursorPosition)).c_str();
+										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										twlsettings_launchslot1value = 0;
-										rom = (char*)(files.at(cursorPosition)).c_str();
+										rom = files.at(cursorPosition).c_str();
 									}
 									applaunchprep = true;
 								}
@@ -3305,10 +3305,10 @@ int main()
 								titleboxXmovetimer = 1;
 								if (twlsettings_forwardervalue == 1) {
 									twlsettings_launchslot1value = 1;
-									rom = (char*)(fcfiles.at(cursorPosition)).c_str();
+									rom = fcfiles.at(cursorPosition).c_str();
 								} else {
 									twlsettings_launchslot1value = 0;
-									rom = (char*)(files.at(cursorPosition)).c_str();
+									rom = files.at(cursorPosition).c_str();
 								}
 								applaunchprep = true;
 							}
