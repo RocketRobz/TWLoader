@@ -252,84 +252,50 @@ void settingsDrawTopScreen(void)
 	if (!settings_tex_loaded) {
 		settingsLoadTextures();
 	}
-
 	update_battery_level(setbatterychrgtex, setbatterytex);
-	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
-	if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-		if (twlsettings_cpuspeedvalue == 1) {
-			sf2d_draw_texture(dsiboottex, offset3D[0].boxart+136, 20); // Draw boot screen
-		} else {
-			sf2d_draw_texture(dsboottex, offset3D[0].boxart+136, 20); // Draw boot screen
-		}
-		if (twlsettings_healthsafetyvalue == 1) {
+
+	// Draw twice; once per 3D framebuffer.
+	for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+		sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
+		sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 			if (twlsettings_cpuspeedvalue == 1) {
-				sf2d_draw_texture(dsihstex, offset3D[0].boxart+136, 124); // Draw H&S screen
+				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 			} else {
-				sf2d_draw_texture(dshstex, offset3D[0].boxart+136, 124); // Draw H&S screen
+				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+			}
+			if (twlsettings_healthsafetyvalue == 1) {
+				if (twlsettings_cpuspeedvalue == 1) {
+					sf2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+				} else {
+					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+				}
+			} else {
+				// Draw a white screen in place of the H&S screen.
+				sf2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+			}
+			if (twlsettings_bootscreenvalue == 0) {
+				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
+				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture
 			}
 		} else {
-			// Draw a white screen in place of the H&S screen.
-			sf2d_draw_rectangle(offset3D[0].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
-		}
-		if (twlsettings_bootscreenvalue == 0) {
-			sf2d_draw_texture(disabledtex, offset3D[0].disabled+136, 20); // Draw disabled texture
-			sf2d_draw_texture(disabledtex, offset3D[0].disabled+136, 124); // Draw disabled texture
-		}
-	} else {
-		sf2d_draw_texture(settingslogotex, offset3D[0].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-		if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-			sftd_draw_textf(font, offset3D[0].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
-			sftd_draw_textf(font, offset3D[0].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
-			sftd_draw_textf(font, offset3D[0].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
-		}
-	}
-	sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-	sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
-
-	draw_volume_slider(setvoltex);
-	sf2d_draw_texture(batteryIcon, 371, 2);
-	sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
-	sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-	sf2d_end_frame();
-
-	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-	sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
-	if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-		if (twlsettings_cpuspeedvalue == 1) {
-			sf2d_draw_texture(dsiboottex, offset3D[1].boxart+136, 20); // Draw boot screen
-		} else {
-			sf2d_draw_texture(dsboottex, offset3D[1].boxart+136, 20); // Draw boot screen
-		}
-		if (twlsettings_healthsafetyvalue == 1) {
-			if (twlsettings_cpuspeedvalue == 1) {
-				sf2d_draw_texture(dsihstex, offset3D[1].boxart+136, 124); // Draw H&S screen
-			} else {
-				sf2d_draw_texture(dshstex, offset3D[1].boxart+136, 124); // Draw H&S screen
+			sf2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
+				sftd_draw_textf(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+				sftd_draw_textf(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+				sftd_draw_textf(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
 			}
-		} else {
-			// Draw a white screen in place of the H&S screen.
-			sf2d_draw_rectangle(offset3D[1].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 		}
-		if (twlsettings_bootscreenvalue == 0) {
-			sf2d_draw_texture(disabledtex, offset3D[1].disabled+136, 20); // Draw disabled texture
-			sf2d_draw_texture(disabledtex, offset3D[1].disabled+136, 124); // Draw disabled texture
-		}
-	} else {
-		sf2d_draw_texture(settingslogotex, offset3D[1].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-		if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-			sftd_draw_textf(font, offset3D[1].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
-			sftd_draw_textf(font, offset3D[1].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
-			sftd_draw_textf(font, offset3D[1].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
-		}
+
+		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
+		sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+
+		draw_volume_slider(setvoltex);
+		sf2d_draw_texture(batteryIcon, 371, 2);
+		sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		sf2d_end_frame();
 	}
-	sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-	sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
-	draw_volume_slider(setvoltex);
-	sf2d_draw_texture(batteryIcon, 371, 2);
-	sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
-	sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-	sf2d_end_frame();
 }
 
 /**
