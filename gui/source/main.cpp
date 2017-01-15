@@ -1246,6 +1246,8 @@ int main()
 	bool titleboxXmoveleft = false;
 	bool titleboxXmoveright = false;
 	int titleboxYmovepos = 120;
+	int boxartYmovepos = 63;
+	int boxartreflYmovepos = 264;
 	int ndsiconXpos;
 	int ndsiconYmovepos = 133;
 	
@@ -1440,7 +1442,7 @@ int main()
 
 			update_battery_level(batterychrgtex, batterytex);
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
-			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg + -12, 0, 1.32, 1);
+			sf2d_draw_texture_scale(topbgtex, offset3dl_topbg-12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
@@ -1477,6 +1479,15 @@ int main()
 							}
 						}
 					}
+					if (applaunchprep) {
+						if (cursorPosition >= 0) {
+							bnriconnum = cursorPosition;
+							ChangeBoxArtNo();
+							sf2d_draw_texture_part(topbgtex, offset3dl_boxart+136, 63, offset3dl_boxart+104, 63, 128, 115*2);
+							sf2d_draw_texture(boxarttexnum, offset3dl_boxart+136, boxartYmovepos); // Draw moving box art
+							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dl_boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+						}
+					}
 				}
 			} else {
 				sftd_draw_textf(font, offset3dl_boxart+152, 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
@@ -1505,7 +1516,7 @@ int main()
 			sf2d_end_frame();
 				
 			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_draw_texture_scale(topbgtex, offset3dr_topbg + -12, 0, 1.32, 1);
+			sf2d_draw_texture_scale(topbgtex, offset3dr_topbg-12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
 				if (romselect_toplayout == 0) {
 					boxartXpos = 136;
@@ -1540,6 +1551,15 @@ int main()
 								sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
 								boxartXpos += 144;
 							}
+						}
+					}
+					if (applaunchprep) {
+						if (cursorPosition >= 0) {
+							bnriconnum = cursorPosition;
+							ChangeBoxArtNo();
+							sf2d_draw_texture_part(topbgtex, offset3dr_boxart+136, 63, offset3dr_boxart+104, 63, 128, 115*2);
+							sf2d_draw_texture(boxarttexnum, offset3dr_boxart+136, boxartYmovepos); // Draw moving box art
+							sf2d_draw_texture_scale_blend(boxarttexnum, offset3dr_boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
 						}
 					}
 				}
@@ -1912,6 +1932,8 @@ int main()
 		}
 		if (applaunchprep) {
 			rad += 0.50f;
+			boxartYmovepos -= 6;
+			boxartreflYmovepos += 2;
 			titleboxYmovepos -= 6;
 			ndsiconYmovepos -= 6;
 			if (titleboxYmovepos == -240) {
@@ -1919,6 +1941,8 @@ int main()
 					musicbool = false;
 					screenmode = SCREEN_MODE_SETTINGS;
 					rad == 0.0f;
+					boxartYmovepos = 63;
+					boxartreflYmovepos = 264;
 					titleboxYmovepos = 120;
 					ndsiconYmovepos = 133;
 					fadein = true;
