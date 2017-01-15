@@ -847,17 +847,19 @@ void SaveSettings() {
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
-		if (twlsettings_launchslot1value == 0) {
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
-			if (gbarunnervalue == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
-				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
-				if (access(path, F_OK) == -1) {
-					// Create a save file if it doesn't exist
-					CreateGameSave(path);
+		if (twlsettings_forwardervalue == 0) {
+			if (twlsettings_launchslot1value == 0) {
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+				if (gbarunnervalue == 0) {
+					bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+					char path[256];
+					snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
+					if (access(path, F_OK) == -1) {
+						// Create a save file if it doesn't exist
+						CreateGameSave(path);
+					}
+					free(sav);
 				}
-				free(sav);
 			}
 		}
 	}
