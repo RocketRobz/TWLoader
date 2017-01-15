@@ -1,5 +1,6 @@
 #include "download.h"
 #include "date.h"
+#include "inifile.h"
 #include "log.h"
 #include "ndsheaderbanner.h"
 
@@ -316,6 +317,9 @@ void downloadBoxArt(void)
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
 
+	char romsel_counter2fc[16];	// Number of ROMs on the SD card.
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
+
 	// Get the system region.
 	// This is needed in order to differentiate the 'O' region code
 	// for USA and Europe.
@@ -326,7 +330,7 @@ void downloadBoxArt(void)
 		region = CFG_REGION_USA;
 	}
 
-	LogFM("Main.downloadBoxArt", "Checking box art.");
+	LogFM("Main.downloadBoxArt", "Checking box art (SD Card).");
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
 		static const char title[] = "Now checking box art if exists (SD Card)...";
 		char romsel_counter1[16];
@@ -355,7 +359,7 @@ void downloadBoxArt(void)
 		const char *ba_region_fallback = NULL;
 		switch (ba_TID[3]) {
 			case 'E':
-				ba_region = "US";	// USA (default)
+				ba_region = "US";	// USA
 				break;
 			case 'J':
 				ba_region = "JA";	// Japanese
@@ -431,6 +435,123 @@ void downloadBoxArt(void)
 			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
 			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+
+			int res = downloadFile(http_url, path, MEDIA_SD_FILE);
+			if (res != 0 && ba_region_fallback != NULL) {
+				// Try the fallback region.
+				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
+				res = downloadFile(http_url, path, MEDIA_SD_FILE);
+			}
+		}
+	}
+	
+	LogFM("Main.downloadBoxArt", "Checking box art (Flashcard).");
+	for (size_t boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
+		static const char title[] = "Now checking box art if exists (Flashcard)...";
+		char romsel_counter1[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
+		DialogBoxAppear(title);
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+
+		const char *tempfile = fcfiles.at(boxartnum).c_str();
+		char path[256];
+		snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
+
+		CIniFile setfcrompathini( path );
+		std::string	ba_TIDini = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
+		char ba_TID[5];
+		strcpy(ba_TID, ba_TIDini.c_str());
+		ba_TID[4] = 0;
+
+		const char *ba_region;
+		const char *ba_region_fallback = NULL;
+		switch (ba_TID[3]) {
+			case 'E':
+				ba_region = "US";	// USA
+				break;
+			case 'J':
+				ba_region = "JA";	// Japanese
+				break;
+			case 'K':
+				ba_region = "KO";	// Korean
+				break;
+
+			case 'O':			// USA/Europe
+				if (region == CFG_REGION_USA) {
+					// System is USA region.
+					// Get the USA boxart if it's available.
+					ba_region = "US";
+					ba_region_fallback = "EN";
+					break;
+				}
+				// fall-through
+			case 'P':			// Europe
+			default:
+				// System is not USA region.
+				// Get the European boxart that matches the system's language.
+				// TODO: Check country code for Australia.
+				// This requires parsing the Config savegame. (GetConfigInfoBlk2())
+				// Reference: https://3dbrew.org/wiki/Config_Savegame
+				ba_region = ba_langs_eur[language];
+				if (strcmp(ba_region, "EN") != 0) {
+					// Fallback to EN if the specified language isn't available.
+					ba_region_fallback = "EN";
+				}
+				break;
+
+			case 'U':
+				// Alternate country code for Australia.
+				ba_region = "AU";
+				ba_region_fallback = "EN";
+				break;
+
+			// European country-specific localizations.
+			case 'D':
+				ba_region = "DE";	// German
+				ba_region_fallback = "EN";
+				break;
+			case 'F':
+				ba_region = "FR";	// French
+				ba_region_fallback = "EN";
+				break;
+			case 'H':
+				ba_region = "NL";	// Dutch
+				ba_region_fallback = "EN";
+				break;
+			case 'I':
+				ba_region = "IT";	// Italian
+				ba_region_fallback = "EN";
+				break;
+			case 'R':
+				ba_region = "RU";	// Russian
+				ba_region_fallback = "EN";
+				break;
+			case 'S':
+				ba_region = "ES";	// Spanish
+				ba_region_fallback = "EN";
+				break;
+		}
+
+		char http_url[256];
+		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
+		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+		if (access(path, F_OK) == -1) {
+			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (Flashcard)...");
+			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 
