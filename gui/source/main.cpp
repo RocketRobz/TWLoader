@@ -1880,7 +1880,7 @@ int main()
 					cursorPosition++;
 					cursorPositionset = true;
 				}
-				if (cursorPosition != filenum || cursorPosition == -1) {
+				if (cursorPosition != filenum) {
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {
@@ -2883,13 +2883,17 @@ int main()
 						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
-								if (filenum == 0) {
-									if (!playwrongsounddone) {
-										if (dspfirmfound) {
-											sfx_wrong.stop();
-											sfx_wrong.play();
+								if (cursorPosition == -1) {
+									if (filenum == 0) {
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong.stop();
+												sfx_wrong.play();
+											}
+											playwrongsounddone = true;
 										}
-										playwrongsounddone = true;
+									} else {
+										titleboxXmoveright = true;
 									}
 								} else {
 									titleboxXmoveright = true;
@@ -2933,13 +2937,17 @@ int main()
 					} else if(hHeld & KEY_RIGHT){
 						//titleboxXmovepos -= 64;
 						if (!titleboxXmoveleft) {
-							if (filenum == 0) {
-								if (!playwrongsounddone) {
-									if (dspfirmfound) {
-										sfx_wrong.stop();
-										sfx_wrong.play();
+							if (cursorPosition == -1) {
+								if (filenum == 0) {
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong.stop();
+											sfx_wrong.play();
+										}
+										playwrongsounddone = true;
 									}
-									playwrongsounddone = true;
+								} else {
+									titleboxXmoveright = true;
 								}
 							} else {
 								titleboxXmoveright = true;
