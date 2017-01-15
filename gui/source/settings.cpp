@@ -44,6 +44,7 @@ extern string name;
 // Sound effects from main.cpp.
 extern sound *sfx_select;
 extern sound *sfx_switch;
+extern sound *sfx_wrong;
 extern sound *sfx_back;
 
 extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
@@ -806,13 +807,19 @@ bool settingsMoveCursor(u32 hDown)
 		} else if (hDown & KEY_X) {
 			if (checkWifiStatus()) {
 				UpdateBootstrapRelease();
+				sfx = sfx_select;
+			} else {
+				// Wi-Fi is not connected.
+				sfx = sfx_wrong;
 			}
-			// TODO: Error sound if Wi-Fi isn't available?
 		} else if (hDown & KEY_Y) {
 			if (checkWifiStatus()) {
 				UpdateBootstrapUnofficial();
+				sfx = sfx_select;
+			} else {
+				// Wi-Fi is not connected.
+				sfx = sfx_wrong;
 			}
-			// TODO: Error sound if Wi-Fi isn't available?
 		} else if (hDown & KEY_START && checkWifiStatus()) {
 			if (checkUpdate() == 0) {
 				DownloadTWLoaderCIAs();
