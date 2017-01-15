@@ -1161,10 +1161,10 @@ int main()
 			}
 			if (settings.twl.forwarder) {
 				noromtext1 = "No games found!";
-				noromtext2 = "Select 'Add games' to get started.";
+				noromtext2 = "Select \"Add Games\" to get started.";
 			} else {
 				noromtext1 = "No games found!";
-				noromtext2 = "Put .nds ROMs in 'sdmc:/roms/nds'.";
+				noromtext2 = "Put .nds ROMs in \"sdmc:/roms/nds\".";
 			}
 
 			update_battery_level(batterychrgtex, batterytex);
@@ -1208,6 +1208,7 @@ int main()
 					}
 				}
 			} else {
+				// TODO: Center this text.
 				sftd_draw_textf(font, offset3D[0].boxart+152, 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
 				sftd_draw_textf(font, offset3D[0].boxart+124, 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 			}
@@ -1679,9 +1680,16 @@ int main()
 						// if (dspfirmfound) { sfx_menuselect->play(); }
 						if (cursorPosition == -2) {
 							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-							sftd_draw_textf(font_b, 124, 38, RGBA8(0, 0, 0, 255), 18, "Settings");
+							static const char curn2text[] = "Settings";
+							const int text_width = sftd_get_text_width(font_b, 18, curn2text);
+							sftd_draw_textf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
 						} else if (cursorPosition == -1) {
-							sftd_draw_textf(font_b, 112, 8, RGBA8(0, 0, 0, 255), 12, "Add games");
+							// TODO: Load NTR cart information.
+							const char *const curn1text = (settings.twl.forwarder
+								? "Add Games"
+								: "Slot-1 cart (NTR carts only)");
+							const int text_width = sftd_get_text_width(font_b, 18, curn1text);
+							sftd_draw_textf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn1text);
 						} else {
 							if (!bannertextloaded) {
 								char path[256];
@@ -1721,7 +1729,7 @@ int main()
 							// Print the banner text, center-aligned.
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								int text_width = sftd_get_text_width(font_b, 16, romsel_gameline[i].c_str());
+								const int text_width = sftd_get_text_width(font_b, 16, romsel_gameline[i].c_str());
 								sftd_draw_textf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
