@@ -1542,6 +1542,7 @@ int main()
 				if (screenmodeswitch) {
 					musicbool = false;
 					screenmode = SCREEN_MODE_SETTINGS;
+					settingsResetSubScreenMode();
 					rad == 0.0f;
 					titleboxYmovepos = 120;
 					ndsiconYmovepos = 133;
@@ -1978,6 +1979,7 @@ int main()
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
 					screenmode = SCREEN_MODE_SETTINGS;
+					settingsResetSubScreenMode();
 					updatebotscreen = true;
 				}
 			} else { */
