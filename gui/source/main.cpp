@@ -220,7 +220,7 @@ bool fadeout = false;
 std::string name;
 
 const char* romsel_filename;
-vector<string> romsel_gameline;	// from banner (TODO: wstring?)
+vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
 // TODO: Potential memory leaks for sav...
@@ -623,16 +623,18 @@ void SaveSettings() {
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder) {
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
-			if (gbarunnervalue == 0 || gbarunnervalue == 1) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
-				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
-				if (access(path, F_OK) == -1) {
-					// Create a save file if it doesn't exist
-					CreateGameSave(path);
+			if (!settings.twl.launchslot1) {
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+				if (gbarunnervalue == 0) {
+					bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+					char path[256];
+					snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
+					if (access(path, F_OK) == -1) {
+						// Create a save file if it doesn't exist
+						CreateGameSave(path);
+					}
+					free(sav);
 				}
-				free(sav);
 			}
 		}
 	}
@@ -1768,8 +1770,8 @@ int main()
 							// Print the banner text, center-aligned.
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								const int text_width = sftd_get_text_width(font_b, 16, romsel_gameline[i].c_str());
-								sftd_draw_textf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+								sftd_draw_wtextf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
 							if (settings.ui.counter) {
