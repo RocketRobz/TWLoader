@@ -750,16 +750,6 @@ static void LoadBNRIcon(void) {
 	}
 }
 
-static void LoadFCBNRIcon(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected bnriconnum is on the current page.
-		sf2d_free_texture(bnricontex[idx]);
-		bnricontex[idx] = sfil_load_PNG_file(bnriconpath[idx], SF2D_PLACE_RAM); // Banner icon
-	}
-}
-
 static void LoadBNRIconatLaunch(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
@@ -1342,8 +1332,8 @@ int main()
 					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
 						if (bnriconnum < fcfiles.size()) {
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "%s%s.png", fcbnriconfolder, tempfile);
-							if (access(path, F_OK) != -1 ) {
+							snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, tempfile);
+							if (access(path, F_OK) != -1) {
 								StoreBNRIconPath(path);
 							} else {
 								StoreBNRIconPath("romfs:/notextbanner");
@@ -1351,7 +1341,7 @@ int main()
 						} else {
 							StoreBNRIconPath("romfs:/notextbanner");
 						}
-						// FIXME: Is this correct?
+						OpenBNRIcon();
 						LoadBNRIcon();
 					}
 				}
@@ -1794,23 +1784,6 @@ int main()
 				boxartXmovepos += 18;
 				if (dspfirmfound) { sfx_select.stop(); }
 				if (dspfirmfound) { sfx_select.play(); }
-				/* if (twlsettings_forwardervalue == 1) {
-					// Load the previous banner icons
-					if ( cursorPosition == 6+pagenum*20 ||
-					cursorPosition == 11+pagenum*20 ||
-					cursorPosition == 16+pagenum*20 ) {
-						bnriconnum = cursorPosition-2;
-						LoadFCBNRIcon();
-						bnriconnum--;
-						LoadFCBNRIcon();
-						bnriconnum--;
-						LoadFCBNRIcon();
-						bnriconnum--;
-						LoadFCBNRIcon();
-						bnriconnum--;
-						LoadFCBNRIcon();
-					}
-				} */
 				// Load the previous box art
 				if ( cursorPosition == 3+pagenum*20 ||
 				cursorPosition == 6+pagenum*20 ||
@@ -1877,23 +1850,6 @@ int main()
 				storedcursorPosition = cursorPosition;
 				if (dspfirmfound) { sfx_stop.stop(); }
 				if (dspfirmfound) { sfx_stop.play(); }
-				/* if (twlsettings_forwardervalue == 1) {
-					// Load the next banner icons
-					if ( cursorPosition == 7+pagenum*20 ||
-					cursorPosition == 12+pagenum*20 ||
-					cursorPosition == 17+pagenum*20 ) {
-						bnriconnum = cursorPosition+3;
-						LoadFCBNRIcon();
-						bnriconnum++;
-						LoadFCBNRIcon();
-						bnriconnum++;
-						LoadFCBNRIcon();
-						bnriconnum++;
-						LoadFCBNRIcon();
-						bnriconnum++;
-						LoadFCBNRIcon();
-					}
-				} */
 				// Load the next box art
 				if ( cursorPosition == 4+pagenum*20 ||
 				cursorPosition == 7+pagenum*20 ||
