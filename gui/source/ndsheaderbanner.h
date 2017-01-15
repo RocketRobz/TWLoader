@@ -26,62 +26,19 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file ndsheaderbanner.h
-\brief Defines for many of the regions of memory on the DS as well as a few control functions for memory bus access
+\brief Defines the Nintendo DS file header and icon/title structs.
 */
 
 #ifndef NDS_HEADER
 #define NDS_HEADER
 
-//#include "ndstypes.h"
-
-
-//#ifdef ARM9
-//#define REG_EXMEMCNT (*(vu16*)0x04000204)
-//#else
-//#define REG_EXMEMSTAT (*(vu16*)0x04000204)
-//#endif
-
-//#define ARM7_MAIN_RAM_PRIORITY BIT(15)
-//#define ARM7_OWNS_CARD BIT(11)
-//#define ARM7_OWNS_ROM  BIT(7)
-
-
-// Protection register (write-once sadly)
-//#ifdef ARM7
-//#define PROTECTION    (*(vu32*)0x04000308)
-//#endif
-
-//! 8 bit pointer to the start of all the ram.
-//#define ALLRAM        ((u8*)0x00000000)
-
-//! 8 bit pointer to main ram.
-//#define MAINRAM8      ((u8*)0x02000000)
-//! 16 bit pointer to main ram.
-//#define MAINRAM16     ((u16*)0x02000000)
-//! 32 bit pointer to main ram.
-//#define MAINRAM32     ((u32*)0x02000000)
-
-
-// TODO: fixme: shared RAM
-
-// GBA_BUS is volatile, while GBAROM is not
-//! 16 bit volatile pointer to the GBA slot bus.
-//#define GBA_BUS       ((vu16 *)(0x08000000))
-//! 16 bit pointer to the GBA slot ROM.
-//#define GBAROM        ((u16*)0x08000000)
-
-//! 8 bit pointer to GBA slot Save ram.
-//#define SRAM          ((u8*)0x0A000000)
-
-
-//#ifdef ARM7
-//#define VRAM          ((u16*)0x06000000)
-//#endif
-
 #include <sf2d.h>
 #include <sftd.h>
 #include <sfil.h>
 #include <stdio.h>
+
+#include <string>
+#include <vector>
 
 /*!
 	\brief the GBA file header format.
@@ -183,58 +140,72 @@ typedef struct {
 	See gbatek for more information.
 */
 typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u16 titles[8][128];	//!< title of the game in 8 different languages.
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[8][128];	//!< title of the game in 8 different languages.
+
+	// DSi-specific.
+	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
+	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
+	u16 dsi_seq[64];	//!< DSi animated icon sequence.
 } sNDSBanner;
 
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*6];		//!< title of the game in 6 different languages.
-} sNDSBannersize1;
+// sNDSBanner version.
+typedef enum {
+	NDS_BANNER_VER_ORIGINAL	= 0x0001,
+	NDS_BANNER_VER_ZH	= 0x0002,
+	NDS_BANNER_VER_ZH_KO	= 0x0003,
+	NDS_BANNER_VER_DSi	= 0x0103,
+} sNDSBannerVersion;
 
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*7];		//!< title of the game in 7 different languages.
-} sNDSBannersize2;
+// sNDSBanner sizes.
+typedef enum {
+	NDS_BANNER_SIZE_ORIGINAL	= 0x0840,
+	NDS_BANNER_SIZE_ZH		= 0x0940,
+	NDS_BANNER_SIZE_ZH_KO		= 0x0A40,
+	NDS_BANNER_SIZE_DSi		= 0x23C0,
+} sNDSBannerSize;
 
-typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*8];		//!< title of the game in 8 different languages.
-} sNDSBannersize3;
+// Language indexes.
+typedef enum {
+	// DS and 3DS
+	NDS_LANG_JAPANESE	= 0,
+	NDS_LANG_ENGLISH	= 1,
+	NDS_LANG_FRENCH		= 2,
+	NDS_LANG_GERMAN		= 3,
+	NDS_LANG_ITALIAN	= 4,
+	NDS_LANG_SPANISH	= 5,
+	NDS_LANG_CHINESE	= 6,
+	NDS_LANG_KOREAN		= 7,
 
-char* grabTID(FILE* ndsFile, int letter);
-char* grabText(FILE* binFile, int bnrtitlenum, int line);
+	// 3DS only
+	N3DS_LANG_CHINESE_SIMPLIFIED	= 6,
+	N3DS_LANG_DUTCH			= 8,
+	N3DS_LANG_PORTUGUESE		= 9,
+	N3DS_LANG_RUSSIAN		= 10,
+	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
+} sNDSLanguage;
+
+/**
+ * Get the title ID.
+ * @param ndsFile DS ROM image.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ */
+void grabTID(FILE* ndsFile, char *buf);
+
+/**
+ * Get text from a cached banner file.
+ * @param binFile Banner file.
+ * @param bnrtitlenum Title number. (aka language)
+ * @return Vector containing each line as a wide string.
+ */
+std::vector<std::string> grabText(FILE* binFile, int bnrtitlenum);
+
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);
-sf2d_texture* grabandstoreIcon(FILE* binFile);
 
 
 #endif // NDS_HEADER

@@ -21,7 +21,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include "inifile.h"
-#include "stringtool.h"
 
 static bool freadLine(FILE* f,std::string& str)
 {
@@ -104,7 +103,9 @@ void CIniFile::SetString(const std::string& Section,const std::string& Item,cons
 
 void CIniFile::SetInt(const std::string& Section,const std::string& Item,int Value)
 {
-  std::string strtemp=formatString("%d",Value);
+  char buf[16];
+  snprintf(buf, sizeof(buf), "%d", Value);
+  std::string strtemp(buf);
 
   if(GetFileString(Section,Item)!=strtemp)
   {

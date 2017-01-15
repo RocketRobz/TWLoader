@@ -29,7 +29,7 @@ class CIniFile
 {
   public:
     CIniFile();
-    CIniFile(const std::string& filename);
+    explicit CIniFile(const std::string& filename);
     virtual ~CIniFile();
 
   public:

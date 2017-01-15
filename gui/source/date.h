@@ -6,7 +6,18 @@
 
 #include <string>
 
+/**
+ * Get the current date as a C string.
+ * @param Format Date format.
+ * @return Current date. (Caller must free() this string.)
+ */
 char *GetDate(int Format);
-std::string RetTime();
+
+/**
+ * Get the current time formatted for the top bar.
+ * This includes the blinking ':'.
+ * @return std::string containing the time.
+ */
+std::string RetTime(void);
 
 #endif // DATE_H

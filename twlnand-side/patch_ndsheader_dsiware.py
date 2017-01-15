@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # -*- coding: utf8 -*-
 # Patch an .nds (works with homebrew and ds demo only) to make it ready for make_cia
 #
