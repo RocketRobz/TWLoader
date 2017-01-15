@@ -670,176 +670,164 @@ bool settingsMoveCursor(u32 hDown)
 		return false;
 	}
 
+	// Sound effect to play.
+	sound *sfx = NULL;
+
 	if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
-		if (hDown & KEY_LEFT && twlsettings_flashcardvalue != 0){
+		if (hDown & KEY_LEFT && twlsettings_flashcardvalue > 0) {
 			twlsettings_flashcardvalue--; // Flashcard
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if (hDown & KEY_RIGHT && twlsettings_flashcardvalue != 6){
+			sfx = sfx_select;
+		} else if (hDown & KEY_RIGHT && twlsettings_flashcardvalue < 6) {
 			twlsettings_flashcardvalue++; // Flashcard
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if (hDown & KEY_A || hDown & KEY_B){
+			sfx = sfx_select;
+		} else if (hDown & (KEY_A | KEY_B)) {
 			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
-			if (dspfirmfound) { sfx_select->play(); }
+			sfx = sfx_select;
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-		if (hDown & KEY_A){
-			if (cursor_pos[1] == 0) {
-				subscreenmode = SUBSCREEN_MODE_FLASH_CARD;
-			} else if (cursor_pos[1] == 1) {
-				twlsettings_rainbowledvalue++; // Rainbow LED
-				if (twlsettings_rainbowledvalue == 2) {
-					twlsettings_rainbowledvalue = 0;
-				}
-			} else if (cursor_pos[1] == 2) {
-				twlsettings_cpuspeedvalue++; // CPU speed
-				if (twlsettings_cpuspeedvalue == 2) {
-					twlsettings_cpuspeedvalue = 0;
-				}
-			} else if (cursor_pos[1] == 3) {
-				twlsettings_extvramvalue++; // VRAM boost
-				if (twlsettings_extvramvalue == 2) {
-					twlsettings_extvramvalue = 0;
-				}
-			} else if (cursor_pos[1] == 4) {
-				twlsettings_bootscreenvalue++; // Boot screen
-				if (twlsettings_bootscreenvalue == 2) {
-					twlsettings_bootscreenvalue = 0;
-				}
-			} else if (cursor_pos[1] == 5) {
-				twlsettings_healthsafetyvalue++; // H&S message
-				if (twlsettings_healthsafetyvalue == 2) {
-					twlsettings_healthsafetyvalue = 0;
-				}
-			} else if (cursor_pos[1] == 6) {
-				twlsettings_resetslot1value++; // Reset Slot-1
-				if (twlsettings_resetslot1value == 2) {
-					twlsettings_resetslot1value = 0;
-				}
-			} else if (cursor_pos[1] == 7) {
-				twlsettings_consolevalue++; // Console output
-				if (twlsettings_consolevalue == 3) {
-					twlsettings_consolevalue = 0;
-				}
-			} else if (cursor_pos[1] == 8) {
-				twlsettings_lockarm9scfgextvalue++; // Lock ARM9 SCFG_EXT
-				if (twlsettings_lockarm9scfgextvalue == 2) {
-					twlsettings_lockarm9scfgextvalue = 0;
-				}
+		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
+			switch (cursor_pos[SUBSCREEN_MODE_NTR_TWL]) {
+				case 0:
+				default:
+					// Top item: Only listen to 'A'.
+					if (hDown & KEY_A) {
+						subscreenmode = SUBSCREEN_MODE_FLASH_CARD;
+					} else {
+						// Ignore this key.
+						return false;
+					}
+					break;
+				case 1:	// Rainbow LED
+					twlsettings_rainbowledvalue = !twlsettings_rainbowledvalue;
+					break;
+				case 2:	// CPU speed
+					twlsettings_cpuspeedvalue = !twlsettings_cpuspeedvalue;
+					break;
+				case 3:	// VRAM boost
+					twlsettings_extvramvalue = !twlsettings_extvramvalue;
+					break;
+				case 4:	// Boot screen
+					twlsettings_bootscreenvalue = !twlsettings_bootscreenvalue;
+					break;
+				case 5:	// H&S message
+					twlsettings_healthsafetyvalue = !twlsettings_healthsafetyvalue;
+					break;
+				case 6:	// Reset Slot-1
+					twlsettings_resetslot1value = !twlsettings_resetslot1value;
+					break;
+				case 7:	// Console output
+					twlsettings_consolevalue = !twlsettings_consolevalue;
+					break;
+				case 8:	// Lock ARM9 SCFG_EXT
+					twlsettings_lockarm9scfgextvalue = !twlsettings_lockarm9scfgextvalue;
+					break;
 			}
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if ((hDown & KEY_DOWN) && cursor_pos[1] != 8){
+			sfx = sfx_select;
+		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 8) {
 			cursor_pos[1]++;
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if ((hDown & KEY_UP) && cursor_pos[1] != 0){
+			sfx = sfx_select;
+		} else if ((hDown & KEY_UP) && cursor_pos[1] > 0) {
 			cursor_pos[1]--;
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if (hDown & KEY_L){
+			sfx = sfx_select;
+		} else if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND;
-			if (dspfirmfound) {
-				sfx_switch->stop();	// Prevent freezing
-				sfx_switch->play();
-			}
-		} else if (hDown & KEY_B){
+			sfx = sfx_switch;
+		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
-			if (dspfirmfound) {
-				// bgm_settings->stop();
-				sfx_back->play();
-			}
+			//bgm_settings->stop();
+			sfx = sfx_back;
 		}
-	} else /* if (subscreenmode == SUBSCREEN_MODE_FRONTEND) */ {
-		if (hDown & KEY_A || hDown & KEY_RIGHT){
-			if (cursor_pos[0] == 0) {
-				settings_colorvalue++; // Color
-				if (settings_colorvalue == 19) {
-					settings_colorvalue = 0;
-				}
-				LoadColor();
-			} else if (cursor_pos[0] == 1) {
-				settings_menucolorvalue++; // Menu color
-				if (settings_menucolorvalue == 17) {
-					settings_menucolorvalue = 0;
-				}
-				LoadMenuColor();
-			} else if (cursor_pos[0] == 2) {
-				settings_filenamevalue++; // Show filename
-				if (settings_filenamevalue == 2) {
-					settings_filenamevalue = 0;
-				}
-			} else if (cursor_pos[0] == 3) {
-				settings_locswitchvalue++; // Game location switcher
-				if (settings_locswitchvalue == 2) {
-					settings_locswitchvalue = 0;
-				}
-			} else if (cursor_pos[0] == 4) {
-				settings_topbordervalue++; // Top border
-				if (settings_topbordervalue == 2) {
-					settings_topbordervalue = 0;
-				}
-			} else if (cursor_pos[0] == 5) {
-				settings_countervalue++; // Game counter
-				if (settings_countervalue == 2) {
-					settings_countervalue = 0;
-				}
-			} else if (cursor_pos[0] == 6) {
-				settings_custombotvalue++; // Custom bottom image
-				if (settings_custombotvalue == 2) {
-					settings_custombotvalue = 0;
-				}
-				LoadBottomImage();
-			} else if (cursor_pos[0] == 7) {
-				settings_autoupdatevalue++; // Enable or disable autoupdate
-				if (settings_autoupdatevalue == 3) {
-					settings_autoupdatevalue = 0;
-				}
-			} else if (cursor_pos[0] == 8) {
-				settings_autodlvalue++; // Enable or disable autodownload
-				if (settings_autodlvalue == 2) {
-					settings_autodlvalue = 0;
-				}
+	} else /*if (subscreenmode == SUBSCREEN_MODE_FRONTEND)*/ {
+		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
+			switch (cursor_pos[SUBSCREEN_MODE_FRONTEND]) {
+				case 0:	// Color
+				default:
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings_colorvalue++; // Color
+						if (settings_colorvalue > 18) {
+							settings_colorvalue = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings_colorvalue--;
+						if (settings_colorvalue < 0) {
+							settings_colorvalue = 18;
+						}
+					}
+					LoadColor();
+					break;
+				case 1:	// Menu color
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings_menucolorvalue++;
+						if (settings_menucolorvalue > 16) {
+							settings_menucolorvalue = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings_menucolorvalue--;
+						if (settings_menucolorvalue < 0) {
+							settings_menucolorvalue = 16;
+						}
+					}
+					LoadMenuColor();
+					break;
+				case 2:	// Show filename
+					settings_filenamevalue = !settings_filenamevalue;
+					break;
+				case 3:	// Game location switcher
+					settings_locswitchvalue = !settings_locswitchvalue;
+					break;
+				case 4:	// Top border
+					settings_topbordervalue = !settings_topbordervalue;
+					break;
+				case 5:	// Game counter
+					settings_countervalue = !settings_countervalue;
+					break;
+				case 6:	// Custom bottom image
+					settings_custombotvalue = !settings_custombotvalue;
+					LoadBottomImage();
+					break;
+				case 7:	// Enable or disable autoupdate
+					settings_autoupdatevalue = !settings_autoupdatevalue;
+					break;
+				case 8:	// Enable or disable autodownload
+					settings_autodlvalue = !settings_autodlvalue;
+					break;
 			}
-			if (dspfirmfound) { sfx_select->play(); }
-		} if (hDown & KEY_LEFT){
-			if (cursor_pos[0] == 0) {
-				settings_colorvalue--; // Color
-				if (settings_colorvalue == -1) {
-					settings_colorvalue = 18;
-				}
-				LoadColor();
-				if (dspfirmfound) { sfx_select->play(); }
-			} else if (cursor_pos[0] == 1) {
-				settings_menucolorvalue--; // Menu color
-				if (settings_menucolorvalue == -1) {
-					settings_menucolorvalue = 16;
-				}
-				LoadMenuColor();
-			}
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] != 8){
+			sfx = sfx_select;
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 8) {
 			cursor_pos[0]++;
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if ((hDown & KEY_UP) && cursor_pos[0] != 0){
+			sfx = sfx_select;
+		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
 			cursor_pos[0]--;
-			if (dspfirmfound) { sfx_select->play(); }
-		} else if (hDown & KEY_R){
+			sfx = sfx_select;
+		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
-			if (dspfirmfound) {
-				sfx_switch->stop();	// Prevent freezing
-				sfx_switch->play();
+			sfx = sfx_switch;
+		} else if (hDown & KEY_X) {
+			if (checkWifiStatus()) {
+				UpdateBootstrapRelease();
 			}
-		} else if (hDown & KEY_X && checkWifiStatus()){
-			UpdateBootstrapRelease();
-		} else if (hDown & KEY_Y && checkWifiStatus()){
-			UpdateBootstrapUnofficial();
-		} else if (hDown & KEY_START && checkWifiStatus() && (checkUpdate() == 0)){
-			DownloadTWLoaderCIAs();
-		} else if (hDown & KEY_B){
+			// TODO: Error sound if Wi-Fi isn't available?
+		} else if (hDown & KEY_Y) {
+			if (checkWifiStatus()) {
+				UpdateBootstrapUnofficial();
+			}
+			// TODO: Error sound if Wi-Fi isn't available?
+		} else if (hDown & KEY_START && checkWifiStatus()) {
+			if (checkUpdate() == 0) {
+				DownloadTWLoaderCIAs();
+			}
+		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
-			if (dspfirmfound) {
-				// bgm_settings->stop();
-				sfx_back->play();
-			}
+			sfx = sfx_back;
 		}
+	}
+
+	// Do we need to play a sound effect?
+	if (dspfirmfound && sfx) {
+		sfx->stop();	// Prevent freezing
+		sfx->play();
 	}
 
 	// Bottom screen needs to be redrawn.
