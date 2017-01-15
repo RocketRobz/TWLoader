@@ -1481,7 +1481,7 @@ int main()
 					}
 					if (applaunchprep) {
 						if (cursorPosition >= 0) {
-							bnriconnum = cursorPosition;
+							boxartnum = cursorPosition;
 							ChangeBoxArtNo();
 							sf2d_draw_texture_part(topbgtex, offset3dl_boxart+136, 63, offset3dl_boxart+104, 63, 128, 115*2);
 							sf2d_draw_texture(boxarttexnum, offset3dl_boxart+136, boxartYmovepos); // Draw moving box art
@@ -1555,7 +1555,7 @@ int main()
 					}
 					if (applaunchprep) {
 						if (cursorPosition >= 0) {
-							bnriconnum = cursorPosition;
+							boxartnum = cursorPosition;
 							ChangeBoxArtNo();
 							sf2d_draw_texture_part(topbgtex, offset3dr_boxart+136, 63, offset3dr_boxart+104, 63, 128, 115*2);
 							sf2d_draw_texture(boxarttexnum, offset3dr_boxart+136, boxartYmovepos); // Draw moving box art
