@@ -1,6 +1,10 @@
 # TWLoader
 TWLoader is a CTR-mode frontend for nds-bootstrap that looks like the Nintendo DSi Menu.
 
+# Usage / FAQ
+
+**Please, read the _wiki_ before asking a question** [Wiki](https://github.com/Robz8/TWLoader/wiki)
+
 # Building
 
 Building this app by yourself require DEVKITARM with DEVKITPRO.You will also need xerpi's [sfillib](https://github.com/xerpi/sfillib),[sf2dlib](https://github.com/xerpi/sf2dlib),[sftdlib](https://github.com/xerpi/sftdlib) and ahezard [libnds](https://github.com/ahezard/libnds). You also need makerom,[make_cia](https://github.com/ihaveamac/ctr_toolkit) and bannertool on system location.
