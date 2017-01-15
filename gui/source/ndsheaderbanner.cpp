@@ -7,6 +7,7 @@
 #include <vector>
 using std::string;
 using std::vector;
+using std::wstring;
 
 #include "log.h"
 
@@ -46,7 +47,7 @@ void grabTID(FILE* ndsFile, char *buf) {
  * @param bnrtitlenum Title number. (aka language)
  * @return Vector containing each line as a wide string.
  */
-vector<string> grabText(FILE* binFile, int bnrtitlenum) {
+vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	// Check for unsupported languages.
 	switch (bnrtitlenum-1) {
 		case N3DS_LANG_DUTCH:
@@ -101,48 +102,73 @@ vector<string> grabText(FILE* binFile, int bnrtitlenum) {
 		case 0:
 		default:
 			// Unsupported banner version.
-			vector<string> vec_str;
-			vec_str.push_back("No Info");
-			return vec_str;
+			vector<wstring> vec_wstr;
+			vec_wstr.push_back(L"No Info");
+			return vec_wstr;
 	}
 
 	// UTF-16 text from the banner.
 	const u16 *u16text = myBanner.titles[bnrtitlenum];
 
 	// Buffers for the strings.
-	// TODO: Return vector<wstring> for Unicode.
-	vector<string> vec_str;
-	vec_str.reserve(3);
-	string str;
-	str.reserve(64);
+	// Assuming wchar_t is 32-bit.
+	static_assert(sizeof(wchar_t) == 4, "wchar_t is not 32-bit.");
+	vector<wstring> vec_wstr;
+	vec_wstr.reserve(3);
+	wstring wstr;
+	wstr.reserve(64);
 
 	for (int i = sizeof(myBanner.titles[bnrtitlenum])/sizeof(myBanner.titles[bnrtitlenum][0]);
 	     *u16text != 0 && i > 0; i--, u16text++)
 	{
-		// Quick and dirty Unicode to "ASCII" conversion.
-		// TODO: Proper UTF-16 to UTF-32 conversion.
-		switch (*u16text) {
-			case L'\r':
-				// Skip carriage returns.
-				break;
-			case L'\n':
-				// Newline.
-				vec_str.push_back(str);
-				str.clear();
-				break;
-			default:
-				// Add the character.
-				str += (char)(*u16text & 0xFF);
-				break;
+		// Convert the UTF-16 character to UTF-32.
+		// Special handling is needed only for surrogate pairs.
+		// (TODO: Test surrogate pair handling.)
+		if ((*u16text & 0xFC00) == 0xD800) {
+			// High surrogate. (0xD800-0xDBFF)
+			if (i > 2 && ((u16text[1] & 0xFC00) == 0xDC00)) {
+				// Low surrogate. (0xDC00-0xDFFF)
+				// Recombine to get the actual character.
+				wchar_t wchr = 0x10000;
+				wchr += ((u16text[0] & 0x3FF) << 10);
+				wchr +=  (u16text[1] & 0x3FF);
+				wstr += wchr;
+				// Make sure we don't process the low surrogate
+				// on the next iteration.
+				u16text++;
+				i--;
+			} else {
+				// Unpaired high surrogate.
+				wstr += (wchar_t)(0xFFFD);
+			}
+		} else if ((*u16text & 0xFC00) == 0xDC00) {
+			// Unpaired low surrogate.
+			wstr += (wchar_t)(0xFFFD);
+		} else {
+			// Standard UTF-16 character.
+			switch (*u16text) {
+				case L'\r':
+					// Skip carriage returns.
+					break;
+				case L'\n':
+					// Newline.
+					vec_wstr.push_back(wstr);
+					wstr.clear();
+					break;
+				default:
+					// Add the character.
+					wstr += *u16text;
+					break;
+			}
 		}
 	}
 
 	// Add the last line if it's not empty.
-	if (!str.empty()) {
-		vec_str.push_back(str);
+	if (!wstr.empty()) {
+		vec_wstr.push_back(wstr);
 	}
 
-	return vec_str;
+	return vec_wstr;
 }
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
