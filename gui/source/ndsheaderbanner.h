@@ -202,7 +202,7 @@ void grabTID(FILE* ndsFile, char *buf);
  * @param bnrtitlenum Title number. (aka language)
  * @return Vector containing each line as a wide string.
  */
-std::vector<std::string> grabText(FILE* binFile, int bnrtitlenum);
+std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 sf2d_texture* grabIcon(FILE* binFile);
