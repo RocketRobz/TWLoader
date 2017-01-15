@@ -116,10 +116,8 @@ int titleboxXmovetimer = 1; // Set to 1 for fade-in effect to run
 
 static const char fcrompathini_flashcardrom[] = "FLASHCARD-ROM";
 static const char fcrompathini_rompath[] = "NDS_PATH";
+static const char fcrompathini_tid[] = "TID";
 static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
-static const char fcrompathini_bnrtext1[] = "BNR_TEXT1";
-static const char fcrompathini_bnrtext2[] = "BNR_TEXT2";
-static const char fcrompathini_bnrtext3[] = "BNR_TEXT3";
 	
 
 // Settings .ini file
@@ -914,16 +912,19 @@ int main()
 	// Scan the ROMs directory for ".nds" files.
 	scan_dir_for_files("sdmc:/roms/nds", ".nds", files);
 	
+	// Scan the flashcard directory for configuration files.
+	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
+
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
 	
+	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
+
 	// Download box art
 	if (checkWifiStatus()) {
 		downloadBoxArt();
 	}
-
-	// Scan the flashcard directory for configuration files.
-	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	// Cache banner data
 	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
@@ -968,9 +969,6 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
-	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
-	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;
@@ -1131,15 +1129,29 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
+					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < fcfiles.size()) {
 							const char *tempfile = fcfiles.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "%s%s.png", fcboxartfolder, tempfile);
+							snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
 
-							if (access(path, F_OK) != -1 ) {
+							CIniFile setfcrompathini( path );
+							std::string	ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+							char ba_TID[5];
+							strcpy(ba_TID, ba_TIDini.c_str());
+							ba_TID[4] = 0;
+
+							// example: SuperMario64DS.nds.png
+							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
+							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								// example: ASME.png
+								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								if (access(path, F_OK) != -1) {
+									StoreBoxArtPath(path);
+								} else {
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								}
 							}
 						} else {
 							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
