@@ -31,36 +31,46 @@ extern Offset3D offset3D[2];	// 0 == Left; 1 == Right
 // Location of the bottom screen image.
 extern const char* bottomloc;
 
-extern int settings_colorvalue;
-extern int settings_menucolorvalue;
-extern int settings_filenamevalue;
-extern int settings_locswitchvalue;
-extern int settings_topbordervalue;
-extern int settings_countervalue;
-extern int settings_custombotvalue;
-extern int settings_autoupdatevalue;
-extern int settings_autodlvalue;
+typedef struct _Settings_t {
+	// TODO: Use int8_t instead of int?
+	struct {
+		int color;
+		int menucolor;
+		bool filename;
+		bool locswitch;
+		bool topborder;
+		bool counter;
+		bool custombot;
+		int autoupdate;	// 0 = Off, 1 = Release, 2 = Unofficial
+		bool autodl;
+	} ui;
 
-extern int twlsettings_rainbowledvalue;
-extern int twlsettings_cpuspeedvalue;
-extern int twlsettings_extvramvalue;
-extern int twlsettings_forwardervalue;
-extern int twlsettings_flashcardvalue;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS
-	3: Acekard 2(i)/M3DS Real/R4i-SDHC v1.4.x
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
-extern int twlsettings_bootscreenvalue;
-extern int twlsettings_healthsafetyvalue;
-extern int twlsettings_launchslot1value;
-extern int twlsettings_resetslot1value;
-extern int twlsettings_consolevalue;
-extern int twlsettings_lockarm9scfgextvalue;
+	struct {
+		bool rainbowled;
+		bool cpuspeed;	// false == NTR, true == TWL
+		bool extvram;
+		bool forwarder;
+
+		int flashcard;
+		/* Flashcard value
+			0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+			1: R4DS (Original Non-SDHC version)/ M3 Simply
+			2: R4iDSN/R4i Gold RTS
+			3: Acekard 2(i)/M3DS Real/R4i-SDHC v1.4.x
+			4: Acekard RPG
+			5: Ace 3DS+/Gateway Blue Card/R4iTT
+			6: SuperCard DSTWO
+		*/
+
+		bool bootscreen;
+		bool healthsafety;
+		bool launchslot1;
+		bool resetslot1;
+		int console;	// 0 = Off, 1 = On, 2 = On (Debug)
+		bool lockarm9scfgext;
+	} twl;
+} Settings_t;
+extern Settings_t settings;
 
 /**
  * Reset the settings screen's subscreen mode.

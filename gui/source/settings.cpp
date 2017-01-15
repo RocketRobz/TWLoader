@@ -91,36 +91,8 @@ static int cursor_pos[3] = {0, 0, 0};
 // Location of the bottom screen image.
 const char* bottomloc = NULL;
 
-int settings_colorvalue;
-int settings_menucolorvalue;
-int settings_filenamevalue;
-int settings_locswitchvalue;
-int settings_topbordervalue;
-int settings_countervalue;
-int settings_custombotvalue;
-int settings_autoupdatevalue;
-int settings_autodlvalue;
-
-int twlsettings_rainbowledvalue;
-int twlsettings_cpuspeedvalue;
-int twlsettings_extvramvalue;
-int twlsettings_forwardervalue;
-int twlsettings_flashcardvalue;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS
-	3: Acekard 2(i)/M3DS Real/R4i-SDHC v1.4.x
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
-int twlsettings_bootscreenvalue;
-int twlsettings_healthsafetyvalue;
-int twlsettings_launchslot1value;
-int twlsettings_resetslot1value;
-int twlsettings_consolevalue;
-int twlsettings_lockarm9scfgextvalue;
+// Settings
+Settings_t settings;
 
 /** Strings **/
 
@@ -259,13 +231,13 @@ void settingsDrawTopScreen(void)
 		sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
 		sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-			if (twlsettings_cpuspeedvalue == 1) {
+			if (settings.twl.cpuspeed == 1) {
 				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 			} else {
 				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 			}
-			if (twlsettings_healthsafetyvalue == 1) {
-				if (twlsettings_cpuspeedvalue == 1) {
+			if (settings.twl.healthsafety == 1) {
+				if (settings.twl.cpuspeed == 1) {
 					sf2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else {
 					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
@@ -274,7 +246,7 @@ void settingsDrawTopScreen(void)
 				// Draw a white screen in place of the H&S screen.
 				sf2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 			}
-			if (twlsettings_bootscreenvalue == 0) {
+			if (settings.twl.bootscreen == 0) {
 				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
 				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture
 			}
@@ -332,9 +304,9 @@ void settingsDrawBottomScreen(void)
 			"Blue", "Violet", "Purple", "Fuchsia",
 			"Red & Blue", "Green & Yellow", "Christmas"
 		};
-		if (settings_colorvalue < 0 || settings_colorvalue > 18)
-			settings_colorvalue = 0;
-		const char *const colorvaluetext = color_text[settings_colorvalue];
+		if (settings.ui.color < 0 || settings.ui.color > 18)
+			settings.ui.color = 0;
+		const char *const colorvaluetext = color_text[settings.ui.color];
 
 		// Menu color text.
 		static const char *const menu_color_text[] = {
@@ -344,18 +316,18 @@ void settingsDrawBottomScreen(void)
 			"Light Blue", "Blue", "Violet", "Purple",
 			"Fuchsia"
 		};
-		if (settings_menucolorvalue < 0 || settings_menucolorvalue > 18)
-			settings_menucolorvalue = 0;
-		const char *const menucolorvaluetext = menu_color_text[settings_menucolorvalue];
+		if (settings.ui.menucolor < 0 || settings.ui.menucolor > 18)
+			settings.ui.menucolor = 0;
+		const char *const menucolorvaluetext = menu_color_text[settings.ui.menucolor];
 
-		const char *const filenamevaluetext = (settings_filenamevalue ? "On" : "Off");
-		const char *const locswitchvaluetext = (settings_locswitchvalue ? "On" : "Off");
-		const char *const topbordervaluetext = (settings_topbordervalue ? "On" : "Off");
-		const char *const countervaluetext = (settings_countervalue ? "On" : "Off");
-		const char *const custombotvaluetext = (settings_custombotvalue ? "On" : "Off");
+		const char *const filenamevaluetext = (settings.ui.filename ? "On" : "Off");
+		const char *const locswitchvaluetext = (settings.ui.locswitch ? "On" : "Off");
+		const char *const topbordervaluetext = (settings.ui.topborder ? "On" : "Off");
+		const char *const countervaluetext = (settings.ui.counter ? "On" : "Off");
+		const char *const custombotvaluetext = (settings.ui.custombot ? "On" : "Off");
 
 		const char *autoupdatevaluetext;
-		switch (settings_autoupdatevalue) {
+		switch (settings.ui.autoupdate) {
 			case 0:
 			default:
 				autoupdatevaluetext = "Off";
@@ -367,7 +339,7 @@ void settingsDrawBottomScreen(void)
 				autoupdatevaluetext = "Unofficial";
 				break;
 		}
-		const char *autodlvaluetext = (settings_autodlvalue ? "On" : "Off");
+		const char *autodlvaluetext = (settings.ui.autodl ? "On" : "Off");
 
 		title = "Settings: GUI";
 		int Ypos = 40;
@@ -473,15 +445,15 @@ void settingsDrawBottomScreen(void)
 		sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 		sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 
-		const char *rainbowledvaluetext = (twlsettings_rainbowledvalue ? "On" : "Off");
-		const char *cpuspeedvaluetext = (twlsettings_cpuspeedvalue ? "133mhz (TWL)" : "67mhz (NTR)");
-		const char *extvramvaluetext = (twlsettings_extvramvalue ? "On" : "Off");
-		const char *bootscreenvaluetext = (twlsettings_bootscreenvalue ? "On" : "Off");
-		const char *healthsafetyvaluetext = (twlsettings_healthsafetyvalue ? "On" : "Off");
-		const char *resetslot1valuetext = (twlsettings_resetslot1value ? "On" : "Off");
+		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
+		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
+		const char *extvramvaluetext = (settings.twl.extvram ? "On" : "Off");
+		const char *bootscreenvaluetext = (settings.twl.bootscreen ? "On" : "Off");
+		const char *healthsafetyvaluetext = (settings.twl.healthsafety ? "On" : "Off");
+		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
 
 		const char *consolevaluetext;
-		switch (twlsettings_consolevalue) {
+		switch (settings.twl.console) {
 			case 0:
 			default:
 				consolevaluetext = "Off";
@@ -494,7 +466,7 @@ void settingsDrawBottomScreen(void)
 				break;
 		}
 
-		const char *lockarm9scfgextvaluetext = (twlsettings_lockarm9scfgextvalue ? "On" : "Off");
+		const char *lockarm9scfgextvaluetext = (settings.twl.lockarm9scfgext ? "On" : "Off");
 
 		title = "Settings: NTR/TWL-mode";
 		int Ypos = 40;
@@ -606,10 +578,10 @@ void settingsDrawBottomScreen(void)
 			{"SuperCard DSTWO", " ", " ", " ", " ", " "},
 		};
 
-		if (twlsettings_flashcardvalue < 0 || twlsettings_flashcardvalue > 6) {
-			twlsettings_flashcardvalue = 0;
+		if (settings.twl.flashcard < 0 || settings.twl.flashcard > 6) {
+			settings.twl.flashcard = 0;
 		}
-		const char *const *fctext = flash_card_options[twlsettings_flashcardvalue];
+		const char *const *fctext = flash_card_options[settings.twl.flashcard];
 		title = twlsettings_flashcardtext;
 		int Ypos = 40;
 		for (int i = 0; i < 6; i++, Ypos += 12) {
@@ -641,11 +613,11 @@ bool settingsMoveCursor(u32 hDown)
 	sound *sfx = NULL;
 
 	if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
-		if (hDown & KEY_LEFT && twlsettings_flashcardvalue > 0) {
-			twlsettings_flashcardvalue--; // Flashcard
+		if (hDown & KEY_LEFT && settings.twl.flashcard > 0) {
+			settings.twl.flashcard--; // Flashcard
 			sfx = sfx_select;
-		} else if (hDown & KEY_RIGHT && twlsettings_flashcardvalue < 6) {
-			twlsettings_flashcardvalue++; // Flashcard
+		} else if (hDown & KEY_RIGHT && settings.twl.flashcard < 6) {
+			settings.twl.flashcard++; // Flashcard
 			sfx = sfx_select;
 		} else if (hDown & (KEY_A | KEY_B)) {
 			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
@@ -665,38 +637,38 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					break;
 				case 1:	// Rainbow LED
-					twlsettings_rainbowledvalue = !twlsettings_rainbowledvalue;
+					settings.twl.rainbowled = !settings.twl.rainbowled;
 					break;
 				case 2:	// CPU speed
-					twlsettings_cpuspeedvalue = !twlsettings_cpuspeedvalue;
+					settings.twl.cpuspeed = !settings.twl.cpuspeed;
 					break;
 				case 3:	// VRAM boost
-					twlsettings_extvramvalue = !twlsettings_extvramvalue;
+					settings.twl.extvram = !settings.twl.extvram;
 					break;
 				case 4:	// Boot screen
-					twlsettings_bootscreenvalue = !twlsettings_bootscreenvalue;
+					settings.twl.bootscreen = !settings.twl.bootscreen;
 					break;
 				case 5:	// H&S message
-					twlsettings_healthsafetyvalue = !twlsettings_healthsafetyvalue;
+					settings.twl.healthsafety = !settings.twl.healthsafety;
 					break;
 				case 6:	// Reset Slot-1
-					twlsettings_resetslot1value = !twlsettings_resetslot1value;
+					settings.twl.resetslot1 = !settings.twl.resetslot1;
 					break;
 				case 7:	// Console output
 					if (hDown & (KEY_A | KEY_RIGHT)) {
-						twlsettings_consolevalue++;
-						if (twlsettings_consolevalue > 2) {
-							twlsettings_consolevalue = 0;
+						settings.twl.console++;
+						if (settings.twl.console > 2) {
+							settings.twl.console = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
-						twlsettings_consolevalue--;
-						if (twlsettings_consolevalue < 0) {
-							twlsettings_consolevalue = 16;
+						settings.twl.console--;
+						if (settings.twl.console < 0) {
+							settings.twl.console = 16;
 						}
 					}
 					break;
 				case 8:	// Lock ARM9 SCFG_EXT
-					twlsettings_lockarm9scfgextvalue = !twlsettings_lockarm9scfgextvalue;
+					settings.twl.lockarm9scfgext = !settings.twl.lockarm9scfgext;
 					break;
 			}
 			sfx = sfx_select;
@@ -721,63 +693,64 @@ bool settingsMoveCursor(u32 hDown)
 				case 0:	// Color
 				default:
 					if (hDown & (KEY_A | KEY_RIGHT)) {
-						settings_colorvalue++; // Color
-						if (settings_colorvalue > 18) {
-							settings_colorvalue = 0;
+						settings.ui.color++; // Color
+						if (settings.ui.color > 18) {
+							settings.ui.color = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
-						settings_colorvalue--;
-						if (settings_colorvalue < 0) {
-							settings_colorvalue = 18;
+						settings.ui.color--;
+						if (settings.ui.color < 0) {
+							settings.ui.color = 18;
 						}
 					}
 					LoadColor();
 					break;
 				case 1:	// Menu color
 					if (hDown & (KEY_A | KEY_RIGHT)) {
-						settings_menucolorvalue++;
-						if (settings_menucolorvalue > 16) {
-							settings_menucolorvalue = 0;
+						settings.ui.menucolor++;
+						if (settings.ui.menucolor > 16) {
+							settings.ui.menucolor = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
-						settings_menucolorvalue--;
-						if (settings_menucolorvalue < 0) {
-							settings_menucolorvalue = 16;
+						settings.ui.menucolor--;
+						if (settings.ui.menucolor < 0) {
+							settings.ui.menucolor = 16;
 						}
 					}
 					LoadMenuColor();
 					break;
 				case 2:	// Show filename
-					settings_filenamevalue = !settings_filenamevalue;
+					settings.ui.filename = !settings.ui.filename;
 					break;
 				case 3:	// Game location switcher
-					settings_locswitchvalue = !settings_locswitchvalue;
+					settings.ui.locswitch = !settings.ui.locswitch;
 					break;
 				case 4:	// Top border
-					settings_topbordervalue = !settings_topbordervalue;
+					settings.ui.topborder = !settings.ui.topborder;
 					break;
 				case 5:	// Game counter
-					settings_countervalue = !settings_countervalue;
+					settings.ui.counter = !settings.ui.counter;
 					break;
 				case 6:	// Custom bottom image
-					settings_custombotvalue = !settings_custombotvalue;
+					settings.ui.custombot = !settings.ui.custombot;
 					LoadBottomImage();
 					break;
 				case 7:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
-						settings_autoupdatevalue++;
-						if (settings_autoupdatevalue > 2) {
-							settings_autoupdatevalue = 0;
+						settings.ui.autoupdate++;
+						if (settings.ui.autoupdate > 2) {
+							settings.ui.autoupdate = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
-						settings_autoupdatevalue--;
-						if (settings_autoupdatevalue < 0) {
-							settings_autoupdatevalue = 16;
+						settings.ui.autoupdate--;
+						if (settings.ui.autoupdate < 0) {
+							settings.ui.autoupdate = 16;
 						}
 					}
+					settings.ui.autoupdate = !settings.ui.autoupdate;
 					break;
 				case 8:	// Enable or disable autodownload
-					settings_autodlvalue = !settings_autodlvalue;
+					settings.ui.autodl = !settings.ui.autodl;
 					break;
 			}
 			sfx = sfx_select;
@@ -948,9 +921,9 @@ void LoadColor(void) {
 		},
 	};
 
-	if (settings_colorvalue < 0 || settings_colorvalue > 18)
-		settings_colorvalue = 0;
-	color_data = &colors[settings_colorvalue];
+	if (settings.ui.color < 0 || settings.ui.color > 18)
+		settings.ui.color = 0;
+	color_data = &colors[settings.ui.color];
 	LogFM("LoadColor()", "Colors load successfully");
 }
 
@@ -978,9 +951,9 @@ void LoadMenuColor(void) {
 		(u32)RGBA8(255, 63, 127, 195),		// Fuchsia
 	};
 
-	if (settings_menucolorvalue < 0 || settings_menucolorvalue > 16)
-		settings_menucolorvalue = 0;
-	menucolor = menu_colors[settings_menucolorvalue];
+	if (settings.ui.menucolor < 0 || settings.ui.menucolor > 16)
+		settings.ui.menucolor = 0;
+	menucolor = menu_colors[settings.ui.menucolor];
 	LogFM("LoadMenuColor()", "Menu color load successfully");
 }
 
@@ -990,7 +963,7 @@ void LoadMenuColor(void) {
 void LoadBottomImage() {
 	bottomloc = "romfs:/graphics/bottom.png";
 
-	if (settings_custombotvalue == 1) {
+	if (settings.ui.custombot == 1) {
 		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
 			bottomloc = "sdmc:/_nds/twloader/bottom.png";
 			LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully");
