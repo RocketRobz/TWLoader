@@ -744,10 +744,9 @@ bool settingsMoveCursor(u32 hDown)
 					} else if (hDown & KEY_LEFT) {
 						settings.ui.autoupdate--;
 						if (settings.ui.autoupdate < 0) {
-							settings.ui.autoupdate = 16;
+							settings.ui.autoupdate = 2;
 						}
 					}
-					settings.ui.autoupdate = !settings.ui.autoupdate;
 					break;
 				case 8:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
