@@ -1419,10 +1419,10 @@ int main()
 				musicbool = true;
 			}
 			if (twlsettings_forwardervalue == 1) {
-				noromtext1 = "No INIs found!";
-				noromtext2 = "Put .ini files in 'sdmc:/roms/flashcard/nds'.";
+				noromtext1 = "No games found!";
+				noromtext2 = "Select 'Add games' to get started.";
 			} else {
-				noromtext1 = "No ROMs found!";
+				noromtext1 = "No games found!";
 				noromtext2 = "Put .nds ROMs in 'sdmc:/roms/nds'.";
 			}
 
@@ -1880,7 +1880,7 @@ int main()
 					cursorPosition++;
 					cursorPositionset = true;
 				}
-				if (cursorPosition != filenum) {
+				if (cursorPosition != filenum || cursorPosition == -1) {
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {
@@ -2034,9 +2034,9 @@ int main()
 						// if (dspfirmfound) { sfx_menuselect.play(); }
 						if (cursorPosition == -2) {
 							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
-							sftd_draw_textf(font_b, 120, 38, RGBA8(0, 0, 0, 255), 18, "Settings");
+							sftd_draw_textf(font_b, 124, 38, RGBA8(0, 0, 0, 255), 18, "Settings");
 						} else if (cursorPosition == -1) {
-							sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Update game list");
+							sftd_draw_textf(font_b, 112, 8, RGBA8(0, 0, 0, 255), 12, "Add games");
 						} else {
 							if (!bannertextloaded) {
 								char path[256];
@@ -2672,7 +2672,7 @@ int main()
 					if (!noromsfound) {
 						if (twlsettings_forwardervalue == 1) {	// If no ROMs are found
 							if (fcfiles.size() == 0) {	// If no ROMs are found
-								cursorPosition = -2;
+								cursorPosition = -1;
 								storedcursorPosition = cursorPosition;
 								titleboxXmovepos = +64;
 								boxartXmovepos = 0;
@@ -2883,17 +2883,13 @@ int main()
 						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
-								if (twlsettings_forwardervalue == 1) {
-									if (filenum == 0) {
-										if (!playwrongsounddone) {
-											if (dspfirmfound) {
-												sfx_wrong.stop();
-												sfx_wrong.play();
-											}
-											playwrongsounddone = true;
+								if (filenum == 0) {
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong.stop();
+											sfx_wrong.play();
 										}
-									} else {
-										titleboxXmoveright = true;
+										playwrongsounddone = true;
 									}
 								} else {
 									titleboxXmoveright = true;
@@ -2937,17 +2933,13 @@ int main()
 					} else if(hHeld & KEY_RIGHT){
 						//titleboxXmovepos -= 64;
 						if (!titleboxXmoveleft) {
-							if (twlsettings_forwardervalue == 1) {
-								if (filenum == 0) {
-									if (!playwrongsounddone) {
-										if (dspfirmfound) {
-											sfx_wrong.stop();
-											sfx_wrong.play();
-										}
-										playwrongsounddone = true;
+							if (filenum == 0) {
+								if (!playwrongsounddone) {
+									if (dspfirmfound) {
+										sfx_wrong.stop();
+										sfx_wrong.play();
 									}
-								} else {
-									titleboxXmoveright = true;
+									playwrongsounddone = true;
 								}
 							} else {
 								titleboxXmoveright = true;
