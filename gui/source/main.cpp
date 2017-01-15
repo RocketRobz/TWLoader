@@ -1220,9 +1220,10 @@ int main()
 					}
 				}
 			} else {
-				// TODO: Center this text.
-				sftd_draw_textf(font, offset3D[0].boxart+152, 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				sftd_draw_textf(font, offset3D[0].boxart+124, 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+				int text_width = sftd_get_text_width(font, 12, noromtext1);
+				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+				text_width = sftd_get_text_width(font, 12, noromtext2);
+				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 			}
 			if (settings.ui.topborder) {
 				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
@@ -1286,8 +1287,10 @@ int main()
 					}
 				}
 			} else {
-				sftd_draw_textf(font, offset3D[1].boxart+152, 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				sftd_draw_textf(font, offset3D[1].boxart+124, 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+				int text_width = sftd_get_text_width(font, 12, noromtext1);
+				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+				text_width = sftd_get_text_width(font, 12, noromtext2);
+				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 			}
 			if (settings.ui.topborder) {
 				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
