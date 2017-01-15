@@ -683,7 +683,17 @@ bool settingsMoveCursor(u32 hDown)
 					twlsettings_resetslot1value = !twlsettings_resetslot1value;
 					break;
 				case 7:	// Console output
-					twlsettings_consolevalue = !twlsettings_consolevalue;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						twlsettings_consolevalue++;
+						if (twlsettings_consolevalue > 2) {
+							twlsettings_consolevalue = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						twlsettings_consolevalue--;
+						if (twlsettings_consolevalue < 0) {
+							twlsettings_consolevalue = 16;
+						}
+					}
 					break;
 				case 8:	// Lock ARM9 SCFG_EXT
 					twlsettings_lockarm9scfgextvalue = !twlsettings_lockarm9scfgextvalue;
@@ -754,7 +764,17 @@ bool settingsMoveCursor(u32 hDown)
 					LoadBottomImage();
 					break;
 				case 7:	// Enable or disable autoupdate
-					settings_autoupdatevalue = !settings_autoupdatevalue;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings_autoupdatevalue++;
+						if (settings_autoupdatevalue > 2) {
+							settings_autoupdatevalue = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings_autoupdatevalue--;
+						if (settings_autoupdatevalue < 0) {
+							settings_autoupdatevalue = 16;
+						}
+					}
 					break;
 				case 8:	// Enable or disable autodownload
 					settings_autodlvalue = !settings_autodlvalue;
