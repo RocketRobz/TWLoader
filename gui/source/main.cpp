@@ -146,6 +146,56 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 bool run = true;
 // End
 
+int menutext_startXpos()
+{
+	int languages[] =
+	{
+		140,		// Japanese
+		140,		// English
+		152,		// French
+		135,		// German
+		142,		// Italian
+		142,		// Spanish
+		140,		// Simplified Chinese
+		140,		// Korean
+		141,		// Dutch
+		130,		// Portugese
+		140,		// Russian
+		140			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+
+const char* menutext_start()
+{
+	static const char *const languages[] =
+	{
+		"START",		// Japanese
+		"START",		// English
+		"OK",			// French
+		"ANFANG",		// German
+		"INIZIO",		// Italian
+		"INICIO",		// Spanish
+		"START",		// Simplified Chinese
+		"START",		// Korean
+		"BEGIN",		// Dutch
+		"COMEÇAR",		// Portugese
+		"START",		// Russian
+		"START"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+
 const char* text_returntohomemenu()
 {
 	static const char *const languages[] =
@@ -2247,7 +2297,7 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						sftd_draw_textf(font_b, 140, 177, RGBA8(255, 255, 255, 255), 12, "START");
+						sftd_draw_textf(font_b, menutext_startXpos(), 177, RGBA8(255, 255, 255, 255), 12, menutext_start());
 					} else {
 						if (settings_custombotvalue == 1)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
@@ -2679,7 +2729,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(!applaunchprep || fadealpha == 255) {
+				if(titleboxXmovetimer == 0) {
 					if (settings_locswitchvalue == 1) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
