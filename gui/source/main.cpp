@@ -1,5 +1,6 @@
 #include "download.h"
 #include "settings.h"
+#include "textfns.h"
 
 #include <cstdio>
 #include <cstring>
@@ -269,8 +270,9 @@ bool fadeout = false;
 
 std::string name;
 
-const char* romsel_filename;
-vector<wstring> romsel_gameline;	// from banner
+static const char* romsel_filename;
+static wstring romsel_filename_w;	// Unicode filename for display.
+static vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
@@ -1777,11 +1779,13 @@ int main()
 								if (settings.twl.forwarder) {
 									if (fcfiles.size() != 0) {
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									const char *tempfile = files.at(cursorPosition).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
@@ -1800,8 +1804,7 @@ int main()
 
 							int y, dy;
 							if (settings.ui.filename) {
-								// TODO: Convert romsel_filename from UTF-8?
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								sftd_draw_wtext(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
 								y = 24; dy = 19;
 							} else {
 								y = 16; dy = 22;
@@ -1811,7 +1814,7 @@ int main()
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
 								const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-								sftd_draw_wtextf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
 							if (settings.ui.counter) {
