@@ -200,7 +200,9 @@ int checkUpdate(void) {
 			// FIXME: DialogBoxDiappear is freezing here,
 			// so just hide the dialog.
 			//DialogBoxDisappear("TWLoader is up-to-date.");
-			showdialogbox = false;	// <-- so do this instead.
+			if (screenmode == 1) {
+				showdialogbox = false;	// <-- so do this instead.
+			}
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
