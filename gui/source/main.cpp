@@ -243,8 +243,7 @@ const char* romsel_filename;
 vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
-// TODO: Potential memory leaks for sav...
-static char* sav = nullptr;		// Associated save file.
+std::string sav;		// Associated save file.
 static const char* flashcardrom = "";
 
 std::string sdmc = "sdmc:/";
@@ -311,35 +310,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
         start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
-}
-
-/**
- * Replace a substring in a C string.
- * @param str Original string.
- * @param o_s Substring to search for.
- * @param n_s New substring.
- * @return Newly allocated string with the replaced substring. (Must be free()'d!)
- */
-char *strrep(const char *str, const char *o_s, const char *n_s) 
-{
-	char *newstr = NULL;
-	char *c = NULL;
-
-	// Look for the substring.
-	if ((c = strstr(str, o_s)) == NULL) {
-		// Substring not found.
-		return strdup(str);
-	}
-
-	newstr = (char*)malloc(strlen(str) - strlen(o_s) + strlen(n_s) + 1);
-	if (!newstr) {
-		printf("ERROR: unable to allocate memory\n");
-		return NULL;
-	}
-
-	strncpy(newstr, str, c-str);  
-	sprintf(newstr+(c-str), "%s%s", n_s, c+strlen(o_s));
-	return newstr;
 }
 
 
@@ -847,18 +817,15 @@ void SaveSettings() {
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
-		if (twlsettings_forwardervalue == 0) {
-			if (twlsettings_launchslot1value == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
-				if (gbarunnervalue == 0) {
-					bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
-					char path[256];
-					snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
-					if (access(path, F_OK) == -1) {
-						// Create a save file if it doesn't exist
-						CreateGameSave(path);
-					}
-					free(sav);
+		if (twlsettings_forwardervalue == 0 || twlsettings_launchslot1value == 0) {
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+			if (gbarunnervalue == 0) {
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+				char path[256];
+				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
+				if (access(path, F_OK) == -1) {
+					// Create a save file if it doesn't exist
+					CreateGameSave(path);
 				}
 			}
 		}
@@ -2903,8 +2870,7 @@ int main()
 									} else {
 										twlsettings_launchslot1value = 0;
 										rom = files.at(cursorPosition).c_str();
-										// FIXME: Potential memory leak.
-										sav = strrep(rom, ".nds", ".sav");
+										sav = ReplaceAll(rom, ".nds", ".sav");
 									}
 									applaunchprep = true;
 								}
@@ -2963,8 +2929,7 @@ int main()
 								} else {
 									twlsettings_launchslot1value = 0;
 									rom = files.at(cursorPosition).c_str();
-									// FIXME: Potential memory leak.
-									sav = strrep(rom, ".nds", ".sav");
+									sav = ReplaceAll(rom, ".nds", ".sav");
 								}
 								applaunchprep = true;
 							}
