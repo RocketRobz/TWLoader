@@ -836,7 +836,7 @@ bool settingsMoveCursor(u32 hDown)
 					} else if (hDown & KEY_LEFT) {
 						settings.twl.console--;
 						if (settings.twl.console < 0) {
-							settings.twl.console = 16;
+							settings.twl.console = 2;
 						}
 					}
 					break;
