@@ -298,9 +298,12 @@ void UpdateBootstrapRelease(void) {
 }
 
 /**
- * Download boxart.
+ * Look up a GameTDB region code.
+ * @param tid_region Region character from the TID.
+ * @param ba_region_fallback Pointer to const char* to store the fallback region.
+ * @return GameTDB region code.
  */
-void downloadBoxArt(void)
+static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 {
 	// European boxart languages.
 	static const char *const ba_langs_eur[] = {
@@ -318,21 +321,104 @@ void downloadBoxArt(void)
 		"ZHTW"	// Traditional Chinese
 	};
 
+	const char *ba_region_fallback = NULL;
+	const char *ba_region;
+
+	// Get the system region.
+	// This is needed in order to differentiate the 'O' region code
+	// for USA and Europe.
+	static u8 region = 0xFF;
+	if (region == 0xFF) {
+		int res = CFGU_SecureInfoGetRegion(&region);
+		if (res != 0) {
+			// Can't get the region. Assume USA.
+			region = CFG_REGION_USA;
+		}
+	}
+
+	switch (tid_region) {
+		case 'E':
+			ba_region = "US";	// USA
+			break;
+		case 'J':
+			ba_region = "JA";	// Japanese
+			break;
+		case 'K':
+			ba_region = "KO";	// Korean
+			break;
+
+		case 'O':			// USA/Europe
+			if (region == CFG_REGION_USA) {
+				// System is USA region.
+				// Get the USA boxart if it's available.
+				ba_region = "US";
+				ba_region_fallback = "EN";
+				break;
+			}
+			// fall-through
+		case 'P':			// Europe
+		default:
+			// System is not USA region.
+			// Get the European boxart that matches the system's language.
+			// TODO: Check country code for Australia.
+			// This requires parsing the Config savegame. (GetConfigInfoBlk2())
+			// Reference: https://3dbrew.org/wiki/Config_Savegame
+			ba_region = ba_langs_eur[language];
+			if (strcmp(ba_region, "EN") != 0) {
+				// Fallback to EN if the specified language isn't available.
+				ba_region_fallback = "EN";
+			}
+			break;
+
+		case 'U':
+			// Alternate country code for Australia.
+			ba_region = "AU";
+			ba_region_fallback = "EN";
+			break;
+
+		// European country-specific localizations.
+		case 'D':
+			ba_region = "DE";	// German
+			ba_region_fallback = "EN";
+			break;
+		case 'F':
+			ba_region = "FR";	// French
+			ba_region_fallback = "EN";
+			break;
+		case 'H':
+			ba_region = "NL";	// Dutch
+			ba_region_fallback = "EN";
+			break;
+		case 'I':
+			ba_region = "IT";	// Italian
+			ba_region_fallback = "EN";
+			break;
+		case 'R':
+			ba_region = "RU";	// Russian
+			ba_region_fallback = "EN";
+			break;
+		case 'S':
+			ba_region = "ES";	// Spanish
+			ba_region_fallback = "EN";
+			break;
+	}
+
+	if (pFallback) {
+		*pFallback = ba_region_fallback;
+	}
+	return ba_region;
+}
+
+/**
+ * Download boxart.
+ */
+void downloadBoxArt(void)
+{
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
 
 	char romsel_counter2fc[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
-
-	// Get the system region.
-	// This is needed in order to differentiate the 'O' region code
-	// for USA and Europe.
-	u8 region;
-	int res = CFGU_SecureInfoGetRegion(&region);
-	if (res != 0) {
-		// Can't get the region. Assume USA.
-		region = CFG_REGION_USA;
-	}
 
 	LogFM("Main.downloadBoxArt", "Checking box art (SD Card).");
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
@@ -359,74 +445,10 @@ void downloadBoxArt(void)
 		ba_TID[4] = 0;
 		fclose(f_nds_file);
 
-		const char *ba_region;
 		const char *ba_region_fallback = NULL;
-		switch (ba_TID[3]) {
-			case 'E':
-				ba_region = "US";	// USA
-				break;
-			case 'J':
-				ba_region = "JA";	// Japanese
-				break;
-			case 'K':
-				ba_region = "KO";	// Korean
-				break;
-
-			case 'O':			// USA/Europe
-				if (region == CFG_REGION_USA) {
-					// System is USA region.
-					// Get the USA boxart if it's available.
-					ba_region = "US";
-					ba_region_fallback = "EN";
-					break;
-				}
-				// fall-through
-			case 'P':			// Europe
-			default:
-				// System is not USA region.
-				// Get the European boxart that matches the system's language.
-				// TODO: Check country code for Australia.
-				// This requires parsing the Config savegame. (GetConfigInfoBlk2())
-				// Reference: https://3dbrew.org/wiki/Config_Savegame
-				ba_region = ba_langs_eur[language];
-				if (strcmp(ba_region, "EN") != 0) {
-					// Fallback to EN if the specified language isn't available.
-					ba_region_fallback = "EN";
-				}
-				break;
-
-			case 'U':
-				// Alternate country code for Australia.
-				ba_region = "AU";
-				ba_region_fallback = "EN";
-				break;
-
-			// European country-specific localizations.
-			case 'D':
-				ba_region = "DE";	// German
-				ba_region_fallback = "EN";
-				break;
-			case 'F':
-				ba_region = "FR";	// French
-				ba_region_fallback = "EN";
-				break;
-			case 'H':
-				ba_region = "NL";	// Dutch
-				ba_region_fallback = "EN";
-				break;
-			case 'I':
-				ba_region = "IT";	// Italian
-				ba_region_fallback = "EN";
-				break;
-			case 'R':
-				ba_region = "RU";	// Russian
-				ba_region_fallback = "EN";
-				break;
-			case 'S':
-				ba_region = "ES";	// Spanish
-				ba_region_fallback = "EN";
-				break;
-		}
+		const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
+		if (!ba_region)
+			continue;
 
 		char http_url[256];
 		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
@@ -471,83 +493,20 @@ void downloadBoxArt(void)
 		snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
 
 		CIniFile setfcrompathini( path );
-		std::string	ba_TIDini = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
-		char ba_TID[5];
-		strcpy(ba_TID, ba_TIDini.c_str());
-		ba_TID[4] = 0;
-
-		const char *ba_region;
-		const char *ba_region_fallback = NULL;
-		switch (ba_TID[3]) {
-			case 'E':
-				ba_region = "US";	// USA
-				break;
-			case 'J':
-				ba_region = "JA";	// Japanese
-				break;
-			case 'K':
-				ba_region = "KO";	// Korean
-				break;
-
-			case 'O':			// USA/Europe
-				if (region == CFG_REGION_USA) {
-					// System is USA region.
-					// Get the USA boxart if it's available.
-					ba_region = "US";
-					ba_region_fallback = "EN";
-					break;
-				}
-				// fall-through
-			case 'P':			// Europe
-			default:
-				// System is not USA region.
-				// Get the European boxart that matches the system's language.
-				// TODO: Check country code for Australia.
-				// This requires parsing the Config savegame. (GetConfigInfoBlk2())
-				// Reference: https://3dbrew.org/wiki/Config_Savegame
-				ba_region = ba_langs_eur[language];
-				if (strcmp(ba_region, "EN") != 0) {
-					// Fallback to EN if the specified language isn't available.
-					ba_region_fallback = "EN";
-				}
-				break;
-
-			case 'U':
-				// Alternate country code for Australia.
-				ba_region = "AU";
-				ba_region_fallback = "EN";
-				break;
-
-			// European country-specific localizations.
-			case 'D':
-				ba_region = "DE";	// German
-				ba_region_fallback = "EN";
-				break;
-			case 'F':
-				ba_region = "FR";	// French
-				ba_region_fallback = "EN";
-				break;
-			case 'H':
-				ba_region = "NL";	// Dutch
-				ba_region_fallback = "EN";
-				break;
-			case 'I':
-				ba_region = "IT";	// Italian
-				ba_region_fallback = "EN";
-				break;
-			case 'R':
-				ba_region = "RU";	// Russian
-				ba_region_fallback = "EN";
-				break;
-			case 'S':
-				ba_region = "ES";	// Spanish
-				ba_region_fallback = "EN";
-				break;
+		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
+		if (ba_TID.size() < 4) {
+			// Invalid TID.
+			continue;
 		}
 
+		const char *ba_region_fallback = NULL;
+		const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
+		if (!ba_region)
+			continue;
+
 		char http_url[256];
-		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
-		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID.c_str());
+		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID.c_str());
 		if (access(path, F_OK) == -1) {
 			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -562,7 +521,7 @@ void downloadBoxArt(void)
 			int res = downloadFile(http_url, path, MEDIA_SD_FILE);
 			if (res != 0 && ba_region_fallback != NULL) {
 				// Try the fallback region.
-				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
+				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID.c_str());
 				res = downloadFile(http_url, path, MEDIA_SD_FILE);
 			}
 		}
