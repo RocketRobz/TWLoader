@@ -11,4 +11,5 @@ copy "NTR_Launcher.nds" "../7zfile/sdroot/_nds/twloader/NTR_Launcher.nds"
 cd ..
 cd gui
 make
+copy "TWLoader.cia" "../7zfile/sdroot/TWLoader.cia"
 pause

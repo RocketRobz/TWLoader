@@ -177,6 +177,7 @@ int checkUpdate(void) {
 	sf2d_swapbuffers();
 
 	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", MEDIA_SD_FILE);
+	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
 		sVerfile Verfile;
 
@@ -194,25 +195,25 @@ int checkUpdate(void) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (updtequals == 0){
+		if (updtequals == 0){			
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
-			LogFM("checkUpdate", "TWLoader is up-to-date!");
-			// FIXME: DialogBoxDiappear is freezing here,
-			// so just hide the dialog.
-			//DialogBoxDisappear("TWLoader is up-to-date.");
-			if (screenmode == 1) {
-				showdialogbox = false;	// <-- so do this instead.
-			} else {
+		
+			if (screenmode == 1) {				
+				showdialogbox = false;
+			}else{
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 			}
+			
+			LogFM("checkUpdate", "TWLoader is up-to-date!");			
 			return -1;
 		}
 		LogFMA("checkUpdate", "Comparing...", "NO equals");
+		showdialogbox = false;
 		return 0;
 	}
-
 	LogFM("checkUpdate", "Problem downloading ver file!");
+	showdialogbox = false;
 	return -1;
 }
 
