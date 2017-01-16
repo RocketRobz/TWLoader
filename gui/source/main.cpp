@@ -165,6 +165,56 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 bool run = true;
 // End
 
+int menutext_startXpos()
+{
+	int languages[] =
+	{
+		140,		// Japanese
+		140,		// English
+		152,		// French
+		135,		// German
+		142,		// Italian
+		142,		// Spanish
+		140,		// Simplified Chinese
+		140,		// Korean
+		141,		// Dutch
+		130,		// Portugese
+		140,		// Russian
+		140			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+
+const char* menutext_start()
+{
+	static const char *const languages[] =
+	{
+		"START",		// Japanese
+		"START",		// English
+		"OK",			// French
+		"ANFANG",		// German
+		"INIZIO",		// Italian
+		"INICIO",		// Spanish
+		"START",		// Simplified Chinese
+		"START",		// Korean
+		"BEGIN",		// Dutch
+		"COMEÇAR",		// Portugese
+		"START",		// Russian
+		"START"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+
 /**
  * Get the localized "Return to HOME Menu" text.
  * @return Localized "Return to HOME Menu" text.
@@ -223,8 +273,7 @@ const char* romsel_filename;
 vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
-// TODO: Potential memory leaks for sav...
-static char* sav = nullptr;		// Associated save file.
+std::string sav;		// Associated save file.
 static const char* flashcardrom = "";
 
 std::string sdmc = "sdmc:/";
@@ -251,35 +300,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
         start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
-}
-
-/**
- * Replace a substring in a C string.
- * @param str Original string.
- * @param o_s Substring to search for.
- * @param n_s New substring.
- * @return Newly allocated string with the replaced substring. (Must be free()'d!)
- */
-char *strrep(const char *str, const char *o_s, const char *n_s) 
-{
-	char *newstr = NULL;
-	char *c = NULL;
-
-	// Look for the substring.
-	if ((c = strstr(str, o_s)) == NULL) {
-		// Substring not found.
-		return strdup(str);
-	}
-
-	newstr = (char*)malloc(strlen(str) - strlen(o_s) + strlen(n_s) + 1);
-	if (!newstr) {
-		printf("ERROR: unable to allocate memory\n");
-		return NULL;
-	}
-
-	strncpy(newstr, str, c-str);  
-	sprintf(newstr+(c-str), "%s%s", n_s, c+strlen(o_s));
-	return newstr;
 }
 
 
@@ -401,10 +421,33 @@ static void CreateGameSave(const char *filename) {
 	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, sizeof(buffer));
+	
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	fclose(f_nds_file);
+	
+	int savesize = 524288;	// 512KB (default size for most games)
+	
+	// Set save size to 1MB for the following games
+	if ( strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+		strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+		strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+		strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+			savesize = 1048576;
+
+	// Set save size to 32MB for the following games
+	if ( strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+		strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+			savesize = 1048576*32;
 
 	FILE *pFile = fopen(filename, "wb");
 	if (pFile) {
-		for (int i = 524288; i > 0; i -= BUFFER_SIZE) {
+		for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 			fwrite(buffer, 1, sizeof(buffer), pFile);
 		}
 		fclose(pFile);
@@ -622,18 +665,15 @@ void SaveSettings() {
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
-		if (!settings.twl.forwarder) {
-			if (!settings.twl.launchslot1) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
-				if (gbarunnervalue == 0) {
-					bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
-					char path[256];
-					snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
-					if (access(path, F_OK) == -1) {
-						// Create a save file if it doesn't exist
-						CreateGameSave(path);
-					}
-					free(sav);
+		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+			if (gbarunnervalue == 0) {
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+				char path[256];
+				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav.c_str());
+				if (access(path, F_OK) == -1) {
+					// Create a save file if it doesn't exist
+					CreateGameSave(path);
 				}
 			}
 		}
@@ -1911,7 +1951,7 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						sftd_draw_textf(font_b, 140, 177, RGBA8(255, 255, 255, 255), 12, "START");
+						sftd_draw_textf(font_b, menutext_startXpos(), 177, RGBA8(255, 255, 255, 255), 12, menutext_start());
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
@@ -2042,7 +2082,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(!applaunchprep || fadealpha == 255) {
+				if(titleboxXmovetimer == 0) {
 					if (settings.ui.locswitch) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
@@ -2242,11 +2282,11 @@ int main()
 									applaunchprep = true;
 								} else if(cursorPosition == -1) {
 									titleboxXmovetimer = 1;
+									settings.twl.launchslot1 = true;
 									if (settings.twl.forwarder) {
 										keepsdvalue = 1;
 										rom = "_nds/twloader.nds";
-									} else
-										settings.twl.launchslot1 = true;
+									}
 									applaunchprep = true;
 								} else {
 									titleboxXmovetimer = 1;
@@ -2256,8 +2296,7 @@ int main()
 									} else {
 										settings.twl.launchslot1 = false;
 										rom = files.at(cursorPosition).c_str();
-										// FIXME: Potential memory leak.
-										sav = strrep(rom, ".nds", ".sav");
+										sav = ReplaceAll(rom, ".nds", ".sav");
 									}
 									applaunchprep = true;
 								}
@@ -2302,11 +2341,11 @@ int main()
 								applaunchprep = true;
 							} else if(cursorPosition == -1) {
 								titleboxXmovetimer = 1;
+								settings.twl.launchslot1 = 1;
 								if (settings.twl.forwarder) {
 									keepsdvalue = 1;
 									rom = "_nds/twloader.nds";
-								} else
-									settings.twl.launchslot1 = true;
+								}
 								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
@@ -2316,8 +2355,7 @@ int main()
 								} else {
 									settings.twl.launchslot1 = false;
 									rom = files.at(cursorPosition).c_str();
-									// FIXME: Potential memory leak.
-									sav = strrep(rom, ".nds", ".sav");
+									sav = ReplaceAll(rom, ".nds", ".sav");
 								}
 								applaunchprep = true;
 							}

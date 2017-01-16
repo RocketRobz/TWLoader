@@ -22,6 +22,8 @@ extern sf2d_texture *batteryIcon;	// Current battery level icon.
 void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 
 // Variables from main.cpp.
+extern u8 language;
+
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -99,14 +101,176 @@ Settings_t settings;
 // Frontend
 static const char settings_xbuttontext[] = "X: Update bootstrap (Official Release)";
 static const char settings_ybuttontext[] = "Y: Update bootstrap (Unofficial build)";
-static const char settings_startbuttontext[] = "START: Update TWLoader";
+const char* settings_startbuttontext()
+{
+	static const char *const languages[] =
+	{
+		"START: Update TWLoader",			// Japanese
+		"START: Update TWLoader",			// English
+		"START: Mettre à jour TWLoader",	// French
+		"START: TWLoader aktualisieren",	// German
+		"START: Aggiornamento TWLoader",	// Italian
+		"START: Actualizar TWLoader",		// Spanish
+		"START: Update TWLoader",			// Simplified Chinese
+		"START: Update TWLoader",			// Korean
+		"START: update TWLoader",			// Dutch
+		"START: Atualizar o TWLoader",		// Portugese
+		"START: Update TWLoader",			// Russian
+		"START: Update TWLoader"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
 
-static const char settings_colortext[] = "Color";
-static const char settings_menucolortext[] = "Menu color";
-static const char settings_filenametext[] = "Show filename";
-static const char settings_locswitchtext[] = "Game location switcher";
-static const char settings_topbordertext[] = "Top border";
-static const char settings_countertext[] = "Game counter";
+const char* settings_colortext()
+{
+	static const char *const languages[] =
+	{
+		"Color",		// Japanese
+		"Color",		// English
+		"Couleur",		// French
+		"Farbe",		// German
+		"Colore",		// Italian
+		"Color",		// Spanish
+		"Color",		// Simplified Chinese
+		"Color",		// Korean
+		"Kleur",		// Dutch
+		"Cor",			// Portugese
+		"Color",		// Russian
+		"Color"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+const char* settings_menucolortext()
+{
+	static const char *const languages[] =
+	{
+		"Menu color",			// Japanese
+		"Menu color",			// English
+		"Couleur du menu",		// French
+		"Menüfarbe",			// German
+		"colore Menu",			// Italian
+		"Color del menú",		// Spanish
+		"Menu color",			// Simplified Chinese
+		"Menu color",			// Korean
+		"menukleur",			// Dutch
+		"Cor do menu",			// Portugese
+		"Menu color",			// Russian
+		"Menu color"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+const char* settings_filenametext()
+{
+	static const char *const languages[] =
+	{
+		"Show filename",					// Japanese
+		"Show filename",					// English
+		"Afficher le nom du fichier",		// French
+		"Dateiname anzeigen",				// German
+		"Visualizza il nome del file",		// Italian
+		"Mostrar nombre de archivo",		// Spanish
+		"Show filename",					// Simplified Chinese
+		"Show filename",					// Korean
+		"Toon bestandsnaam",				// Dutch
+		"Mostrar nome do arquivo",			// Portugese
+		"Show filename",					// Russian
+		"Show filename"						// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+const char* settings_locswitchtext()
+{
+	static const char *const languages[] =
+	{
+		"Game location switcher",			// Japanese
+		"Game location switcher",			// English
+		"Commutateur de position de jeu",	// French
+		"Spielort-Umschalter",				// German
+		"Gioco posizione switcher",			// Italian
+		"Selector de ubicación de juegos",	// Spanish
+		"Game location switcher",			// Simplified Chinese
+		"Game location switcher",			// Korean
+		"Game locatie switcher",			// Dutch
+		"Seletor de localização de jogos",	// Portugese
+		"Game location switcher",			// Russian
+		"Game location switcher"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+const char* settings_topbordertext()
+{
+	static const char *const languages[] =
+	{
+		"Top border",			// Japanese
+		"Top border",			// English
+		"Bordure supérieure",	// French
+		"Top Grenze",			// German
+		"Top confine",			// Italian
+		"Borde superior",		// Spanish
+		"Top border",			// Simplified Chinese
+		"Top border",			// Korean
+		"bovenkader",			// Dutch
+		"Borda superior",		// Portugese
+		"Top border",			// Russian
+		"Top border"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+const char* settings_countertext()
+{
+	static const char *const languages[] =
+	{
+		"Game counter",			// Japanese
+		"Game counter",			// English
+		"Compteur de jeux",		// French
+		"Spielzähler",			// German
+		"contatore Gioco",		// Italian
+		"Contador de juegos",	// Spanish
+		"Game counter",			// Simplified Chinese
+		"Game counter",			// Korean
+		"Game teller",			// Dutch
+		"Contador de jogos",	// Portugese
+		"Game counter",			// Russian
+		"Game counter"			// Traditional Chinese
+	};
+	
+	if (language < 11) {
+		return languages[language];
+	} else {
+		return languages[1];
+	}
+}
+
 static const char settings_custombottext[] = "Custom bottom image";
 static const char settings_autoupdatetext[] = "Auto-update bootstrap";
 static const char settings_autodltext[] = "Auto-update to latest TWLoader";
@@ -255,7 +419,7 @@ void settingsDrawTopScreen(void)
 			if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 				sftd_draw_textf(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
 				sftd_draw_textf(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
-				sftd_draw_textf(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext);
+				sftd_draw_textf(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext());
 			}
 		}
 
@@ -344,66 +508,66 @@ void settingsDrawBottomScreen(void)
 		title = "Settings: GUI";
 		int Ypos = 40;
 		if (cursor_pos[0] == 0) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_colortext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_colortext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top background,");
 			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the START border, and the circling dots.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_colortext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_colortext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 1) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_menucolortext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_menucolortext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top border,");
 			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and the bottom background.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_menucolortext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_menucolortext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 2) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_filenametext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_filenametext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_filenametext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_filenametext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 3) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_locswitchtext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_locswitchtext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, locswitchvaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
 			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "between the SD Card and the flashcard.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_locswitchtext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_locswitchtext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, locswitchvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 4) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_topbordertext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_topbordertext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, topbordervaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_topbordertext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_topbordertext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, topbordervaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 5) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_countertext);
+			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_countertext());
 			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
 			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
 			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "is shown below the text bubble.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_countertext);
+			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_countertext());
 			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
 			Ypos += 12;
 		}
