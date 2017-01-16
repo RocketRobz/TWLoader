@@ -1842,10 +1842,16 @@ int main()
 					} else {
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
-					sf2d_draw_texture(homeicontex, 81, 220); // Draw HOME icon
-					sftd_draw_textf(font, 98, 221, RGBA8(0, 0, 0, 255), 13, text_returntohomemenu());
+
+					const char *home_text = text_returntohomemenu();
+					const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
+					const int home_x = (320-home_width)/2;
+					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
+					sftd_draw_textf(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
+
 					if (!settings.twl.forwarder) {
 						if (pagenum != 0) {
 							if(files.size() <= 0-pagenum*20) {

@@ -101,24 +101,25 @@ Settings_t settings;
 // Frontend
 static const char settings_xbuttontext[] = "X: Update bootstrap (Official Release)";
 static const char settings_ybuttontext[] = "Y: Update bootstrap (Unofficial build)";
-const char* settings_startbuttontext()
+
+static const char* settings_startbuttontext(void)
 {
 	static const char *const languages[] =
 	{
-		"START: Update TWLoader",			// Japanese
-		"START: Update TWLoader",			// English
+		"START: Update TWLoader",		// Japanese
+		"START: Update TWLoader",		// English
 		"START: Mettre à jour TWLoader",	// French
 		"START: TWLoader aktualisieren",	// German
 		"START: Aggiornamento TWLoader",	// Italian
 		"START: Actualizar TWLoader",		// Spanish
-		"START: Update TWLoader",			// Simplified Chinese
-		"START: Update TWLoader",			// Korean
-		"START: update TWLoader",			// Dutch
+		"START: Update TWLoader",		// Simplified Chinese
+		"START: Update TWLoader",		// Korean
+		"START: update TWLoader",		// Dutch
 		"START: Atualizar o TWLoader",		// Portugese
-		"START: Update TWLoader",			// Russian
-		"START: Update TWLoader"			// Traditional Chinese
+		"START: Update TWLoader",		// Russian
+		"START: Update TWLoader"		// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
@@ -126,7 +127,7 @@ const char* settings_startbuttontext()
 	}
 }
 
-const char* settings_colortext()
+static const char* settings_colortext(void)
 {
 	static const char *const languages[] =
 	{
@@ -143,14 +144,15 @@ const char* settings_colortext()
 		"Color",		// Russian
 		"Color"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
 		return languages[1];
 	}
 }
-const char* settings_menucolortext()
+
+static const char* settings_menucolortext(void)
 {
 	static const char *const languages[] =
 	{
@@ -167,68 +169,71 @@ const char* settings_menucolortext()
 		"Menu color",			// Russian
 		"Menu color"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
 		return languages[1];
 	}
 }
-const char* settings_filenametext()
+
+static const char* settings_filenametext(void)
 {
 	static const char *const languages[] =
 	{
-		"Show filename",					// Japanese
-		"Show filename",					// English
-		"Afficher le nom du fichier",		// French
-		"Dateiname anzeigen",				// German
-		"Visualizza il nome del file",		// Italian
-		"Mostrar nombre de archivo",		// Spanish
-		"Show filename",					// Simplified Chinese
-		"Show filename",					// Korean
-		"Toon bestandsnaam",				// Dutch
-		"Mostrar nome do arquivo",			// Portugese
-		"Show filename",					// Russian
-		"Show filename"						// Traditional Chinese
+		"Show filename",		// Japanese
+		"Show filename",		// English
+		"Afficher le nom du fichier",	// French
+		"Dateiname anzeigen",		// German
+		"Visualizza il nome del file",	// Italian
+		"Mostrar nombre de archivo",	// Spanish
+		"Show filename",		// Simplified Chinese
+		"Show filename",		// Korean
+		"Toon bestandsnaam",		// Dutch
+		"Mostrar nome do arquivo",	// Portugese
+		"Show filename",		// Russian
+		"Show filename"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
 		return languages[1];
 	}
 }
-const char* settings_locswitchtext()
+
+static const char* settings_locswitchtext(void)
 {
 	static const char *const languages[] =
 	{
-		"Game location switcher",			// Japanese
-		"Game location switcher",			// English
+		"Game location switcher",		// Japanese
+		"Game location switcher",		// English
 		"Commutateur de position de jeu",	// French
-		"Spielort-Umschalter",				// German
-		"Gioco posizione switcher",			// Italian
+		"Spielort-Umschalter",			// German
+		"Gioco posizione switcher",		// Italian
 		"Selector de ubicación de juegos",	// Spanish
-		"Game location switcher",			// Simplified Chinese
-		"Game location switcher",			// Korean
-		"Game locatie switcher",			// Dutch
+		"Game location switcher",		// Simplified Chinese
+		"Game location switcher",		// Korean
+		"Game locatie switcher",		// Dutch
 		"Seletor de localização de jogos",	// Portugese
-		"Game location switcher",			// Russian
-		"Game location switcher"			// Traditional Chinese
+		"Game location switcher",		// Russian
+		"Game location switcher"		// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
 		return languages[1];
 	}
 }
-const char* settings_topbordertext()
+
+static const char* settings_topbordertext(void)
 {
 	static const char *const languages[] =
 	{
 		"Top border",			// Japanese
 		"Top border",			// English
-		"Bordure supérieure",	// French
+		"Bordure supérieure",		// French
 		"Top Grenze",			// German
 		"Top confine",			// Italian
 		"Borde superior",		// Spanish
@@ -239,14 +244,15 @@ const char* settings_topbordertext()
 		"Top border",			// Russian
 		"Top border"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
 		return languages[1];
 	}
 }
-const char* settings_countertext()
+
+static const char* settings_countertext(void)
 {
 	static const char *const languages[] =
 	{
@@ -255,15 +261,15 @@ const char* settings_countertext()
 		"Compteur de jeux",		// French
 		"Spielzähler",			// German
 		"contatore Gioco",		// Italian
-		"Contador de juegos",	// Spanish
+		"Contador de juegos",		// Spanish
 		"Game counter",			// Simplified Chinese
 		"Game counter",			// Korean
 		"Game teller",			// Dutch
-		"Contador de jogos",	// Portugese
+		"Contador de jogos",		// Portugese
 		"Game counter",			// Russian
 		"Game counter"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
@@ -445,8 +451,11 @@ void settingsDrawBottomScreen(void)
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_draw_texture(settingstex, 0, 0);
-	sf2d_draw_texture(whomeicontex, 81, 220); // Draw HOME icon
-	sftd_draw_textf(font, 98, 221, RGBA8(255, 255, 255, 255), 13, text_returntohomemenu());
+	const char *home_text = text_returntohomemenu();
+	const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
+	const int home_x = (320-home_width)/2;
+	sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
+	sftd_draw_textf(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
 
 	// X positions.
 	static const int Xpos = 24;
