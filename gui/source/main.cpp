@@ -954,11 +954,13 @@ int main()
 		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_textf(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile);
+		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_text(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_text(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+
+		wstring tempfile_w = utf8_to_wstring(tempfile);
+		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", tempfile);
