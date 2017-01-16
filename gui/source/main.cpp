@@ -166,32 +166,7 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 bool run = true;
 // End
 
-int menutext_startXpos()
-{
-	int languages[] =
-	{
-		140,		// Japanese
-		140,		// English
-		152,		// French
-		135,		// German
-		142,		// Italian
-		142,		// Spanish
-		140,		// Simplified Chinese
-		140,		// Korean
-		141,		// Dutch
-		130,		// Portugese
-		140,		// Russian
-		140			// Traditional Chinese
-	};
-	
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-const char* menutext_start()
+static const char* menutext_start(void)
 {
 	static const char *const languages[] =
 	{
@@ -208,7 +183,7 @@ const char* menutext_start()
 		"START",		// Russian
 		"START"			// Traditional Chinese
 	};
-	
+
 	if (language < 11) {
 		return languages[language];
 	} else {
@@ -1960,7 +1935,9 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						sftd_draw_textf(font_b, menutext_startXpos(), 177, RGBA8(255, 255, 255, 255), 12, menutext_start());
+						const char *start_text = menutext_start();
+						const int start_width = sftd_get_text_width(font_b, 12, start_text);
+						sftd_draw_textf(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
