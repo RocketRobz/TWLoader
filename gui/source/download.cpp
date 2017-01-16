@@ -202,6 +202,9 @@ int checkUpdate(void) {
 			//DialogBoxDisappear("TWLoader is up-to-date.");
 			if (screenmode == 1) {
 				showdialogbox = false;	// <-- so do this instead.
+			} else {
+				sf2d_end_frame();
+				sf2d_swapbuffers();
 			}
 			return -1;
 		}
