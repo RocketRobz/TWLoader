@@ -431,10 +431,33 @@ static void CreateGameSave(const char *filename) {
 	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, sizeof(buffer));
+	
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	fclose(f_nds_file);
+	
+	int savesize = 524288;	// 512KB (default size for most games)
+	
+	// Set save size to 1MB for the following games
+	if ( strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+		strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+		strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+		strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+			savesize = 1048576;
+
+	// Set save size to 32MB for the following games
+	if ( strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+		strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+			savesize = 1048576*32;
 
 	FILE *pFile = fopen(filename, "wb");
 	if (pFile) {
-		for (int i = 524288; i > 0; i -= BUFFER_SIZE) {
+		for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 			fwrite(buffer, 1, sizeof(buffer), pFile);
 		}
 		fclose(pFile);
@@ -822,7 +845,7 @@ void SaveSettings() {
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
 				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav);
+				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav.c_str());
 				if (access(path, F_OK) == -1) {
 					// Create a save file if it doesn't exist
 					CreateGameSave(path);
