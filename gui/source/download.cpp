@@ -182,8 +182,7 @@ int checkUpdate(void) {
 
 		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
 		fread(&Verfile, 1, sizeof(Verfile), VerFile);
-		strncpy(settings_latestvertext, Verfile.text, sizeof(settings_latestvertext));
-		settings_latestvertext[sizeof(settings_latestvertext)-1] = 0;
+		strcpy(settings_latestvertext, Verfile.text);
 		fclose(VerFile);
 		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
 		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);

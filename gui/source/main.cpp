@@ -2889,11 +2889,11 @@ int main()
 									applaunchprep = true;
 								} else if(cursorPosition == -1) {
 									titleboxXmovetimer = 1;
+									twlsettings_launchslot1value = 1;
 									if (twlsettings_forwardervalue == 1) {
 										keepsdvalue = 1;
 										rom = "_nds/twloader.nds";
-									} else
-										twlsettings_launchslot1value = 1;
+									}
 									applaunchprep = true;
 								} else {
 									titleboxXmovetimer = 1;
@@ -2949,11 +2949,11 @@ int main()
 								applaunchprep = true;
 							} else if(cursorPosition == -1) {
 								titleboxXmovetimer = 1;
+								twlsettings_launchslot1value = 1;
 								if (twlsettings_forwardervalue == 1) {
 									keepsdvalue = 1;
 									rom = "_nds/twloader.nds";
-								} else
-									twlsettings_launchslot1value = 1;
+								}
 								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
