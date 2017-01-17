@@ -21,7 +21,7 @@ static union {
 } twl_gameid;	// 4-character game ID
 bool twl_inserted = false;
 static GameCardType twl_card_type = CARD_TYPE_UNKNOWN;
-static string twl_product_code;
+static char twl_product_code[16] = { };
 static u8 twl_revision = 0xFF;
 static sf2d_texture *twl_icon = NULL;
 static vector<wstring> twl_text;
@@ -35,7 +35,7 @@ void gamecardClearCache(void)
 	twl_gameid.d = 0;
 	sf2d_free_texture(twl_icon);
 	twl_card_type = CARD_TYPE_UNKNOWN;
-	twl_product_code.clear();
+	twl_product_code[0] = 0;
 	twl_revision = 0xFF;
 	twl_icon = NULL;
 	twl_text.clear();
@@ -113,9 +113,7 @@ bool gamecardPoll(bool force)
 	}
 
 	// Product code. Format: NTR-P-XXXX or TWL-P-XXXX
-	char buf[16];
-	snprintf(buf, sizeof(buf), "%s-P-%.4s", prefix, twl_gameid.id4);
-	twl_product_code = string(buf);
+	snprintf(twl_product_code, sizeof(twl_product_code), "%s-P-%.4s", prefix, twl_gameid.id4);
 
 	// Revision.
 	twl_revision = header.romversion;
@@ -150,7 +148,7 @@ GameCardType gamecardGetType(void)
  */
 const char *gamecardGetProductCode(void)
 {
-	return twl_product_code.c_str();
+	return twl_product_code;
 }
 
 /**
