@@ -32,6 +32,7 @@ void gamecardClearCache(void)
 	// NOTE: twl_inserted is NOT reset here.
 	twl_gameid.d = 0;
 	sf2d_free_texture(twl_icon);
+	twl_product_code.clear();
 	twl_icon = NULL;
 	twl_text.clear();
 }
