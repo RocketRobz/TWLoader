@@ -147,6 +147,9 @@ typedef struct {
 	u16 palette[16];	//!< the palette of the icon.
 	u16 titles[8][128];	//!< title of the game in 8 different languages.
 
+	// [0xA40] Reserved space, possibly for other titles.
+	u8 reserved2[0x800];
+
 	// DSi-specific.
 	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
 	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
@@ -168,6 +171,9 @@ typedef enum {
 	NDS_BANNER_SIZE_ZH_KO		= 0x0A40,
 	NDS_BANNER_SIZE_DSi		= 0x23C0,
 } sNDSBannerSize;
+
+// Make sure the banner size is correct.
+static_assert(sizeof(sNDSBanner) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBanner) is not 0x23C0 bytes");
 
 // Language indexes.
 typedef enum {

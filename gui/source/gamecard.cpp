@@ -97,11 +97,6 @@ bool gamecardPoll(bool force)
 		 twl_gameid.id4);
 	twl_product_code = string(buf);
 
-	twl_text.push_back(L"Banner Placeholder");
-	return true;
-
-	// TODO: Get the banner data.
-#if 0
 	// Get the banner.
 	sNDSBanner ndsBanner;
 	if (R_FAILED(FSUSER_GetLegacyBannerData(MEDIATYPE_GAME_CARD, 0, (u8*)&ndsBanner))) {
@@ -114,7 +109,7 @@ bool gamecardPoll(bool force)
 	sf2d_free_texture(twl_icon);
 	twl_icon = grabIcon(&ndsBanner);
 	twl_text = grabText(&ndsBanner, language);
-#endif
+	return true;
 }
 
 /**
