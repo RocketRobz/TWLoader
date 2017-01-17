@@ -1,6 +1,7 @@
 #include "download.h"
 #include "settings.h"
 #include "textfns.h"
+#include "language.h"
 
 #include <cstdio>
 #include <cstring>
@@ -45,7 +46,6 @@ CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
 int equals;
-u8 language;
 
 sftd_font *font;
 sftd_font *font_b;
@@ -165,60 +165,6 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 // Run
 bool run = true;
 // End
-
-static const char* menutext_start(void)
-{
-	static const char *const languages[] =
-	{
-		"START",		// Japanese
-		"START",		// English
-		"OK",			// French
-		"ANFANG",		// German
-		"INIZIO",		// Italian
-		"INICIO",		// Spanish
-		"START",		// Simplified Chinese
-		"START",		// Korean
-		"BEGIN",		// Dutch
-		"COMEÇAR",		// Portugese
-		"START",		// Russian
-		"START"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-/**
- * Get the localized "Return to HOME Menu" text.
- * @return Localized "Return to HOME Menu" text.
- */
-const char* text_returntohomemenu(void)
-{
-	static const char *const languages[] =
-	{
-		": Return to HOME Menu",		// Japanese
-		": Return to HOME Menu",		// English
-		": Retour au menu HOME",		// French
-		": Zuruck zum HOME-Menu",		// German
-		": Ritorna al Menu Home",		// Italian
-		": Volver al menu HOME",		// Spanish
-		": Return to HOME Menu",		// Simplified Chinese
-		": Return to HOME Menu",		// Korean
-		": Keer terug naar HOME-menu",	// Dutch
-		": Retornar ao Menu HOME",		// Portugese
-		": Return to HOME Menu",		// Russian
-		": Return to HOME Menu"			// Traditional Chinese
-	};
-	
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
 
 bool showdialogbox = false;
 
@@ -851,8 +797,9 @@ int main()
 	strcpy(settings_vertext, Verfile.text);
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
-	
-	CFGU_GetSystemLanguage(&language);
+
+	// Initialize translations.
+	langInit();
 
 	LoadSettings();
 
@@ -1823,7 +1770,7 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 
-					const char *home_text = text_returntohomemenu();
+					const char *home_text = TR(STR_RETURN_TO_HOME_MENU);
 					const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
 					const int home_x = (320-home_width)/2;
 					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
@@ -1937,7 +1884,7 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						const char *start_text = menutext_start();
+						const char *start_text = TR(STR_START);
 						const int start_width = sftd_get_text_width(font_b, 12, start_text);
 						sftd_draw_textf(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 					} else {
