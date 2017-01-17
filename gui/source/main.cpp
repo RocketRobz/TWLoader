@@ -1909,7 +1909,7 @@ int main()
 							sf2d_texture *cardicontex = gamecardGetIcon();
 							if (!cardicontex)
 								cardicontex = iconunktex;
-							sf2d_draw_texture(cardicontex, 16+cartXpos+titleboxXmovepos, 133);
+							sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 						} else {
 							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 						}
@@ -1977,12 +1977,12 @@ int main()
 							startbordermovepos = 0;
 							startborderscalesize = 1.0;
 						}
-						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 						if (!settings.twl.forwarder && cursorPosition == -1 && romsel_gameline.empty()) {
 							// Slot-1 selected, but no cartridge is present.
-							// Don't print "START".
+							// Don't print "START" and the cursor border.
 						} else {
 							// Print "START".
+							sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 							const wchar_t *start_text = TR(STR_START);
 							const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
 							sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);

@@ -288,6 +288,7 @@ void UpdateBootstrapRelease(void) {
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
+	sf2d_draw_texture(dialogboxtex, 0, 0);
 	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
