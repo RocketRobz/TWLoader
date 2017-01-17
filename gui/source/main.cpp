@@ -2314,19 +2314,33 @@ int main()
 								}
 							}
 						} else if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+							bool playlaunchsound = true;
 							if (titleboxXmovetimer == 0) {
 								if(cursorPosition == -2) {
 									titleboxXmovetimer = 1;
 									screenmodeswitch = true;
 									applaunchprep = true;
 								} else if(cursorPosition == -1) {
-									titleboxXmovetimer = 1;
-									settings.twl.launchslot1 = true;
-									if (settings.twl.forwarder) {
-										keepsdvalue = 1;
-										rom = "_nds/twloader.nds";
+									if (!settings.twl.forwarder && romsel_gameline.empty()) {
+										// Slot-1 is selected, but no
+										// cartridge is present.
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong->stop();
+												sfx_wrong->play();
+											}
+											playwrongsounddone = true;
+										}
+										playlaunchsound = false;
+									} else {
+										titleboxXmovetimer = 1;
+										settings.twl.launchslot1 = true;
+										if (settings.twl.forwarder) {
+											keepsdvalue = 1;
+											rom = "_nds/twloader.nds";
+										}
+										applaunchprep = true;
 									}
-									applaunchprep = true;
 								} else {
 									titleboxXmovetimer = 1;
 									if (settings.twl.forwarder) {
@@ -2341,7 +2355,7 @@ int main()
 								}
 							}
 							updatebotscreen = true;
-							if (dspfirmfound) {
+							if (playlaunchsound && dspfirmfound) {
 								bgm_menu->stop();
 								sfx_launch->play();
 							}
