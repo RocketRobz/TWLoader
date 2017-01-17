@@ -12,6 +12,11 @@ extern u8 language;
  */
 void langInit(void);
 
+/**
+ * Clear the translations cache.
+ */
+void langClear(void);
+
 // String IDs.
 typedef enum _StrID {
 	STR_RETURN_TO_HOME_MENU = 0,	// "Return to HOME Menu"
@@ -37,6 +42,6 @@ typedef enum _StrID {
  * @param strID String ID.
  * @return Translation, or error string if strID is invalid.
  */
-const char *TR(StrID strID);
+const wchar_t *TR(StrID strID);
 
 #endif /* TWLOADER_LANGUAGE_H */

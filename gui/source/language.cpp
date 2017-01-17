@@ -1,4 +1,7 @@
 #include "language.h"
+#include "textfns.h"
+
+#include <malloc.h>
 
 #include <3ds.h>
 
@@ -132,6 +135,9 @@ static const char *const *lang_all[12] = {
 u8 language = 1;	// Default to English.
 static const char *const *lang_data = lang_all[1];
 
+// Translation cache.
+static wchar_t *lang_cache[STR_MAX] = { };
+
 /**
  * Initialize translations.
  */
@@ -144,7 +150,20 @@ void langInit(void)
 		// Default to English.
 		language = 1;
 	}
+	// TODO: Clear the language cache?
+	// (Language can't usually be changed at runtime...)
 	lang_data = lang_all[language];
+}
+
+/**
+ * Clear the translations cache.
+ */
+void langClear(void)
+{
+	for (int i = STR_MAX-1; i >= 0; i--) {
+		free(lang_cache[i]);
+		lang_cache[i] = NULL;
+	}
 }
 
 /**
@@ -155,14 +174,19 @@ void langInit(void)
  * @param strID String ID.
  * @return Translation, or error string if strID is invalid.
  */
-const char *TR(StrID strID)
+const wchar_t *TR(StrID strID)
 {
-	// TODO: Convert to wstring and store
-	// cached wstrings.
 	if (strID < 0 || strID >= STR_MAX) {
 		// Invalid string ID.
-		return "STRID ERR";
+		return L"STRID ERR";
 	}
 
-	return lang_data[strID];
+	if (lang_cache[strID]) {
+		// String has already been converted to wchar_t*.
+		return lang_cache[strID];
+	}
+
+	// Convert the string to wchar_t*.
+	lang_cache[strID] = utf8_to_wchar(lang_data[strID]);
+	return lang_cache[strID];
 }

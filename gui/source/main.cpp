@@ -1770,11 +1770,11 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 
-					const char *home_text = TR(STR_RETURN_TO_HOME_MENU);
-					const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
+					const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+					const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 					const int home_x = (320-home_width)/2;
 					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
-					sftd_draw_textf(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+					sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
 
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
@@ -1884,9 +1884,9 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						const char *start_text = TR(STR_START);
-						const int start_width = sftd_get_text_width(font_b, 12, start_text);
-						sftd_draw_textf(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+						const wchar_t *start_text = TR(STR_START);
+						const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+						sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
@@ -2420,6 +2420,9 @@ int main()
 	// Remaining common textures.
 	sf2d_free_texture(dialogboxtex);
 	sf2d_free_texture(settingslogotex);
+
+	// Clear the translations cache.
+	langClear();
 
 	// Shut down audio.
 	delete bgm_menu;
