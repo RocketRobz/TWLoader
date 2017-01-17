@@ -70,14 +70,14 @@ static const char *const lang_IT[STR_MAX] = {
 
 // Spanish
 static const char *const lang_ES[STR_MAX] = {
-	": Volver al menu HOME",	// "Return to HOME Menu"
+	": Volver al menú HOME",	// "Return to HOME Menu"
 	"INICIO",			// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: Actualizar TWLoader",		// "START: Update TWLoader"
 	"Color",				// "Color"
 	"Color del menú",			// "Menu Color"
-	"Mostrar nombre de archivo",		// "Show filename"
+	"Mostrar nombre del archivo",		// "Show filename"
 	"Selector de ubicación de juegos",	// "Game location switcher"
 	"Borde superior",			// "Top border"
 	"Contador de juegos",			// "Game counter"
