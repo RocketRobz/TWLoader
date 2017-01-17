@@ -106,18 +106,18 @@ static const char* settings_startbuttontext(void)
 {
 	static const char *const languages[] =
 	{
-		"START: Update TWLoader",			// Japanese
-		"START: Update TWLoader",			// English
+		"START: Update TWLoader",		// Japanese
+		"START: Update TWLoader",		// English
 		"START: Mettre à jour TWLoader",	// French
 		"START: TWLoader aktualisieren",	// German
 		"START: Aggiornamento TWLoader",	// Italian
 		"START: Actualizar TWLoader",		// Spanish
-		"START: Update TWLoader",			// Simplified Chinese
-		"START: Update TWLoader",			// Korean
-		"START: update TWLoader",			// Dutch
+		"START: Update TWLoader",		// Simplified Chinese
+		"START: Update TWLoader",		// Korean
+		"START: update TWLoader",		// Dutch
 		"START: Atualizar o TWLoader",		// Portugese
-		"START: Update TWLoader",			// Russian
-		"START: Update TWLoader"			// Traditional Chinese
+		"START: Update TWLoader",		// Russian
+		"START: Update TWLoader"		// Traditional Chinese
 	};
 
 	if (language < 11) {
@@ -161,7 +161,7 @@ static const char* settings_menucolortext(void)
 		"Couleur du menu",		// French
 		"Menüfarbe",			// German
 		"colore Menu",			// Italian
-		"Color del menu",		// Spanish
+		"Color del menú",		// Spanish
 		"Menu color",			// Simplified Chinese
 		"Menu color",			// Korean
 		"menukleur",			// Dutch
@@ -181,18 +181,18 @@ static const char* settings_filenametext(void)
 {
 	static const char *const languages[] =
 	{
-		"Show filename",				// Japanese
-		"Show filename",				// English
+		"Show filename",		// Japanese
+		"Show filename",		// English
 		"Afficher le nom du fichier",	// French
-		"Dateiname anzeigen",			// German
+		"Dateiname anzeigen",		// German
 		"Visualizza il nome del file",	// Italian
 		"Mostrar nombre de archivo",	// Spanish
-		"Show filename",				// Simplified Chinese
-		"Show filename",				// Korean
-		"Toon bestandsnaam",			// Dutch
-		"Mostrar nome do arquivo",		// Portugese
-		"Show filename",				// Russian
-		"Show filename"					// Traditional Chinese
+		"Show filename",		// Simplified Chinese
+		"Show filename",		// Korean
+		"Toon bestandsnaam",		// Dutch
+		"Mostrar nome do arquivo",	// Portugese
+		"Show filename",		// Russian
+		"Show filename"			// Traditional Chinese
 	};
 
 	if (language < 11) {
@@ -206,18 +206,18 @@ static const char* settings_locswitchtext(void)
 {
 	static const char *const languages[] =
 	{
-		"Game location switcher",			// Japanese
-		"Game location switcher",			// English
+		"Game location switcher",		// Japanese
+		"Game location switcher",		// English
 		"Commutateur de position de jeu",	// French
-		"Spielort-Umschalter",				// German
-		"Gioco posizione switcher",			// Italian
-		"Selector de ubicacion de juegos",	// Spanish
-		"Game location switcher",			// Simplified Chinese
-		"Game location switcher",			// Korean
-		"Game locatie switcher",			// Dutch
+		"Spielort-Umschalter",			// German
+		"Gioco posizione switcher",		// Italian
+		"Selector de ubicación de juegos",	// Spanish
+		"Game location switcher",		// Simplified Chinese
+		"Game location switcher",		// Korean
+		"Game locatie switcher",		// Dutch
 		"Seletor de localização de jogos",	// Portugese
-		"Game location switcher",			// Russian
-		"Game location switcher"			// Traditional Chinese
+		"Game location switcher",		// Russian
+		"Game location switcher"		// Traditional Chinese
 	};
 
 	if (language < 11) {
@@ -233,7 +233,7 @@ static const char* settings_topbordertext(void)
 	{
 		"Top border",			// Japanese
 		"Top border",			// English
-		"Bordure supérieure",	// French
+		"Bordure supérieure",		// French
 		"Top Grenze",			// German
 		"Top confine",			// Italian
 		"Borde superior",		// Spanish
@@ -261,11 +261,11 @@ static const char* settings_countertext(void)
 		"Compteur de jeux",		// French
 		"Spielzähler",			// German
 		"contatore Gioco",		// Italian
-		"Contador de juegos",	// Spanish
+		"Contador de juegos",		// Spanish
 		"Game counter",			// Simplified Chinese
 		"Game counter",			// Korean
 		"Game teller",			// Dutch
-		"Contador de jogos",	// Portugese
+		"Contador de jogos",		// Portugese
 		"Game counter",			// Russian
 		"Game counter"			// Traditional Chinese
 	};
