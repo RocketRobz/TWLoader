@@ -7,6 +7,8 @@
 #include <string>
 using std::wstring;
 
+/** UTF-8 **/
+
 /**
  * Convert a UTF-8 string to wchar_t. (internal function
  * @param wstr	[out] UTF-32 buffer.
@@ -123,5 +125,79 @@ wchar_t *utf8_to_wchar(const char *str)
 
 	// Convert the string.
 	utf8_to_wchar_internal(wstr, str);
+	return wstr;
+}
+
+/** Latin-1 **/
+
+/**
+ * Convert a Latin-1 string to wchar_t. (internal function
+ * @param wstr	[out] UTF-32 buffer.
+ * @param str	[in] Latin-1 string.
+ * @return Number of characters used in wstr, not including the NULL terminator.
+ */
+static int latin1_to_wchar_internal(wchar_t *wstr, const char *str)
+{
+	if (!str) {
+		// No string.
+		*wstr = 0;
+		return 0;
+	}
+
+	int size = 0;
+	for (; *str != 0; str++, wstr++, size++) {
+		*wstr = *str;
+	}
+
+	// Add a NULL terminator.
+	*wstr = 0;
+	return size;
+}
+
+/**
+ * Convert a Latin-1 string to wstring.
+ * @param str Latin-1 string.
+ * @return wstring. (UTF-32)
+ */
+wstring latin1_to_wstring(const char *str)
+{
+	wstring wstr;
+	if (!str) {
+		// No string.
+		return wstr;
+	}
+
+	// Allocate at least as many UTF-32 units
+	// as there are bytes in the string, plus
+	// one for the NULL terminator.
+	wstr.resize(strlen(str)+1);
+
+	// Convert the string.
+	int size = latin1_to_wchar_internal(&wstr[0], str);
+
+	// Resize the string to trim extra spaces.
+	wstr.resize(size);
+	return wstr;
+}
+
+/**
+ * Convert a Latin-1 string to wchar_t*.
+ * @param str Latin-1 string.
+ * @return malloc()'d wchar_t*. (UTF-32) (NOTE: If str is nullptr, this returns nullptr.)
+ */
+wchar_t *latin1_to_wchar(const char *str)
+{
+	if (!str) {
+		// No string.
+		return nullptr;
+	}
+
+	// Allocate at least as many UTF-32 units
+	// as there are bytes in the string, plus
+	// one for the NULL terminator.
+	wchar_t *wstr = (wchar_t*)malloc((strlen(str)+1) * sizeof(wchar_t));
+
+	// Convert the string.
+	latin1_to_wchar_internal(wstr, str);
 	return wstr;
 }

@@ -42,12 +42,12 @@ void grabTID(FILE* ndsFile, char *buf) {
 }
 
 /**
- * Get text from a cached banner file.
- * @param binFile Banner file.
+ * Get text from an NDS banner.
+ * @param ndsBanner NDS banner.
  * @param bnrtitlenum Title number. (aka language)
  * @return Vector containing each line as a wide string.
  */
-vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
+vector<wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum) {
 	// Check for unsupported languages.
 	switch (bnrtitlenum-1) {
 		case N3DS_LANG_DUTCH:
@@ -69,16 +69,8 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 			break;
 	}
 
-	// Load the banner.
-	// NOTE: myBanner is cleared first in case the banner
-	// file is smaller than NDS_BANNER_SIZE_DSi.
-	sNDSBanner myBanner;
-	memset(&myBanner, 0, sizeof(myBanner));
-	fseek(binFile, 0, SEEK_SET);
-	fread(&myBanner, 1, sizeof(myBanner), binFile);
-
 	// Check the banner version.
-	switch (myBanner.version) {
+	switch (ndsBanner->version) {
 		case NDS_BANNER_VER_ORIGINAL:
 			if (bnrtitlenum > NDS_LANG_SPANISH) {
 				// Unsupported language. (Chinese or Korean)
@@ -108,7 +100,7 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	}
 
 	// UTF-16 text from the banner.
-	const u16 *u16text = myBanner.titles[bnrtitlenum];
+	const u16 *u16text = ndsBanner->titles[bnrtitlenum];
 
 	// Buffers for the strings.
 	// Assuming wchar_t is 32-bit.
@@ -118,7 +110,7 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	wstring wstr;
 	wstr.reserve(64);
 
-	for (int i = sizeof(myBanner.titles[bnrtitlenum])/sizeof(myBanner.titles[bnrtitlenum][0]);
+	for (int i = sizeof(ndsBanner->titles[bnrtitlenum])/sizeof(ndsBanner->titles[bnrtitlenum][0]);
 	     *u16text != 0 && i > 0; i--, u16text++)
 	{
 		// Convert the UTF-16 character to UTF-32.
@@ -169,6 +161,25 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	}
 
 	return vec_wstr;
+}
+
+/**
+ * Get text from a cached NDS banner.
+ * @param binFile Banner file.
+ * @param bnrtitlenum Title number. (aka language)
+ * @return Vector containing each line as a wide string.
+ */
+vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
+	// Load the banner.
+	// NOTE: ndsBanner is cleared first in case the banner
+	// file is smaller than NDS_BANNER_SIZE_DSi.
+	sNDSBanner ndsBanner;
+	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	fseek(binFile, 0, SEEK_SET);
+	fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+
+	// Get the banner text.
+	return grabText(&ndsBanner, bnrtitlenum);
 }
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
@@ -247,22 +258,23 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 	fclose(filetosave);
 }
 
-sf2d_texture* grabIcon(FILE* binFile) {
-	sNDSBanner myBanner;
-	fseek(binFile, 0, SEEK_SET);
-	fread(&myBanner, 1, sizeof(myBanner), binFile);    
-
+/**
+ * Get the icon from an NDS banner.
+ * @param binFile NDS banner.
+ * @return Icon texture.
+ */
+sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	// Convert the palette first.
 	u32 palette[16];
 	palette[0] = 0;	// Color 0 is always transparent.
 	for (int i = 16; i > 0; i--) {
-		palette[i] = BGR555_to_RGBA8(myBanner.palette[i]);
+		palette[i] = BGR555_to_RGBA8(ndsBanner->palette[i]);
 	}
 
 	// Un-tile the icon.
 	// FIXME: Why are we allocating 64x32?
 	u32 *textureData = (u32*)linearAlloc(32*64*sizeof(u32));
-	const u8 *offset = myBanner.icon;
+	const u8 *offset = ndsBanner->icon;
 	for (int y = 0; y < 32; y += 8) {
 		for (int x = 0; x < 32; x += 8) {
 			for (int y2 = 0; y2 < 8; y2++) {
@@ -280,4 +292,18 @@ sf2d_texture* grabIcon(FILE* binFile) {
 	sf2d_texture *tex = sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
 	linearFree(textureData);
 	return tex;
+}
+
+/**
+ * Get the icon from a cached NDS banner.
+ * @param binFile Banner file.
+ * @return Icon texture.
+ */
+sf2d_texture* grabIcon(FILE* binFile) {
+	sNDSBanner ndsBanner;
+	fseek(binFile, 0, SEEK_SET);
+	fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+
+	// Get the icon.
+	return grabIcon(&ndsBanner);
 }

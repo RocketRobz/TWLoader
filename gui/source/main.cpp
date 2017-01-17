@@ -2,6 +2,7 @@
 #include "settings.h"
 #include "textfns.h"
 #include "language.h"
+#include "gamecard.h"
 
 #include <cstdio>
 #include <cstring>
@@ -740,6 +741,42 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 vector<string> files;
 vector<string> fcfiles;
 
+// APT hook for "returned from HOME menu".
+static aptHookCookie rfhm_cookie;
+static void rfhm_callback(APT_HookType hook, void *param)
+{
+	if (hook == APTHOOK_ONRESTORE) {
+		// param == pointer to bannertextloaded
+		// TODO: Only if cursorPosition == -1.
+		*((bool*)param) = false;
+		gamecardPoll(true);
+	}
+}
+
+// Cartridge textures.
+static sf2d_texture *cartntrtex = NULL;
+static sf2d_texture *carttwltex = NULL;
+//static sf2d_texture *cartctrtex = NULL;	// TODO
+
+/**
+ * Determine the 3DS cartridge texture to use for Slot-1.
+ * @return Cartridge texture.
+ */
+static inline sf2d_texture *carttex(void)
+{
+	// TODO: 3DS cartridges.
+	switch (gamecardGetType()) {
+		case CARD_TYPE_NTR:
+		case CARD_TYPE_TWL_ENH:
+		default:
+			return cartntrtex;
+
+		case CARD_TYPE_TWL_ONLY:
+			return carttwltex;
+			break;
+	}
+}
+
 int main()
 {
 	aptInit();
@@ -831,14 +868,15 @@ int main()
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
 
 	sf2d_texture *bottomtex; // Bottom of menu
-	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_placeholder.png", SF2D_PLACE_RAM); // Icon placeholder at bottom of menu
+	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dotcircletex; // Dots forming a circle
 	sf2d_texture *startbordertex; // "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
-	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/graphics/cart.png", SF2D_PLACE_RAM); // Cartridge on bottom screen
+	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
+	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
@@ -982,6 +1020,9 @@ int main()
 	float startborderscalesize;
 
 	sf2d_set_3D(1);
+
+	// Register a handler for "returned from HOME Menu".
+	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
 
 	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
 	u8 param[0x300];
@@ -1359,6 +1400,13 @@ int main()
 					screenmode = SCREEN_MODE_ROM_SELECT;
 					fadeout = false;
 					fadein = true;
+
+					// Poll for Slot 1 changes.
+					gamecardPoll(true);
+					if (cursorPosition == -1) {
+						// Force banner text reloading.
+						bannertextloaded = false;
+					}	
 				} else {
 					// run = false;
 					if (settings.twl.forwarder) {
@@ -1686,18 +1734,42 @@ int main()
 					if (fadealpha == 0) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// if (dspfirmfound) { sfx_menuselect->play(); }
+						bool drawBannerText = true;
 						if (cursorPosition == -2) {
-							// sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, "Settings");
 							static const char curn2text[] = "Settings";
 							const int text_width = sftd_get_text_width(font_b, 18, curn2text);
 							sftd_draw_textf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
+							drawBannerText = false;
 						} else if (cursorPosition == -1) {
-							// TODO: Load NTR cart information.
-							const char *const curn1text = (settings.twl.forwarder
-								? "Add Games"
-								: "Slot-1 cart (NTR carts only)");
-							const int text_width = sftd_get_text_width(font_b, 18, curn1text);
-							sftd_draw_textf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn1text);
+							if (settings.twl.forwarder) {
+								static const char add_games_text[] = "Add Games";
+								const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
+								sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, add_games_text);
+								drawBannerText = false;
+							} else {
+								// Get the text from the Slot 1 cartridge.
+								if (!bannertextloaded) {
+									romsel_gameline = gamecardGetText();
+									const char *productCode = gamecardGetProductCode();
+									if (!romsel_gameline.empty() && productCode) {
+										// Display the product code and revision.
+										char buf[48];
+										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										romsel_filename_w = latin1_to_wstring(buf);
+									} else {
+										romsel_filename_w.clear();
+									}
+								}
+								if (romsel_gameline.empty()) {
+									// No cartridge.
+									// TODO: Indicate if it's a CTR cartridge?
+									// TODO: Prevent starting if no cartridge is present.
+									static const char no_cartridge[] = "No Cartridge";
+									const int text_width = sftd_get_text_width(font_b, 18, no_cartridge);
+									sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, no_cartridge);
+									drawBannerText = false;
+								}
+							}
 						} else {
 							if (!bannertextloaded) {
 								char path[256];
@@ -1731,13 +1803,20 @@ int main()
 								fclose(f_bnr);
 								bannertextloaded = true;
 							}
+						}
 
+						if (drawBannerText) {
 							int y, dy;
+							//top dialog = 100px tall
 							if (settings.ui.filename) {
 								sftd_draw_wtext(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
-								y = 24; dy = 19;
+								y = (100-(19*romsel_gameline.size()))/2 + 4;
+								//y = 24; dy = 19;
+								dy = 19;
 							} else {
-								y = 16; dy = 22;
+								y = (100-(22*romsel_gameline.size()))/2;
+								//y = 16; dy = 22;
+								dy = 22;
 							}
 
 							// Print the banner text, center-aligned.
@@ -1747,7 +1826,7 @@ int main()
 								sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
-							if (settings.ui.counter) {
+							if (cursorPosition >= 0 && settings.ui.counter) {
 								char romsel_counter1[16];
 								snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 								size_t file_count;
@@ -1768,8 +1847,6 @@ int main()
 									sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
 									sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
 								}
-							} else {
-								bannertextloaded = true;
 							}
 						}
 					} else {
@@ -1820,8 +1897,19 @@ int main()
 						if (pagenum == 0) {
 							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
 							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
-							sf2d_draw_texture(iconunktex, 16+cartXpos+titleboxXmovepos, 133);
+
+							// Poll for Slot 1 changes.
+							bool s1chg = gamecardPoll(false);
+							if (s1chg && cursorPosition == -1) {
+								// Slot 1 card has changed.
+								// Reload the banner text.
+								bannertextloaded = false;
+							}
+							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
+							sf2d_texture *cardicontex = gamecardGetIcon();
+							if (!cardicontex)
+								cardicontex = iconunktex;
+							sf2d_draw_texture(cardicontex, 16+cartXpos+titleboxXmovepos, 133);
 						} else {
 							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 						}
@@ -1890,9 +1978,15 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						const wchar_t *start_text = TR(STR_START);
-						const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-						sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+						if (!settings.twl.forwarder && cursorPosition == -1 && romsel_gameline.empty()) {
+							// Slot-1 selected, but no cartridge is present.
+							// Don't print "START".
+						} else {
+							// Print "START".
+							const wchar_t *start_text = TR(STR_START);
+							const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+							sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+						}
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
@@ -1904,8 +1998,12 @@ int main()
 							if (settings.twl.forwarder)
 								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
 							else {
-								sf2d_draw_texture(carttex, 128, titleboxYmovepos); // Draw selected Slot-1 game that moves up
-								sf2d_draw_texture(iconunktex, 144, ndsiconYmovepos);
+								// Draw selected Slot-1 game that moves up
+								sf2d_draw_texture(carttex(), 128, 120);
+								sf2d_texture *cardicontex = gamecardGetIcon();
+								if (!cardicontex)
+									cardicontex = iconunktex;
+								sf2d_draw_texture(cardicontex, 144, ndsiconYmovepos);
 							}
 						} else {
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
@@ -2275,19 +2373,33 @@ int main()
 							updatebotscreen = true;
 						}
 					} else if(hDown & KEY_A){
+						bool playlaunchsound = true;
 						if (titleboxXmovetimer == 0) {
 							if(cursorPosition == -2) {
 								titleboxXmovetimer = 1;
 								screenmodeswitch = true;
 								applaunchprep = true;
 							} else if(cursorPosition == -1) {
-								titleboxXmovetimer = 1;
-								settings.twl.launchslot1 = 1;
-								if (settings.twl.forwarder) {
-									keepsdvalue = 1;
-									rom = "_nds/twloader.nds";
+								if (!settings.twl.forwarder && romsel_gameline.empty()) {
+									// Slot-1 is selected, but no
+									// cartridge is present.
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong->stop();
+											sfx_wrong->play();
+										}
+										playwrongsounddone = true;
+									}
+									playlaunchsound = false;
+								} else {
+									titleboxXmovetimer = 1;
+									settings.twl.launchslot1 = 1;
+									if (settings.twl.forwarder) {
+										keepsdvalue = 1;
+										rom = "_nds/twloader.nds";
+									}
+									applaunchprep = true;
 								}
-								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
 								if (settings.twl.forwarder) {
@@ -2302,7 +2414,7 @@ int main()
 							}
 						}
 						updatebotscreen = true;
-						if (dspfirmfound) {
+						if (playlaunchsound && dspfirmfound) {
 							bgm_menu->stop();
 							sfx_launch->play();
 						}
@@ -2366,6 +2478,9 @@ int main()
 	//}	// run
 	}	// aptMainLoop
 
+	// Unregister the "returned from HOME Menu" handler.
+	aptUnhook(&rfhm_cookie);
+
 	SaveSettings();
 
 	hidExit();
@@ -2402,7 +2517,9 @@ int main()
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
 	sf2d_free_texture(settingsboxtex);
-	sf2d_free_texture(carttex);
+	sf2d_free_texture(cartntrtex);
+	sf2d_free_texture(carttwltex);
+	gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
 	if (colortexloaded) { sf2d_free_texture(dotcircletex); }
 	if (colortexloaded) { sf2d_free_texture(startbordertex); }

@@ -40,30 +40,30 @@ AccessControlInfo:
    - Debug
    - TwlCardBackup
    - TwlNandData
-   - Boss
+   #- Boss
    - DirectSdmc
    - Core
-   - CtrNandRo
-   - CtrNandRw
-   - CtrNandRoWrite
+   #- CtrNandRo
+   #- CtrNandRw
+   #- CtrNandRoWrite
    - CategorySystemSettings
-   - CardBoard
-   - ExportImportIvs
+   #- CardBoard
+   #- ExportImportIvs
    - DirectSdmcWrite
-   - SwitchCleanup
-   - SaveDataMove
-   - Shop
-   - Shell
-   - CategoryHomeMenu
-#  - SeedDB
+   #- SwitchCleanup
+   #- SaveDataMove
+   #- Shop
+   #- Shell
+   #- CategoryHomeMenu
+   #- SeedDB
   IoAccessControl:
-   - FsMountNand
-   - FsMountNandRoWrite
+   #- FsMountNand
+   #- FsMountNandRoWrite
    - FsMountTwln
-   - FsMountWnand
+   #- FsMountWnand
    - FsMountCardSpi
    - UseSdif3
-   - CreateSeed
+   #- CreateSeed
    - UseCardSpi
 
   # Process Settings
@@ -210,27 +210,27 @@ AccessControlInfo:
   # Maximum 34 services (32 if firmware is prior to 9.6.0)
   ServiceAccessControl:
    - APT:U
-   - ac:u
+   #- ac:u
    - am:net
-   - boss:U
-   - cam:u
-   - cecd:u
-   - cfg:nor
+   #- boss:U
+   #- cam:u
+   #- cecd:u
+   #- cfg:nor
    - cfg:u
-   - csnd:SND
+   #- csnd:SND
    - dsp::DSP
-   - frd:u
+   #- frd:u
    - fs:USER
    - gsp::Gpu
    - gsp::Lcd
    - hid:USER
    - http:C
-   - ir:rst
-   - ir:u
-   - ir:USER
-   - mic:u
-   - ndm:u
-   - news:s
+   #- ir:rst
+   #- ir:u
+   #- ir:USER
+   #- mic:u
+   #- ndm:u
+   #- news:s
    - nwm::EXT
    - nwm::UDS
    - ptm:sysm
@@ -238,7 +238,7 @@ AccessControlInfo:
    - pxi:dev
    - soc:U
    - ssl:C
-   - y2r:u
+   #- y2r:u
 
 
 SystemControlInfo:
