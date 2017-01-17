@@ -1725,7 +1725,7 @@ int main()
 								if (!bannertextloaded) {
 									romsel_gameline = gamecardGetText();
 									const char *productCode = gamecardGetProductCode();
-									if (productCode) {
+									if (!romsel_gameline.empty() && productCode) {
 										// Display the product code and revision.
 										char buf[48];
 										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
@@ -2336,19 +2336,33 @@ int main()
 							updatebotscreen = true;
 						}
 					} else if(hDown & KEY_A){
+						bool playlaunchsound = true;
 						if (titleboxXmovetimer == 0) {
 							if(cursorPosition == -2) {
 								titleboxXmovetimer = 1;
 								screenmodeswitch = true;
 								applaunchprep = true;
 							} else if(cursorPosition == -1) {
-								titleboxXmovetimer = 1;
-								settings.twl.launchslot1 = 1;
-								if (settings.twl.forwarder) {
-									keepsdvalue = 1;
-									rom = "_nds/twloader.nds";
+								if (!settings.twl.forwarder && romsel_gameline.empty()) {
+									// Slot-1 is selected, but no
+									// cartridge is present.
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong->stop();
+											sfx_wrong->play();
+										}
+										playwrongsounddone = true;
+									}
+									playlaunchsound = false;
+								} else {
+									titleboxXmovetimer = 1;
+									settings.twl.launchslot1 = 1;
+									if (settings.twl.forwarder) {
+										keepsdvalue = 1;
+										rom = "_nds/twloader.nds";
+									}
+									applaunchprep = true;
 								}
-								applaunchprep = true;
 							} else {
 								titleboxXmovetimer = 1;
 								if (settings.twl.forwarder) {
@@ -2363,7 +2377,7 @@ int main()
 							}
 						}
 						updatebotscreen = true;
-						if (dspfirmfound) {
+						if (playlaunchsound && dspfirmfound) {
 							bgm_menu->stop();
 							sfx_launch->play();
 						}
