@@ -1725,8 +1725,14 @@ int main()
 								if (!bannertextloaded) {
 									romsel_gameline = gamecardGetText();
 									const char *productCode = gamecardGetProductCode();
-									romsel_filename_w = (productCode ? latin1_to_wstring(productCode) : L"");
-									bannertextloaded = true;
+									if (productCode) {
+										// Display the product code and revision.
+										char buf[48];
+										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										romsel_filename_w = latin1_to_wstring(buf);
+									} else {
+										romsel_filename_w.clear();
+									}
 								}
 								if (romsel_gameline.empty()) {
 									// No cartridge.

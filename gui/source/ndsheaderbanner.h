@@ -124,6 +124,9 @@ typedef struct {
 	u32 offset_0x16C;			//reserved?
 
 	u8 zero[0x90];
+
+	// TODO: DSi-specific fields.
+	u8 dsi[0x1B4];
 } sNDSHeader;
 
 typedef struct {
@@ -133,6 +136,9 @@ typedef struct {
 
 
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
+
+// Make sure the banner size is correct.
+static_assert(sizeof(sNDSHeader) == 0x3B4, "sizeof(sNDSHeader) is not 0x3B4 bytes");
 
 
 /*!

@@ -26,6 +26,12 @@ void gamecardClearCache(void);
 const char *gamecardGetProductCode(void);
 
 /**
+ * Get the game card's revision..
+ * @return Game card revision. (0xFF if unknown.)
+ */
+u8 gamecardGetRevision(void);
+
+/**
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */

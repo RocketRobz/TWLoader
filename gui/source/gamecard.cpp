@@ -21,6 +21,7 @@ static union {
 } twl_gameid;	// 4-character game ID
 bool twl_inserted = false;
 static string twl_product_code;
+static u8 twl_revision = 0xFF;
 static sf2d_texture *twl_icon = NULL;
 static vector<wstring> twl_text;
 
@@ -33,6 +34,7 @@ void gamecardClearCache(void)
 	twl_gameid.d = 0;
 	sf2d_free_texture(twl_icon);
 	twl_product_code.clear();
+	twl_revision = 0xFF;
 	twl_icon = NULL;
 	twl_text.clear();
 }
@@ -78,8 +80,8 @@ bool gamecardPoll(bool force)
 	// Based on FBI 2.4.7's listtitles.c, task_populate_titles_add_twl()
 
 	// Get the NDS ROM header.
-	u8 header[0x3B4];
-	if (R_FAILED(FSUSER_GetLegacyRomHeader(MEDIATYPE_GAME_CARD, 0, header))) {
+	sNDSHeader header;
+	if (R_FAILED(FSUSER_GetLegacyRomHeader(MEDIATYPE_GAME_CARD, 0, (u8*)&header))) {
 		// Unable to read the ROM header.
 		gamecardClearCache();
 		return true;
@@ -87,15 +89,18 @@ bool gamecardPoll(bool force)
 
 	// Get the game ID from the ROM header.
 	u32 gameid;
-	memcpy(&gameid, &header[0x0C], sizeof(gameid));
+	memcpy(&gameid, header.gameCode, sizeof(gameid));
 	twl_gameid.d = gameid;
 
 	// Product code. Format: NTR-P-XXXX or TWL-P-XXXX
 	char buf[16];
 	snprintf(buf, sizeof(buf), "%s-P-%.4s",
-		 (header[0x12] & 0x02 ? "TWL" : "NTR"),
+		 (header.unitCode & 0x02 ? "TWL" : "NTR"),
 		 twl_gameid.id4);
 	twl_product_code = string(buf);
+
+	// Revision.
+	twl_revision = header.romversion;
 
 	// Get the banner.
 	sNDSBanner ndsBanner;
@@ -119,6 +124,15 @@ bool gamecardPoll(bool force)
 const char *gamecardGetProductCode(void)
 {
 	return twl_product_code.c_str();
+}
+
+/**
+ * Get the game card's revision..
+ * @return Game card revision. (0xFF if unknown.)
+ */
+u8 gamecardGetRevision(void)
+{
+	return twl_revision;
 }
 
 /**
