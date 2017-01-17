@@ -197,7 +197,15 @@ typedef enum {
 void grabTID(FILE* ndsFile, char *buf);
 
 /**
- * Get text from a cached banner file.
+ * Get text from an NDS banner.
+ * @param ndsBanner NDS banner.
+ * @param bnrtitlenum Title number. (aka language)
+ * @return Vector containing each line as a wide string.
+ */
+std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum);
+
+/**
+ * Get text from a cached NDS banner.
  * @param binFile Banner file.
  * @param bnrtitlenum Title number. (aka language)
  * @return Vector containing each line as a wide string.
@@ -205,7 +213,19 @@ void grabTID(FILE* ndsFile, char *buf);
 std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
 void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
-sf2d_texture* grabIcon(FILE* binFile);
 
+/**
+ * Get the icon from an NDS banner.
+ * @param binFile NDS banner.
+ * @return Icon texture.
+ */
+sf2d_texture* grabIcon(const sNDSBanner* ndsBanner);
+
+/**
+ * Get the icon from a cached NDS banner.
+ * @param binFile Banner file.
+ * @return Icon texture.
+ */
+sf2d_texture* grabIcon(FILE* binFile);
 
 #endif // NDS_HEADER
