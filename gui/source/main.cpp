@@ -1776,11 +1776,16 @@ int main()
 
 						if (drawBannerText) {
 							int y, dy;
+							//top dialog = 100px tall
 							if (settings.ui.filename) {
 								sftd_draw_wtext(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
-								y = 24; dy = 19;
+								y = (100-(19*romsel_gameline.size()))/2 + 4;
+								//y = 24; dy = 19;
+								dy = 19;
 							} else {
-								y = 16; dy = 22;
+								y = (100-(22*romsel_gameline.size()))/2;
+								//y = 16; dy = 22;
+								dy = 22;
 							}
 
 							// Print the banner text, center-aligned.
