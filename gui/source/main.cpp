@@ -346,7 +346,7 @@ static void CreateGameSave(const char *filename) {
 	memset(buffer, 0, sizeof(buffer));
 	
 	char nds_path[256];
-	snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", rom);
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
@@ -771,7 +771,6 @@ int main()
 	createLog();
 
 	// make folders if they don't exist
-	mkdir("sdmc:/roms/nds", 0777);
 	mkdir("sdmc:/roms/flashcard/nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
@@ -876,7 +875,9 @@ int main()
 	}
 
 	// Scan the ROMs directory for ".nds" files.
-	scan_dir_for_files("sdmc:/roms/nds", ".nds", files);
+	char folder_path[256];
+	snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", romfolder.c_str());
+	scan_dir_for_files(folder_path, ".nds", files);
 	
 	// Scan the flashcard directory for configuration files.
 	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
@@ -910,7 +911,7 @@ int main()
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
-		snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", tempfile);
+		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		cacheBanner(f_nds_file, tempfile, font);
 		fclose(f_nds_file);
@@ -1068,7 +1069,7 @@ int main()
 					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
 						if (boxartnum < files.size()) {
 							const char *tempfile = files.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+							snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
 
 							char ba_TID[5];
@@ -1111,7 +1112,7 @@ int main()
 							ba_TID[4] = 0;
 
 							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
+							snprintf(path, sizeof(path), "%s%s.png", fcboxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
@@ -1146,7 +1147,7 @@ int main()
 				noromtext2 = "Select \"Add Games\" to get started.";
 			} else {
 				noromtext1 = "No games found!";
-				noromtext2 = "Put .nds ROMs in \"sdmc:/roms/nds\".";
+				noromtext2 = " ";
 			}
 
 			update_battery_level(batterychrgtex, batterytex);
@@ -1704,15 +1705,20 @@ int main()
 									if (fcfiles.size() != 0) {
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									const char *tempfile = files.at(cursorPosition).c_str();
-									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+									snprintf(path, sizeof(path), "%s%s.bin", bnriconfolder, romsel_filename);
 								}
 
 								if (access(path, F_OK) == -1) {
