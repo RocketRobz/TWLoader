@@ -1972,9 +1972,15 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						const wchar_t *start_text = TR(STR_START);
-						const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-						sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+						if (!settings.twl.forwarder && cursorPosition == -1 && romsel_gameline.empty()) {
+							// Slot-1 selected, but no cartridge is present.
+							// Don't print "START".
+						} else {
+							// Print "START".
+							const wchar_t *start_text = TR(STR_START);
+							const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+							sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+						}
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
