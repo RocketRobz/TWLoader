@@ -753,6 +753,30 @@ static void rfhm_callback(APT_HookType hook, void *param)
 	}
 }
 
+// Cartridge textures.
+static sf2d_texture *cartntrtex = NULL;
+static sf2d_texture *carttwltex = NULL;
+//static sf2d_texture *cartctrtex = NULL;	// TODO
+
+/**
+ * Determine the 3DS cartridge texture to use for Slot-1.
+ * @return Cartridge texture.
+ */
+static inline sf2d_texture *carttex(void)
+{
+	// TODO: 3DS cartridges.
+	switch (gamecardGetType()) {
+		case CARD_TYPE_NTR:
+		case CARD_TYPE_TWL_ENH:
+		default:
+			return cartntrtex;
+
+		case CARD_TYPE_TWL_ONLY:
+			return carttwltex;
+			break;
+	}
+}
+
 int main()
 {
 	aptInit();
@@ -852,7 +876,8 @@ int main()
 	sf2d_texture *startbordertex; // "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
-	sf2d_texture *carttex = sfil_load_PNG_file("romfs:/graphics/cart.png", SF2D_PLACE_RAM); // Cartridge on bottom screen
+	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
+	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
@@ -1873,8 +1898,8 @@ int main()
 								// Slot 1 card has changed.
 								// Reload the banner text.
 								bannertextloaded = false;
-							}	
-							sf2d_draw_texture(carttex, cartXpos+titleboxXmovepos, 120);
+							}
+							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
 							if (!cardicontex)
 								cardicontex = iconunktex;
@@ -1962,7 +1987,7 @@ int main()
 								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
 							else {
 								// Draw selected Slot-1 game that moves up
-								sf2d_draw_texture(carttex, 128, 120);
+								sf2d_draw_texture(carttex(), 128, 120);
 								sf2d_texture *cardicontex = gamecardGetIcon();
 								if (!cardicontex)
 									cardicontex = iconunktex;
@@ -2480,7 +2505,8 @@ int main()
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
 	sf2d_free_texture(settingsboxtex);
-	sf2d_free_texture(carttex);
+	sf2d_free_texture(cartntrtex);
+	sf2d_free_texture(carttwltex);
 	gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
 	if (colortexloaded) { sf2d_free_texture(dotcircletex); }

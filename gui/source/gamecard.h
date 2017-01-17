@@ -19,6 +19,20 @@ bool gamecardPoll(bool force);
  */
 void gamecardClearCache(void);
 
+enum GameCardType {
+	CARD_TYPE_UNKNOWN	= 0,	// Unknown type.
+	CARD_TYPE_NTR		= 1,	// DS
+	CARD_TYPE_TWL_ENH	= 2,	// DSi-enhanced
+	CARD_TYPE_TWL_ONLY	= 3,	// DSi only
+	CARD_TYPE_CTR		= 4,	// 3DS
+};
+
+/**
+ * Get the game card's type.
+ * @return Game card type.
+ */
+GameCardType gamecardGetType(void);
+
 /**
  * Get the game card's product code.
  * @return Product code, or NULL if not a TWL card.

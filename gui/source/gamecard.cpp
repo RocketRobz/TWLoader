@@ -20,6 +20,7 @@ static union {
 	char id4[4];
 } twl_gameid;	// 4-character game ID
 bool twl_inserted = false;
+static GameCardType twl_card_type = CARD_TYPE_UNKNOWN;
 static string twl_product_code;
 static u8 twl_revision = 0xFF;
 static sf2d_texture *twl_icon = NULL;
@@ -33,6 +34,7 @@ void gamecardClearCache(void)
 	// NOTE: twl_inserted is NOT reset here.
 	twl_gameid.d = 0;
 	sf2d_free_texture(twl_icon);
+	twl_card_type = CARD_TYPE_UNKNOWN;
 	twl_product_code.clear();
 	twl_revision = 0xFF;
 	twl_icon = NULL;
@@ -92,11 +94,27 @@ bool gamecardPoll(bool force)
 	memcpy(&gameid, header.gameCode, sizeof(gameid));
 	twl_gameid.d = gameid;
 
+	// Card type.
+	const char *prefix;
+	switch (header.unitCode & 0x03) {
+		case 0x00:
+		default:
+			twl_card_type = CARD_TYPE_NTR;
+			prefix = "NTR";
+			break;
+		case 0x02:
+			twl_card_type = CARD_TYPE_TWL_ENH;
+			prefix = "TWL";
+			break;
+		case 0x03:
+			twl_card_type = CARD_TYPE_TWL_ONLY;
+			prefix = "TWL";
+			break;
+	}
+
 	// Product code. Format: NTR-P-XXXX or TWL-P-XXXX
 	char buf[16];
-	snprintf(buf, sizeof(buf), "%s-P-%.4s",
-		 (header.unitCode & 0x02 ? "TWL" : "NTR"),
-		 twl_gameid.id4);
+	snprintf(buf, sizeof(buf), "%s-P-%.4s", prefix, twl_gameid.id4);
 	twl_product_code = string(buf);
 
 	// Revision.
@@ -115,6 +133,15 @@ bool gamecardPoll(bool force)
 	twl_icon = grabIcon(&ndsBanner);
 	twl_text = grabText(&ndsBanner, language);
 	return true;
+}
+
+/**
+ * Get the game card's type.
+ * @return Game card type.
+ */
+GameCardType gamecardGetType(void)
+{
+	return twl_card_type;
 }
 
 /**
