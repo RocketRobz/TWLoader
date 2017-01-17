@@ -1999,7 +1999,7 @@ int main()
 								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
 							else {
 								// Draw selected Slot-1 game that moves up
-								sf2d_draw_texture(carttex(), 128, 120);
+								sf2d_draw_texture(carttex(), 128, titleboxYmovepos);
 								sf2d_texture *cardicontex = gamecardGetIcon();
 								if (!cardicontex)
 									cardicontex = iconunktex;
