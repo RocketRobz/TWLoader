@@ -4,6 +4,7 @@
 #include "sound.h"
 #include "download.h"
 #include "log.h"
+#include "language.h"
 
 #include <unistd.h>
 #include <string>
@@ -15,7 +16,6 @@ using std::string;
 #include <sftd.h>
 
 // Functions from main.cpp.
-const char* text_returntohomemenu(void);
 void draw_volume_slider(sf2d_texture *texarray[]);
 
 extern sf2d_texture *batteryIcon;	// Current battery level icon.
@@ -101,181 +101,6 @@ Settings_t settings;
 // Frontend
 static const char settings_xbuttontext[] = "X: Update bootstrap (Official Release)";
 static const char settings_ybuttontext[] = "Y: Update bootstrap (Unofficial build)";
-
-static const char* settings_startbuttontext(void)
-{
-	static const char *const languages[] =
-	{
-		"START: Update TWLoader",			// Japanese
-		"START: Update TWLoader",			// English
-		"START: Mettre à jour TWLoader",	// French
-		"START: TWLoader aktualisieren",	// German
-		"START: Aggiornamento TWLoader",	// Italian
-		"START: Actualizar TWLoader",		// Spanish
-		"START: Update TWLoader",			// Simplified Chinese
-		"START: Update TWLoader",			// Korean
-		"START: update TWLoader",			// Dutch
-		"START: Atualizar o TWLoader",		// Portugese
-		"START: Update TWLoader",			// Russian
-		"START: Update TWLoader"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_colortext(void)
-{
-	static const char *const languages[] =
-	{
-		"Color",		// Japanese
-		"Color",		// English
-		"Couleur",		// French
-		"Farbe",		// German
-		"Colore",		// Italian
-		"Color",		// Spanish
-		"Color",		// Simplified Chinese
-		"Color",		// Korean
-		"Kleur",		// Dutch
-		"Cor",			// Portugese
-		"Color",		// Russian
-		"Color"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_menucolortext(void)
-{
-	static const char *const languages[] =
-	{
-		"Menu color",			// Japanese
-		"Menu color",			// English
-		"Couleur du menu",		// French
-		"Menüfarbe",			// German
-		"colore Menu",			// Italian
-		"Color del menu",		// Spanish
-		"Menu color",			// Simplified Chinese
-		"Menu color",			// Korean
-		"menukleur",			// Dutch
-		"Cor do menu",			// Portugese
-		"Menu color",			// Russian
-		"Menu color"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_filenametext(void)
-{
-	static const char *const languages[] =
-	{
-		"Show filename",				// Japanese
-		"Show filename",				// English
-		"Afficher le nom du fichier",	// French
-		"Dateiname anzeigen",			// German
-		"Visualizza il nome del file",	// Italian
-		"Mostrar nombre de archivo",	// Spanish
-		"Show filename",				// Simplified Chinese
-		"Show filename",				// Korean
-		"Toon bestandsnaam",			// Dutch
-		"Mostrar nome do arquivo",		// Portugese
-		"Show filename",				// Russian
-		"Show filename"					// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_locswitchtext(void)
-{
-	static const char *const languages[] =
-	{
-		"Game location switcher",			// Japanese
-		"Game location switcher",			// English
-		"Commutateur de position de jeu",	// French
-		"Spielort-Umschalter",				// German
-		"Gioco posizione switcher",			// Italian
-		"Selector de ubicacion de juegos",	// Spanish
-		"Game location switcher",			// Simplified Chinese
-		"Game location switcher",			// Korean
-		"Game locatie switcher",			// Dutch
-		"Seletor de localização de jogos",	// Portugese
-		"Game location switcher",			// Russian
-		"Game location switcher"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_topbordertext(void)
-{
-	static const char *const languages[] =
-	{
-		"Top border",			// Japanese
-		"Top border",			// English
-		"Bordure supérieure",	// French
-		"Top Grenze",			// German
-		"Top confine",			// Italian
-		"Borde superior",		// Spanish
-		"Top border",			// Simplified Chinese
-		"Top border",			// Korean
-		"bovenkader",			// Dutch
-		"Borda superior",		// Portugese
-		"Top border",			// Russian
-		"Top border"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-static const char* settings_countertext(void)
-{
-	static const char *const languages[] =
-	{
-		"Game counter",			// Japanese
-		"Game counter",			// English
-		"Compteur de jeux",		// French
-		"Spielzähler",			// German
-		"contatore Gioco",		// Italian
-		"Contador de juegos",	// Spanish
-		"Game counter",			// Simplified Chinese
-		"Game counter",			// Korean
-		"Game teller",			// Dutch
-		"Contador de jogos",	// Portugese
-		"Game counter",			// Russian
-		"Game counter"			// Traditional Chinese
-	};
-
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
 
 static const char settings_custombottext[] = "Custom bottom image";
 static const char settings_autoupdatetext[] = "Auto-update bootstrap";
@@ -423,18 +248,18 @@ void settingsDrawTopScreen(void)
 		} else {
 			sf2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
 			if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-				sftd_draw_textf(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
-				sftd_draw_textf(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
-				sftd_draw_textf(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, settings_startbuttontext());
+				sftd_draw_text(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
+				sftd_draw_text(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
+				sftd_draw_wtext(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, TR(STR_SETTINGS_START_UPDATE_TWLOADER));
 			}
 		}
 
 		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-		sftd_draw_textf(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+		sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
-		sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+		sftd_draw_text(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
@@ -451,11 +276,11 @@ void settingsDrawBottomScreen(void)
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_draw_texture(settingstex, 0, 0);
-	const char *home_text = text_returntohomemenu();
-	const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
+	const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+	const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 	const int home_x = (320-home_width)/2;
 	sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
-	sftd_draw_textf(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
+	sftd_draw_wtext(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
 
 	// X positions.
 	static const int Xpos = 24;
@@ -466,8 +291,8 @@ void settingsDrawBottomScreen(void)
 	if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-		sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+		sftd_draw_text(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+		sftd_draw_text(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 
 		// Color text.
 		static const char *const color_text[] = {
@@ -517,106 +342,106 @@ void settingsDrawBottomScreen(void)
 		title = "Settings: GUI";
 		int Ypos = 40;
 		if (cursor_pos[0] == 0) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_colortext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top background,");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the START border, and the circling dots.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COLOR));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top background,");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the START border, and the circling dots.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_colortext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_COLOR));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 1) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_menucolortext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top border,");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and the bottom background.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top border,");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and the bottom background.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_menucolortext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 2) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_filenametext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_FILENAME));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_filenametext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_FILENAME));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 3) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_locswitchtext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, locswitchvaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "between the SD Card and the flashcard.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LOCSWITCH));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, locswitchvaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "between the SD Card and the flashcard.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_locswitchtext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, locswitchvaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LOCSWITCH));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, locswitchvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 4) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_topbordertext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, topbordervaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_TOPBORDER));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, topbordervaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_topbordertext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, topbordervaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TOPBORDER));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, topbordervaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 5) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_countertext());
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "is shown below the text bubble.");
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COUNTER));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "is shown below the text bubble.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_countertext());
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_COUNTER));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 6) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_custombottext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "for the game menu.");
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_custombottext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "for the game menu.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_custombottext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_custombottext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 7) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 8) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "TWLoader version at launch.");
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "TWLoader version at launch.");
 			Ypos += 12;
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autodltext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autodlvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autodltext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autodlvaluetext);
 			Ypos += 12;
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-		sftd_draw_textf(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+		sftd_draw_text(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+		sftd_draw_text(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
@@ -644,98 +469,98 @@ void settingsDrawBottomScreen(void)
 		title = "Settings: NTR/TWL-mode";
 		int Ypos = 40;
 		if (cursor_pos[1] == 0) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardtext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_flashcardtext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Pick a flashcard to use to");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "run ROMs from it.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Pick a flashcard to use to");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "run ROMs from it.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_flashcardtext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_flashcardtext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 1) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_rainbowledtext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, rainbowledvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_rainbowledtext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, rainbowledvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "See rainbow colors glowing in");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the Notification LED.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "See rainbow colors glowing in");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "the Notification LED.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_rainbowledtext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, rainbowledvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_rainbowledtext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, rainbowledvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 2) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_cpuspeedtext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, cpuspeedvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_cpuspeedtext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, cpuspeedvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Set to TWL to get rid of lags in some games.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Set to TWL to get rid of lags in some games.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_cpuspeedtext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, cpuspeedvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_cpuspeedtext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, cpuspeedvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 3) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_extvramtext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, extvramvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_extvramtext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, extvramvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Allows 8 bit VRAM writes");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and expands the bus to 32 bit.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Allows 8 bit VRAM writes");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "and expands the bus to 32 bit.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_extvramtext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, extvramvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_extvramtext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, extvramvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 4) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_bootscreentext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, bootscreenvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_bootscreentext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, bootscreenvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays the DS/DSi boot animation");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "before launched game.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays the DS/DSi boot animation");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "before launched game.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootscreentext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, bootscreenvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootscreentext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, bootscreenvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 5) {
-			sftd_draw_textf(font, Xpos+16, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_healthsafetytext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, healthsafetyvaluetext);
+			sftd_draw_text(font, Xpos+16, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_healthsafetytext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, healthsafetyvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays the Health and Safety");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "message on the bottom screen.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays the Health and Safety");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "message on the bottom screen.");
 		} else {
-			sftd_draw_textf(font, Xpos+16, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_healthsafetytext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, healthsafetyvaluetext);
+			sftd_draw_text(font, Xpos+16, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_healthsafetytext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, healthsafetyvaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 6) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_resetslot1text);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, resetslot1valuetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_resetslot1text);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, resetslot1valuetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Enable this if Slot-1 carts are stuck");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "on white screens.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Enable this if Slot-1 carts are stuck");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "on white screens.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_resetslot1text);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, resetslot1valuetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_resetslot1text);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, resetslot1valuetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 7) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_consoletext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, consolevaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_consoletext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, consolevaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays some text before launched game.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Displays some text before launched game.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_consoletext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, consolevaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_consoletext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, consolevaluetext);
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 8) {
-			sftd_draw_textf(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_lockarm9scfgexttext);
-			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, lockarm9scfgextvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_lockarm9scfgexttext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, lockarm9scfgextvaluetext);
 			Ypos += 12;
-			sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Locks the ARM9 SCFG_EXT,");
-			sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "avoiding conflict with recent libnds.");
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Locks the ARM9 SCFG_EXT,");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "avoiding conflict with recent libnds.");
 		} else {
-			sftd_draw_textf(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_lockarm9scfgexttext);
-			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, lockarm9scfgextvaluetext);
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_lockarm9scfgexttext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, lockarm9scfgextvaluetext);
 			Ypos += 12;
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
@@ -758,13 +583,13 @@ void settingsDrawBottomScreen(void)
 		title = twlsettings_flashcardtext;
 		int Ypos = 40;
 		for (int i = 0; i < 6; i++, Ypos += 12) {
-			sftd_draw_textf(font, Xpos, Ypos,
+			sftd_draw_text(font, Xpos, Ypos,
 				SET_ALPHA(color_data->color, 255), 12, fctext[i]);
 		}
-		sftd_draw_textf(font, 8, 184, RGBA8(255, 255, 255, 255), 13, settings_lrpicktext);
-		sftd_draw_textf(font, 8, 198, RGBA8(255, 255, 255, 255), 13, settings_absavereturn);
+		sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, settings_lrpicktext);
+		sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, settings_absavereturn);
 	}
-	sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
+	sftd_draw_text(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
 }
 
 /**

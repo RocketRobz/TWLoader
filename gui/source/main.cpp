@@ -1,5 +1,7 @@
 #include "download.h"
 #include "settings.h"
+#include "textfns.h"
+#include "language.h"
 
 #include <cstdio>
 #include <cstring>
@@ -44,7 +46,6 @@ CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
 int equals;
-u8 language;
 
 sftd_font *font;
 sftd_font *font_b;
@@ -165,85 +166,6 @@ static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 bool run = true;
 // End
 
-int menutext_startXpos()
-{
-	int languages[] =
-	{
-		140,		// Japanese
-		140,		// English
-		152,		// French
-		135,		// German
-		142,		// Italian
-		142,		// Spanish
-		140,		// Simplified Chinese
-		140,		// Korean
-		141,		// Dutch
-		130,		// Portugese
-		140,		// Russian
-		140			// Traditional Chinese
-	};
-	
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-const char* menutext_start()
-{
-	static const char *const languages[] =
-	{
-		"START",		// Japanese
-		"START",		// English
-		"OK",			// French
-		"ANFANG",		// German
-		"INIZIO",		// Italian
-		"INICIO",		// Spanish
-		"START",		// Simplified Chinese
-		"START",		// Korean
-		"BEGIN",		// Dutch
-		"COMEÇAR",		// Portugese
-		"START",		// Russian
-		"START"			// Traditional Chinese
-	};
-	
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
-/**
- * Get the localized "Return to HOME Menu" text.
- * @return Localized "Return to HOME Menu" text.
- */
-const char* text_returntohomemenu(void)
-{
-	static const char *const languages[] =
-	{
-		": Return to HOME Menu",		// Japanese
-		": Return to HOME Menu",		// English
-		": Retour au menu HOME",		// French
-		": Zuruck zum HOME-Menu",		// German
-		": Ritorna al Menu Home",		// Italian
-		": Volver al menu HOME",		// Spanish
-		": Return to HOME Menu",		// Simplified Chinese
-		": Return to HOME Menu",		// Korean
-		": Keer terug naar HOME-menu",	// Dutch
-		": Retornar ao Menu HOME",		// Portugese
-		": Return to HOME Menu",		// Russian
-		": Return to HOME Menu"			// Traditional Chinese
-	};
-	
-	if (language < 11) {
-		return languages[language];
-	} else {
-		return languages[1];
-	}
-}
-
 bool showdialogbox = false;
 
 const char* noromtext1;
@@ -269,8 +191,9 @@ bool fadeout = false;
 
 std::string name;
 
-const char* romsel_filename;
-vector<wstring> romsel_gameline;	// from banner
+static const char* romsel_filename;
+static wstring romsel_filename_w;	// Unicode filename for display.
+static vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
@@ -874,8 +797,9 @@ int main()
 	strcpy(settings_vertext, Verfile.text);
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
-	
-	CFGU_GetSystemLanguage(&language);
+
+	// Initialize translations.
+	langInit();
 
 	LoadSettings();
 
@@ -977,11 +901,13 @@ int main()
 		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_textf(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile);
+		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_text(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_text(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+
+		wstring tempfile_w = utf8_to_wstring(tempfile);
+		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/roms/nds/%s", tempfile);
@@ -1777,11 +1703,13 @@ int main()
 								if (settings.twl.forwarder) {
 									if (fcfiles.size() != 0) {
 										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									const char *tempfile = files.at(cursorPosition).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
@@ -1800,8 +1728,7 @@ int main()
 
 							int y, dy;
 							if (settings.ui.filename) {
-								// TODO: Convert romsel_filename from UTF-8?
-								sftd_draw_textf(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename);
+								sftd_draw_wtext(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
 								y = 24; dy = 19;
 							} else {
 								y = 16; dy = 22;
@@ -1811,7 +1738,7 @@ int main()
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
 								const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-								sftd_draw_wtextf(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 
 							if (settings.ui.counter) {
@@ -1843,11 +1770,11 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 
-					const char *home_text = text_returntohomemenu();
-					const int home_width = sftd_get_text_width(font, 13, home_text) + 16;
+					const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+					const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 					const int home_x = (320-home_width)/2;
 					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
-					sftd_draw_textf(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+					sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
 
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
@@ -1957,7 +1884,9 @@ int main()
 							startborderscalesize = 1.0;
 						}
 						sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-						sftd_draw_textf(font_b, menutext_startXpos(), 177, RGBA8(255, 255, 255, 255), 12, menutext_start());
+						const wchar_t *start_text = TR(STR_START);
+						const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+						sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 					} else {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
@@ -2491,6 +2420,9 @@ int main()
 	// Remaining common textures.
 	sf2d_free_texture(dialogboxtex);
 	sf2d_free_texture(settingslogotex);
+
+	// Clear the translations cache.
+	langClear();
 
 	// Shut down audio.
 	delete bgm_menu;

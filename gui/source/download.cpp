@@ -429,10 +429,10 @@ void downloadBoxArt(void)
 		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
@@ -458,10 +458,10 @@ void downloadBoxArt(void)
 			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
-			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
-			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
+			sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 
@@ -482,10 +482,10 @@ void downloadBoxArt(void)
 		DialogBoxAppear(title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
@@ -512,10 +512,10 @@ void downloadBoxArt(void)
 			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
-			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (Flashcard)...");
-			sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_textf(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
+			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (Flashcard)...");
+			sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 
