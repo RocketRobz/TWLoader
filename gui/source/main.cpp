@@ -1406,10 +1406,11 @@ int main()
 
 					// Poll for Slot 1 changes.
 					gamecardPoll(true);
-					if (cursorPosition == -1) {
-						// Force banner text reloading.
-						bannertextloaded = false;
-					}	
+
+					// Force a banner text reload in case
+					// the Slot-1 cartridge was changed or
+					// the UI language was changed.
+					bannertextloaded = false;
 				} else {
 					// run = false;
 					if (settings.twl.forwarder) {
