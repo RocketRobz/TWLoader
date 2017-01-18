@@ -51,7 +51,7 @@ sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *dialogboxtex;	// Dialog box
 sf2d_texture *settingslogotex;	// TWLoader logo.
-sf2d_texture *slot1boxarttex;
+sf2d_texture *slot1boxarttex = NULL;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -1108,11 +1108,12 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!slot1boxarttexloaded) {
-				if (!settings.twl.forwarder) {
-					sf2d_free_texture(slot1boxarttex);
-					gamecardPoll(true);
-					const char *gameID = gamecardGetGameID();
+			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
+				// Load the boxart for the Slot-1 cartridge.
+				sf2d_free_texture(slot1boxarttex);
+				gamecardPoll(true);
+				const char *gameID = gamecardGetGameID();
+				if (gameID) {
 					if (checkWifiStatus()) {
 						downloadSlot1BoxArt(gameID);
 					}
@@ -1121,11 +1122,14 @@ int main()
 					LogFMA("Main", "Loading Slot-1 box art", gameID);
 					snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, gameID);
 					if (access(path, F_OK) != -1) {
-						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
+						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 					} else {
-						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
+						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 					}
 					LogFMA("Main", "Done loading Slot-1 box art", gameID);
+				} else {
+					// No cartridge.
+					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 				}
 				slot1boxarttexloaded = true;
 			}
@@ -2207,8 +2211,11 @@ int main()
 
 		while(applaunchon){
 			// Prepare for the app launch
-			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44, 0); // TWLNAND side's title ID
-			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000, 2);	// TODO: Launch TWL carts directly
+			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44ULL, MEDIATYPE_NAND); // TWLNAND side's title ID
+			// TODO: Launch TWL carts directly.
+			// Note that APT_PrepareToDoApplicationJump() doesn't
+			// seem to work right with NTR/TWL carts...
+			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000ULL, MEDIATYPE_GAME_CARD);
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}
@@ -2281,6 +2288,7 @@ int main()
 	// Remaining common textures.
 	sf2d_free_texture(dialogboxtex);
 	sf2d_free_texture(settingslogotex);
+	sf2d_free_texture(slot1boxarttex);
 
 	// Clear the translations cache.
 	langClear();
