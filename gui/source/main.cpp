@@ -169,7 +169,7 @@ static const std::string fat = "fat:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
-static std::string romfolder = "roms/nds/";
+static std::string romfolder;
 static const std::string flashcardfolder = "roms/flashcard/nds/";
 static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons/";
 static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard/";
@@ -639,10 +639,10 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 		return -1;
 	}
 
-	struct dirent *namelist;
+	struct dirent *ent;
 	const int extlen = (ext ? strlen(ext) : 0);
-	while ((namelist = readdir(dir)) != NULL) {
-		std::string fname = (namelist->d_name);
+	while ((ent = readdir(dir)) != NULL) {
+		std::string fname = (ent->d_name);
 		if (extlen > 0) {
 			// Check the file extension. (TODO needs verification)
 			size_t lastdotpos = fname.find_last_of('.');
@@ -650,7 +650,7 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 				// Invalid file extension.
 				continue;
 			}
-			if (strcasecmp(&namelist->d_name[lastdotpos], ext) != 0) {
+			if (strcasecmp(&ent->d_name[lastdotpos], ext) != 0) {
 				// Incorrect file extension.
 				continue;
 			}
@@ -846,6 +846,11 @@ int main()
 		sfx_wrong = new sound("romfs:/sounds/wrong.wav", 2, false);
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
+	
+	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
+	romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
+	if (romfolder == "")
+		romfolder = "roms/nds/";
 
 	// Scan the ROMs directory for ".nds" files.
 	char folder_path[256];
