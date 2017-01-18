@@ -1753,10 +1753,13 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot 1 changes.
 							bool s1chg = gamecardPoll(false);
-							if (s1chg && cursorPosition == -1) {
-								// Slot 1 card has changed.
-								// Reload the banner text.
-								bannertextloaded = false;
+							if (s1chg) {
+								if (cursorPosition == -1) {
+									// Slot 1 card has changed.
+									// Reload the banner text.
+									bannertextloaded = false;
+								}
+								slot1boxarttexloaded = false;
 							}
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
