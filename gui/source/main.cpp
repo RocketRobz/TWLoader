@@ -1122,162 +1122,85 @@ int main()
 			}
 
 			update_battery_level(batterychrgtex, batterytex);
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
-			sf2d_draw_texture_scale(topbgtex, offset3D[0].topbg-12, 0, 1.32, 1);
-			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (!settings.romselect.toplayout) {
-					boxartXpos = 136;
-					if (settings.twl.forwarder) {
-						if(fcfiles.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
+			for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+				sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
+				sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
+				if (filenum != 0) {	// If ROMs are found, then display box art
+					if (!settings.romselect.toplayout) {
+						boxartXpos = 136;
+						if (settings.twl.forwarder) {
+							if(fcfiles.size() >= 19+pagenum*20) {
+								for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
+									ChangeBoxArtNo();
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+									boxartXpos += 144;
+								}
+							} else {
+								for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
+									ChangeBoxArtNo();
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+									boxartXpos += 144;
+								}
 							}
 						} else {
-							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
+							if(files.size() >= 19+pagenum*20) {
+								for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
+									ChangeBoxArtNo();
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+									boxartXpos += 144;
+								}
+							} else {
+								for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
+									ChangeBoxArtNo();
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
+									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+									boxartXpos += 144;
+								}
 							}
 						}
-					} else {
-						if(files.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
+						if (applaunchprep) {
+							if (cursorPosition >= 0) {
+								boxartnum = cursorPosition;
 								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
+								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+								sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
+								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
 							}
 						}
 					}
-					if (applaunchprep) {
-						if (cursorPosition >= 0) {
-							boxartnum = cursorPosition;
-							ChangeBoxArtNo();
-							sf2d_draw_texture_part(topbgtex, offset3D[0].boxart+136, 63, offset3D[0].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-						}
-					}
+				} else {
+					int text_width = sftd_get_text_width(font, 12, noromtext1);
+					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+					text_width = sftd_get_text_width(font, 12, noromtext2);
+					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 				}
-			} else {
-				int text_width = sftd_get_text_width(font, 12, noromtext1);
-				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				text_width = sftd_get_text_width(font, 12, noromtext2);
-				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-			}
-			if (settings.ui.topborder) {
-				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
-			} else {
-				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-			}
-
-			draw_volume_slider(voltex);
-			sf2d_draw_texture(batteryIcon, 371, 2);
-			if (!name.empty()) {
-				sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
-			}
-			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
-			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-			if (settings.ui.locswitch) {
-				sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-				sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-			}
-
-			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-
-			sf2d_end_frame();
-				
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_draw_texture_scale(topbgtex, offset3D[1].topbg-12, 0, 1.32, 1);
-			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (!settings.romselect.toplayout) {
-					boxartXpos = 136;
-					if (settings.twl.forwarder) {
-						if(fcfiles.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						}
-					} else {
-						if(files.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						}
-					}
-					if (applaunchprep) {
-						if (cursorPosition >= 0) {
-							boxartnum = cursorPosition;
-							ChangeBoxArtNo();
-							sf2d_draw_texture_part(topbgtex, offset3D[1].boxart+136, 63, offset3D[1].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-						}
-					}
+				if (settings.ui.topborder) {
+					sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
+					sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
+				} else {
+					sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 				}
-			} else {
-				int text_width = sftd_get_text_width(font, 12, noromtext1);
-				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				text_width = sftd_get_text_width(font, 12, noromtext2);
-				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-			}
-			if (settings.ui.topborder) {
-				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
-			} else {
-				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-			}
 
-			draw_volume_slider(voltex);
-			sf2d_draw_texture(batteryIcon, 371, 2);
-			if (!name.empty()) {
-				sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+				draw_volume_slider(voltex);
+				sf2d_draw_texture(batteryIcon, 371, 2);
+				if (!name.empty()) {
+					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+				}
+				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
+				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+				sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+				if (settings.ui.locswitch) {
+					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
+					sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+				}
+
+				sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+				sf2d_end_frame();
 			}
-			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
-			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
-			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-			if (settings.ui.locswitch) {
-				sf2d_draw_texture(shoulderRtex, 327, RshoulderYpos);
-				sftd_draw_textf(font, 331, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-			}
-			
-			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-			
-			sf2d_end_frame();
-		} else if(screenmode == SCREEN_MODE_SETTINGS) {
+		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			if (colortexloaded) {
 				sf2d_free_texture(topbgtex);
 				topbgtex = NULL;
