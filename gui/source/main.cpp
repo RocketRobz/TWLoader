@@ -42,7 +42,6 @@ u32 kUp;
 u32 kDown;
 u32 kHeld;
 
-CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );	
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
@@ -52,7 +51,7 @@ sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *dialogboxtex;	// Dialog box
 sf2d_texture *settingslogotex;	// TWLoader logo.
-sf2d_texture *slot1boxarttex;
+sf2d_texture *slot1boxarttex = NULL;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -123,38 +122,6 @@ static const char fcrompathini_tid[] = "TID";
 static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
 	
 
-// Settings .ini file
-static const char settingsini_frontend[] = "FRONTEND";
-//static const char settingsini_frontend_twlappinstalled[] = "TWLAPP_INSTALLED";
-static const char settingsini_frontend_name[] = "NAME";
-static const char settingsini_frontend_color[] = "COLOR";
-static const char settingsini_frontend_menucolor[] = "MENU_COLOR";
-static const char settingsini_frontend_filename[] = "SHOW_FILENAME";
-static const char settingsini_frontend_locswitch[] = "GAMELOC_SWITCH";
-static const char settingsini_frontend_topborder[] = "TOP_BORDER";
-static const char settingsini_frontend_toplayout[] = "TOP_LAYOUT";
-static const char settingsini_frontend_custombot[] = "CUSTOM_BOTTOM";
-static const char settingsini_frontend_counter[] = "COUNTER";
-static const char settingsini_frontend_autoupdate[] = "AUTOUPDATE";
-static const char settingsini_frontend_autodl[] = "AUTODOWNLOAD";
-	
-static const char settingsini_twlmode[] = "TWL-MODE";
-static const char settingsini_twl_rainbowled[] = "RAINBOW_LED";
-static const char settingsini_twl_clock[] = "TWL_CLOCK";
-static const char settingsini_twl_vram[] = "TWL_VRAM";
-static const char settingsini_twl_bootani[] = "BOOT_ANIMATION";
-static const char settingsini_twl_hsmsg[] = "HEALTH&SAFETY_MSG";
-static const char settingsini_twl_launchslot1[] = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
-static const char settingsini_twl_resetslot1[] = "RESET_SLOT1";
-static const char settingsini_twl_keepsd[] = "SLOT1_KEEPSD";
-static const char settingsini_twl_debug[] = "DEBUG";
-static const char settingsini_twl_gbarunner[] = "GBARUNNER";
-static const char settingsini_twl_forwarder[] = "FORWARDER";
-static const char settingsini_twl_flashcard[] = "FLASHCARD";
-// End
-
-
-
 // Bootstrap .ini file
 static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 static const char bootstrapini_ndspath[] = "NDS_PATH";
@@ -181,16 +148,13 @@ typedef struct {
 char settings_vertext[13];
 char settings_latestvertext[13];
 
-int romselect_toplayout;
-//	0: Show box art
-//	1: Hide box art
-
 static bool applaunchprep = false;
 
 int fadealpha = 255;
 bool fadein = true;
 bool fadeout = false;
 
+// Customizable frontend name.
 std::string name;
 
 static const char* romsel_filename;
@@ -199,26 +163,25 @@ static vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
-static const char* flashcardrom = "";
 
-std::string sdmc = "sdmc:/";
-std::string fat = "fat:/";
-std::string slashchar = "/";
-std::string woodfat = "fat0:/";
-std::string dstwofat = "fat1:/";
-std::string romfolder = "roms/nds/";
-std::string flashcardfolder = "roms/flashcard/nds/";
-const char* bnriconfolder = "sdmc:/_nds/twloader/bnricons/";
-const char* fcbnriconfolder = "sdmc:/_nds/twloader/bnricons/flashcard/";
-const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
-const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
+static const std::string sdmc = "sdmc:/";
+static const std::string fat = "fat:/";
+static const std::string slashchar = "/";
+static const std::string woodfat = "fat0:/";
+static const std::string dstwofat = "fat1:/";
+static std::string romfolder = "roms/nds/";
+static const std::string flashcardfolder = "roms/flashcard/nds/";
+static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons/";
+static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard/";
+static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart/";
+static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard/";
 // End
 	
-int keepsdvalue = 0;
+bool keepsdvalue = false;
 int gbarunnervalue = 0;
 
 
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
     while((start_pos = str.find(from, start_pos)) != std::string::npos) {
         str.replace(start_pos, from.length(), to);
@@ -228,29 +191,29 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 
-void screenoff()
+static inline void screenoff(void)
 {
-    gspLcdInit();\
-    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdInit();
+    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
     gspLcdExit();
 }
 
-void screenon()
+static inline void screenon(void)
 {
-    gspLcdInit();\
-    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdInit();
+    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
     gspLcdExit();
 }
 
 
-Handle ptmsysmHandle = 0;
+static Handle ptmsysmHandle = 0;
 
-Result ptmsysmInit()
+static inline Result ptmsysmInit(void)
 {
     return srvGetServiceHandle(&ptmsysmHandle, "ptm:sysm");
 }
 
-Result ptmsysmExit()
+static inline Result ptmsysmExit(void)
 {
     return svcCloseHandle(ptmsysmHandle);
 }
@@ -518,76 +481,33 @@ static void LoadBoxArt(void) {
 	}
 }
 
-void LoadSettings() {
-	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
-	settings.ui.color = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
-	settings.ui.menucolor = settingsini.GetInt(settingsini_frontend, settingsini_frontend_menucolor, 0);
-	settings.ui.filename = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
-	settings.ui.locswitch = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
-	settings.ui.topborder = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
-	settings.ui.counter = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
-	settings.ui.custombot = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
-	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
-	settings.ui.autoupdate = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
-	settings.ui.autodl = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autodl, 0);
-	// romselect_layout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0);
-	settings.twl.rainbowled = settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0);
-	settings.twl.cpuspeed = settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0);
-	settings.twl.extvram = settingsini.GetInt(settingsini_twlmode, settingsini_twl_vram, 0);
-	settings.twl.bootscreen = settingsini.GetInt(settingsini_twlmode, settingsini_twl_bootani, 0);
-	settings.twl.healthsafety = settingsini.GetInt(settingsini_twlmode, settingsini_twl_hsmsg, 0);
-	settings.twl.resetslot1 = settingsini.GetInt(settingsini_twlmode, settingsini_twl_resetslot1, 0);
-	settings.twl.forwarder = settingsini.GetInt(settingsini_twlmode, settingsini_twl_forwarder, 0);
-	settings.twl.flashcard = settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0);
-	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == 1) {
-		settings.twl.console = 2;
-	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == 0) {
-		settings.twl.console = 1;
-	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == -1) {
-		settings.twl.console = 0;
-	}
-	if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 1) {
-		settings.twl.console = 2;
-	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 0) {
-		settings.twl.console = 1;
-	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == -1) {
-		settings.twl.console = 0;
+/**
+ * Load nds-bootstrap's configuration.
+ */
+static void LoadBootstrapConfig(void)
+{
+	// TODO: Change the default to -1?
+	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0)) {
+		case 1:
+			settings.twl.console = 2;
+			break;
+		case 0:
+		default:
+			settings.twl.console = 1;
+			break;
+		case -1:
+			settings.twl.console = 0;
+			break;
 	}
 	settings.twl.lockarm9scfgext = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
-	LogFM("Main.LoadSettings", "Settings load successfully");
+	LogFM("Main.LoadBootstrapConfig", "Bootstrap configuration loaded successfully");
 }
 
-void SaveSettings() {
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings.ui.color);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_menucolor, settings.ui.menucolor);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings.ui.filename);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings.ui.locswitch);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings.ui.topborder);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings.ui.counter);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings.ui.custombot);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings.ui.autoupdate);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autodl, settings.ui.autodl);
-	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, settings.twl.rainbowled);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, settings.twl.cpuspeed);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_vram, settings.twl.extvram);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, settings.twl.bootscreen);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, settings.twl.healthsafety);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, settings.twl.launchslot1);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, settings.twl.resetslot1);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_keepsd, keepsdvalue);
-	if (settings.twl.console == 0) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, -1);
-	} else if (settings.twl.console == 1) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 0);
-	} else if (settings.twl.console == 2) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 1);
-	}
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, settings.twl.forwarder);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, settings.twl.flashcard);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
-	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
+/**
+ * Update nds-bootstrap's configuration.
+ */
+static void SaveBootstrapConfig(void)
+{
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
@@ -604,13 +524,21 @@ void SaveSettings() {
 		}
 	}
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
-	if (settings.twl.console == 0) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
-	} else if (settings.twl.console == 1) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0);
-	} else if (settings.twl.console == 2) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
+
+	// TODO: Change the default to 0?
+	switch (settings.twl.console) {
+		case 0:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
+			break;
+		case 1:
+		default:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0);
+			break;
+		case 2:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
+			break;
 	}
+
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, settings.twl.lockarm9scfgext);
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
@@ -839,10 +767,11 @@ int main()
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
+	LoadSettings();
+	LoadBootstrapConfig();
+
 	// Initialize translations.
 	langInit();
-
-	LoadSettings();
 
 	LoadColor();
 	LoadMenuColor();
@@ -872,12 +801,12 @@ int main()
 	batterytex[4] = sfil_load_PNG_file("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
 
-	sf2d_texture *bottomtex; // Bottom of menu
+	sf2d_texture *bottomtex = NULL;		// Bottom of menu
 	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
-	sf2d_texture *dotcircletex; // Dots forming a circle
-	sf2d_texture *startbordertex; // "START" border
+	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
+	sf2d_texture *startbordertex = NULL;	// "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
 	cartnulltex = sfil_load_PNG_file("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
@@ -938,7 +867,7 @@ int main()
 	}
 
 	// Cache banner data
-	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
@@ -985,7 +914,6 @@ int main()
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;
-	int settingscursorPosition = 0;
 	
 	bool cursorPositionset = false;
 	
@@ -1008,14 +936,11 @@ int main()
 	u16 touch_x = 320/2;
 	u16 touch_y = 240/2;
 	
-	int textWidth = 0;
-	int textHeight = 0;
-	
 	int boxartXpos;
 	int boxartXmovepos = 0;
 
 	int filenameYpos;
-	int filenameYmovepos = 0;
+	//int filenameYmovepos = 0;
 	int setsboxXpos = 0;
 	int cartXpos = 64;
 	int boxartYmovepos = 63;
@@ -1023,8 +948,8 @@ int main()
 	int ndsiconXpos;
 	int ndsiconYmovepos = 133;
 
-	int startbordermovepos;
-	float startborderscalesize;
+	int startbordermovepos = 0;
+	float startborderscalesize = 1.0f;
 
 	sf2d_set_3D(1);
 
@@ -1044,9 +969,8 @@ int main()
 		// Scan hid shared memory for input events
 		hidScanInput();
 		
-		u32 hUp = hidKeysUp();
-		u32 hDown = hidKeysDown();
-		u32 hHeld = hidKeysHeld();
+		const u32 hDown = hidKeysDown();
+		const u32 hHeld = hidKeysHeld();
 		
 		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
 		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
@@ -1057,6 +981,9 @@ int main()
 
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
+
+		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		const int pagemax = std::min((20+pagenum*20), (int)file_count);
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -1071,8 +998,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
-						if (bnriconnum < files.size()) {
+					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						if (bnriconnum < (int)files.size()) {
 							const char *tempfile = files.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 							StoreBNRIconPath(path);
@@ -1088,8 +1015,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
-						if (bnriconnum < fcfiles.size()) {
+					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						if (bnriconnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
@@ -1115,8 +1042,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-						if (boxartnum < files.size()) {
+					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						if (boxartnum < (int)files.size()) {
 							const char *tempfile = files.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
@@ -1186,10 +1113,11 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!slot1boxarttexloaded) {
-				if (!settings.twl.forwarder) {
-					sf2d_free_texture(slot1boxarttex);
-					const char *gameID = gamecardGetGameID();
+			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
+				// Load the boxart for the Slot-1 cartridge.
+				sf2d_free_texture(slot1boxarttex);
+				const char *gameID = gamecardGetGameID();
+				if (gameID) {
 					if (checkWifiStatus()) {
 						downloadSlot1BoxArt(gameID);
 					}
@@ -1198,11 +1126,14 @@ int main()
 					LogFMA("Main", "Loading Slot-1 box art", gameID);
 					snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, gameID);
 					if (access(path, F_OK) != -1) {
-						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
+						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 					} else {
-						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
+						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 					}
 					LogFMA("Main", "Done loading Slot-1 box art", gameID);
+				} else {
+					// No cartridge, or unrecognized cartridge.
+					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 				}
 				slot1boxarttexloaded = true;
 			}
@@ -1220,174 +1151,70 @@ int main()
 			}
 
 			update_battery_level(batterychrgtex, batterytex);
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
-			sf2d_draw_texture_scale(topbgtex, offset3D[0].topbg-12, 0, 1.32, 1);
-			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (romselect_toplayout == 0) {
-					boxartXpos = 136;
-					if (settings.twl.forwarder) {
-						if(fcfiles.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
+			for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+				sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
+				sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
+				if (filenum != 0) {	// If ROMs are found, then display box art
+					if (!settings.romselect.toplayout) {
+						boxartXpos = 136;
+						if (!settings.twl.forwarder && pagenum == 0) {
+							sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
 						}
-					} else {
-						if(pagenum == 0) {
-							sf2d_draw_texture(slot1boxarttex, offset3D[0].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[0].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-						}
-						if(files.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						}
-					}
-					if (applaunchprep) {
-						if (cursorPosition >= 0) {
-							boxartnum = cursorPosition;
+						for (boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
 							ChangeBoxArtNo();
-							sf2d_draw_texture_part(topbgtex, offset3D[0].boxart+136, 63, offset3D[0].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(boxarttexnum, offset3D[0].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[0].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-						} else if (!settings.twl.forwarder && cursorPosition == -1) {
-							sf2d_draw_texture_part(topbgtex, offset3D[0].boxart+136, 63, offset3D[0].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(slot1boxarttex, offset3D[0].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[0].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+							// Draw box art
+							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
+							// Draw box art's reflection
+							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+							boxartXpos += 144;
+						}
+						if (applaunchprep) {
+							if (cursorPosition >= 0) {
+								boxartnum = cursorPosition;
+								ChangeBoxArtNo();
+								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+								// Draw moving box art
+								sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+								// Draw moving box art's reflection
+								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+							} else if (!settings.twl.forwarder && cursorPosition == -1) {
+								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+								sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
+								sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+							}
 						}
 					}
+				} else {
+					int text_width = sftd_get_text_width(font, 12, noromtext1);
+					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+					text_width = sftd_get_text_width(font, 12, noromtext2);
+					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 				}
-			} else {
-				int text_width = sftd_get_text_width(font, 12, noromtext1);
-				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				text_width = sftd_get_text_width(font, 12, noromtext2);
-				sftd_draw_textf(font, offset3D[0].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-			}
-			if (settings.ui.topborder) {
-				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
-			} else {
-				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-			}
-
-			draw_volume_slider(voltex);
-			sf2d_draw_texture(batteryIcon, 371, 2);
-			sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
-			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
-			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-			if (settings.ui.locswitch) {
-				sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-				sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-			}
-
-			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-
-			sf2d_end_frame();
-				
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_draw_texture_scale(topbgtex, offset3D[1].topbg-12, 0, 1.32, 1);
-			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (romselect_toplayout == 0) {
-					boxartXpos = 136;
-					if (settings.twl.forwarder) {
-						if(fcfiles.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						}
-					} else {
-						if(pagenum == 0) {
-							sf2d_draw_texture(slot1boxarttex, offset3D[1].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[1].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-						}
-						if(files.size() >= 19+pagenum*20) {
-							for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						} else {
-							for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
-								ChangeBoxArtNo();
-								sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-								boxartXpos += 144;
-							}
-						}
-					}
-					if (applaunchprep) {
-						if (cursorPosition >= 0) {
-							boxartnum = cursorPosition;
-							ChangeBoxArtNo();
-							sf2d_draw_texture_part(topbgtex, offset3D[1].boxart+136, 63, offset3D[1].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(boxarttexnum, offset3D[1].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[1].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-						} else if (!settings.twl.forwarder && cursorPosition == -1) {
-							sf2d_draw_texture_part(topbgtex, offset3D[1].boxart+136, 63, offset3D[1].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(slot1boxarttex, offset3D[1].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[1].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-						}
-					}
+				if (settings.ui.topborder) {
+					sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
+					sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
+				} else {
+					sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 				}
-			} else {
-				int text_width = sftd_get_text_width(font, 12, noromtext1);
-				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-				text_width = sftd_get_text_width(font, 12, noromtext2);
-				sftd_draw_textf(font, offset3D[1].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-			}
-			if (settings.ui.topborder) {
-				sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-				sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
-			} else {
-				sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-			}
 
-			draw_volume_slider(voltex);
-			sf2d_draw_texture(batteryIcon, 371, 2);
-			sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
-			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
-			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
-			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-			if (settings.ui.locswitch) {
-				sf2d_draw_texture(shoulderRtex, 327, RshoulderYpos);
-				sftd_draw_textf(font, 331, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+				draw_volume_slider(voltex);
+				sf2d_draw_texture(batteryIcon, 371, 2);
+				if (!name.empty()) {
+					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+				}
+				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
+				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+				sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+				if (settings.ui.locswitch) {
+					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
+					sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+				}
+
+				sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+				sf2d_end_frame();
 			}
-			
-			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-			
-			sf2d_end_frame();
-		} else if(screenmode == SCREEN_MODE_SETTINGS) {
+		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			if (colortexloaded) {
 				sf2d_free_texture(topbgtex);
 				topbgtex = NULL;
@@ -1447,11 +1274,12 @@ int main()
 
 					// Poll for Slot 1 changes.
 					gamecardPoll(true);
+
+					// Force boxart and banner text reloads
+					// in case the Slot-1 cartridge was changed
+					// or the UI language was changed.
 					slot1boxarttexloaded = false;
-					if (cursorPosition == -1) {
-						// Force banner text reloading.
-						bannertextloaded = false;
-					}	
+					bannertextloaded = false;
 				} else {
 					// run = false;
 					if (settings.twl.forwarder) {
@@ -1485,6 +1313,7 @@ int main()
 					}
 					gbarunnervalue = 1;
 					SaveSettings();
+					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
 						RainbowLED();
@@ -1651,7 +1480,7 @@ int main()
 					musicbool = false;
 					screenmode = SCREEN_MODE_SETTINGS;
 					settingsResetSubScreenMode();
-					rad == 0.0f;
+					rad = 0.0f;
 					boxartYmovepos = 63;
 					boxartreflYmovepos = 264;
 					titleboxYmovepos = 120;
@@ -1664,7 +1493,7 @@ int main()
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						// TODO: Enum values for flash card type.
-						if (keepsdvalue == 1) {
+						if (keepsdvalue) {
 							switch (settings.twl.flashcard) {
 								case 0:
 								case 1:
@@ -1724,6 +1553,7 @@ int main()
 						}
 					}
 					SaveSettings();
+					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
 						RainbowLED();
@@ -1874,13 +1704,10 @@ int main()
 							if (cursorPosition >= 0 && settings.ui.counter) {
 								char romsel_counter1[16];
 								snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-								size_t file_count;
 								const char *p_romsel_counter;
 								if (settings.twl.forwarder) {
-									file_count = fcfiles.size();
 									p_romsel_counter = romsel_counter2fc;
 								} else {
-									file_count = files.size();
 									p_romsel_counter = romsel_counter2sd;
 								}
 								if (file_count < 100) {
@@ -1907,42 +1734,23 @@ int main()
 					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 
-					if (!settings.twl.forwarder) {
-						if (pagenum != 0) {
-							if(files.size() <= 0-pagenum*20) {
-								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
-							} else {
-								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
-							}
-						} else {
-							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
-						}
-						if(files.size() > 20+pagenum*20) {
-							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Next");
-						} else {
-							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
-						}
-					} else {
-						if (pagenum != 0) {
-							if(fcfiles.size() <= 0-pagenum*20) {
-								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Prev");
-							} else {
-								sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
-							}
-						} else {
-							sftd_draw_textf(font, 17, YbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Prev");
-						}
-						if(fcfiles.size() > 20+pagenum*20) {
-							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(0, 0, 0, 255), 11, "Next");
-						} else {
-							sftd_draw_textf(font, 252, XbuttonYpos+5, RGBA8(127, 127, 127, 255), 11, "Next");
-						}
-					}
-					if (!settings.twl.forwarder) {
-						if (pagenum == 0) {
-							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+					// Draw the "Prev" and "Next" text for X/Y.
+					// FIXME: "0-pagenum*20" seems wrong...
+					u32 xy_color = (pagenum != 0 && file_count <= 0-pagenum*20)
+							? RGBA8(0, 0, 0, 255)
+							: RGBA8(127, 127, 127, 255);
+					sftd_draw_text(font, 17, YbuttonYpos+5, xy_color, 11, "Prev");
 
+					xy_color = (file_count > 20+pagenum*20)
+							? RGBA8(0, 0, 0, 255)
+							: RGBA8(127, 127, 127, 255);
+					sftd_draw_text(font, 252, XbuttonYpos+5, xy_color, 11, "Next");
+
+					if (pagenum == 0) {
+						sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
+						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+
+						if (!settings.twl.forwarder) {
 							// Poll for Slot 1 changes.
 							bool s1chg = gamecardPoll(false);
 							if (s1chg && cursorPosition == -1) {
@@ -1956,66 +1764,26 @@ int main()
 								cardicontex = iconunktex;
 							sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 						} else {
-							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
+							// Get flash cart games.
+ 							sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 119);
 						}
 					} else {
-						if (pagenum == 0) {
-							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
-							sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 119);
-						} else {
-							sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
-						}
+						sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 					}
 
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
 					filenameYpos = 0;
-					if (settings.twl.forwarder) {
-						if(fcfiles.size() >= 19+pagenum*20) {
-							for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
+					for (filenum = pagenum*20; filenum < pagemax; filenum++) {
+						sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+						titleboxXpos += 64;
 
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-								ndsiconXpos += 64;
-							}
-						} else {
-							for (filenum = pagenum*20; filenum < fcfiles.size(); filenum++){
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
-
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-								ndsiconXpos += 64;
-							}
-						}
-					} else {
-						if(files.size() >= 19+pagenum*20) {
-							for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
-
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-								ndsiconXpos += 64;
-							}
-						} else {
-							for (filenum = pagenum*20; filenum < files.size(); filenum++) {
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
-
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-								ndsiconXpos += 64;
-							}
-						} 
+						bnriconnum = filenum;
+						ChangeBNRIconNo();
+						sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
+						ndsiconXpos += 64;
 					}
+
 					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
 					if (!applaunchprep) {
 						if (titleboxXmovetimer == 0) {
@@ -2092,14 +1860,14 @@ int main()
 			updatebotscreen = false;
 		}
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
-			Lshouldertext = (romselect_toplayout ? "Box Art" : "Blank");
+			Lshouldertext = (settings.romselect.toplayout ? "Box Art" : "Blank");
 			Rshouldertext = (settings.twl.forwarder ? "SD Card" : "Flashcard");
 			/* if (filenum == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
 			if(hDown & KEY_L) {
-				romselect_toplayout = !romselect_toplayout;
+				settings.romselect.toplayout = !settings.romselect.toplayout;
 				if (dspfirmfound) {
 					sfx_switch->stop();	// Prevent freezing
 					sfx_switch->play();
@@ -2122,6 +1890,7 @@ int main()
 					screenoff();
 					rom = files.at(cursorPosition).c_str();
 					SaveSettings();
+					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if(hDown & KEY_DOWN){
@@ -2156,6 +1925,7 @@ int main()
 					settings.twl.launchslot1 = true;
 					screenoff();
 					SaveSettings();
+					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
@@ -2187,102 +1957,50 @@ int main()
 							updatebotscreen = true;
 						}
 					}
-					if (!noromsfound) {
-						if (settings.twl.forwarder) {	// If no ROMs are found
-							if (fcfiles.size() == 0) {	// If no ROMs are found
-								cursorPosition = -1;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = +64;
-								boxartXmovepos = 0;
-							}
-						} else {
-							if (files.size() == 0) {	// If no ROMs are found
-								cursorPosition = -1;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = +64;
-								boxartXmovepos = 0;
-							}
-						}
+					if (!noromsfound && file_count == 0) {
+						// No ROMs were fonud.
+						cursorPosition = -1;
+						storedcursorPosition = cursorPosition;
+						titleboxXmovepos = +64;
+						boxartXmovepos = 0;
 						updatebotscreen = true;
 						noromsfound = true;
 					}
 					if(hDown & KEY_X) {
-						if (settings.twl.forwarder) {
-							if(fcfiles.size() > 20+pagenum*20) {
-								pagenum++;
-								slot1boxarttexloaded = false;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
+						if (file_count > pagemax) {
+							pagenum++;
+							slot1boxarttexloaded = false;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
 							}
-						} else {
-							if(files.size() > 20+pagenum*20) {
-								pagenum++;
-								slot1boxarttexloaded = false;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
-							}
+							updatebotscreen = true;
 						}
 					} else if(hDown & KEY_Y) {
-						if (pagenum != 0) {
-							if (settings.twl.forwarder) {
-								if(fcfiles.size() <= 0-pagenum*20) {
-									pagenum--;
-									slot1boxarttexloaded = false;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
-								}
-							} else {
-								if(files.size() <= 0-pagenum*20) {
-									pagenum--;
-									slot1boxarttexloaded = false;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
-								}
+						if (pagenum != 0 && file_count <= 0-pagenum*20) {
+							pagenum--;
+							slot1boxarttexloaded = false;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
 							}
+							updatebotscreen = true;
 						}
 					}
 					if(hDown & KEY_TOUCH){
@@ -2290,82 +2008,40 @@ int main()
 						touch_x = touch.px;
 						touch_y = touch.py;
 						if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
-							if (pagenum != 0) {
-								if (settings.twl.forwarder) {
-									if(fcfiles.size() <= 0-pagenum*20) {
-										pagenum--;
-										slot1boxarttexloaded = false;
-										bannertextloaded = false;
-										cursorPosition = 0+pagenum*20;
-										storedcursorPosition = cursorPosition;
-										titleboxXmovepos = 0;
-										boxartXmovepos = 0;
-										// noromsfound = false;
-										bnricontexloaded = false;
-										boxarttexloaded = false;
-										if (dspfirmfound) {
-											sfx_switch->stop();	// Prevent freezing
-											sfx_switch->play();
-										}
-										updatebotscreen = true;
-									}
-								} else {
-									if(files.size() <= 0-pagenum*20) {
-										pagenum--;
-										slot1boxarttexloaded = false;
-										bannertextloaded = false;
-										cursorPosition = 0+pagenum*20;
-										storedcursorPosition = cursorPosition;
-										titleboxXmovepos = 0;
-										boxartXmovepos = 0;
-										// noromsfound = false;
-										bnricontexloaded = false;
-										boxarttexloaded = false;
-										if (dspfirmfound) {
-											sfx_switch->stop();	// Prevent freezing
-											sfx_switch->play();
-										}
-										updatebotscreen = true;
-									}
+							if (pagenum != 0 && file_count <= 0-pagenum*20) {
+								pagenum--;
+								slot1boxarttexloaded = false;
+								bannertextloaded = false;
+								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								bnricontexloaded = false;
+								boxarttexloaded = false;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
 								}
+								updatebotscreen = true;
 							}
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
-							if (settings.twl.forwarder) {
-								if(fcfiles.size() > 20+pagenum*20) {
-									pagenum++;
-									slot1boxarttexloaded = false;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
+							if (file_count > pagemax) {
+								pagenum++;
+								slot1boxarttexloaded = false;
+								bannertextloaded = false;
+								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								bnricontexloaded = false;
+								boxarttexloaded = false;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
 								}
-							} else {
-								if(files.size() > 20+pagenum*20) {
-									pagenum++;
-									slot1boxarttexloaded = false;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
-								}
+								updatebotscreen = true;
 							}
 						} else if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
 							bool playlaunchsound = true;
@@ -2390,7 +2066,7 @@ int main()
 										titleboxXmovetimer = 1;
 										settings.twl.launchslot1 = true;
 										if (settings.twl.forwarder) {
-											keepsdvalue = 1;
+											keepsdvalue = true;
 											rom = "_nds/twloader.nds";
 										}
 										applaunchprep = true;
@@ -2461,9 +2137,9 @@ int main()
 									playlaunchsound = false;
 								} else {
 									titleboxXmovetimer = 1;
-									settings.twl.launchslot1 = 1;
+									settings.twl.launchslot1 = true;
 									if (settings.twl.forwarder) {
-										keepsdvalue = 1;
+										keepsdvalue = true;
 										rom = "_nds/twloader.nds";
 									}
 									applaunchprep = true;
@@ -2539,8 +2215,11 @@ int main()
 
 		while(applaunchon){
 			// Prepare for the app launch
-			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44, 0); // TWLNAND side's title ID
-			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000, 2);	// TODO: Launch TWL carts directly
+			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44ULL, MEDIATYPE_NAND); // TWLNAND side's title ID
+			// TODO: Launch TWL carts directly.
+			// Note that APT_PrepareToDoApplicationJump() doesn't
+			// seem to work right with NTR/TWL carts...
+			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000ULL, MEDIATYPE_GAME_CARD);
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}
@@ -2551,6 +2230,7 @@ int main()
 	aptUnhook(&rfhm_cookie);
 
 	SaveSettings();
+	SaveBootstrapConfig();
 
 	hidExit();
 	srvExit();

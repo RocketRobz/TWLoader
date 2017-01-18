@@ -148,7 +148,7 @@ GameCardType gamecardGetType(void)
  */
 const char *gamecardGetGameID(void)
 {
-	return twl_gameid.id4;
+	return (twl_gameid.d != 0 ? twl_gameid.id4 : NULL);
 }
 
 /**

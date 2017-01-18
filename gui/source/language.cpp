@@ -1,5 +1,6 @@
 #include "language.h"
 #include "textfns.h"
+#include "settings.h"
 
 #include <malloc.h>
 
@@ -15,6 +16,7 @@ static const char *const lang_EN[STR_MAX] = {
 
 	// Settings
 	"START: Update TWLoader",	// "START: Update TWLoader"
+	"Language",			// "Language"
 	"Color",			// "Color"
 	"Menu color",			// "Menu Color"
 	"Show filename",		// "Show filename"
@@ -30,6 +32,7 @@ static const char *const lang_FR[STR_MAX] = {
 
 	// Settings
 	"START: Mettre à jour TWLoader",	// "START: Update TWLoader"
+	"Langue",				// "Language"
 	"Couleur",				// "Color"
 	"Couleur du menu",			// "Menu Color"
 	"Afficher le nom du fichier",		// "Show filename"
@@ -45,6 +48,7 @@ static const char *const lang_DE[STR_MAX] = {
 
 	// Settings
 	"START: TWLoader aktualisieren",	// "START: Update TWLoader"
+	"Sprache",				// "Language"
 	"Farbe",				// "Color"
 	"Menüfarbe",				// "Menu Color"
 	"Dateiname anzeigen",			// "Show filename"
@@ -60,6 +64,7 @@ static const char *const lang_IT[STR_MAX] = {
 
 	// Settings
 	"START: Aggiornamento TWLoader",	// "START: Update TWLoader"
+	"Lingua",				// "Language"
 	"Colore",				// "Color"
 	"colore Menu",				// "Menu Color"
 	"Visualizza il nome del file",		// "Show filename"
@@ -75,6 +80,7 @@ static const char *const lang_ES[STR_MAX] = {
 
 	// Settings
 	"START: Actualizar TWLoader",		// "START: Update TWLoader"
+	"Idioma",				// "Language"
 	"Color",				// "Color"
 	"Color del menú",			// "Menu Color"
 	"Mostrar nombre del archivo",		// "Show filename"
@@ -90,6 +96,7 @@ static const char *const lang_NL[STR_MAX] = {
 
 	// Settings
 	"START: update TWLoader",	// "START: Update TWLoader"
+	"Taal",				// "Language"
 	"Kleur",			// "Color"
 	"menukleur",			// "Menu Color"
 	"Toon bestandsnaam",		// "Show filename"
@@ -105,6 +112,7 @@ static const char *const lang_PT[STR_MAX] = {
 
 	// Settings
 	"START: Atualizar o TWLoader",		// "START: Update TWLoader"
+	"Língua",				// "Language"
 	"Cor",					// "Color"
 	"Cor do menu",				// "Menu Color"
 	"Mostrar nome do arquivo",		// "Show filename"
@@ -140,18 +148,24 @@ static wchar_t *lang_cache[STR_MAX] = { };
 
 /**
  * Initialize translations.
+ * Uses the language ID specified in settings.ui.language.
  */
 void langInit(void)
 {
-	// Get the system language setting.
-	CFGU_GetSystemLanguage(&language);
+	language = settings.ui.language;
 	if (language < 0 || language >= 12) {
-		// Invalid language.
-		// Default to English.
-		language = 1;
+		// Get the system language setting.
+		CFGU_GetSystemLanguage(&language);
+		if (language < 0 || language >= 12) {
+			// Invalid language.
+			// Default to English.
+			language = 1;
+		}
 	}
-	// TODO: Clear the language cache?
-	// (Language can't usually be changed at runtime...)
+
+	// Clear the language cache.
+	langClear();
+	// Set the selected language.
 	lang_data = lang_all[language];
 }
 

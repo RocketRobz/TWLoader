@@ -5,6 +5,8 @@
 #include "download.h"
 #include "log.h"
 #include "language.h"
+#include "textfns.h"
+#include "inifile.h"
 
 #include <unistd.h>
 #include <string>
@@ -24,6 +26,9 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern u8 language;
 
+// Customizable frontend name.
+extern std::string name;
+
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -42,6 +47,9 @@ extern sf2d_texture *settingslogotex;	// TWLoader logo.
 extern char settings_vertext[13];
 
 extern string name;
+
+extern bool keepsdvalue;
+extern int gbarunnervalue;
 
 // Sound effects from main.cpp.
 extern sound *sfx_select;
@@ -78,6 +86,8 @@ enum SubScreenMode {
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
 /** Settings **/
+
+static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 
 // Color settings.
 // Use SET_ALPHA() to replace the alpha value.
@@ -294,6 +304,30 @@ void settingsDrawBottomScreen(void)
 		sftd_draw_text(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 		sftd_draw_text(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 
+		// Language.
+		static const char *const language_text[] = {
+			"日本語",	// Japanese
+			"English",	// English
+			"Français",	// French
+			"Deutsch",	// German
+			"Italiano",	// Italian
+			"Español",	// Spanish
+			"ZHCN",		// Simplified Chinese (TODO)
+			"Korean",	// Korean (TODO) [Font is missing characters]
+			"Nederlands",	// Dutch
+			"Português",	// Portuguese
+			"Russian",	// Russian (TODO) [Font's characters are too wide]
+			"ZHTW",		// Traditional Chinese (TODO)
+		};
+		// TODO: Cache the conversion?
+		wstring languagevaluetext;
+		if (settings.ui.language >= 0 && settings.ui.language < 12) {
+			languagevaluetext = utf8_to_wstring(language_text[settings.ui.language]);
+		} else {
+			// TODO: Translate?
+			languagevaluetext = latin1_to_wstring("System");
+		}
+
 		// Color text.
 		static const char *const color_text[] = {
 			"Gray", "Brown", "Red", "Pink",
@@ -342,6 +376,17 @@ void settingsDrawBottomScreen(void)
 		title = "Settings: GUI";
 		int Ypos = 40;
 		if (cursor_pos[0] == 0) {
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LANGUAGE));
+			sftd_draw_wtext(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, languagevaluetext.c_str());
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The language to use for the UI,");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "including game banner text.");
+			Ypos += 12;
+		} else {
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LANGUAGE));
+			sftd_draw_wtext(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, languagevaluetext.c_str());
+			Ypos += 12;
+		}
+		if (cursor_pos[0] == 1) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COLOR));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top background,");
@@ -352,7 +397,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 1) {
+		if (cursor_pos[0] == 2) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top border,");
@@ -363,7 +408,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 2) {
+		if (cursor_pos[0] == 3) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_FILENAME));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
@@ -373,7 +418,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 3) {
+		if (cursor_pos[0] == 4) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LOCSWITCH));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, locswitchvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
@@ -384,7 +429,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, locswitchvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 4) {
+		if (cursor_pos[0] == 5) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_TOPBORDER));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, topbordervaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
@@ -394,7 +439,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, topbordervaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 5) {
+		if (cursor_pos[0] == 6) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COUNTER));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
@@ -405,7 +450,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 6) {
+		if (cursor_pos[0] == 7) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_custombottext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
@@ -416,7 +461,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 7) {
+		if (cursor_pos[0] == 8) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -426,7 +471,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 8) {
+		if (cursor_pos[0] == 9) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -688,10 +733,25 @@ bool settingsMoveCursor(u32 hDown)
 	} else /*if (subscreenmode == SUBSCREEN_MODE_FRONTEND)*/ {
 		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
 			switch (cursor_pos[SUBSCREEN_MODE_FRONTEND]) {
-				case 0:	// Color
+				case 0:	// Language
 				default:
 					if (hDown & (KEY_A | KEY_RIGHT)) {
-						settings.ui.color++; // Color
+						settings.ui.language++;
+						if (settings.ui.language > 11) {
+							settings.ui.language = -1;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.ui.language--;
+						if (settings.ui.language < -1) {
+							settings.ui.language = 11;
+						}
+					}
+					langInit();
+					break;
+
+				case 1:	// Color
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.ui.color++;
 						if (settings.ui.color > 18) {
 							settings.ui.color = 0;
 						}
@@ -703,7 +763,7 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					LoadColor();
 					break;
-				case 1:	// Menu color
+				case 2:	// Menu color
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.menucolor++;
 						if (settings.ui.menucolor > 16) {
@@ -717,23 +777,23 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					LoadMenuColor();
 					break;
-				case 2:	// Show filename
+				case 3:	// Show filename
 					settings.ui.filename = !settings.ui.filename;
 					break;
-				case 3:	// Game location switcher
+				case 4:	// Game location switcher
 					settings.ui.locswitch = !settings.ui.locswitch;
 					break;
-				case 4:	// Top border
+				case 5:	// Top border
 					settings.ui.topborder = !settings.ui.topborder;
 					break;
-				case 5:	// Game counter
+				case 6:	// Game counter
 					settings.ui.counter = !settings.ui.counter;
 					break;
-				case 6:	// Custom bottom image
+				case 7:	// Custom bottom image
 					settings.ui.custombot = !settings.ui.custombot;
 					LoadBottomImage();
 					break;
-				case 7:	// Enable or disable autoupdate
+				case 8:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 2) {
@@ -746,12 +806,12 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 8:	// Enable or disable autodownload
+				case 9:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
 					break;
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 8) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 9) {
 			cursor_pos[0]++;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
@@ -969,4 +1029,97 @@ void LoadBottomImage() {
 			LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully");
 		}
 	}
+}
+
+/**
+ * Load settings.
+ */
+void LoadSettings(void) {
+	// UI settings.
+	name = settingsini.GetString("FRONTEND", "NAME", "");
+	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
+	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
+	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
+	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
+	settings.ui.locswitch = settingsini.GetInt("FRONTEND", "GAMELOC_SWITCH", 0);
+	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 0);
+	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
+	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
+	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
+	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
+	settings.ui.autodl = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
+	// romselect_layout = settingsini.GetInt("FRONTEND", "BOTTOM_LAYOUT", 0);
+
+	// TWL settings.
+	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
+	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
+	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 0);
+	settings.twl.bootscreen = settingsini.GetInt("TWL-MODE", "BOOT_ANIMATION", 0);
+	settings.twl.healthsafety = settingsini.GetInt("TWL-MODE", "HEALTH&SAFETY_MSG", 0);
+	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
+	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
+	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
+
+	// TODO: Change the default to -1?
+	switch (settingsini.GetInt("TWL-MODE", "DEBUG", 0)) {
+		case 1:
+			settings.twl.console = 2;
+			break;
+		case 0:
+		default:
+			settings.twl.console = 1;
+			break;
+		case -1:
+			settings.twl.console = 0;
+			break;
+	}
+	LogFM("Settings.LoadSettings", "Settings loaded successfully");
+}
+
+/**
+ * Save settings.
+ */
+void SaveSettings(void) {
+	// UI settings.
+	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
+	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
+	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
+	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
+	settingsini.SetInt("FRONTEND", "GAMELOC_SWITCH", settings.ui.locswitch);
+	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
+	settingsini.SetInt("FRONTEND", "COUNTER", settings.ui.counter);
+	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
+	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);
+	settingsini.SetInt("FRONTEND", "AUTOUPDATE", settings.ui.autoupdate);
+	settingsini.SetInt("FRONTEND", "AUTODOWNLOAD", settings.ui.autodl);
+	//settingsini.SetInt("FRONTEND", "BOTTOM_LAYOUT", romselect_layout);
+
+	// TWL settings.
+	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
+	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
+	settingsini.SetInt("TWL-MODE", "TWL_VRAM", settings.twl.extvram);
+	settingsini.SetInt("TWL-MODE", "BOOT_ANIMATION", settings.twl.bootscreen);
+	settingsini.SetInt("TWL-MODE", "HEALTH&SAFETY_MSG", settings.twl.healthsafety);
+	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
+	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
+	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
+
+	// TODO: Change default to 0?
+	switch (settings.twl.console) {
+		case 0:
+			settingsini.SetInt("TWL-MODE", "DEBUG", -1);
+			break;
+		case 1:
+		default:
+			settingsini.SetInt("TWL-MODE", "DEBUG", 0);
+			break;
+		case 2:
+			settingsini.SetInt("TWL-MODE", "DEBUG", 1);
+			break;
+	}
+
+	settingsini.SetInt("TWL-MODE", "FORWARDER", settings.twl.forwarder);
+	settingsini.SetInt("TWL-MODE", "FLASHCARD", settings.twl.flashcard);
+	settingsini.SetInt("TWL-MODE", "GBARUNNER", gbarunnervalue);
+	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 }
