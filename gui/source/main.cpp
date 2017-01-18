@@ -1128,7 +1128,7 @@ int main()
 					}
 					LogFMA("Main", "Done loading Slot-1 box art", gameID);
 				} else {
-					// No cartridge.
+					// No cartridge, or unrecognized cartridge.
 					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 				}
 				slot1boxarttexloaded = true;
@@ -1165,18 +1165,20 @@ int main()
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
 							boxartXpos += 144;
 						}
-						if (applaunchprep && cursorPosition >= 0) {
-							boxartnum = cursorPosition;
-							ChangeBoxArtNo();
-							sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
-							// Draw moving box art
-							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
-							// Draw moving box art's reflection
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
-						} else if (!settings.twl.forwarder && cursorPosition == -1) {
-							sf2d_draw_texture_part(topbgtex, offset3D[0].boxart+136, 63, offset3D[0].boxart+104, 63, 128, 115*2);
-							sf2d_draw_texture(slot1boxarttex, offset3D[0].boxart+136, boxartYmovepos); // Draw moving box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[0].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+						if (applaunchprep) {
+							if (cursorPosition >= 0) {
+								boxartnum = cursorPosition;
+								ChangeBoxArtNo();
+								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+								// Draw moving box art
+								sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+								// Draw moving box art's reflection
+								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+							} else if (!settings.twl.forwarder && cursorPosition == -1) {
+								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+								sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
+								sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+							}
 						}
 					}
 				} else {
