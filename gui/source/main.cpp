@@ -981,7 +981,7 @@ int main()
 			storedcursorPosition = 0;
 
 		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-		const size_t pagemax = std::min((size_t)(19+pagenum*20), file_count);
+		const size_t pagemax = std::min((size_t)(20+pagenum*20), file_count);
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
