@@ -379,7 +379,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LANGUAGE));
 			sftd_draw_wtext(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, languagevaluetext.c_str());
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The language to use for the UI,");
-			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "including banner text.");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "including game banner text.");
 			Ypos += 12;
 		} else {
 			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LANGUAGE));
