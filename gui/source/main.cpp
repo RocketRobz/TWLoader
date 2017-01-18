@@ -126,6 +126,7 @@ static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
 static const char settingsini_frontend[] = "FRONTEND";
 //static const char settingsini_frontend_twlappinstalled[] = "TWLAPP_INSTALLED";
 static const char settingsini_frontend_name[] = "NAME";
+static const char settingsini_frontend_language[] = "LANGUAGE";
 static const char settingsini_frontend_color[] = "COLOR";
 static const char settingsini_frontend_menucolor[] = "MENU_COLOR";
 static const char settingsini_frontend_filename[] = "SHOW_FILENAME";
@@ -519,6 +520,7 @@ static void LoadBoxArt(void) {
 
 void LoadSettings() {
 	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
+	settings.ui.language = settingsini.GetInt(settingsini_frontend, settingsini_frontend_language, -1);
 	settings.ui.color = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
 	settings.ui.menucolor = settingsini.GetInt(settingsini_frontend, settingsini_frontend_menucolor, 0);
 	settings.ui.filename = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
@@ -557,6 +559,7 @@ void LoadSettings() {
 }
 
 void SaveSettings() {
+	settingsini.SetInt(settingsini_frontend, settingsini_frontend_language, settings.ui.language);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings.ui.color);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_menucolor, settings.ui.menucolor);
 	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings.ui.filename);
@@ -834,10 +837,10 @@ int main()
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
+	LoadSettings();
+
 	// Initialize translations.
 	langInit();
-
-	LoadSettings();
 
 	LoadColor();
 	LoadMenuColor();

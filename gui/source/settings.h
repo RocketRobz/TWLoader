@@ -34,6 +34,7 @@ extern const char* bottomloc;
 typedef struct _Settings_t {
 	// TODO: Use int8_t instead of int?
 	struct {
+		int language;	// Language. (0-11; other for system)
 		int color;
 		int menucolor;
 		bool filename;

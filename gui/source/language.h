@@ -4,11 +4,15 @@
 
 #include <3ds/types.h>
 
-// System language setting.
+// Active language ID.
 extern u8 language;
 
 /**
  * Initialize translations.
+ * Uses the language ID specified in settings.ui.language.
+ *
+ * Check the language variable outside of settings to determine
+ * the actual language in use.
  */
 void langInit(void);
 
@@ -24,6 +28,7 @@ typedef enum _StrID {
 
 	// Settings
 	STR_SETTINGS_START_UPDATE_TWLOADER,	// "START: Update TWLoader"
+	STR_SETTINGS_LANGUAGE,			// Language
 	STR_SETTINGS_COLOR,			// "Color"
 	STR_SETTINGS_MENUCOLOR,			// "Menu Color"
 	STR_SETTINGS_FILENAME,			// "Show filename"
