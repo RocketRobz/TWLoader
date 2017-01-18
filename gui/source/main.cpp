@@ -51,6 +51,7 @@ sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *dialogboxtex;	// Dialog box
 sf2d_texture *settingslogotex;	// TWLoader logo.
+sf2d_texture *slot1boxarttex;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -919,6 +920,7 @@ int main()
 	bool bannertextloaded = false;
 	bool bnricontexloaded = false;
 	bool boxarttexloaded = false;
+	bool slot1boxarttexloaded = false;
 
 	bool updatebotscreen = true;
 	bool screenmodeswitch = false;
@@ -955,6 +957,7 @@ int main()
 	// Clear both buffers
 	memset(param, 0, sizeof(param));
 	memset(hmac, 0, sizeof(hmac));
+	
 	// Loop as long as the status is not exit
 	while(run && aptMainLoop()) {
 	//while(run) {
@@ -1105,6 +1108,27 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
+			if (!slot1boxarttexloaded) {
+				if (!settings.twl.forwarder) {
+					sf2d_free_texture(slot1boxarttex);
+					gamecardPoll(true);
+					const char *gameID = gamecardGetGameID();
+					if (checkWifiStatus()) {
+						downloadSlot1BoxArt(gameID);
+					}
+					char path[256];
+					// example: ASME.png
+					LogFMA("Main", "Loading Slot-1 box art", gameID);
+					snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, gameID);
+					if (access(path, F_OK) != -1) {
+						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
+					} else {
+						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM); // Box art
+					}
+					LogFMA("Main", "Done loading Slot-1 box art", gameID);
+				}
+				slot1boxarttexloaded = true;
+			}
 
 			if (!musicbool) {
 				if (dspfirmfound) { bgm_menu->play(); }
@@ -1125,6 +1149,10 @@ int main()
 				if (filenum != 0) {	// If ROMs are found, then display box art
 					if (!settings.romselect.toplayout) {
 						boxartXpos = 136;
+						if (!settings.twl.forwarder && pagenum == 0) {
+							sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+						}
 						for (boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
 							ChangeBoxArtNo();
 							// Draw box art
@@ -1141,6 +1169,10 @@ int main()
 							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
 							// Draw moving box art's reflection
 							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+						} else if (!settings.twl.forwarder && cursorPosition == -1) {
+							sf2d_draw_texture_part(topbgtex, offset3D[0].boxart+136, 63, offset3D[0].boxart+104, 63, 128, 115*2);
+							sf2d_draw_texture(slot1boxarttex, offset3D[0].boxart+136, boxartYmovepos); // Draw moving box art
+							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[0].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
 						}
 					}
 				} else {
@@ -1233,9 +1265,10 @@ int main()
 					// Poll for Slot 1 changes.
 					gamecardPoll(true);
 
-					// Force a banner text reload in case
-					// the Slot-1 cartridge was changed or
-					// the UI language was changed.
+					// Force boxart and banner text reloads
+					// in case the Slot-1 cartridge was changed
+					// or the UI language was changed.
+					slot1boxarttexloaded = false;
 					bannertextloaded = false;
 				} else {
 					// run = false;
@@ -1710,10 +1743,12 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot 1 changes.
 							bool s1chg = gamecardPoll(false);
-							if (s1chg && cursorPosition == -1) {
+							if (s1chg) {
 								// Slot 1 card has changed.
 								// Reload the banner text.
-								bannertextloaded = false;
+								slot1boxarttexloaded = false;
+								if (cursorPosition == -1)
+									bannertextloaded = false;
 							}
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
@@ -1897,6 +1932,7 @@ int main()
 					if (settings.ui.locswitch) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
+							slot1boxarttexloaded = false;
 							bannertextloaded = false;
 							cursorPosition = 0;
 							storedcursorPosition = cursorPosition;
@@ -1925,6 +1961,7 @@ int main()
 					if(hDown & KEY_X) {
 						if (file_count > pagemax) {
 							pagenum++;
+							slot1boxarttexloaded = false;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -1942,6 +1979,7 @@ int main()
 					} else if(hDown & KEY_Y) {
 						if (pagenum != 0 && file_count <= 0-pagenum*20) {
 							pagenum--;
+							slot1boxarttexloaded = false;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -1964,6 +2002,7 @@ int main()
 						if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
 							if (pagenum != 0 && file_count <= 0-pagenum*20) {
 								pagenum--;
+								slot1boxarttexloaded = false;
 								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								storedcursorPosition = cursorPosition;
@@ -1981,6 +2020,7 @@ int main()
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
 							if (file_count > pagemax) {
 								pagenum++;
+								slot1boxarttexloaded = false;
 								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
 								storedcursorPosition = cursorPosition;
@@ -2167,7 +2207,8 @@ int main()
 
 		while(applaunchon){
 			// Prepare for the app launch
-			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44LL, 0); // TWLNAND side's title ID
+			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44, 0); // TWLNAND side's title ID
+			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000, 2);	// TODO: Launch TWL carts directly
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}

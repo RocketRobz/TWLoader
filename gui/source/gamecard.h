@@ -34,6 +34,12 @@ enum GameCardType {
 GameCardType gamecardGetType(void);
 
 /**
+ * Get the game card's game ID.
+ * @return Game ID, or NULL if not a TWL card.
+ */
+const char *gamecardGetGameID(void);
+
+/**
  * Get the game card's product code.
  * @return Product code, or NULL if not a TWL card.
  */

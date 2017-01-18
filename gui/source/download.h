@@ -44,6 +44,11 @@ void UpdateBootstrapUnofficial(void);
 void UpdateBootstrapRelease(void);
 
 /**
+ * Download Slot-1 boxart.
+ */
+void downloadSlot1BoxArt(const char* TID);
+
+/**
  * Download boxart.
  */
 void downloadBoxArt(void);
