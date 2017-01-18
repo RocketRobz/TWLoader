@@ -1128,47 +1128,24 @@ int main()
 				if (filenum != 0) {	// If ROMs are found, then display box art
 					if (!settings.romselect.toplayout) {
 						boxartXpos = 136;
-						if (settings.twl.forwarder) {
-							if(fcfiles.size() >= 19+pagenum*20) {
-								for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-									ChangeBoxArtNo();
-									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-									boxartXpos += 144;
-								}
-							} else {
-								for(boxartnum = pagenum*20; boxartnum < fcfiles.size(); boxartnum++) {
-									ChangeBoxArtNo();
-									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-									boxartXpos += 144;
-								}
-							}
-						} else {
-							if(files.size() >= 19+pagenum*20) {
-								for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-									ChangeBoxArtNo();
-									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-									boxartXpos += 144;
-								}
-							} else {
-								for(boxartnum = pagenum*20; boxartnum < files.size(); boxartnum++) {
-									ChangeBoxArtNo();
-									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2); // Draw box art
-									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
-									boxartXpos += 144;
-								}
-							}
+						const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						const size_t boxartmax = std::min((size_t)(19+pagenum*20), file_count);
+						for (boxartnum = pagenum*20; boxartnum < boxartmax; boxartnum++) {
+							ChangeBoxArtNo();
+							// Draw box art
+							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
+							// Draw box art's reflection
+							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+							boxartXpos += 144;
 						}
-						if (applaunchprep) {
-							if (cursorPosition >= 0) {
-								boxartnum = cursorPosition;
-								ChangeBoxArtNo();
-								sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
-								sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
-								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
-							}
+						if (applaunchprep && cursorPosition >= 0) {
+							boxartnum = cursorPosition;
+							ChangeBoxArtNo();
+							sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+							// Draw moving box art
+							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+							// Draw moving box art's reflection
+							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
 						}
 					}
 				} else {
