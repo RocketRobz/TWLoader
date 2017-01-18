@@ -1043,9 +1043,9 @@ void LoadSettings(void) {
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
 	settings.ui.locswitch = settingsini.GetInt("FRONTEND", "GAMELOC_SWITCH", 0);
 	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 0);
-	settings.ui.counter = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
+	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
 	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
-	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "COUNTER", 0);
+	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
 	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
 	settings.ui.autodl = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
 	// romselect_layout = settingsini.GetInt("FRONTEND", "BOTTOM_LAYOUT", 0);
@@ -1087,7 +1087,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
 	settingsini.SetInt("FRONTEND", "GAMELOC_SWITCH", settings.ui.locswitch);
 	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
-	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.ui.counter);
+	settingsini.SetInt("FRONTEND", "COUNTER", settings.ui.counter);
 	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
 	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);
 	settingsini.SetInt("FRONTEND", "AUTOUPDATE", settings.ui.autoupdate);
