@@ -6,6 +6,7 @@
 #include "log.h"
 #include "language.h"
 #include "textfns.h"
+#include "inifile.h"
 
 #include <unistd.h>
 #include <string>
@@ -25,6 +26,9 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern u8 language;
 
+// Customizable frontend name.
+extern std::string name;
+
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -43,6 +47,9 @@ extern sf2d_texture *settingslogotex;	// TWLoader logo.
 extern char settings_vertext[13];
 
 extern string name;
+
+extern bool keepsdvalue;
+extern int gbarunnervalue;
 
 // Sound effects from main.cpp.
 extern sound *sfx_select;
@@ -79,6 +86,8 @@ enum SubScreenMode {
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
 /** Settings **/
+
+static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 
 // Color settings.
 // Use SET_ALPHA() to replace the alpha value.
@@ -1020,4 +1029,97 @@ void LoadBottomImage() {
 			LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully");
 		}
 	}
+}
+
+/**
+ * Load settings.
+ */
+void LoadSettings(void) {
+	// UI settings.
+	name = settingsini.GetString("FRONTEND", "NAME", "");
+	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
+	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
+	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
+	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
+	settings.ui.locswitch = settingsini.GetInt("FRONTEND", "GAMELOC_SWITCH", 0);
+	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 0);
+	settings.ui.counter = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
+	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
+	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "COUNTER", 0);
+	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
+	settings.ui.autodl = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
+	// romselect_layout = settingsini.GetInt("FRONTEND", "BOTTOM_LAYOUT", 0);
+
+	// TWL settings.
+	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
+	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
+	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 0);
+	settings.twl.bootscreen = settingsini.GetInt("TWL-MODE", "BOOT_ANIMATION", 0);
+	settings.twl.healthsafety = settingsini.GetInt("TWL-MODE", "HEALTH&SAFETY_MSG", 0);
+	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
+	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
+	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
+
+	// TODO: Change the default to -1?
+	switch (settingsini.GetInt("TWL-MODE", "DEBUG", 0)) {
+		case 1:
+			settings.twl.console = 2;
+			break;
+		case 0:
+		default:
+			settings.twl.console = 1;
+			break;
+		case -1:
+			settings.twl.console = 0;
+			break;
+	}
+	LogFM("Settings.LoadSettings", "Settings loaded successfully");
+}
+
+/**
+ * Save settings.
+ */
+void SaveSettings(void) {
+	// UI settings.
+	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
+	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
+	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
+	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
+	settingsini.SetInt("FRONTEND", "GAMELOC_SWITCH", settings.ui.locswitch);
+	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
+	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.ui.counter);
+	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
+	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);
+	settingsini.SetInt("FRONTEND", "AUTOUPDATE", settings.ui.autoupdate);
+	settingsini.SetInt("FRONTEND", "AUTODOWNLOAD", settings.ui.autodl);
+	//settingsini.SetInt("FRONTEND", "BOTTOM_LAYOUT", romselect_layout);
+
+	// TWL settings.
+	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
+	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
+	settingsini.SetInt("TWL-MODE", "TWL_VRAM", settings.twl.extvram);
+	settingsini.SetInt("TWL-MODE", "BOOT_ANIMATION", settings.twl.bootscreen);
+	settingsini.SetInt("TWL-MODE", "HEALTH&SAFETY_MSG", settings.twl.healthsafety);
+	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
+	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
+	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
+
+	// TODO: Change default to 0?
+	switch (settings.twl.console) {
+		case 0:
+			settingsini.SetInt("TWL-MODE", "DEBUG", -1);
+			break;
+		case 1:
+		default:
+			settingsini.SetInt("TWL-MODE", "DEBUG", 0);
+			break;
+		case 2:
+			settingsini.SetInt("TWL-MODE", "DEBUG", 1);
+			break;
+	}
+
+	settingsini.SetInt("TWL-MODE", "FORWARDER", settings.twl.forwarder);
+	settingsini.SetInt("TWL-MODE", "FLASHCARD", settings.twl.flashcard);
+	settingsini.SetInt("TWL-MODE", "GBARUNNER", gbarunnervalue);
+	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 }

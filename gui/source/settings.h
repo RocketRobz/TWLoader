@@ -32,6 +32,12 @@ extern Offset3D offset3D[2];	// 0 == Left; 1 == Right
 extern const char* bottomloc;
 
 typedef struct _Settings_t {
+	struct {
+		bool toplayout;
+		//	0: Show box art
+		//	1: Hide box art
+	} romselect;
+
 	// TODO: Use int8_t instead of int?
 	struct {
 		int language;	// Language. (0-11; other for system)
@@ -119,5 +125,15 @@ void LoadMenuColor(void);
  * Load the filename of the bottom screen image.
  */
 void LoadBottomImage(void);
+
+/**
+ * Load settings.
+ */
+void LoadSettings(void);
+
+/**
+ * Save settings.
+ */
+void SaveSettings(void);
 
 #endif /* TWLOADER_SETTINGS_H */

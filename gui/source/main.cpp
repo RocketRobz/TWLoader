@@ -42,7 +42,6 @@ u32 kUp;
 u32 kDown;
 u32 kHeld;
 
-CIniFile settingsini( "sdmc:/_nds/twloader/settings.ini" );	
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
@@ -122,39 +121,6 @@ static const char fcrompathini_tid[] = "TID";
 static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
 	
 
-// Settings .ini file
-static const char settingsini_frontend[] = "FRONTEND";
-//static const char settingsini_frontend_twlappinstalled[] = "TWLAPP_INSTALLED";
-static const char settingsini_frontend_name[] = "NAME";
-static const char settingsini_frontend_language[] = "LANGUAGE";
-static const char settingsini_frontend_color[] = "COLOR";
-static const char settingsini_frontend_menucolor[] = "MENU_COLOR";
-static const char settingsini_frontend_filename[] = "SHOW_FILENAME";
-static const char settingsini_frontend_locswitch[] = "GAMELOC_SWITCH";
-static const char settingsini_frontend_topborder[] = "TOP_BORDER";
-static const char settingsini_frontend_toplayout[] = "TOP_LAYOUT";
-static const char settingsini_frontend_custombot[] = "CUSTOM_BOTTOM";
-static const char settingsini_frontend_counter[] = "COUNTER";
-static const char settingsini_frontend_autoupdate[] = "AUTOUPDATE";
-static const char settingsini_frontend_autodl[] = "AUTODOWNLOAD";
-	
-static const char settingsini_twlmode[] = "TWL-MODE";
-static const char settingsini_twl_rainbowled[] = "RAINBOW_LED";
-static const char settingsini_twl_clock[] = "TWL_CLOCK";
-static const char settingsini_twl_vram[] = "TWL_VRAM";
-static const char settingsini_twl_bootani[] = "BOOT_ANIMATION";
-static const char settingsini_twl_hsmsg[] = "HEALTH&SAFETY_MSG";
-static const char settingsini_twl_launchslot1[] = "LAUNCH_SLOT1";	// 0: Don't boot Slot-1, 1: Boot Slot-1, 2: Forward a ROM path to a Slot-1 flashcard.
-static const char settingsini_twl_resetslot1[] = "RESET_SLOT1";
-static const char settingsini_twl_keepsd[] = "SLOT1_KEEPSD";
-static const char settingsini_twl_debug[] = "DEBUG";
-static const char settingsini_twl_gbarunner[] = "GBARUNNER";
-static const char settingsini_twl_forwarder[] = "FORWARDER";
-static const char settingsini_twl_flashcard[] = "FLASHCARD";
-// End
-
-
-
 // Bootstrap .ini file
 static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 static const char bootstrapini_ndspath[] = "NDS_PATH";
@@ -181,16 +147,13 @@ typedef struct {
 char settings_vertext[13];
 char settings_latestvertext[13];
 
-int romselect_toplayout;
-//	0: Show box art
-//	1: Hide box art
-
 static bool applaunchprep = false;
 
 int fadealpha = 255;
 bool fadein = true;
 bool fadeout = false;
 
+// Customizable frontend name.
 std::string name;
 
 static const char* romsel_filename;
@@ -214,7 +177,7 @@ const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
 const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
 // End
 	
-int keepsdvalue = 0;
+bool keepsdvalue = false;
 int gbarunnervalue = 0;
 
 
@@ -518,78 +481,33 @@ static void LoadBoxArt(void) {
 	}
 }
 
-void LoadSettings() {
-	name = settingsini.GetString(settingsini_frontend, settingsini_frontend_name, "");
-	settings.ui.language = settingsini.GetInt(settingsini_frontend, settingsini_frontend_language, -1);
-	settings.ui.color = settingsini.GetInt(settingsini_frontend, settingsini_frontend_color, 0);
-	settings.ui.menucolor = settingsini.GetInt(settingsini_frontend, settingsini_frontend_menucolor, 0);
-	settings.ui.filename = settingsini.GetInt(settingsini_frontend, settingsini_frontend_filename, 0);
-	settings.ui.locswitch = settingsini.GetInt(settingsini_frontend, settingsini_frontend_locswitch, 0);
-	settings.ui.topborder = settingsini.GetInt(settingsini_frontend, settingsini_frontend_topborder, 0);
-	settings.ui.counter = settingsini.GetInt(settingsini_frontend, settingsini_frontend_counter, 0);
-	settings.ui.custombot = settingsini.GetInt(settingsini_frontend, settingsini_frontend_custombot, 0);
-	romselect_toplayout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_toplayout, 0);
-	settings.ui.autoupdate = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autoupdate, 0);
-	settings.ui.autodl = settingsini.GetInt(settingsini_frontend, settingsini_frontend_autodl, 0);
-	// romselect_layout = settingsini.GetInt(settingsini_frontend, settingsini_frontend_botlayout, 0);
-	settings.twl.rainbowled = settingsini.GetInt(settingsini_twlmode, settingsini_twl_rainbowled, 0);
-	settings.twl.cpuspeed = settingsini.GetInt(settingsini_twlmode, settingsini_twl_clock, 0);
-	settings.twl.extvram = settingsini.GetInt(settingsini_twlmode, settingsini_twl_vram, 0);
-	settings.twl.bootscreen = settingsini.GetInt(settingsini_twlmode, settingsini_twl_bootani, 0);
-	settings.twl.healthsafety = settingsini.GetInt(settingsini_twlmode, settingsini_twl_hsmsg, 0);
-	settings.twl.resetslot1 = settingsini.GetInt(settingsini_twlmode, settingsini_twl_resetslot1, 0);
-	settings.twl.forwarder = settingsini.GetInt(settingsini_twlmode, settingsini_twl_forwarder, 0);
-	settings.twl.flashcard = settingsini.GetInt(settingsini_twlmode, settingsini_twl_flashcard, 0);
-	if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == 1) {
-		settings.twl.console = 2;
-	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == 0) {
-		settings.twl.console = 1;
-	} else if (settingsini.GetInt(settingsini_twlmode, settingsini_twl_debug, 0) == -1) {
-		settings.twl.console = 0;
-	}
-	if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 1) {
-		settings.twl.console = 2;
-	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == 0) {
-		settings.twl.console = 1;
-	} else if (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0) == -1) {
-		settings.twl.console = 0;
+/**
+ * Load nds-bootstrap's configuration.
+ */
+static void LoadBootstrapConfig(void)
+{
+	// TODO: Change the default to -1?
+	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0)) {
+		case 1:
+			settings.twl.console = 2;
+			break;
+		case 0:
+		default:
+			settings.twl.console = 1;
+			break;
+		case -1:
+			settings.twl.console = 0;
+			break;
 	}
 	settings.twl.lockarm9scfgext = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
-	LogFM("Main.LoadSettings", "Settings load successfully");
+	LogFM("Main.LoadBootstrapConfig", "Bootstrap configuration loaded successfully");
 }
 
-void SaveSettings() {
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_language, settings.ui.language);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_color, settings.ui.color);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_menucolor, settings.ui.menucolor);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_filename, settings.ui.filename);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_locswitch, settings.ui.locswitch);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_topborder, settings.ui.topborder);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_counter, settings.ui.counter);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_custombot, settings.ui.custombot);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_toplayout, romselect_toplayout);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autoupdate, settings.ui.autoupdate);
-	settingsini.SetInt(settingsini_frontend, settingsini_frontend_autodl, settings.ui.autodl);
-	//settingsini.SetInt(settingsini_frontend, settingsini_frontend_botlayout, romselect_layout);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_rainbowled, settings.twl.rainbowled);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_clock, settings.twl.cpuspeed);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_vram, settings.twl.extvram);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_bootani, settings.twl.bootscreen);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_hsmsg, settings.twl.healthsafety);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_launchslot1, settings.twl.launchslot1);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_resetslot1, settings.twl.resetslot1);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_keepsd, keepsdvalue);
-	if (settings.twl.console == 0) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, -1);
-	} else if (settings.twl.console == 1) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 0);
-	} else if (settings.twl.console == 2) {
-		settingsini.SetInt(settingsini_twlmode, settingsini_twl_debug, 1);
-	}
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_forwarder, settings.twl.forwarder);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_flashcard, settings.twl.flashcard);
-	settingsini.SetInt(settingsini_twlmode, settingsini_twl_gbarunner, gbarunnervalue);
-	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
+/**
+ * Update nds-bootstrap's configuration.
+ */
+static void SaveBootstrapConfig(void)
+{
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
@@ -606,13 +524,21 @@ void SaveSettings() {
 		}
 	}
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
-	if (settings.twl.console == 0) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
-	} else if (settings.twl.console == 1) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0);
-	} else if (settings.twl.console == 2) {
-		bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
+
+	// TODO: Change the default to 0?
+	switch (settings.twl.console) {
+		case 0:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1);
+			break;
+		case 1:
+		default:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0);
+			break;
+		case 2:
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
+			break;
 	}
+
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, settings.twl.lockarm9scfgext);
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
@@ -838,6 +764,7 @@ int main()
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
 	LoadSettings();
+	LoadBootstrapConfig();
 
 	// Initialize translations.
 	langInit();
@@ -1198,7 +1125,7 @@ int main()
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);			
 			sf2d_draw_texture_scale(topbgtex, offset3D[0].topbg-12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (romselect_toplayout == 0) {
+				if (!settings.romselect.toplayout) {
 					boxartXpos = 136;
 					if (settings.twl.forwarder) {
 						if(fcfiles.size() >= 19+pagenum*20) {
@@ -1258,7 +1185,9 @@ int main()
 
 			draw_volume_slider(voltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
-			sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+			if (!name.empty()) {
+				sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+			}
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 			sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 			sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -1274,7 +1203,7 @@ int main()
 			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 			sf2d_draw_texture_scale(topbgtex, offset3D[1].topbg-12, 0, 1.32, 1);
 			if (filenum != 0) {	// If ROMs are found, then display box art
-				if (romselect_toplayout == 0) {
+				if (!settings.romselect.toplayout) {
 					boxartXpos = 136;
 					if (settings.twl.forwarder) {
 						if(fcfiles.size() >= 19+pagenum*20) {
@@ -1334,7 +1263,9 @@ int main()
 
 			draw_volume_slider(voltex);
 			sf2d_draw_texture(batteryIcon, 371, 2);
-			sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+			if (!name.empty()) {
+				sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+			}
 			// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 			sf2d_draw_texture(shoulderLtex, -1, LshoulderYpos);
 			sftd_draw_textf(font, 16, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
@@ -1444,6 +1375,7 @@ int main()
 					}
 					gbarunnervalue = 1;
 					SaveSettings();
+					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
 						RainbowLED();
@@ -1623,7 +1555,7 @@ int main()
 						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
 						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						// TODO: Enum values for flash card type.
-						if (keepsdvalue == 1) {
+						if (keepsdvalue) {
 							switch (settings.twl.flashcard) {
 								case 0:
 								case 1:
@@ -1683,6 +1615,7 @@ int main()
 						}
 					}
 					SaveSettings();
+					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
 						RainbowLED();
@@ -2051,14 +1984,14 @@ int main()
 			updatebotscreen = false;
 		}
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
-			Lshouldertext = (romselect_toplayout ? "Box Art" : "Blank");
+			Lshouldertext = (settings.romselect.toplayout ? "Box Art" : "Blank");
 			Rshouldertext = (settings.twl.forwarder ? "SD Card" : "Flashcard");
 			/* if (filenum == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
 			if(hDown & KEY_L) {
-				romselect_toplayout = !romselect_toplayout;
+				settings.romselect.toplayout = !settings.romselect.toplayout;
 				if (dspfirmfound) {
 					sfx_switch->stop();	// Prevent freezing
 					sfx_switch->play();
@@ -2081,6 +2014,7 @@ int main()
 					screenoff();
 					rom = files.at(cursorPosition).c_str();
 					SaveSettings();
+					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if(hDown & KEY_DOWN){
@@ -2115,6 +2049,7 @@ int main()
 					settings.twl.launchslot1 = true;
 					screenoff();
 					SaveSettings();
+					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
@@ -2340,7 +2275,7 @@ int main()
 										titleboxXmovetimer = 1;
 										settings.twl.launchslot1 = true;
 										if (settings.twl.forwarder) {
-											keepsdvalue = 1;
+											keepsdvalue = true;
 											rom = "_nds/twloader.nds";
 										}
 										applaunchprep = true;
@@ -2411,9 +2346,9 @@ int main()
 									playlaunchsound = false;
 								} else {
 									titleboxXmovetimer = 1;
-									settings.twl.launchslot1 = 1;
+									settings.twl.launchslot1 = true;
 									if (settings.twl.forwarder) {
-										keepsdvalue = 1;
+										keepsdvalue = true;
 										rom = "_nds/twloader.nds";
 									}
 									applaunchprep = true;
@@ -2500,6 +2435,7 @@ int main()
 	aptUnhook(&rfhm_cookie);
 
 	SaveSettings();
+	SaveBootstrapConfig();
 
 	hidExit();
 	srvExit();
