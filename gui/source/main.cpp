@@ -1919,97 +1919,49 @@ int main()
 							updatebotscreen = true;
 						}
 					}
-					if (!noromsfound) {
-						if (settings.twl.forwarder) {	// If no ROMs are found
-							if (fcfiles.size() == 0) {	// If no ROMs are found
-								cursorPosition = -1;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = +64;
-								boxartXmovepos = 0;
-							}
-						} else {
-							if (files.size() == 0) {	// If no ROMs are found
-								cursorPosition = -1;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = +64;
-								boxartXmovepos = 0;
-							}
-						}
+					if (!noromsfound && file_count == 0) {
+						// No ROMs were fonud.
+						cursorPosition = -1;
+						storedcursorPosition = cursorPosition;
+						titleboxXmovepos = +64;
+						boxartXmovepos = 0;
 						updatebotscreen = true;
 						noromsfound = true;
 					}
 					if(hDown & KEY_X) {
-						if (settings.twl.forwarder) {
-							if(fcfiles.size() > 20+pagenum*20) {
-								pagenum++;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
+						if (file_count > 20+pagenum*20) {
+							pagenum++;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
 							}
-						} else {
-							if(files.size() > 20+pagenum*20) {
-								pagenum++;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
-							}
+							updatebotscreen = true;
 						}
 					} else if(hDown & KEY_Y) {
 						if (pagenum != 0) {
-							if (settings.twl.forwarder) {
-								if(fcfiles.size() <= 0-pagenum*20) {
-									pagenum--;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
+							if (file_count <= 0-pagenum*20) {
+								pagenum--;
+								bannertextloaded = false;
+								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								bnricontexloaded = false;
+								boxarttexloaded = false;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
 								}
-							} else {
-								if(files.size() <= 0-pagenum*20) {
-									pagenum--;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
-								}
+								updatebotscreen = true;
 							}
 						}
 					}
@@ -2018,78 +1970,38 @@ int main()
 						touch_x = touch.px;
 						touch_y = touch.py;
 						if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
-							if (pagenum != 0) {
-								if (settings.twl.forwarder) {
-									if(fcfiles.size() <= 0-pagenum*20) {
-										pagenum--;
-										bannertextloaded = false;
-										cursorPosition = 0+pagenum*20;
-										storedcursorPosition = cursorPosition;
-										titleboxXmovepos = 0;
-										boxartXmovepos = 0;
-										// noromsfound = false;
-										bnricontexloaded = false;
-										boxarttexloaded = false;
-										if (dspfirmfound) {
-											sfx_switch->stop();	// Prevent freezing
-											sfx_switch->play();
-										}
-										updatebotscreen = true;
-									}
-								} else {
-									if(files.size() <= 0-pagenum*20) {
-										pagenum--;
-										bannertextloaded = false;
-										cursorPosition = 0+pagenum*20;
-										storedcursorPosition = cursorPosition;
-										titleboxXmovepos = 0;
-										boxartXmovepos = 0;
-										// noromsfound = false;
-										bnricontexloaded = false;
-										boxarttexloaded = false;
-										if (dspfirmfound) {
-											sfx_switch->stop();	// Prevent freezing
-											sfx_switch->play();
-										}
-										updatebotscreen = true;
-									}
+							if (pagenum != 0 && file_count <= 0-pagenum*20) {
+								pagenum--;
+								bannertextloaded = false;
+								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								bnricontexloaded = false;
+								boxarttexloaded = false;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
 								}
+								updatebotscreen = true;
 							}
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
-							if (settings.twl.forwarder) {
-								if(fcfiles.size() > 20+pagenum*20) {
-									pagenum++;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
+							if (file_count > 20+pagenum*20) {
+								pagenum++;
+								bannertextloaded = false;
+								cursorPosition = 0+pagenum*20;
+								storedcursorPosition = cursorPosition;
+								titleboxXmovepos = 0;
+								boxartXmovepos = 0;
+								// noromsfound = false;
+								bnricontexloaded = false;
+								boxarttexloaded = false;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
 								}
-							} else {
-								if(files.size() > 20+pagenum*20) {
-									pagenum++;
-									bannertextloaded = false;
-									cursorPosition = 0+pagenum*20;
-									storedcursorPosition = cursorPosition;
-									titleboxXmovepos = 0;
-									boxartXmovepos = 0;
-									// noromsfound = false;
-									bnricontexloaded = false;
-									boxarttexloaded = false;
-									if (dspfirmfound) {
-										sfx_switch->stop();	// Prevent freezing
-										sfx_switch->play();
-									}
-									updatebotscreen = true;
-								}
+								updatebotscreen = true;
 							}
 						} else if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
 							bool playlaunchsound = true;
