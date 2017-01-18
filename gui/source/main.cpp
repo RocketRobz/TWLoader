@@ -849,8 +849,11 @@ int main()
 	
 	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 	romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
-	if (romfolder == "")
+	// Use default folder if none is specified
+	if (romfolder == "") {
+		mkdir("sdmc:/roms/nds", 0777);	// make folder if it doesn't exist
 		romfolder = "roms/nds/";
+	}
 
 	// Scan the ROMs directory for ".nds" files.
 	char folder_path[256];
