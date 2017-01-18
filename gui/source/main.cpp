@@ -683,6 +683,7 @@ static void rfhm_callback(APT_HookType hook, void *param)
 }
 
 // Cartridge textures.
+static sf2d_texture *cartnulltex = NULL;
 static sf2d_texture *cartntrtex = NULL;
 static sf2d_texture *carttwltex = NULL;
 //static sf2d_texture *cartctrtex = NULL;	// TODO
@@ -695,9 +696,12 @@ static inline sf2d_texture *carttex(void)
 {
 	// TODO: 3DS cartridges.
 	switch (gamecardGetType()) {
+		case CARD_TYPE_UNKNOWN:
+		default:
+			return cartnulltex;
+
 		case CARD_TYPE_NTR:
 		case CARD_TYPE_TWL_ENH:
-		default:
 			return cartntrtex;
 
 		case CARD_TYPE_TWL_ONLY:
@@ -805,6 +809,7 @@ int main()
 	sf2d_texture *startbordertex = NULL;	// "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
+	cartnulltex = sfil_load_PNG_file("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
 	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
@@ -1111,7 +1116,6 @@ int main()
 			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
 				// Load the boxart for the Slot-1 cartridge.
 				sf2d_free_texture(slot1boxarttex);
-				gamecardPoll(true);
 				const char *gameID = gamecardGetGameID();
 				if (gameID) {
 					if (checkWifiStatus()) {
@@ -1749,12 +1753,10 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot 1 changes.
 							bool s1chg = gamecardPoll(false);
-							if (s1chg) {
+							if (s1chg && cursorPosition == -1) {
 								// Slot 1 card has changed.
 								// Reload the banner text.
-								slot1boxarttexloaded = false;
-								if (cursorPosition == -1)
-									bannertextloaded = false;
+								bannertextloaded = false;
 							}
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
@@ -2264,6 +2266,7 @@ int main()
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
 	sf2d_free_texture(settingsboxtex);
+	sf2d_free_texture(cartnulltex);
 	sf2d_free_texture(cartntrtex);
 	sf2d_free_texture(carttwltex);
 	gamecardClearCache();
@@ -2283,6 +2286,7 @@ int main()
 		sf2d_free_texture(bnricontex[i]);
 		free(boxartpath[i]);
 	}
+	sf2d_free_texture(slot1boxarttex);
 	for (int i = 0; i < 6; i++) {
 		sf2d_free_texture(boxarttex[i]);
 	}
@@ -2290,7 +2294,6 @@ int main()
 	// Remaining common textures.
 	sf2d_free_texture(dialogboxtex);
 	sf2d_free_texture(settingslogotex);
-	sf2d_free_texture(slot1boxarttex);
 
 	// Clear the translations cache.
 	langClear();
