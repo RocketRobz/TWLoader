@@ -163,24 +163,24 @@ static vector<wstring> romsel_gameline;	// from banner
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
 
-std::string sdmc = "sdmc:/";
-std::string fat = "fat:/";
-std::string slashchar = "/";
-std::string woodfat = "fat0:/";
-std::string dstwofat = "fat1:/";
-std::string romfolder = "roms/nds/";
-std::string flashcardfolder = "roms/flashcard/nds/";
-const char* bnriconfolder = "sdmc:/_nds/twloader/bnricons/";
-const char* fcbnriconfolder = "sdmc:/_nds/twloader/bnricons/flashcard/";
-const char* boxartfolder = "sdmc:/_nds/twloader/boxart/";
-const char* fcboxartfolder = "sdmc:/_nds/twloader/boxart/flashcard/";
+static const std::string sdmc = "sdmc:/";
+static const std::string fat = "fat:/";
+static const std::string slashchar = "/";
+static const std::string woodfat = "fat0:/";
+static const std::string dstwofat = "fat1:/";
+static std::string romfolder = "roms/nds/";
+static const std::string flashcardfolder = "roms/flashcard/nds/";
+static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons/";
+static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard/";
+static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart/";
+static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard/";
 // End
 	
 bool keepsdvalue = false;
 int gbarunnervalue = 0;
 
 
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
     while((start_pos = str.find(from, start_pos)) != std::string::npos) {
         str.replace(start_pos, from.length(), to);
@@ -190,29 +190,29 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 
-void screenoff()
+static inline void screenoff(void)
 {
-    gspLcdInit();\
-    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdInit();
+    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
     gspLcdExit();
 }
 
-void screenon()
+static inline void screenon(void)
 {
-    gspLcdInit();\
-    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);\
+    gspLcdInit();
+    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
     gspLcdExit();
 }
 
 
-Handle ptmsysmHandle = 0;
+static Handle ptmsysmHandle = 0;
 
-Result ptmsysmInit()
+static inline Result ptmsysmInit(void)
 {
     return srvGetServiceHandle(&ptmsysmHandle, "ptm:sysm");
 }
 
-Result ptmsysmExit()
+static inline Result ptmsysmExit(void)
 {
     return svcCloseHandle(ptmsysmHandle);
 }
