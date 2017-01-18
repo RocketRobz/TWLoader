@@ -162,7 +162,6 @@ static vector<wstring> romsel_gameline;	// from banner
 
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
-static const char* flashcardrom = "";
 
 std::string sdmc = "sdmc:/";
 std::string fat = "fat:/";
@@ -797,12 +796,12 @@ int main()
 	batterytex[4] = sfil_load_PNG_file("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
 
-	sf2d_texture *bottomtex; // Bottom of menu
+	sf2d_texture *bottomtex = NULL;		// Bottom of menu
 	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
-	sf2d_texture *dotcircletex; // Dots forming a circle
-	sf2d_texture *startbordertex; // "START" border
+	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
+	sf2d_texture *startbordertex = NULL;	// "START" border
 	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
@@ -862,7 +861,7 @@ int main()
 	}
 
 	// Cache banner data
-	for (bnriconnum = 0; bnriconnum < files.size(); bnriconnum++) {
+	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
@@ -909,7 +908,6 @@ int main()
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
 	bool noromsfound = false;
-	int settingscursorPosition = 0;
 	
 	bool cursorPositionset = false;
 	
@@ -931,14 +929,11 @@ int main()
 	u16 touch_x = 320/2;
 	u16 touch_y = 240/2;
 	
-	int textWidth = 0;
-	int textHeight = 0;
-	
 	int boxartXpos;
 	int boxartXmovepos = 0;
 
 	int filenameYpos;
-	int filenameYmovepos = 0;
+	//int filenameYmovepos = 0;
 	int setsboxXpos = 0;
 	int cartXpos = 64;
 	int boxartYmovepos = 63;
@@ -946,8 +941,8 @@ int main()
 	int ndsiconXpos;
 	int ndsiconYmovepos = 133;
 
-	int startbordermovepos;
-	float startborderscalesize;
+	int startbordermovepos = 0;
+	float startborderscalesize = 1.0f;
 
 	sf2d_set_3D(1);
 
@@ -966,9 +961,8 @@ int main()
 		// Scan hid shared memory for input events
 		hidScanInput();
 		
-		u32 hUp = hidKeysUp();
-		u32 hDown = hidKeysDown();
-		u32 hHeld = hidKeysHeld();
+		const u32 hDown = hidKeysDown();
+		const u32 hHeld = hidKeysHeld();
 		
 		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
 		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
@@ -981,7 +975,7 @@ int main()
 			storedcursorPosition = 0;
 
 		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-		const size_t pagemax = std::min((size_t)(20+pagenum*20), file_count);
+		const int pagemax = std::min((20+pagenum*20), (int)file_count);
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -996,8 +990,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
-						if (bnriconnum < files.size()) {
+					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						if (bnriconnum < (int)files.size()) {
 							const char *tempfile = files.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 							StoreBNRIconPath(path);
@@ -1013,8 +1007,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (bnriconnum = pagenum*20; bnriconnum < 20+pagenum*20; bnriconnum++) {
-						if (bnriconnum < fcfiles.size()) {
+					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						if (bnriconnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
@@ -1040,8 +1034,8 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-						if (boxartnum < files.size()) {
+					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						if (boxartnum < (int)files.size()) {
 							const char *tempfile = files.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
@@ -1443,7 +1437,7 @@ int main()
 					musicbool = false;
 					screenmode = SCREEN_MODE_SETTINGS;
 					settingsResetSubScreenMode();
-					rad == 0.0f;
+					rad = 0.0f;
 					boxartYmovepos = 63;
 					boxartreflYmovepos = 264;
 					titleboxYmovepos = 120;
@@ -1929,7 +1923,7 @@ int main()
 						noromsfound = true;
 					}
 					if(hDown & KEY_X) {
-						if (file_count > 20+pagenum*20) {
+						if (file_count > pagemax) {
 							pagenum++;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
@@ -1946,23 +1940,21 @@ int main()
 							updatebotscreen = true;
 						}
 					} else if(hDown & KEY_Y) {
-						if (pagenum != 0) {
-							if (file_count <= 0-pagenum*20) {
-								pagenum--;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
+						if (pagenum != 0 && file_count <= 0-pagenum*20) {
+							pagenum--;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
 							}
+							updatebotscreen = true;
 						}
 					}
 					if(hDown & KEY_TOUCH){
@@ -1987,7 +1979,7 @@ int main()
 								updatebotscreen = true;
 							}
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
-							if (file_count > 20+pagenum*20) {
+							if (file_count > pagemax) {
 								pagenum++;
 								bannertextloaded = false;
 								cursorPosition = 0+pagenum*20;
