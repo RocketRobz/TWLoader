@@ -802,7 +802,7 @@ int main()
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
 
 	sf2d_texture *bottomtex = NULL;		// Bottom of menu
-	sf2d_texture *iconunktex = sfil_load_PNG_file("romfs:/graphics/icon_unknown.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
+	sf2d_texture *iconnulltex = sfil_load_PNG_file("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
@@ -1141,7 +1141,7 @@ int main()
 					LogFMA("Main", "Done loading Slot-1 box art", gameID);
 				} else {
 					// No cartridge, or unrecognized cartridge.
-					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
+					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
 				}
 				slot1boxarttexloaded = true;
 			}
@@ -1772,7 +1772,7 @@ int main()
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
 							if (!cardicontex)
-								cardicontex = iconunktex;
+								cardicontex = iconnulltex;
 							sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 						} else {
 							// Get flash cart games.
@@ -1826,7 +1826,7 @@ int main()
 								sf2d_draw_texture(carttex(), 128, titleboxYmovepos);
 								sf2d_texture *cardicontex = gamecardGetIcon();
 								if (!cardicontex)
-									cardicontex = iconunktex;
+									cardicontex = iconnulltex;
 								sf2d_draw_texture(cardicontex, 144, ndsiconYmovepos);
 							}
 						} else {
@@ -2272,7 +2272,7 @@ int main()
 		sf2d_free_texture(batterytex[i]);
 	}
 	if (colortexloaded) { sf2d_free_texture(bottomtex); }
-	sf2d_free_texture(iconunktex);
+	sf2d_free_texture(iconnulltex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
