@@ -382,8 +382,8 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "including banner text.");
 			Ypos += 12;
 		} else {
-			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_COLOR));
-			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LANGUAGE));
+			sftd_draw_wtext(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, languagevaluetext.c_str());
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 1) {
