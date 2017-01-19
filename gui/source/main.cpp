@@ -784,7 +784,6 @@ int main()
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
-	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
