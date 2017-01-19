@@ -224,7 +224,14 @@ std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum)
  */
 std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
-void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
+/**
+ * Cache the banner from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param setfont Font to use for messages.
+ * @return 0 on success; non-zero on error.
+ */
+int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 
 /**
  * Get the icon from an NDS banner.
