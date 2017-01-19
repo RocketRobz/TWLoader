@@ -546,7 +546,7 @@ void downloadBoxArt(void)
 
 	// Download the boxart.
 	char s_boxart_total[12];
-	snprintf(s_boxart_total, sizeof(s_boxart_total), "%u", boxart_dl_tids.size());
+	snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
 	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
 		static const char title[] = "Downloading missing boxart...";
 
@@ -561,7 +561,7 @@ void downloadBoxArt(void)
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%u", boxartnum);
+		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
 		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
 		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
 		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
