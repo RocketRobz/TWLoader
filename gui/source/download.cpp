@@ -3,6 +3,7 @@
 #include "inifile.h"
 #include "log.h"
 #include "ndsheaderbanner.h"
+#include "settings.h"
 
 #include <cstdio>
 #include <malloc.h>
@@ -476,7 +477,7 @@ void downloadBoxArt(void)
 
 		const char *tempfile = files.at(boxartnum).c_str();
 		char path[256];
-		snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(path, "rb");
 		if (!f_nds_file)
 			continue;
