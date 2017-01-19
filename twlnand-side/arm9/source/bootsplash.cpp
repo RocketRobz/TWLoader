@@ -41,6 +41,15 @@
 
 #include "Bot00.h"
 #include "Bot01.h"
+// Japanese
+#include "Bot02_JA.h"
+#include "Bot03_JA.h"
+#include "Bot04_JA.h"
+#include "Bot05_JA.h"
+#include "Bot06_JA.h"
+#include "Bot07_JA.h"
+#include "Bot08_JA.h"
+// English
 #include "Bot02.h"
 #include "Bot03.h"
 #include "Bot04.h"
@@ -48,6 +57,7 @@
 #include "Bot06.h"
 #include "Bot07.h"
 #include "Bot08.h"
+
 #include "Bot09.h"
 #include "Bot10.h"
 

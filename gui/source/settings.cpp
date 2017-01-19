@@ -615,7 +615,7 @@ void settingsDrawBottomScreen(void)
 				"R4 SDHC Dual-Core", "R4 SDHC Upgrade", "SuperCard DSONE"},
 			{"Original R4", "M3 Simply", " ", " ", " ", " "},
 			{"R4iDSN", "R4i Gold RTS", " ", " ", " ", " "},
-			{"Acekard 2(i)", "M3DS Real", " ", " ", " ", " "},
+			{"Acekard 2(i)", "Galaxy Eagle", "M3DS Real", " ", " ", " "},
 			{"Acekard RPG", " ", " ", " ", " ", " "},
 			{"Ace 3DS+", "Gateway Blue Card", "R4iTT", " ", " ", " "},
 			{"SuperCard DSTWO", " ", " ", " ", " ", " "},

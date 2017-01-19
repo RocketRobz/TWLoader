@@ -42,6 +42,10 @@ u32 kUp;
 u32 kDown;
 u32 kHeld;
 
+bool menuaction_nextpage = false;
+bool menuaction_prevpage = false;
+bool menuaction_launch = false;
+
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
 
@@ -59,8 +63,21 @@ enum ScreenMode {
 };
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 
+enum MenuDBox_Mode {
+	DBOX_MODE_OPTIONS = 0,	// Options
+	DBOX_MODE_SETTINGS = 1,	// Game Settings
+};
+MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
+
+enum Menu_ControlSet {
+	CTRL_SET_GAMESEL = 0,	// ROM Select
+	CTRL_SET_DBOX = 1,	// Dialog box mode
+};
+Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
+
 static sf2d_texture *bnricontexnum = NULL;
 static sf2d_texture *bnricontexlaunch = NULL;
+static sf2d_texture *bnricontexdbox = NULL;
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
@@ -136,6 +153,10 @@ bool run = true;
 // End
 
 bool showdialogbox = false;
+bool showdialogbox_menu = false;	// for Game Select menu
+int menudbox_movespeed = 22;
+int menudbox_Ypos = -240;
+int menudbox_bgalpha = 0;
 
 const char* noromtext1;
 const char* noromtext2;
@@ -454,7 +475,8 @@ static void LoadBNRIcon(void) {
 	}
 }
 
-static void LoadBNRIconatLaunch(void) {
+// May not be needed
+/* static void LoadBNRIconatLaunch(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
 	if (idx >= 0 && idx < 20) {
@@ -462,13 +484,14 @@ static void LoadBNRIconatLaunch(void) {
 		sf2d_free_texture(bnricontexlaunch);
 		if (ndsFile[idx]) {
 			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
+			fclose(ndsFile[idx]);
 		} else {
 			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
 			bnricontexlaunch = grabIcon(f_nobnr);
 			fclose(f_nobnr);
 		}
 	}
-}
+} */
 
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
@@ -777,6 +800,8 @@ int main()
 	LoadMenuColor();
 	LoadBottomImage();
 	dialogboxtex = sfil_load_PNG_file("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
+		sf2d_texture *dboxtex_iconbox = sfil_load_PNG_file("romfs:/graphics/dbox/iconbox.png", SF2D_PLACE_RAM); // Icon box
+		sf2d_texture *dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
 
@@ -935,7 +960,7 @@ int main()
 	bool boxarttexloaded = false;
 	bool slot1boxarttexloaded = false;
 
-	bool updatebotscreen = true;
+	// bool updatebotscreen = true;
 	bool screenmodeswitch = false;
 	bool applaunchicon = false;
 	bool applaunchon = false;
@@ -986,6 +1011,33 @@ int main()
 		offset3D[1].boxart = CONFIG_3D_SLIDERSTATE * 5.0f;
 		offset3D[0].disabled = CONFIG_3D_SLIDERSTATE * -3.0f;
 		offset3D[1].disabled = CONFIG_3D_SLIDERSTATE * 3.0f;
+		
+		if (showdialogbox_menu) {
+			if (menudbox_movespeed <= 1) {
+				if (menudbox_Ypos >= 0) {
+					menudbox_movespeed = 0;
+					menudbox_Ypos = 0;
+				} else
+					menudbox_movespeed = 1;
+			} else {
+				menudbox_movespeed -= 0.2;
+				menudbox_bgalpha += 5;
+			}
+			menudbox_Ypos += menudbox_movespeed;
+		} else {
+			if (menudbox_Ypos <= -240 || menudbox_Ypos >= 240) {
+				menudbox_movespeed = 22;
+				menudbox_Ypos = -240;
+			} else {
+				menudbox_movespeed += 1;
+				menudbox_bgalpha -= 5;
+				if (menudbox_bgalpha <= 0) {
+					menudbox_bgalpha = 0;
+				}
+				menudbox_Ypos += menudbox_movespeed;
+			}
+		}
+
 
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
@@ -1743,8 +1795,7 @@ int main()
 					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
 
 					// Draw the "Prev" and "Next" text for X/Y.
-					// FIXME: "0-pagenum*20" seems wrong...
-					u32 xy_color = (pagenum != 0 && file_count <= 0-pagenum*20)
+					u32 xy_color = (pagenum != 0 && file_count <= pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					sftd_draw_text(font, 17, YbuttonYpos+5, xy_color, 11, "Prev");
@@ -1805,7 +1856,7 @@ int main()
 							// Slot-1 selected, but no cartridge is present.
 							// Don't print "START" and the cursor border.
 						} else {
-							// Print "START".
+							// Print "START" and the cursor border.
 							sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 							const wchar_t *start_text = TR(STR_START);
 							const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
@@ -1833,18 +1884,35 @@ int main()
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 							if (!applaunchicon) {
 								bnriconnum = cursorPosition;
-								if (!settings.twl.forwarder) {
-									OpenBNRIcon();
-									LoadBNRIconatLaunch();
-								} else {
-									ChangeBNRIconNo();
-									bnricontexlaunch = bnricontexnum;
-								}
+								ChangeBNRIconNo();
+								bnricontexlaunch = bnricontexnum;
 								applaunchicon = true;
 							}
 							sf2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
 						}
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
+					}
+					sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
+					sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
+					sf2d_draw_texture(dboxtex_buttonback, 232, menudbox_Ypos+192);
+					sftd_draw_text(font, 242, menudbox_Ypos+198, RGBA8(0, 0, 0, 255), 12, "B: Back");
+					if (menudboxmode == DBOX_MODE_SETTINGS) {
+						bnriconnum = cursorPosition;
+						ChangeBNRIconNo();
+						bnricontexdbox = bnricontexnum;
+						sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+						sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+						
+						if (cursorPosition >= 0) {
+							int y = 24, dy = 19;
+							// Print the banner text, center-aligned.
+							const size_t banner_lines = std::min(3U, romsel_gameline.size());
+							for (size_t i = 0; i < banner_lines; i++, y += dy) {
+								const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+								sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+							}
+						}
+
 					}
 				// }
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -1867,9 +1935,9 @@ int main()
 		sf2d_swapbuffers();
 
 
-		if (titleboxXmovetimer == 0) {
+		/* if (titleboxXmovetimer == 0) {
 			updatebotscreen = false;
-		}
+		} */
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			Lshouldertext = (settings.romselect.toplayout ? "Box Art" : "Blank");
 			Rshouldertext = (settings.twl.forwarder ? "SD Card" : "Flashcard");
@@ -1947,7 +2015,7 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
-				if(titleboxXmovetimer == 0) {
+				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
 					if (settings.ui.locswitch) {
 						if(hDown & KEY_R) {
 							pagenum = 0;
@@ -1965,7 +2033,7 @@ int main()
 								sfx_switch->stop();	// Prevent freezing
 								sfx_switch->play();
 							}
-							updatebotscreen = true;
+							// updatebotscreen = true;
 						}
 					}
 					if (!noromsfound && file_count == 0) {
@@ -1974,139 +2042,31 @@ int main()
 						storedcursorPosition = cursorPosition;
 						titleboxXmovepos = +64;
 						boxartXmovepos = 0;
-						updatebotscreen = true;
+						// updatebotscreen = true;
 						noromsfound = true;
 					}
 					if(hDown & KEY_X) {
-						if (file_count > pagemax) {
-							pagenum++;
-							slot1boxarttexloaded = false;
-							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
-							storedcursorPosition = cursorPosition;
-							titleboxXmovepos = 0;
-							boxartXmovepos = 0;
-							// noromsfound = false;
-							bnricontexloaded = false;
-							boxarttexloaded = false;
-							if (dspfirmfound) {
-								sfx_switch->stop();	// Prevent freezing
-								sfx_switch->play();
-							}
-							updatebotscreen = true;
-						}
+						menuaction_nextpage = true;
 					} else if(hDown & KEY_Y) {
-						if (pagenum != 0 && file_count <= 0-pagenum*20) {
-							pagenum--;
-							slot1boxarttexloaded = false;
-							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
-							storedcursorPosition = cursorPosition;
-							titleboxXmovepos = 0;
-							boxartXmovepos = 0;
-							// noromsfound = false;
-							bnricontexloaded = false;
-							boxarttexloaded = false;
-							if (dspfirmfound) {
-								sfx_switch->stop();	// Prevent freezing
-								sfx_switch->play();
-							}
-							updatebotscreen = true;
-						}
+						menuaction_prevpage = true;
 					}
+					hidTouchRead(&touch);
+					touch_x = touch.px;
+					touch_y = touch.py;
 					if(hDown & KEY_TOUCH){
-						hidTouchRead(&touch);
-						touch_x = touch.px;
-						touch_y = touch.py;
-						if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
-							if (pagenum != 0 && file_count <= 0-pagenum*20) {
-								pagenum--;
-								slot1boxarttexloaded = false;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
-							}
+						/* if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
+							menuaction_prevpage = true;
 						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
-							if (file_count > pagemax) {
-								pagenum++;
-								slot1boxarttexloaded = false;
-								bannertextloaded = false;
-								cursorPosition = 0+pagenum*20;
-								storedcursorPosition = cursorPosition;
-								titleboxXmovepos = 0;
-								boxartXmovepos = 0;
-								// noromsfound = false;
-								bnricontexloaded = false;
-								boxarttexloaded = false;
-								if (dspfirmfound) {
-									sfx_switch->stop();	// Prevent freezing
-									sfx_switch->play();
-								}
-								updatebotscreen = true;
-							}
-						} else if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
-							bool playlaunchsound = true;
-							if (titleboxXmovetimer == 0) {
-								if(cursorPosition == -2) {
-									titleboxXmovetimer = 1;
-									screenmodeswitch = true;
-									applaunchprep = true;
-								} else if(cursorPosition == -1) {
-									if (!settings.twl.forwarder && romsel_gameline.empty()) {
-										// Slot-1 is selected, but no
-										// cartridge is present.
-										if (!playwrongsounddone) {
-											if (dspfirmfound) {
-												sfx_wrong->stop();
-												sfx_wrong->play();
-											}
-											playwrongsounddone = true;
-										}
-										playlaunchsound = false;
-									} else {
-										titleboxXmovetimer = 1;
-										settings.twl.launchslot1 = true;
-										if (settings.twl.forwarder) {
-											keepsdvalue = true;
-											rom = "_nds/twloader.nds";
-										}
-										applaunchprep = true;
-									}
-								} else {
-									titleboxXmovetimer = 1;
-									if (settings.twl.forwarder) {
-										settings.twl.launchslot1 = true;
-										rom = fcfiles.at(cursorPosition).c_str();
-									} else {
-										settings.twl.launchslot1 = false;
-										rom = files.at(cursorPosition).c_str();
-										sav = ReplaceAll(rom, ".nds", ".sav");
-									}
-									applaunchprep = true;
-								}
-							}
-							updatebotscreen = true;
-							if (playlaunchsound && dspfirmfound) {
-								bgm_menu->stop();
-								sfx_launch->play();
-							}
-						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180) {
+							menuaction_nextpage = true;
+						} else */ if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+							menuaction_launch = true;
+						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveright) {
 								titleboxXmoveleft = true;
 							}
-							updatebotscreen = true;
-						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180) {
+							// updatebotscreen = true;
+						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
 								if (cursorPosition == -1) {
@@ -2125,9 +2085,106 @@ int main()
 									titleboxXmoveright = true;
 								}
 							}
-							updatebotscreen = true;
+							// updatebotscreen = true;
 						}
 					} else if(hDown & KEY_A){
+						menuaction_launch = true;
+					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
+						//titleboxXmovepos -= 64;
+						if (!titleboxXmoveleft) {
+							if (cursorPosition == -1) {
+								if (filenum == 0) {
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong->stop();
+											sfx_wrong->play();
+										}
+										playwrongsounddone = true;
+									}
+								} else {
+									titleboxXmoveright = true;
+								}
+							} else {
+								titleboxXmoveright = true;
+							}
+						}
+						// updatebotscreen = true;
+					} else if(hHeld & KEY_LEFT && menudbox_Ypos == -240){
+						//titleboxXmovepos += 64;
+						if (!titleboxXmoveright) {
+							titleboxXmoveleft = true;
+						}
+						// updatebotscreen = true;
+					} else if (hDown & KEY_START) {
+						if (!showdialogbox_menu) {
+							if (menudbox_Ypos == -240)
+								showdialogbox_menu = true;
+						}
+						if (menudboxmode == DBOX_MODE_SETTINGS)
+							menudboxmode = DBOX_MODE_OPTIONS;
+						menu_ctrlset = CTRL_SET_DBOX;
+					} else if (hDown & KEY_SELECT) {
+						if (!showdialogbox_menu) {
+							if (menudbox_Ypos == -240)
+								showdialogbox_menu = true;
+						}
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							menudboxmode = DBOX_MODE_SETTINGS;
+						menu_ctrlset = CTRL_SET_DBOX;
+						// Save for later
+						/* romfolder = "_nds/";
+						rom = "GBARunner2.nds";
+						if (settings.twl.forwarder) {
+							settings.twl.launchslot1 = true;
+						} else {
+							settings.twl.launchslot1 = false;
+						}
+						fadeout = true;
+						updatebotscreen = true;
+						if (dspfirmfound) {
+							bgm_menu->stop();
+							sfx_launch->play();
+						} */
+						
+					}
+					
+					if (menuaction_nextpage) { menuaction_nextpage = false;	// Don't run the action again 'til R is pressed again
+						if (file_count > pagemax) {
+							pagenum++;
+							slot1boxarttexloaded = false;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
+							}
+							// updatebotscreen = true;
+						}
+					} else if (menuaction_prevpage) { menuaction_prevpage = false;	// Don't run the action again 'til L is pressed again
+						if (pagenum != 0 && file_count <= 0-pagenum*20) {
+							pagenum--;
+							slot1boxarttexloaded = false;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							storedcursorPosition = cursorPosition;
+							titleboxXmovepos = 0;
+							boxartXmovepos = 0;
+							// noromsfound = false;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+							if (dspfirmfound) {
+								sfx_switch->stop();	// Prevent freezing
+								sfx_switch->play();
+							}
+							// updatebotscreen = true;
+						}
+					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
 						bool playlaunchsound = true;
 						if (titleboxXmovetimer == 0) {
 							if(cursorPosition == -2) {
@@ -2168,55 +2225,24 @@ int main()
 								applaunchprep = true;
 							}
 						}
-						updatebotscreen = true;
+						// updatebotscreen = true;
 						if (playlaunchsound && dspfirmfound) {
 							bgm_menu->stop();
 							sfx_launch->play();
 						}
-					} else if(hHeld & KEY_RIGHT){
-						//titleboxXmovepos -= 64;
-						if (!titleboxXmoveleft) {
-							if (cursorPosition == -1) {
-								if (filenum == 0) {
-									if (!playwrongsounddone) {
-										if (dspfirmfound) {
-											sfx_wrong->stop();
-											sfx_wrong->play();
-										}
-										playwrongsounddone = true;
-									}
-								} else {
-									titleboxXmoveright = true;
-								}
-							} else {
-								titleboxXmoveright = true;
-							}
-						}
-						updatebotscreen = true;
-					} else if(hHeld & KEY_LEFT){
-						//titleboxXmovepos += 64;
-						if (!titleboxXmoveright) {
-							titleboxXmoveleft = true;
-						}
-						updatebotscreen = true;
+					}
+					
+				} else if(menu_ctrlset == CTRL_SET_DBOX) {
+					if (hDown & KEY_START) {
+						if (menudboxmode == DBOX_MODE_SETTINGS)
+							menudboxmode = DBOX_MODE_OPTIONS;
 					} else if (hDown & KEY_SELECT) {
-						if (titleboxXmovetimer == 0) {
-							titleboxXmovetimer = 1;
-							romfolder = "_nds/";
-							rom = "GBARunner2.nds";
-							if (settings.twl.forwarder) {
-								settings.twl.launchslot1 = true;
-							} else {
-								settings.twl.launchslot1 = false;
-							}
-							fadeout = true;
-							updatebotscreen = true;
-							if (dspfirmfound) {
-								bgm_menu->stop();
-								sfx_launch->play();
-							}
-						}
-						
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							menudboxmode = DBOX_MODE_SETTINGS;
+					} else if (hDown & KEY_B) {
+						showdialogbox_menu = false;
+						menudbox_movespeed = 1;
+						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				}
 			//}
