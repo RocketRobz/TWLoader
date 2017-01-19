@@ -547,9 +547,9 @@ static void SaveBootstrapConfig(void)
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			if (gbarunnervalue == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+sav);
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
 				snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
 				if (access(path, F_OK) == -1) {
