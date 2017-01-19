@@ -450,12 +450,14 @@ static void LoadBNRIcon(void) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
+		bnricontex[idx] = NULL;
 		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
 		if (ndsFile[idx]) {
 			bnricontex[idx] = grabIcon(ndsFile[idx]);
 			fclose(ndsFile[idx]);
 			ndsFile[idx] = NULL;
-		} else {
+		}
+		if (!bnricontex[idx]) {
 			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
 			bnricontex[idx] = grabIcon(f_nobnr);
 			fclose(f_nobnr);
@@ -470,9 +472,11 @@ static void LoadBNRIconatLaunch(void) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontexlaunch);
+		bnricontexlaunch = NULL;
 		if (ndsFile[idx]) {
 			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
-		} else {
+		}
+		if (!bnricontexlaunch) {
 			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
 			bnricontexlaunch = grabIcon(f_nobnr);
 			fclose(f_nobnr);
@@ -914,7 +918,8 @@ int main()
 		downloadBoxArt();
 	}
 
-	// Cache banner data
+	// Cache banner data for ROMs on the SD card.
+	// TODO: Re-cache if it's 0 bytes?
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
