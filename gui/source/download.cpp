@@ -181,21 +181,27 @@ int checkUpdate(void) {
 	if (res == 0) {
 		sVerfile Verfile;
 
+		bool isUnknown = false;
 		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
-		fread(&Verfile, 1, sizeof(Verfile), VerFile);
-		strcpy(settings_latestvertext, Verfile.text);
-		fclose(VerFile);
+		if (VerFile) {
+			fread(&Verfile, 1, sizeof(Verfile), VerFile);
+			strcpy(settings_latestvertext, Verfile.text);
+			fclose(VerFile);
+		} else {
+			// Unable to open the version file.
+			strcpy(settings_latestvertext, "Unknown");
+			isUnknown = true;
+		}
 		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
 		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
-
-		int updtequals = strcmp(settings_latestvertext, settings_vertext);
 
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (updtequals == 0){			
+		if (!isUnknown && !strcmp(settings_latestvertext, settings_vertext)) {
+			// Version is different.
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
 		
 			if (screenmode == 1) {				
@@ -472,6 +478,8 @@ void downloadBoxArt(void)
 		char path[256];
 		snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
 		FILE *f_nds_file = fopen(path, "rb");
+		if (!f_nds_file)
+			continue;
 
 		char ba_TID[5];
 		grabTID(f_nds_file, ba_TID);

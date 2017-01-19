@@ -299,8 +299,9 @@ void DialogBoxDisappear(const char *text) {
 /**
  * Create a save file.
  * @param filename Filename.
+ * @return 0 on success; non-zero on error.
  */
-static void CreateGameSave(const char *filename) {
+static int CreateGameSave(const char *filename) {
 	DialogBoxAppear("Creating save file...");
 	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
@@ -309,6 +310,10 @@ static void CreateGameSave(const char *filename) {
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
+	if (!f_nds_file) {
+		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.");
+		return -1;
+	}
 
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
@@ -318,16 +323,20 @@ static void CreateGameSave(const char *filename) {
 	int savesize = 524288;	// 512KB (default size for most games)
 	
 	// Set save size to 1MB for the following games
-	if ( strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-		strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-		strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-		strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
-			savesize = 1048576;
+	if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+	    strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+	    strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+	    strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+	{
+		savesize = 1048576;
+	}
 
 	// Set save size to 32MB for the following games
-	if ( strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-		strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
-			savesize = 1048576*32;
+	if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+	    strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+	{
+		savesize = 1048576*32;
+	}
 
 	FILE *pFile = fopen(filename, "wb");
 	if (pFile) {
@@ -338,6 +347,7 @@ static void CreateGameSave(const char *filename) {
 	}
 
 	DialogBoxDisappear("Done!");
+	return 0;
 }
 
 /**
@@ -893,6 +903,8 @@ int main()
 		char nds_path[256];
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
+		if (!f_nds_file)
+			continue;
 		cacheBanner(f_nds_file, tempfile, font);
 		fclose(f_nds_file);
 	}
@@ -1054,6 +1066,11 @@ int main()
 							const char *tempfile = files.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
+							if (!f_nds_file) {
+								// Can't open the NDS file.
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								continue;
+							}
 
 							char ba_TID[5];
 							grabTID(f_nds_file, ba_TID);
@@ -1083,13 +1100,19 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-						if (boxartnum < fcfiles.size()) {
+					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						if (boxartnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
 
 							CIniFile setfcrompathini( path );
-							std::string	ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+							std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+							if (ba_TIDini.size() < 4) {
+								// TID is too short.
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								continue;
+							}
+
 							char ba_TID[5];
 							strcpy(ba_TID, ba_TIDini.c_str());
 							ba_TID[4] = 0;
@@ -1681,8 +1704,15 @@ int main()
 								}
 								bnriconnum = cursorPosition;
 								FILE *f_bnr = fopen(path, "rb");
-								romsel_gameline = grabText(f_bnr, language);
-								fclose(f_bnr);
+								if (f_bnr) {
+									romsel_gameline = grabText(f_bnr, language);
+									fclose(f_bnr);
+								} else {
+									// Unable to open the banner file.
+									romsel_gameline.clear();
+									romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+									romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+								}
 								bannertextloaded = true;
 							}
 						}
