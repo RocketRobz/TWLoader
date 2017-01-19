@@ -172,6 +172,8 @@ DEPENDS	:=	$(OFILES:.o=.d)
 # main targets
 #---------------------------------------------------------------------------------
 all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
+cia: $(OUTPUT).elf $(OUTPUT).cia
+3dsx: $(OUTPUT).elf $(OUTPUT).3dsx
 
 $(OUTPUT).elf	:	$(OFILES)
 

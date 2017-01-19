@@ -36,6 +36,8 @@ using std::vector;
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
+bool is3DSX = true;
+
 
 touchPosition touch;
 u32 kUp;
@@ -45,6 +47,7 @@ u32 kHeld;
 bool menuaction_nextpage = false;
 bool menuaction_prevpage = false;
 bool menuaction_launch = false;
+bool menudboxaction_switchloc = false;
 
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
@@ -841,6 +844,7 @@ int main()
 	LoadBottomImage();
 	dialogboxtex = sfil_load_PNG_file("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
 		sf2d_texture *dboxtex_iconbox = sfil_load_PNG_file("romfs:/graphics/dbox/iconbox.png", SF2D_PLACE_RAM); // Icon box
+		sf2d_texture *dboxtex_button = sfil_load_PNG_file("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
 		sf2d_texture *dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
@@ -854,8 +858,6 @@ int main()
 
 	shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
-	shoulderYtex = sfil_load_PNG_file("romfs:/graphics/shoulder_Y.png", SF2D_PLACE_RAM); // Y button
-	shoulderXtex = sfil_load_PNG_file("romfs:/graphics/shoulder_X.png", SF2D_PLACE_RAM); // X button
 
 	// Battery level textures.
 	batterychrgtex = sfil_load_PNG_file("romfs:/graphics/battery_charging.png", SF2D_PLACE_RAM);
@@ -992,6 +994,7 @@ int main()
 	sf2d_swapbuffers();
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
+	int startmenu_cursorPosition = 0;
 	bool noromsfound = false;
 	
 	bool cursorPositionset = false;
@@ -1301,11 +1304,19 @@ int main()
 				}
 				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-				sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-				if (settings.ui.locswitch) {
-					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-					sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
-				}
+				// sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
+				sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
+				// sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+				// Draw the "Prev" and "Next" text for X/Y.
+				u32 lr_color = (pagenum != 0 && file_count <= -pagenum*20)
+						? RGBA8(0, 0, 0, 255)
+						: RGBA8(127, 127, 127, 255);
+				sftd_draw_text(font, 17, LshoulderYpos+5, lr_color, 11, "Prev. Page");
+
+				lr_color = (file_count > 20+pagenum*20)
+						? RGBA8(0, 0, 0, 255)
+						: RGBA8(127, 127, 127, 255);
+				sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
 
 				sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 				sf2d_end_frame();
@@ -1334,7 +1345,7 @@ int main()
 			{RshoulderYpos -= 1;}
 		}
 		
-		if(hHeld & KEY_Y){
+		/* if(hHeld & KEY_Y){
 			if (YbuttonYpos != 223)
 			{YbuttonYpos += 1;}
 		} else {
@@ -1347,7 +1358,7 @@ int main()
 		} else {
 			if (XbuttonYpos != 220)
 			{XbuttonYpos -= 1;}
-		}
+		} */
 		
 		if (fadein) {
 			fadealpha -= 31;
@@ -1376,7 +1387,7 @@ int main()
 					// or the UI language was changed.
 					slot1boxarttexloaded = false;
 					bannertextloaded = false;
-				} else {
+				} else if (gbarunnervalue == 1) {
 					// run = false;
 					if (settings.twl.forwarder) {
 						switch (settings.twl.flashcard) {
@@ -1406,8 +1417,8 @@ int main()
 								break;
 							}
 						}
-					}
-					gbarunnervalue = 1;
+					} else
+						run = false;
 					SaveSettings();
 					SaveBootstrapConfig();
 					screenoff();
@@ -1834,20 +1845,6 @@ int main()
 					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
 					sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
 
-					sf2d_draw_texture(shoulderYtex, 0, YbuttonYpos);
-					sf2d_draw_texture(shoulderXtex, 248, XbuttonYpos);
-
-					// Draw the "Prev" and "Next" text for X/Y.
-					u32 xy_color = (pagenum != 0 && file_count <= pagenum*20)
-							? RGBA8(0, 0, 0, 255)
-							: RGBA8(127, 127, 127, 255);
-					sftd_draw_text(font, 17, YbuttonYpos+5, xy_color, 11, "Prev");
-
-					xy_color = (file_count > 20+pagenum*20)
-							? RGBA8(0, 0, 0, 255)
-							: RGBA8(127, 127, 127, 255);
-					sftd_draw_text(font, 252, XbuttonYpos+5, xy_color, 11, "Next");
-
 					if (pagenum == 0) {
 						sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
 						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
@@ -1899,11 +1896,13 @@ int main()
 							// Slot-1 selected, but no cartridge is present.
 							// Don't print "START" and the cursor border.
 						} else {
-							// Print "START" and the cursor border.
-							sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-							const wchar_t *start_text = TR(STR_START);
-							const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-							sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+							if (!is3DSX || cursorPosition == -2) {
+								// Print "START" and the cursor border.
+								sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
+								const wchar_t *start_text = TR(STR_START);
+								const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+								sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+							}
 						}
 					} else {
 						if (settings.ui.custombot)
@@ -1937,8 +1936,8 @@ int main()
 					}
 					sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 					sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
-					sf2d_draw_texture(dboxtex_buttonback, 232, menudbox_Ypos+192);
-					sftd_draw_text(font, 242, menudbox_Ypos+198, RGBA8(0, 0, 0, 255), 12, "B: Back");
+					sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
+					sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
 					if (menudboxmode == DBOX_MODE_SETTINGS) {
 						bnriconnum = cursorPosition;
 						ChangeBNRIconNo();
@@ -1955,7 +1954,33 @@ int main()
 								sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 							}
 						}
+					} else {
+						if (startmenu_cursorPosition == 0)
+							sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
+						else
+							sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+						if (startmenu_cursorPosition == 1)
+							sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
+						else
+							sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+						if (startmenu_cursorPosition == 2)
+							sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
+						else
+							sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
 
+						sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
+						if (!settings.twl.forwarder)
+							sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
+						else
+							sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
+						if (!settings.romselect.toplayout)
+							sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
+						else
+							sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
+						if (!is3DSX)
+							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
+						else
+							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
 					}
 				// }
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -1982,19 +2007,10 @@ int main()
 			updatebotscreen = false;
 		} */
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
-			Lshouldertext = (settings.romselect.toplayout ? "Box Art" : "Blank");
-			Rshouldertext = (settings.twl.forwarder ? "SD Card" : "Flashcard");
 			/* if (filenum == 0) {	// If no ROMs are found
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
-			if(hDown & KEY_L) {
-				settings.romselect.toplayout = !settings.romselect.toplayout;
-				if (dspfirmfound) {
-					sfx_switch->stop();	// Prevent freezing
-					sfx_switch->play();
-				}
-			}
 			/* if (romselect_layout == 0) {
 				Rshouldertext = "DSi-Menu";
 				if(cursorPosition == -1) {
@@ -2059,36 +2075,6 @@ int main()
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
 				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
-					if (settings.ui.locswitch) {
-						if(hDown & KEY_R) {
-							pagenum = 0;
-							slot1boxarttexloaded = false;
-							bannertextloaded = false;
-							cursorPosition = 0;
-							storedcursorPosition = cursorPosition;
-							titleboxXmovepos = 0;
-							boxartXmovepos = 0;
-							noromsfound = false;
-							settings.twl.forwarder = !settings.twl.forwarder;
-							bnricontexloaded = false;
-							boxarttexloaded = false;
-							if (dspfirmfound) {
-								sfx_switch->stop();	// Prevent freezing
-								sfx_switch->play();
-							}
-							// updatebotscreen = true;
-
-							if (!settings.twl.forwarder) {
-								// Poll for Slot-1 changes.
-								gamecardPoll(true);
-								// Load the Slot-1 boxart.
-								// NOTE: This is needed here; otherwise, the
-								// boxart won't be visible for a few frames
-								// when switching from flashcard to SD.
-								loadSlot1BoxArt();
-							}
-						}
-					}
 					if (!noromsfound && file_count == 0) {
 						// No ROMs were fonud.
 						cursorPosition = -1;
@@ -2098,20 +2084,16 @@ int main()
 						// updatebotscreen = true;
 						noromsfound = true;
 					}
-					if(hDown & KEY_X) {
+					if(hDown & KEY_R) {
 						menuaction_nextpage = true;
-					} else if(hDown & KEY_Y) {
+					} else if(hDown & KEY_L) {
 						menuaction_prevpage = true;
 					}
 					hidTouchRead(&touch);
 					touch_x = touch.px;
 					touch_y = touch.py;
 					if(hDown & KEY_TOUCH){
-						/* if (touch_x <= 72 && touch_y >= YbuttonYpos) {		// Also for Y button
-							menuaction_prevpage = true;
-						} else if (touch_x >= 248 && touch_y >= XbuttonYpos) {
-							menuaction_nextpage = true;
-						} else */ if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+						if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
 							menuaction_launch = true;
 						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
@@ -2142,6 +2124,12 @@ int main()
 						}
 					} else if(hDown & KEY_A){
 						menuaction_launch = true;
+					} else if(hDown & KEY_B && is3DSX){
+						fadeout = true;
+						if (dspfirmfound) {
+							bgm_menu->stop();
+							sfx_back->play();
+						}
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
 						//titleboxXmovepos -= 64;
 						if (!titleboxXmoveleft) {
@@ -2186,20 +2174,6 @@ int main()
 						}
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							menudboxmode = DBOX_MODE_SETTINGS;
-						// Save for later
-						/* romfolder = "_nds/";
-						rom = "GBARunner2.nds";
-						if (settings.twl.forwarder) {
-							settings.twl.launchslot1 = true;
-						} else {
-							settings.twl.launchslot1 = false;
-						}
-						fadeout = true;
-						updatebotscreen = true;
-						if (dspfirmfound) {
-							bgm_menu->stop();
-							sfx_launch->play();
-						} */
 						
 					}
 					
@@ -2240,50 +2214,59 @@ int main()
 							// updatebotscreen = true;
 						}
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
-						bool playlaunchsound = true;
-						if (titleboxXmovetimer == 0) {
-							if(cursorPosition == -2) {
-								titleboxXmovetimer = 1;
-								screenmodeswitch = true;
-								applaunchprep = true;
-							} else if(cursorPosition == -1) {
-								if (!settings.twl.forwarder && romsel_gameline.empty()) {
-									// Slot-1 is selected, but no
-									// cartridge is present.
-									if (!playwrongsounddone) {
-										if (dspfirmfound) {
-											sfx_wrong->stop();
-											sfx_wrong->play();
+						if (!is3DSX || cursorPosition == -2) {
+							bool playlaunchsound = true;
+							if (titleboxXmovetimer == 0) {
+								if(cursorPosition == -2) {
+									titleboxXmovetimer = 1;
+									screenmodeswitch = true;
+									applaunchprep = true;
+								} else if(cursorPosition == -1) {
+									if (!settings.twl.forwarder && romsel_gameline.empty()) {
+										// Slot-1 is selected, but no
+										// cartridge is present.
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong->stop();
+												sfx_wrong->play();
+											}
+											playwrongsounddone = true;
 										}
-										playwrongsounddone = true;
+										playlaunchsound = false;
+									} else {
+										titleboxXmovetimer = 1;
+										settings.twl.launchslot1 = true;
+										if (settings.twl.forwarder) {
+											keepsdvalue = true;
+											rom = "_nds/twloader.nds";
+										}
+										applaunchprep = true;
 									}
-									playlaunchsound = false;
 								} else {
 									titleboxXmovetimer = 1;
-									settings.twl.launchslot1 = true;
 									if (settings.twl.forwarder) {
-										keepsdvalue = true;
-										rom = "_nds/twloader.nds";
+										settings.twl.launchslot1 = false;
+										rom = fcfiles.at(cursorPosition).c_str();
+									} else {
+										settings.twl.launchslot1 = false;
+										rom = files.at(cursorPosition).c_str();
+										sav = ReplaceAll(rom, ".nds", ".sav");
 									}
 									applaunchprep = true;
 								}
-							} else {
-								titleboxXmovetimer = 1;
-								if (settings.twl.forwarder) {
-									settings.twl.launchslot1 = false;
-									rom = fcfiles.at(cursorPosition).c_str();
-								} else {
-									settings.twl.launchslot1 = false;
-									rom = files.at(cursorPosition).c_str();
-									sav = ReplaceAll(rom, ".nds", ".sav");
-								}
-								applaunchprep = true;
 							}
-						}
-						// updatebotscreen = true;
-						if (playlaunchsound && dspfirmfound) {
-							bgm_menu->stop();
-							sfx_launch->play();
+							if (playlaunchsound && dspfirmfound) {
+								bgm_menu->stop();
+								sfx_launch->play();
+							}
+						} else {
+							if (!playwrongsounddone) {
+								if (dspfirmfound) {
+									sfx_wrong->stop();
+									sfx_wrong->play();
+								}
+								playwrongsounddone = true;
+							}
 						}
 					}
 					
@@ -2294,11 +2277,97 @@ int main()
 					} else if (hDown & KEY_SELECT && cursorPosition >= 0) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							menudboxmode = DBOX_MODE_SETTINGS;
+					} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 2) {
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							startmenu_cursorPosition++;
+					} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0) {
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							startmenu_cursorPosition--;
+					} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 2) {
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							startmenu_cursorPosition += 2;
+					} else if (hDown & KEY_UP && startmenu_cursorPosition != 0) {
+						if (menudboxmode == DBOX_MODE_OPTIONS)
+							startmenu_cursorPosition -= 2;
+					} else if (hDown & KEY_A) {
+						if (menudboxmode == DBOX_MODE_OPTIONS) {
+							switch (startmenu_cursorPosition) {
+								case 0:
+								default:
+									menudboxaction_switchloc = true;
+									break;
+								case 1:
+									settings.romselect.toplayout = !settings.romselect.toplayout;
+									if (dspfirmfound) {
+										sfx_switch->stop();	// Prevent freezing
+										sfx_switch->play();
+									}
+									break;
+								case 2:
+									if (!is3DSX) {
+										gbarunnervalue = 1;
+										rom = "GBARunner2.nds";
+										if (settings.twl.forwarder) {
+											settings.twl.launchslot1 = true;
+										} else {
+											settings.twl.launchslot1 = false;
+										}
+										fadeout = true;
+										if (dspfirmfound) {
+											bgm_menu->stop();
+											sfx_launch->play();
+										}
+									} else {
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong->stop();
+												sfx_wrong->play();
+											}
+											playwrongsounddone = true;
+										}
+									}
+									break;
+							}
+						}
 					} else if (hDown & KEY_B) {
 						showdialogbox_menu = false;
 						menudbox_movespeed = 1;
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
+					
+					if (menudboxaction_switchloc) { menudboxaction_switchloc = false;
+						if (dspfirmfound) {
+							sfx_switch->stop();	// Prevent freezing
+							sfx_switch->play();
+						}
+						pagenum = 0;
+						slot1boxarttexloaded = false;
+						bannertextloaded = false;
+						cursorPosition = 0;
+						storedcursorPosition = cursorPosition;
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						noromsfound = false;
+						settings.twl.forwarder = !settings.twl.forwarder;
+						bnricontexloaded = false;
+						boxarttexloaded = false;
+						if (dspfirmfound) {
+							sfx_switch->stop();	// Prevent freezing
+							sfx_switch->play();
+						}
+						// updatebotscreen = true;
+						
+						if (!settings.twl.forwarder) {
+							// Poll for Slot-1 changes.
+							gamecardPoll(true);
+							// Load the Slot-1 boxart.
+							// NOTE: This is needed here; otherwise, the
+							// boxart won't be visible for a few frames
+							// when switching from flashcard to SD.
+							loadSlot1BoxArt();
+						}
+					}
+					
 				}
 			//}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
