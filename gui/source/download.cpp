@@ -4,6 +4,7 @@
 #include "log.h"
 #include "ndsheaderbanner.h"
 #include "settings.h"
+#include "gamecard.h"
 
 #include <cstdio>
 #include <malloc.h>
@@ -422,34 +423,55 @@ static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 }
 
 /**
+ * Download a single boxart from GameTDB.
+ * @param ba_TID Game ID. (4 characters, NULL-terminated)
+ * @return 0 on success; non-zero on error.
+ */
+static int downloadBoxArt_internal(const char *ba_TID)
+{
+	char path[256];
+	char http_url[256];
+
+	const char *ba_region_fallback = NULL;
+	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
+	if (!ba_region)
+		return -1;
+
+	// NOTE: downloadFile() doesn't use devoptab,
+	// so don't prefix the filename with sdmc:/.
+	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
+		 ba_region, ba_TID);
+	int res = downloadFile(http_url, path, MEDIA_SD_FILE);
+	if (res != 0 && ba_region_fallback != NULL) {
+		// Try the fallback region.
+		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
+			 ba_region_fallback, ba_TID);
+		res = downloadFile(http_url, path, MEDIA_SD_FILE);
+	}
+	return res;
+}
+
+/**
  * Download Slot-1 boxart.
  */
 void downloadSlot1BoxArt(const char* TID)
 {
 	LogFM("Main.downloadSlot1BoxArt", "Checking box art (Slot-1 card).");
 	
-	char path[256];
-	
 	char ba_TID[5];
 	snprintf(ba_TID, sizeof(ba_TID), "%.4s", TID);
 	ba_TID[4] = 0;
 
-	const char *ba_region_fallback = NULL;
-	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
-
-	char http_url[256];
-	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
+	char path[256];
 	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
-	if (access(path, F_OK) == -1) {
-		LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
-
-		int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		if (res != 0 && ba_region_fallback != NULL) {
-			// Try the fallback region.
-			snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
-			res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		}
+	if (!access(path, F_OK)) {
+		// File already exists.
+		return;
 	}
+
+	LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
+	downloadBoxArt_internal(ba_TID);
 }
 
 /**
@@ -568,21 +590,6 @@ void downloadBoxArt(void)
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
-		const char *ba_region_fallback = NULL;
-		const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
-		if (!ba_region)
-			continue;
-
-		// NOTE: downloadFile() doesn't use devoptab,
-		// so don't prefix the filename with sdmc:/.
-		char http_url[256];
-		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
-		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
-		int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		if (res != 0 && ba_region_fallback != NULL) {
-			// Try the fallback region.
-			snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
-			res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		}
+		downloadBoxArt_internal(ba_TID);
 	}
 }
