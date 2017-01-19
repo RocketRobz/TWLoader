@@ -1027,12 +1027,25 @@ void LoadBottomImage() {
 }
 
 /**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+static void RemoveTrailingSlashes(string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
+
+/**
  * Load settings.
  */
 void LoadSettings(void) {
 	// UI settings.
 	settings.ui.name = settingsini.GetString("FRONTEND", "NAME", "");
 	settings.ui.romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
+	RemoveTrailingSlashes(settings.ui.romfolder);
+
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
