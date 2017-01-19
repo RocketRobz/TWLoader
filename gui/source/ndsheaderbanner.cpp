@@ -297,7 +297,8 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Un-tile the icon.
-	// FIXME: Why are we allocating 64x32?
+	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8"
+	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
 	u32 *textureData = (u32*)linearAlloc(32*64*sizeof(u32));
 	const u8 *offset = ndsBanner->icon;
 	for (int y = 0; y < 32; y += 8) {

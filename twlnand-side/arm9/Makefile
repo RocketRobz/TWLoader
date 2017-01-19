@@ -15,7 +15,7 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing extra header files
 # MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
-TARGET		:=	TWLapp-hb
+TARGET		:=	twlapp-hb
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include
@@ -173,7 +173,28 @@ Bot00.s			:	../$(IMAGES)/Bot00.bmp
 
 Bot01.s			:	../$(IMAGES)/Bot01.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+# Japanese
+Bot02_JA.s			:	../$(IMAGES)/Bot02_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
+Bot03_JA.s			:	../$(IMAGES)/Bot03_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Bot04_JA.s			:	../$(IMAGES)/Bot04_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Bot05_JA.s			:	../$(IMAGES)/Bot05_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Bot06_JA.s			:	../$(IMAGES)/Bot06_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Bot07_JA.s			:	../$(IMAGES)/Bot07_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Bot08_JA.s			:	../$(IMAGES)/Bot08_JA.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+# English
 Bot02.s			:	../$(IMAGES)/Bot02.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
