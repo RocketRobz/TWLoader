@@ -2170,20 +2170,22 @@ int main()
 						// updatebotscreen = true;
 					} else if (hDown & KEY_START) {
 						if (!showdialogbox_menu) {
-							if (menudbox_Ypos == -240)
+							if (menudbox_Ypos == -240) {
 								showdialogbox_menu = true;
+								menu_ctrlset = CTRL_SET_DBOX;
+							}
 						}
 						if (menudboxmode == DBOX_MODE_SETTINGS)
 							menudboxmode = DBOX_MODE_OPTIONS;
-						menu_ctrlset = CTRL_SET_DBOX;
 					} else if (hDown & KEY_SELECT) {
 						if (!showdialogbox_menu) {
-							if (menudbox_Ypos == -240)
+							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
 								showdialogbox_menu = true;
+								menu_ctrlset = CTRL_SET_DBOX;
+							}
 						}
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							menudboxmode = DBOX_MODE_SETTINGS;
-						menu_ctrlset = CTRL_SET_DBOX;
 						// Save for later
 						/* romfolder = "_nds/";
 						rom = "GBARunner2.nds";
@@ -2289,7 +2291,7 @@ int main()
 					if (hDown & KEY_START) {
 						if (menudboxmode == DBOX_MODE_SETTINGS)
 							menudboxmode = DBOX_MODE_OPTIONS;
-					} else if (hDown & KEY_SELECT) {
+					} else if (hDown & KEY_SELECT && cursorPosition >= 0) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							menudboxmode = DBOX_MODE_SETTINGS;
 					} else if (hDown & KEY_B) {
