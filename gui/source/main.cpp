@@ -51,7 +51,9 @@ sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *dialogboxtex;	// Dialog box
 sf2d_texture *settingslogotex;	// TWLoader logo.
-sf2d_texture *slot1boxarttex = NULL;
+
+static sf2d_texture *slot1boxarttex = NULL;
+static bool slot1boxarttexloaded = false;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -718,6 +720,34 @@ static inline sf2d_texture *carttex(void)
 	}
 }
 
+/**
+ * Load the boxart for the Slot-1 cartridge.
+ */
+static void loadSlot1BoxArt(void)
+{
+	sf2d_free_texture(slot1boxarttex);
+	const char *gameID = gamecardGetGameID();
+	if (gameID) {
+		if (checkWifiStatus()) {
+			downloadSlot1BoxArt(gameID);
+		}
+		char path[256];
+		// example: ASME.png
+		LogFMA("Main", "Loading Slot-1 box art", gameID);
+		snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
+		if (access(path, F_OK) != -1) {
+			slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
+		} else {
+			slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
+		}
+		LogFMA("Main", "Done loading Slot-1 box art", gameID);
+	} else {
+		// No cartridge, or unrecognized cartridge.
+		slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
+	}
+	slot1boxarttexloaded = true;
+}
+
 int main()
 {
 	aptInit();
@@ -946,7 +976,6 @@ int main()
 	bool bannertextloaded = false;
 	bool bnricontexloaded = false;
 	bool boxarttexloaded = false;
-	bool slot1boxarttexloaded = false;
 
 	bool updatebotscreen = true;
 	bool screenmodeswitch = false;
@@ -1147,27 +1176,7 @@ int main()
 			}
 			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
 				// Load the boxart for the Slot-1 cartridge.
-				sf2d_free_texture(slot1boxarttex);
-				const char *gameID = gamecardGetGameID();
-				if (gameID) {
-					if (checkWifiStatus()) {
-						downloadSlot1BoxArt(gameID);
-					}
-					char path[256];
-					// example: ASME.png
-					LogFMA("Main", "Loading Slot-1 box art", gameID);
-					snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
-					if (access(path, F_OK) != -1) {
-						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
-					} else {
-						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
-					}
-					LogFMA("Main", "Done loading Slot-1 box art", gameID);
-				} else {
-					// No cartridge, or unrecognized cartridge.
-					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
-				}
-				slot1boxarttexloaded = true;
+				loadSlot1BoxArt();
 			}
 
 			if (!musicbool) {
@@ -1304,7 +1313,7 @@ int main()
 					fadeout = false;
 					fadein = true;
 
-					// Poll for Slot 1 changes.
+					// Poll for Slot-1 changes.
 					gamecardPoll(true);
 
 					// Force boxart and banner text reloads
@@ -1790,7 +1799,7 @@ int main()
 						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
 
 						if (!settings.twl.forwarder) {
-							// Poll for Slot 1 changes.
+							// Poll for Slot-1 changes.
 							bool s1chg = gamecardPoll(false);
 							if (s1chg) {
 								if (cursorPosition == -1) {
@@ -1997,6 +2006,16 @@ int main()
 								sfx_switch->play();
 							}
 							updatebotscreen = true;
+
+							if (!settings.twl.forwarder) {
+								// Poll for Slot-1 changes.
+								gamecardPoll(true);
+								// Load the Slot-1 boxart.
+								// NOTE: This is needed here; otherwise, the
+								// boxart won't be visible for a few frames
+								// when switching from flashcard to SD.
+								loadSlot1BoxArt();
+							}
 						}
 					}
 					if (!noromsfound && file_count == 0) {
