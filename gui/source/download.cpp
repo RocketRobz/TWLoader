@@ -11,8 +11,10 @@
 
 #include <algorithm>
 #include <string>
+#include <unordered_set>
 #include <vector>
 using std::string;
+using std::unordered_set;
 using std::vector;
 
 #include <3ds.h>
@@ -458,8 +460,10 @@ void downloadBoxArt(void)
 	char path[256];
 
 	// First, check if we're missing any boxart on the SD card.
-	vector<u32> boxart_tids;	// Title IDs of boxart to download.
-	boxart_tids.reserve(files.size() + fcfiles.size());
+	unordered_set<u32> boxart_all_tids;	// Title IDs of all ROM files.
+	vector<u32> boxart_dl_tids;	// Title IDs of boxart to download.
+	boxart_all_tids.reserve(files.size() + fcfiles.size());
+	boxart_dl_tids.reserve(files.size() + fcfiles.size());
 	LogFM("Download.downloadBoxArt", "Checking for missing boxart...");
 
 	// Check if we're missing any boxart for ROMs on the SD card.
@@ -476,6 +480,17 @@ void downloadBoxArt(void)
 		ba_TID[4] = 0;
 		fclose(f_nds_file);
 
+		// Did we already check for this boxart?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, ba_TID, sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
+			// Already checked for this boxart.
+			continue;
+		}
+		boxart_all_tids.insert(tid);
+
 		// Does this boxart file already exist?
 		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", ba_TID);
 		if (!access(path, F_OK)) {
@@ -483,11 +498,8 @@ void downloadBoxArt(void)
 			continue;
 		}
 
-		// Boxart file does not exist.
-		// NOTE: Storing byteswapped in order to sort correctly.
-		u32 tid;
-		memcpy(&tid, ba_TID, sizeof(tid));
-		boxart_tids.push_back(__builtin_bswap32(tid));
+		// Boxart file does not exist. Download it.
+		boxart_dl_tids.push_back(tid);
 	}
 	
 	// Check if we're missing any boxart for ROMs on the flashcard.
@@ -501,6 +513,17 @@ void downloadBoxArt(void)
 			continue;
 		}
 
+		// Did we already check for this boxart?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, ba_TID.c_str(), sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
+			// Already checked for this boxart.
+			continue;
+		}
+		boxart_all_tids.insert(tid);
+
 		// Does this boxart file already exist?
 		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", ba_TID.c_str());
 		if (!access(path, F_OK)) {
@@ -508,30 +531,28 @@ void downloadBoxArt(void)
 			continue;
 		}
 
-		// Boxart file does not exist.
-		u32 tid;
-		memcpy(&tid, ba_TID.c_str(), sizeof(tid));
-		boxart_tids.push_back(tid);
+		// Boxart file does not exist. Download it.
+		boxart_dl_tids.push_back(tid);
 	}
 
-	if (boxart_tids.empty()) {
+	if (boxart_dl_tids.empty()) {
 		// No boxart to download.
 		LogFM("Download.downloadBoxArt", "No boxart to download.");
 		return;
 	}
 
 	// Sort the TIDs for convenience purposes.
-	std::sort(boxart_tids.begin(), boxart_tids.end());
+	std::sort(boxart_dl_tids.begin(), boxart_dl_tids.end());
 
 	// Download the boxart.
 	char s_boxart_total[12];
-	snprintf(s_boxart_total, sizeof(s_boxart_total), "%u", boxart_tids.size());
-	for (size_t boxartnum = 0; boxartnum < boxart_tids.size(); boxartnum++) {
+	snprintf(s_boxart_total, sizeof(s_boxart_total), "%u", boxart_dl_tids.size());
+	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
 		static const char title[] = "Downloading missing boxart...";
 
 		// Convert the TID back to char.
 		char ba_TID[5];
-		u32 tid = __builtin_bswap32(boxart_tids[boxartnum]);
+		u32 tid = __builtin_bswap32(boxart_dl_tids[boxartnum]);
 		memcpy(ba_TID, &tid, 4);
 		ba_TID[4] = 0;
 
