@@ -35,17 +35,19 @@ static inline u32 BGR555_to_RGBA8(u32 px16) {
  * Get the title ID.
  * @param ndsFile DS ROM image.
  * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @return 0 on success; non-zero on error.
  */
-void grabTID(FILE* ndsFile, char *buf) {
+int grabTID(FILE* ndsFile, char *buf) {
 	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-	fread(buf, 1, 4, ndsFile);
+	size_t read = fread(buf, 1, 4, ndsFile);
+	return !(read == 4);
 }
 
 /**
  * Get text from an NDS banner.
  * @param ndsBanner NDS banner.
  * @param bnrtitlenum Title number. (aka language)
- * @return Vector containing each line as a wide string.
+ * @return Vector containing each line as a wide string. (empty on error)
  */
 vector<wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum) {
 	// Check for unsupported languages.
@@ -167,7 +169,7 @@ vector<wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum) {
  * Get text from a cached NDS banner.
  * @param binFile Banner file.
  * @param bnrtitlenum Title number. (aka language)
- * @return Vector containing each line as a wide string.
+ * @return Vector containing each line as a wide string. (empty on error)
  */
 vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	// Load the banner.
@@ -176,55 +178,59 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 	sNDSBanner ndsBanner;
 	memset(&ndsBanner, 0, sizeof(ndsBanner));
 	fseek(binFile, 0, SEEK_SET);
-	fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	if (read < NDS_BANNER_VER_ORIGINAL) {
+		// Banner file is invalid.
+		// Unsupported banner version.
+		vector<wstring> vec_wstr;
+		vec_wstr.push_back(L"No Info");
+		return vec_wstr;
+	}
 
 	// Get the banner text.
 	return grabText(&ndsBanner, bnrtitlenum);
 }
 
-void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
+/**
+ * Cache the banner from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param setfont Font to use for messages.
+ * @return 0 on success; non-zero on error.
+ */
+int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
 	if (!access(bannerpath, F_OK)) {
 		// Banner is already cached.
+		// TODO: If it's 0 bytes, re-cache it?
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		return;
+		return 0;
 	}
 
-	// Cache the banner.
-	FILE* filetosave = fopen(bannerpath, "wb");
-	if (!filetosave) {
-		// Error opening the banner cache file...
-		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Error caching the banner.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-		return;
-	}
-
+	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
-	sNDSBanner myBanner;
-	memset(&myBanner, 0, sizeof(myBanner));
-
-	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file: ", filename);
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
 	LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
 
+	sNDSBanner ndsBanner;
+	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	u32 bannersize = 0;
 	if (NDSHeader.bannerOffset != 0x00000000) {
 		// Read the banner from the NDS file.
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
-		fread(&myBanner, 1, sizeof(myBanner), ndsFile);
+		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 		LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
-		u32 bannersize;
-		switch (myBanner.version) {
+		switch (ndsBanner.version) {
 			case NDS_BANNER_VER_DSi:
 				bannersize = NDS_BANNER_SIZE_DSi;
 				break;
@@ -239,8 +245,6 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 				bannersize = NDS_BANNER_SIZE_ORIGINAL;
 				break;
 		}
-		fwrite(&myBanner, 1, bannersize, filetosave);
-		LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
@@ -249,19 +253,40 @@ void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 		sf2d_swapbuffers();
 		LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
-		fread(&myBanner, 1, NDS_BANNER_SIZE_ZH_KO, nobannerFile);
-		fwrite(&myBanner, 1, NDS_BANNER_SIZE_ZH_KO, filetosave);
-		LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached (empty):", bannerpath);
+		bannersize = NDS_BANNER_SIZE_ZH_KO;
+		fread(&ndsBanner, 1, bannersize, nobannerFile);
 		fclose(nobannerFile);
 	}
 
+	if (bannersize == 0) {
+		// Invalid banner.
+		LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
+		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Invalid banner loaded; not caching.");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		return -1;
+	}
+
+	// Write the cached banner.
+	FILE* filetosave = fopen(bannerpath, "wb");
+	if (!filetosave) {
+		// Error opening the banner cache file.
+		LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
+		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Error writing the banner cache file.");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		return -2;
+	}
+	fwrite(&ndsBanner, 1, bannersize, filetosave);
 	fclose(filetosave);
+	LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);
+	return 0;
 }
 
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
- * @return Icon texture.
+ * @return Icon texture. (NULL on error)
  */
 sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	// Convert the palette first.
@@ -298,12 +323,16 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 /**
  * Get the icon from a cached NDS banner.
  * @param binFile Banner file.
- * @return Icon texture.
+ * @return Icon texture. (NULL on error)
  */
 sf2d_texture* grabIcon(FILE* binFile) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
-	fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	if (read < NDS_BANNER_VER_ORIGINAL) {
+		// Banner file is invalid.
+		return NULL;
+	}
 
 	// Get the icon.
 	return grabIcon(&ndsBanner);

@@ -205,14 +205,15 @@ typedef enum {
  * Get the title ID.
  * @param ndsFile DS ROM image.
  * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @return 0 on success; non-zero on error.
  */
-void grabTID(FILE* ndsFile, char *buf);
+int grabTID(FILE* ndsFile, char *buf);
 
 /**
  * Get text from an NDS banner.
  * @param ndsBanner NDS banner.
  * @param bnrtitlenum Title number. (aka language)
- * @return Vector containing each line as a wide string.
+ * @return Vector containing each line as a wide string. (empty on error)
  */
 std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum);
 
@@ -220,23 +221,30 @@ std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum)
  * Get text from a cached NDS banner.
  * @param binFile Banner file.
  * @param bnrtitlenum Title number. (aka language)
- * @return Vector containing each line as a wide string.
+ * @return Vector containing each line as a wide string. (empty on error)
  */
 std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
-void cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
+/**
+ * Cache the banner from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param setfont Font to use for messages.
+ * @return 0 on success; non-zero on error.
+ */
+int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont);
 
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
- * @return Icon texture.
+ * @return Icon texture. (NULL on error)
  */
 sf2d_texture* grabIcon(const sNDSBanner* ndsBanner);
 
 /**
  * Get the icon from a cached NDS banner.
  * @param binFile Banner file.
- * @return Icon texture.
+ * @return Icon texture. (NULL on error)
  */
 sf2d_texture* grabIcon(FILE* binFile);
 

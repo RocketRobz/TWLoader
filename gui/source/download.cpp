@@ -3,14 +3,19 @@
 #include "inifile.h"
 #include "log.h"
 #include "ndsheaderbanner.h"
+#include "settings.h"
+#include "gamecard.h"
 
 #include <cstdio>
 #include <malloc.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <string>
+#include <unordered_set>
 #include <vector>
 using std::string;
+using std::unordered_set;
 using std::vector;
 
 #include <3ds.h>
@@ -181,21 +186,27 @@ int checkUpdate(void) {
 	if (res == 0) {
 		sVerfile Verfile;
 
+		bool isUnknown = false;
 		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
-		fread(&Verfile, 1, sizeof(Verfile), VerFile);
-		strcpy(settings_latestvertext, Verfile.text);
-		fclose(VerFile);
+		if (VerFile) {
+			fread(&Verfile, 1, sizeof(Verfile), VerFile);
+			strcpy(settings_latestvertext, Verfile.text);
+			fclose(VerFile);
+		} else {
+			// Unable to open the version file.
+			strcpy(settings_latestvertext, "Unknown");
+			isUnknown = true;
+		}
 		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
 		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
-
-		int updtequals = strcmp(settings_latestvertext, settings_vertext);
 
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (updtequals == 0){			
+		if (!isUnknown && !strcmp(settings_latestvertext, settings_vertext)) {
+			// Version is different.
 			LogFMA("checkUpdate", "Comparing...", "Are equals");
 		
 			if (screenmode == 1) {				
@@ -412,34 +423,55 @@ static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 }
 
 /**
+ * Download a single boxart from GameTDB.
+ * @param ba_TID Game ID. (4 characters, NULL-terminated)
+ * @return 0 on success; non-zero on error.
+ */
+static int downloadBoxArt_internal(const char *ba_TID)
+{
+	char path[256];
+	char http_url[256];
+
+	const char *ba_region_fallback = NULL;
+	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
+	if (!ba_region)
+		return -1;
+
+	// NOTE: downloadFile() doesn't use devoptab,
+	// so don't prefix the filename with sdmc:/.
+	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
+		 ba_region, ba_TID);
+	int res = downloadFile(http_url, path, MEDIA_SD_FILE);
+	if (res != 0 && ba_region_fallback != NULL) {
+		// Try the fallback region.
+		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
+			 ba_region_fallback, ba_TID);
+		res = downloadFile(http_url, path, MEDIA_SD_FILE);
+	}
+	return res;
+}
+
+/**
  * Download Slot-1 boxart.
  */
 void downloadSlot1BoxArt(const char* TID)
 {
 	LogFM("Main.downloadSlot1BoxArt", "Checking box art (Slot-1 card).");
 	
-	char path[256];
-	
 	char ba_TID[5];
 	snprintf(ba_TID, sizeof(ba_TID), "%.4s", TID);
 	ba_TID[4] = 0;
 
-	const char *ba_region_fallback = NULL;
-	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
-
-	char http_url[256];
-	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
+	char path[256];
 	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
-	if (access(path, F_OK) == -1) {
-		LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
-
-		int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		if (res != 0 && ba_region_fallback != NULL) {
-			// Try the fallback region.
-			snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
-			res = downloadFile(http_url, path, MEDIA_SD_FILE);
-		}
+	if (!access(path, F_OK)) {
+		// File already exists.
+		return;
 	}
+
+	LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
+	downloadBoxArt_internal(ba_TID);
 }
 
 /**
@@ -447,118 +479,139 @@ void downloadSlot1BoxArt(const char* TID)
  */
 void downloadBoxArt(void)
 {
-	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
-	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
+	char path[256];
 
-	char romsel_counter2fc[16];	// Number of ROMs on the SD card.
-	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
+	// First, check if we're missing any boxart on the SD card.
+	unordered_set<u32> boxart_all_tids;	// Title IDs of all ROM files.
+	vector<u32> boxart_dl_tids;	// Title IDs of boxart to download.
+	boxart_all_tids.reserve(files.size() + fcfiles.size());
+	boxart_dl_tids.reserve(files.size() + fcfiles.size());
+	LogFM("Download.downloadBoxArt", "Checking for missing boxart...");
 
-	LogFM("Main.downloadBoxArt", "Checking box art (SD Card).");
+	// Check if we're missing any boxart for ROMs on the SD card.
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
-		static const char title[] = "Now checking box art if exists (SD Card)...";
-		char romsel_counter1[16];
-		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
-		DialogBoxAppear(title);
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-
+		// Get the title ID from the ROM image.
 		const char *tempfile = files.at(boxartnum).c_str();
-		char path[256];
-		snprintf(path, sizeof(path), "sdmc:/roms/nds/%s", tempfile);
+		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(path, "rb");
+		if (!f_nds_file)
+			continue;
 
 		char ba_TID[5];
 		grabTID(f_nds_file, ba_TID);
 		ba_TID[4] = 0;
 		fclose(f_nds_file);
 
-		const char *ba_region_fallback = NULL;
-		const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
-		if (!ba_region)
+		// Did we already check for this boxart?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, ba_TID, sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
+			// Already checked for this boxart.
 			continue;
-
-		char http_url[256];
-		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID);
-		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
-		if (access(path, F_OK) == -1) {
-			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (SD Card)...");
-			sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-
-			int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-			if (res != 0 && ba_region_fallback != NULL) {
-				// Try the fallback region.
-				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID);
-				res = downloadFile(http_url, path, MEDIA_SD_FILE);
-			}
 		}
+		boxart_all_tids.insert(tid);
+
+		// Does this boxart file already exist?
+		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", ba_TID);
+		if (!access(path, F_OK)) {
+			// Boxart file exists.
+			continue;
+		}
+
+		// Boxart file does not exist. Download it.
+		boxart_dl_tids.push_back(tid);
 	}
 	
-	LogFM("Main.downloadBoxArt", "Checking box art (Flashcard).");
+	// Check if we're missing any boxart for ROMs on the flashcard.
 	for (size_t boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
-		static const char title[] = "Now checking box art if exists (Flashcard)...";
-		char romsel_counter1[16];
-		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", boxartnum+1);
-		DialogBoxAppear(title);
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-
+		// Get the title ID from the INI file.
 		const char *tempfile = fcfiles.at(boxartnum).c_str();
-		char path[256];
-		snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
-
-		CIniFile setfcrompathini( path );
+		CIniFile setfcrompathini(tempfile);
 		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
 		if (ba_TID.size() < 4) {
 			// Invalid TID.
 			continue;
 		}
 
-		const char *ba_region_fallback = NULL;
-		const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
-		if (!ba_region)
+		// Did we already check for this boxart?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, ba_TID.c_str(), sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
+			// Already checked for this boxart.
 			continue;
+		}
+		boxart_all_tids.insert(tid);
 
-		char http_url[256];
-		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region, ba_TID.c_str());
-		snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID.c_str());
-		if (access(path, F_OK) == -1) {
-			LogFMA("Main.downloadBoxArt", "Downloading box art: ", romsel_counter1);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading box art (Flashcard)...");
-			sftd_draw_text(font, 12, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, romsel_counter2fc);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+		// Does this boxart file already exist?
+		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", ba_TID.c_str());
+		if (!access(path, F_OK)) {
+			// Boxart file exists.
+			continue;
+		}
 
-			int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-			if (res != 0 && ba_region_fallback != NULL) {
-				// Try the fallback region.
-				snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png", ba_region_fallback, ba_TID.c_str());
-				res = downloadFile(http_url, path, MEDIA_SD_FILE);
+		// Boxart file does not exist. Download it.
+		boxart_dl_tids.push_back(tid);
+	}
+
+	// Check if we're missing boxart for the Slot-1 cartridge.
+	gamecardPoll(true);
+	const char *const card_gameID = gamecardGetGameID();
+	if (card_gameID) {
+		// Did we already check for this card?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, card_gameID, sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) == boxart_all_tids.end()) {
+			// Boxart wasn't checked yet.
+			boxart_all_tids.insert(tid);
+
+			// Does this boxart file already exist?
+			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", card_gameID);
+			if (access(path, F_OK) != 0) {
+				// Boxart file does not exist. Download it.
+				boxart_dl_tids.push_back(tid);
 			}
 		}
 	}
 
-	LogFM("Main.downloadBoxArt", "Box arts downloaded correctly");
+	if (boxart_dl_tids.empty()) {
+		// No boxart to download.
+		LogFM("Download.downloadBoxArt", "No boxart to download.");
+		return;
+	}
+
+	// Sort the TIDs for convenience purposes.
+	std::sort(boxart_dl_tids.begin(), boxart_dl_tids.end());
+
+	// Download the boxart.
+	char s_boxart_total[12];
+	snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
+	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
+		static const char title[] = "Downloading missing boxart...";
+
+		// Convert the TID back to char.
+		char ba_TID[5];
+		u32 tid = __builtin_bswap32(boxart_dl_tids[boxartnum]);
+		memcpy(ba_TID, &tid, 4);
+		ba_TID[4] = 0;
+
+		// Show the dialog.
+		DialogBoxAppear(title);
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
+		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
+		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+
+		downloadBoxArt_internal(ba_TID);
+	}
 }

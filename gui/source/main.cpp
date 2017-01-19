@@ -55,7 +55,9 @@ sftd_font *font;
 sftd_font *font_b;
 sf2d_texture *dialogboxtex;	// Dialog box
 sf2d_texture *settingslogotex;	// TWLoader logo.
-sf2d_texture *slot1boxarttex = NULL;
+
+static sf2d_texture *slot1boxarttex = NULL;
+static bool slot1boxarttexloaded = false;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -175,9 +177,6 @@ int fadealpha = 255;
 bool fadein = true;
 bool fadeout = false;
 
-// Customizable frontend name.
-std::string name;
-
 static const char* romsel_filename;
 static wstring romsel_filename_w;	// Unicode filename for display.
 static vector<wstring> romsel_gameline;	// from banner
@@ -185,17 +184,18 @@ static vector<wstring> romsel_gameline;	// from banner
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
 
+// These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
 static const std::string fat = "fat:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
-static std::string romfolder;
-static const std::string flashcardfolder = "roms/flashcard/nds/";
-static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons/";
-static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard/";
-static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart/";
-static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard/";
+
+static const char flashcardfolder[] = "sdmc:/roms/flashcard/nds";
+static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
+static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
+static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
+static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 // End
 	
 bool keepsdvalue = false;
@@ -324,16 +324,21 @@ void DialogBoxDisappear(const char *text) {
 /**
  * Create a save file.
  * @param filename Filename.
+ * @return 0 on success; non-zero on error.
  */
-static void CreateGameSave(const char *filename) {
+static int CreateGameSave(const char *filename) {
 	DialogBoxAppear("Creating save file...");
 	static const int BUFFER_SIZE = 4096;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, sizeof(buffer));
 	
 	char nds_path[256];
-	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str() , rom);
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
+	if (!f_nds_file) {
+		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.");
+		return -1;
+	}
 
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
@@ -343,16 +348,20 @@ static void CreateGameSave(const char *filename) {
 	int savesize = 524288;	// 512KB (default size for most games)
 	
 	// Set save size to 1MB for the following games
-	if ( strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-		strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-		strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-		strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
-			savesize = 1048576;
+	if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+	    strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+	    strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+	    strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+	{
+		savesize = 1048576;
+	}
 
 	// Set save size to 32MB for the following games
-	if ( strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-		strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
-			savesize = 1048576*32;
+	if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+	    strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+	{
+		savesize = 1048576*32;
+	}
 
 	FILE *pFile = fopen(filename, "wb");
 	if (pFile) {
@@ -363,6 +372,7 @@ static void CreateGameSave(const char *filename) {
 	}
 
 	DialogBoxDisappear("Done!");
+	return 0;
 }
 
 /**
@@ -461,12 +471,14 @@ static void LoadBNRIcon(void) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
+		bnricontex[idx] = NULL;
 		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
 		if (ndsFile[idx]) {
 			bnricontex[idx] = grabIcon(ndsFile[idx]);
 			fclose(ndsFile[idx]);
 			ndsFile[idx] = NULL;
-		} else {
+		}
+		if (!bnricontex[idx]) {
 			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
 			bnricontex[idx] = grabIcon(f_nobnr);
 			fclose(f_nobnr);
@@ -482,10 +494,11 @@ static void LoadBNRIcon(void) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontexlaunch);
+		bnricontexlaunch = NULL;
 		if (ndsFile[idx]) {
 			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
-			fclose(ndsFile[idx]);
-		} else {
+		}
+		if (!bnricontexlaunch) {
 			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
 			bnricontexlaunch = grabIcon(f_nobnr);
 			fclose(f_nobnr);
@@ -534,11 +547,11 @@ static void SaveBootstrapConfig(void)
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+rom);
 			if (gbarunnervalue == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+sav);
 				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav.c_str());
+				snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
 				if (access(path, F_OK) == -1) {
 					// Create a save file if it doesn't exist
 					CreateGameSave(path);
@@ -733,6 +746,34 @@ static inline sf2d_texture *carttex(void)
 	}
 }
 
+/**
+ * Load the boxart for the Slot-1 cartridge.
+ */
+static void loadSlot1BoxArt(void)
+{
+	sf2d_free_texture(slot1boxarttex);
+	const char *gameID = gamecardGetGameID();
+	if (gameID) {
+		if (checkWifiStatus()) {
+			downloadSlot1BoxArt(gameID);
+		}
+		char path[256];
+		// example: ASME.png
+		LogFMA("Main", "Loading Slot-1 box art", gameID);
+		snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
+		if (access(path, F_OK) != -1) {
+			slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
+		} else {
+			slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
+		}
+		LogFMA("Main", "Done loading Slot-1 box art", gameID);
+	} else {
+		// No cartridge, or unrecognized cartridge.
+		slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
+	}
+	slot1boxarttexloaded = true;
+}
+
 int main()
 {
 	aptInit();
@@ -769,7 +810,6 @@ int main()
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
-	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
@@ -872,20 +912,23 @@ int main()
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 	
-	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
-	romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
-	// Use default folder if none is specified
-	if (romfolder == "") {
-		mkdir("sdmc:/roms/nds", 0777);	// make folder if it doesn't exist
-		romfolder = "roms/nds/";
+	// Use default directory if none is specified
+	char folder_path[256];
+	if (settings.ui.romfolder.empty()) {
+		settings.ui.romfolder = "roms/nds";
+		// Make sure the directory exists.
+		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
+		mkdir(folder_path, 0777);
+	} else {
+		// Use the custom ROMs directory.
+		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
 	}
 
 	// Scan the ROMs directory for ".nds" files.
-	char folder_path[256];
-	snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", romfolder.c_str());
 	scan_dir_for_files(folder_path, ".nds", files);
 	
 	// Scan the flashcard directory for configuration files.
+	// TODO: Customizable location based on romfolder?
 	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
@@ -899,7 +942,8 @@ int main()
 		downloadBoxArt();
 	}
 
-	// Cache banner data
+	// Cache banner data for ROMs on the SD card.
+	// TODO: Re-cache if it's 0 bytes?
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
@@ -917,8 +961,10 @@ int main()
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
-		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
+		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
+		if (!f_nds_file)
+			continue;
 		cacheBanner(f_nds_file, tempfile, font);
 		fclose(f_nds_file);
 	}
@@ -958,7 +1004,6 @@ int main()
 	bool bannertextloaded = false;
 	bool bnricontexloaded = false;
 	bool boxarttexloaded = false;
-	bool slot1boxarttexloaded = false;
 
 	// bool updatebotscreen = true;
 	bool screenmodeswitch = false;
@@ -1078,7 +1123,7 @@ int main()
 					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
 						if (bnriconnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
 								StoreBNRIconPath(path);
 							} else {
@@ -1105,8 +1150,13 @@ int main()
 					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
 						if (boxartnum < (int)files.size()) {
 							const char *tempfile = files.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
+							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
+							if (!f_nds_file) {
+								// Can't open the NDS file.
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								continue;
+							}
 
 							char ba_TID[5];
 							grabTID(f_nds_file, ba_TID);
@@ -1114,12 +1164,12 @@ int main()
 							fclose(f_nds_file);
 
 							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
 								// example: ASME.png
-								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
 								if (access(path, F_OK) != -1) {
 									StoreBoxArtPath(path);
 								} else {
@@ -1136,24 +1186,30 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for(boxartnum = pagenum*20; boxartnum < 20+pagenum*20; boxartnum++) {
-						if (boxartnum < fcfiles.size()) {
+					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						if (boxartnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(boxartnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
 
 							CIniFile setfcrompathini( path );
-							std::string	ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+							std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+							if (ba_TIDini.size() < 4) {
+								// TID is too short.
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								continue;
+							}
+
 							char ba_TID[5];
 							strcpy(ba_TID, ba_TIDini.c_str());
 							ba_TID[4] = 0;
 
 							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s%s.png", fcboxartfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
 								// example: ASME.png
-								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
 								if (access(path, F_OK) != -1) {
 									StoreBoxArtPath(path);
 								} else {
@@ -1175,27 +1231,7 @@ int main()
 			}
 			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
 				// Load the boxart for the Slot-1 cartridge.
-				sf2d_free_texture(slot1boxarttex);
-				const char *gameID = gamecardGetGameID();
-				if (gameID) {
-					if (checkWifiStatus()) {
-						downloadSlot1BoxArt(gameID);
-					}
-					char path[256];
-					// example: ASME.png
-					LogFMA("Main", "Loading Slot-1 box art", gameID);
-					snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, gameID);
-					if (access(path, F_OK) != -1) {
-						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
-					} else {
-						slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
-					}
-					LogFMA("Main", "Done loading Slot-1 box art", gameID);
-				} else {
-					// No cartridge, or unrecognized cartridge.
-					slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
-				}
-				slot1boxarttexloaded = true;
+				loadSlot1BoxArt();
 			}
 
 			if (!musicbool) {
@@ -1260,8 +1296,8 @@ int main()
 
 				draw_volume_slider(voltex);
 				sf2d_draw_texture(batteryIcon, 371, 2);
-				if (!name.empty()) {
-					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+				if (!settings.ui.name.empty()) {
+					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 				}
 				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
@@ -1332,7 +1368,7 @@ int main()
 					fadeout = false;
 					fadein = true;
 
-					// Poll for Slot 1 changes.
+					// Poll for Slot-1 changes.
 					gamecardPoll(true);
 
 					// Force boxart and banner text reloads
@@ -1550,7 +1586,7 @@ int main()
 					applaunchprep = false;
 				} else {
 					if (settings.twl.forwarder) {
-						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
+						CIniFile setfcrompathini(flashcardfolder+slashchar+rom);
 						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						// TODO: Enum values for flash card type.
 						if (keepsdvalue) {
@@ -1716,7 +1752,7 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
@@ -1725,7 +1761,7 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									snprintf(path, sizeof(path), "%s%s.bin", bnriconfolder, romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 								}
 
 								if (access(path, F_OK) == -1) {
@@ -1734,8 +1770,15 @@ int main()
 								}
 								bnriconnum = cursorPosition;
 								FILE *f_bnr = fopen(path, "rb");
-								romsel_gameline = grabText(f_bnr, language);
-								fclose(f_bnr);
+								if (f_bnr) {
+									romsel_gameline = grabText(f_bnr, language);
+									fclose(f_bnr);
+								} else {
+									// Unable to open the banner file.
+									romsel_gameline.clear();
+									romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+									romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+								}
 								bannertextloaded = true;
 							}
 						}
@@ -1810,7 +1853,7 @@ int main()
 						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
 
 						if (!settings.twl.forwarder) {
-							// Poll for Slot 1 changes.
+							// Poll for Slot-1 changes.
 							bool s1chg = gamecardPoll(false);
 							if (s1chg) {
 								if (cursorPosition == -1) {
@@ -2034,6 +2077,16 @@ int main()
 								sfx_switch->play();
 							}
 							// updatebotscreen = true;
+
+							if (!settings.twl.forwarder) {
+								// Poll for Slot-1 changes.
+								gamecardPoll(true);
+								// Load the Slot-1 boxart.
+								// NOTE: This is needed here; otherwise, the
+								// boxart won't be visible for a few frames
+								// when switching from flashcard to SD.
+								loadSlot1BoxArt();
+							}
 						}
 					}
 					if (!noromsfound && file_count == 0) {
