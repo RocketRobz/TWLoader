@@ -26,9 +26,6 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern u8 language;
 
-// Customizable frontend name.
-extern std::string name;
-
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -45,8 +42,6 @@ extern bool fadeout;
 
 extern sf2d_texture *settingslogotex;	// TWLoader logo.
 extern char settings_vertext[13];
-
-extern string name;
 
 extern bool keepsdvalue;
 extern int gbarunnervalue;
@@ -269,7 +264,7 @@ void settingsDrawTopScreen(void)
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
-		sftd_draw_text(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+		sftd_draw_text(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
@@ -1036,7 +1031,9 @@ void LoadBottomImage() {
  */
 void LoadSettings(void) {
 	// UI settings.
-	name = settingsini.GetString("FRONTEND", "NAME", "");
+	settings.ui.name = settingsini.GetString("FRONTEND", "NAME", "");
+	settings.ui.romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
+	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);

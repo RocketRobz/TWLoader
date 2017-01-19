@@ -2,6 +2,8 @@
 #ifndef TWLOADER_SETTINGS_H
 #define TWLOADER_SETTINGS_H
 
+#include <string>
+
 // Textures.
 #include <sf2d.h>
 extern sf2d_texture *settingstex;
@@ -40,6 +42,9 @@ typedef struct _Settings_t {
 
 	// TODO: Use int8_t instead of int?
 	struct {
+		std::string name;
+		std::string romfolder;
+
 		int language;	// Language. (0-11; other for system)
 		int color;
 		int menucolor;

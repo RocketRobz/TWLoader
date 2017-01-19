@@ -154,9 +154,6 @@ int fadealpha = 255;
 bool fadein = true;
 bool fadeout = false;
 
-// Customizable frontend name.
-std::string name;
-
 static const char* romsel_filename;
 static wstring romsel_filename_w;	// Unicode filename for display.
 static vector<wstring> romsel_gameline;	// from banner
@@ -169,12 +166,11 @@ static const std::string fat = "fat:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
-static std::string romfolder;
-static const std::string flashcardfolder = "roms/flashcard/nds/";
-static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons/";
-static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard/";
-static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart/";
-static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard/";
+static const std::string flashcardfolder = "roms/flashcard/nds";
+static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
+static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
+static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
+static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 // End
 	
 bool keepsdvalue = false;
@@ -311,7 +307,7 @@ static void CreateGameSave(const char *filename) {
 	memset(buffer, 0, sizeof(buffer));
 	
 	char nds_path[256];
-	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str() , rom);
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
@@ -511,11 +507,11 @@ static void SaveBootstrapConfig(void)
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+romfolder+rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+rom);
 			if (gbarunnervalue == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+romfolder+sav);
+				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+sav);
 				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), sav.c_str());
+				snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
 				if (access(path, F_OK) == -1) {
 					// Create a save file if it doesn't exist
 					CreateGameSave(path);
@@ -847,20 +843,23 @@ int main()
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 	
-	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
-	romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
-	// Use default folder if none is specified
-	if (romfolder == "") {
-		mkdir("sdmc:/roms/nds", 0777);	// make folder if it doesn't exist
-		romfolder = "roms/nds/";
+	// Use default directory if none is specified
+	char folder_path[256];
+	if (settings.ui.romfolder.empty()) {
+		settings.ui.romfolder = "roms/nds";
+		// Make sure the directory exists.
+		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
+		mkdir(folder_path, 0777);
+	} else {
+		// Use the custom ROMs directory.
+		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
 	}
 
 	// Scan the ROMs directory for ".nds" files.
-	char folder_path[256];
-	snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", romfolder.c_str());
 	scan_dir_for_files(folder_path, ".nds", files);
 	
 	// Scan the flashcard directory for configuration files.
+	// TODO: Customizable location based on romfolder?
 	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
@@ -892,7 +891,7 @@ int main()
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
-		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
+		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		cacheBanner(f_nds_file, tempfile, font);
 		fclose(f_nds_file);
@@ -1026,7 +1025,7 @@ int main()
 					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
 						if (bnriconnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
 								StoreBNRIconPath(path);
 							} else {
@@ -1053,7 +1052,7 @@ int main()
 					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
 						if (boxartnum < (int)files.size()) {
 							const char *tempfile = files.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/%s%s", romfolder.c_str(), tempfile);
+							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 							FILE *f_nds_file = fopen(path, "rb");
 
 							char ba_TID[5];
@@ -1062,12 +1061,12 @@ int main()
 							fclose(f_nds_file);
 
 							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s%s.png", boxartfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
 								// example: ASME.png
-								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
 								if (access(path, F_OK) != -1) {
 									StoreBoxArtPath(path);
 								} else {
@@ -1096,12 +1095,12 @@ int main()
 							ba_TID[4] = 0;
 
 							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s%s.png", fcboxartfolder, tempfile);
+							snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
 							if (access(path, F_OK ) != -1 ) {
 								StoreBoxArtPath(path);
 							} else {
 								// example: ASME.png
-								snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, ba_TID);
+								snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
 								if (access(path, F_OK) != -1) {
 									StoreBoxArtPath(path);
 								} else {
@@ -1132,7 +1131,7 @@ int main()
 					char path[256];
 					// example: ASME.png
 					LogFMA("Main", "Loading Slot-1 box art", gameID);
-					snprintf(path, sizeof(path), "%s%.4s.png", boxartfolder, gameID);
+					snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
 					if (access(path, F_OK) != -1) {
 						slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 					} else {
@@ -1208,8 +1207,8 @@ int main()
 
 				draw_volume_slider(voltex);
 				sf2d_draw_texture(batteryIcon, 371, 2);
-				if (!name.empty()) {
-					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, name.c_str());
+				if (!settings.ui.name.empty()) {
+					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 				}
 				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
@@ -1664,7 +1663,7 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									snprintf(path, sizeof(path), "%s%s.bin", fcbnriconfolder, romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
 									if (files.size() != 0) {
 										romsel_filename = files.at(storedcursorPosition).c_str();
@@ -1673,7 +1672,7 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									snprintf(path, sizeof(path), "%s%s.bin", bnriconfolder, romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 								}
 
 								if (access(path, F_OK) == -1) {
@@ -2202,7 +2201,7 @@ int main()
 					} else if (hDown & KEY_SELECT) {
 						if (titleboxXmovetimer == 0) {
 							titleboxXmovetimer = 1;
-							romfolder = "_nds/";
+							settings.ui.romfolder = "_nds/";
 							rom = "GBARunner2.nds";
 							if (settings.twl.forwarder) {
 								settings.twl.launchslot1 = true;
