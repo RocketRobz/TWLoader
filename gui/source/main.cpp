@@ -161,12 +161,14 @@ static vector<wstring> romsel_gameline;	// from banner
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
 
+// These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
 static const std::string fat = "fat:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
-static const std::string flashcardfolder = "roms/flashcard/nds";
+
+static const char flashcardfolder[] = "sdmc:/roms/flashcard/nds";
 static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
 static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
 static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
@@ -1520,7 +1522,7 @@ int main()
 					applaunchprep = false;
 				} else {
 					if (settings.twl.forwarder) {
-						CIniFile setfcrompathini( sdmc+flashcardfolder+rom );
+						CIniFile setfcrompathini(flashcardfolder+slashchar+rom);
 						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						// TODO: Enum values for flash card type.
 						if (keepsdvalue) {
