@@ -557,6 +557,28 @@ void downloadBoxArt(void)
 		boxart_dl_tids.push_back(tid);
 	}
 
+	// Check if we're missing boxart for the Slot-1 cartridge.
+	gamecardPoll(true);
+	const char *const card_gameID = gamecardGetGameID();
+	if (card_gameID) {
+		// Did we already check for this card?
+		// NOTE: Storing byteswapped in order to sort correctly.
+		u32 tid;
+		memcpy(&tid, card_gameID, sizeof(tid));
+		tid = __builtin_bswap32(tid);
+		if (boxart_all_tids.find(tid) == boxart_all_tids.end()) {
+			// Boxart wasn't checked yet.
+			boxart_all_tids.insert(tid);
+
+			// Does this boxart file already exist?
+			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", card_gameID);
+			if (access(path, F_OK) != 0) {
+				// Boxart file does not exist. Download it.
+				boxart_dl_tids.push_back(tid);
+			}
+		}
+	}
+
 	if (boxart_dl_tids.empty()) {
 		// No boxart to download.
 		LogFM("Download.downloadBoxArt", "No boxart to download.");
