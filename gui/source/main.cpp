@@ -36,7 +36,7 @@ using std::vector;
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
-bool is3DSX = true;
+bool is3DSX = false;
 
 
 touchPosition touch;
@@ -203,6 +203,9 @@ static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 	
 bool keepsdvalue = false;
 int gbarunnervalue = 0;
+
+u64 applaunch_tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
+int applaunch_mediatype = MEDIATYPE_NAND;
 
 
 static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
@@ -725,7 +728,7 @@ static void rfhm_callback(APT_HookType hook, void *param)
 static sf2d_texture *cartnulltex = NULL;
 static sf2d_texture *cartntrtex = NULL;
 static sf2d_texture *carttwltex = NULL;
-//static sf2d_texture *cartctrtex = NULL;	// TODO
+static sf2d_texture *cartctrtex = NULL;
 
 /**
  * Determine the 3DS cartridge texture to use for Slot-1.
@@ -745,6 +748,10 @@ static inline sf2d_texture *carttex(void)
 
 		case CARD_TYPE_TWL_ONLY:
 			return carttwltex;
+			break;
+			
+		case CARD_TYPE_CTR:
+			return cartctrtex;
 			break;
 	}
 }
@@ -793,7 +800,10 @@ int main()
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(0);
 
-	settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on top screen
+	if(is3DSX)
+		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo.png", SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
+	else
+		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on top screen
 
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
@@ -879,6 +889,7 @@ int main()
 	cartnulltex = sfil_load_PNG_file("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
 	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
+	cartctrtex = sfil_load_PNG_file("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // TWL cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
@@ -1417,8 +1428,7 @@ int main()
 								break;
 							}
 						}
-					} else
-						run = false;
+					}
 					SaveSettings();
 					SaveBootstrapConfig();
 					screenoff();
@@ -2124,12 +2134,6 @@ int main()
 						}
 					} else if(hDown & KEY_A){
 						menuaction_launch = true;
-					} else if(hDown & KEY_B && is3DSX){
-						fadeout = true;
-						if (dspfirmfound) {
-							bgm_menu->stop();
-							sfx_back->play();
-						}
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
 						//titleboxXmovepos -= 64;
 						if (!titleboxXmoveleft) {
@@ -2240,6 +2244,10 @@ int main()
 											keepsdvalue = true;
 											rom = "_nds/twloader.nds";
 										}
+										// if (gamecardGetType() == CARD_TYPE_TWL_ENH || gamecardGetType() == CARD_TYPE_TWL_ONLY) {
+										// 	applaunch_tid = 0x00048005544F4F42ULL;
+										// 	applaunch_mediatype = MEDIATYPE_GAME_CARD;
+										// }
 										applaunchprep = true;
 									}
 								} else {
@@ -2373,14 +2381,13 @@ int main()
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			settingsMoveCursor(hDown);
 		}
-
+		
 		while(applaunchon){
 			// Prepare for the app launch
-			APT_PrepareToDoApplicationJump(0, 0x0004800554574C44ULL, MEDIATYPE_NAND); // TWLNAND side's title ID
 			// TODO: Launch TWL carts directly.
 			// Note that APT_PrepareToDoApplicationJump() doesn't
 			// seem to work right with NTR/TWL carts...
-			// APT_PrepareToDoApplicationJump(0, 0x0000000000000000ULL, MEDIATYPE_GAME_CARD);
+			APT_PrepareToDoApplicationJump(0, applaunch_tid, applaunch_mediatype);
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
 		}
