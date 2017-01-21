@@ -942,10 +942,10 @@ int main()
 	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
-	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
+	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 	
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
-	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
 
 	// Download box art
 	if (checkWifiStatus()) {

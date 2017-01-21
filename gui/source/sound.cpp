@@ -8,12 +8,13 @@ sound::sound(string path, int channel, bool toloop)
 	ndspSetOutputMode(NDSP_OUTPUT_STEREO);
 	ndspSetOutputCount(2); // Num of buffers
 
-						   // Reading wav file
+	// Reading wav file
 	FILE* fp = fopen(path.c_str(), "rb");
 
 	if (!fp)
 	{
 		printf("Could not open the example.wav file.\n");
+		return;
 	}
 	char signature[4];
 
@@ -26,6 +27,7 @@ sound::sound(string path, int channel, bool toloop)
 	{
 		printf("Wrong file format.\n");
 		fclose(fp);
+		return;
 	}
 
 	fseek(fp, 0, SEEK_END);
@@ -42,14 +44,11 @@ sound::sound(string path, int channel, bool toloop)
 	{
 		printf("Corrupted wav file.\n");
 		fclose(fp);
+		return;
 	}
 
 	// Allocating and reading samples
 	data = static_cast<u8*>(linearAlloc(dataSize));
-	fseek(fp, 44, SEEK_SET);
-	fread(data, 1, dataSize, fp);
-	fclose(fp);
-
 	fseek(fp, 44, SEEK_SET);
 	fread(data, 1, dataSize, fp);
 	fclose(fp);
@@ -102,12 +101,15 @@ sound::~sound()
 
 void sound::play()
 {
+	if (!data)
+		return;
 	DSP_FlushDataCache(data, dataSize);
-
 	ndspChnWaveBufAdd(chnl, &waveBuf);
 }
 
 void sound::stop()
 {
+	if (!data)
+		return;
 	ndspChnWaveBufClear(chnl);
 }
