@@ -106,16 +106,16 @@ const char* musicpath = "romfs:/null.wav";
 // Shoulder buttons.
 sf2d_texture *shoulderLtex = NULL;
 sf2d_texture *shoulderRtex = NULL;
-sf2d_texture *shoulderYtex = NULL;
-sf2d_texture *shoulderXtex = NULL;
+// sf2d_texture *shoulderYtex = NULL;
+// sf2d_texture *shoulderXtex = NULL;
 
 const char* Lshouldertext = "";
 const char* Rshouldertext = "";
 
 int LshoulderYpos = 220;
 int RshoulderYpos = 220;
-int YbuttonYpos = 220;
-int XbuttonYpos = 220;
+// int YbuttonYpos = 220;
+// int XbuttonYpos = 220;
 
 
 // Sound effects.
@@ -588,6 +588,70 @@ static void SaveBootstrapConfig(void)
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
+/**
+ * Load per-game settings.
+ */
+static void LoadPerGameSettings(void)
+{
+	std::string inifilename;
+	if (!settings.twl.forwarder)
+		inifilename = ReplaceAll(rom, ".nds", ".ini");
+	else {
+		char path[256];
+		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
+		inifilename = path;
+	}
+	char path[256];
+	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/gamesettings/%s", inifilename.c_str());
+	CIniFile gamesettingsini(path);
+	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", 0);
+	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", 0);
+	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, 0);
+
+	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
+}
+
+/**
+ * Update per-game settings.
+ */
+static void SavePerGameSettings(void)
+{
+	std::string inifilename;
+	if (!settings.twl.forwarder)
+		inifilename = ReplaceAll(rom, ".nds", ".ini");
+	else {
+		char path[256];
+		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
+		inifilename = path;
+	}
+	char path[256];
+	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/gamesettings/%s", inifilename.c_str());
+	CIniFile gamesettingsini(path);
+	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
+	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
+	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
+	gamesettingsini.SaveIniFile(path);
+	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
+}
+
+/**
+ * Set per-game settings file.
+ */
+static void SetPerGameSettings(void)
+{
+	std::string inifilename;
+	if (!settings.twl.forwarder)
+		inifilename = ReplaceAll(rom, ".nds", ".ini");
+	else {
+		char path[256];
+		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
+		inifilename = path;
+	}
+	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
+	settingsini.SetString("TWL-MODE", "GAMESETTINGS_FILE", inifilename);
+	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
+}
+
 bool dspfirmfound = false;
 static sf2d_texture *voltex[5] = { };
 
@@ -987,7 +1051,7 @@ int main()
 	}
 
 	if (checkWifiStatus()) {
-		if (settings.ui.autodl && (checkUpdate() == 0)) {
+		if (settings.ui.autodl && (checkUpdate() == 0) && !is3DSX) {
 			DownloadTWLoaderCIAs();
 		}
 
@@ -1300,10 +1364,25 @@ int main()
 						}
 					}
 				} else {
-					int text_width = sftd_get_text_width(font, 12, noromtext1);
-					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-					text_width = sftd_get_text_width(font, 12, noromtext2);
-					sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+					if (!settings.romselect.toplayout) {
+						boxartXpos = 136;
+						if (!settings.twl.forwarder && pagenum == 0) {
+							sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+						} else {
+							int text_width = sftd_get_text_width(font, 12, noromtext1);
+							sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+							text_width = sftd_get_text_width(font, 12, noromtext2);
+							sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+						}
+					} else {
+						if (settings.twl.forwarder && pagenum == 0) {
+							int text_width = sftd_get_text_width(font, 12, noromtext1);
+							sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
+							text_width = sftd_get_text_width(font, 12, noromtext2);
+							sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+						}
+					}
 				}
 				if (settings.ui.topborder) {
 					sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
@@ -1434,6 +1513,7 @@ int main()
 						}
 					}
 					SaveSettings();
+					SetPerGameSettings();
 					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
@@ -1674,6 +1754,7 @@ int main()
 						}
 					}
 					SaveSettings();
+					SetPerGameSettings();
 					SaveBootstrapConfig();
 					screenoff();
 					if (settings.twl.rainbowled)
@@ -2127,16 +2208,16 @@ int main()
 			} else { */
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
+				if (!noromsfound && file_count == 0) {
+					// No ROMs were found.
+					cursorPosition = -1;
+					storedcursorPosition = cursorPosition;
+					titleboxXmovepos = +64;
+					boxartXmovepos = 0;
+					// updatebotscreen = true;
+					noromsfound = true;
+				}
 				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
-					if (!noromsfound && file_count == 0) {
-						// No ROMs were fonud.
-						cursorPosition = -1;
-						storedcursorPosition = cursorPosition;
-						titleboxXmovepos = +64;
-						boxartXmovepos = 0;
-						// updatebotscreen = true;
-						noromsfound = true;
-					}
 					if(hDown & KEY_R) {
 						menuaction_nextpage = true;
 					} else if(hDown & KEY_L) {
@@ -2381,6 +2462,12 @@ int main()
 						}
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 						if (hDown & KEY_START) {
+							if (settings.twl.forwarder) {
+								rom = fcfiles.at(cursorPosition).c_str();
+							} else {
+								rom = files.at(cursorPosition).c_str();
+							}
+							SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
 						} else if (hDown & KEY_RIGHT && gamesettings_cursorPosition != 1 && gamesettings_cursorPosition != 2) {
 							gamesettings_cursorPosition++;
@@ -2419,6 +2506,12 @@ int main()
 									break;
 							}
 						} else if (hDown & KEY_B) {
+							if (settings.twl.forwarder) {
+								rom = fcfiles.at(cursorPosition).c_str();
+							} else {
+								rom = files.at(cursorPosition).c_str();
+							}
+							SavePerGameSettings();
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
 							menu_ctrlset = CTRL_SET_GAMESEL;
@@ -2503,8 +2596,6 @@ int main()
 
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
-	sf2d_free_texture(shoulderYtex);
-	sf2d_free_texture(shoulderXtex);
 
 	sf2d_free_texture(batterychrgtex);
 	for (int i = 0; i < 6; i++) {
