@@ -606,8 +606,8 @@ void downloadBoxArt(void)
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
-		sftd_draw_text(font, 31, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 36, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
+		sftd_draw_text(font, 39, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 44, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
 		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
