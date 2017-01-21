@@ -5,6 +5,8 @@
 #include <malloc.h>
 
 #include <string>
+#include <vector>
+using std::vector;
 using std::wstring;
 
 /** UTF-16 **/
@@ -84,6 +86,73 @@ wstring utf16_to_wstring(const u16 *str)
 	// Resize the string to trim extra spaces.
 	wstr.resize(size);
 	return wstr;
+}
+
+/**
+ * Convert a UTF-16 string with newlines to a vector of wstrings.
+ * @param str UTF-16 string with newlines.
+ * @param len Length of str.
+ * @return vector<wstring>, split on newline boundaries.
+ */
+vector<wstring> utf16_nl_to_vwstring(const u16 *str, int len)
+{
+	// Buffers for the strings.
+	// Assuming wchar_t is 32-bit.
+	static_assert(sizeof(wchar_t) == 4, "wchar_t is not 32-bit.");
+	vector<wstring> vec_wstr;
+	vec_wstr.reserve(3);
+	wstring wstr;
+	wstr.reserve(64);
+
+	for (; *str != 0 && len > 0; str++, len--) {
+		// Convert the UTF-16 character to UTF-32.
+		// Special handling is needed only for surrogate pairs.
+		// (TODO: Test surrogate pair handling.)
+		if ((*str & 0xFC00) == 0xD800) {
+			// High surrogate. (0xD800-0xDBFF)
+			if (len > 2 && (str[1] & 0xFC00) == 0xDC00) {
+				// Low surrogate. (0xDC00-0xDFFF)
+				// Recombine to get the actual character.
+				wchar_t wchr = 0x10000;
+				wchr += ((str[0] & 0x3FF) << 10);
+				wchr +=  (str[1] & 0x3FF);
+				wstr += wchr;
+				// Make sure we don't process the low surrogate
+				// on the next iteration.
+				str++;
+				len--;
+			} else {
+				// Unpaired high surrogate.
+				wstr += (wchar_t)(0xFFFD);
+			}
+		} else if ((*str & 0xFC00) == 0xDC00) {
+			// Unpaired low surrogate.
+			wstr += (wchar_t)(0xFFFD);
+		} else {
+			// Standard UTF-16 character.
+			switch (*str) {
+				case L'\r':
+					// Skip carriage returns.
+					break;
+				case L'\n':
+					// Newline.
+					vec_wstr.push_back(wstr);
+					wstr.clear();
+					break;
+				default:
+					// Add the character.
+					wstr += *str;
+					break;
+			}
+		}
+	}
+
+	// Add the last line if it's not empty.
+	if (!wstr.empty()) {
+		vec_wstr.push_back(wstr);
+	}
+
+	return vec_wstr;
 }
 
 /**

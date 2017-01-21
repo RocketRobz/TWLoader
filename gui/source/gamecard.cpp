@@ -220,14 +220,19 @@ static void gamecardCacheCTR(void)
 		}
 	}
 
-	// Make sure the banners are NULL-terminated.
-	smdh->titles[lang].shortDescription[0x40-1] = 0;
-	smdh->titles[lang].longDescription[0x80-1] = 0;
-	smdh->titles[lang].publisher[0x40-1] = 0;
+	// Check which description to use.
+	const u16 *desc;
+	if (smdh->titles[lang].longDescription[0]) {
+		// Use the long description.
+		card_text = utf16_nl_to_vwstring(smdh->titles[lang].longDescription, 128);
+	} else {
+		// Use the short description.
+		card_text = utf16_nl_to_vwstring(smdh->titles[lang].shortDescription, 64);
+	}
 
-	// Convert the lines.
-	// FIXME: longDescription might have a newline.
-	card_text.push_back(utf16_to_wstring(smdh->titles[lang].longDescription));
+	// Add the publisher.
+	// TODO: Make sure we don't have more than two lines here.
+	smdh->titles[lang].publisher[0x40-1] = 0;
 	card_text.push_back(utf16_to_wstring(smdh->titles[lang].publisher));
 	free(smdh);
 
