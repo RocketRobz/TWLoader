@@ -1,8 +1,13 @@
 #include "sound.h"
 
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
+#include <string>
+using std::string;
 
-sound::sound(string path, int channel, bool toloop)
+sound::sound(const string& path, int channel, bool toloop)
 {
 
 	ndspSetOutputMode(NDSP_OUTPUT_STEREO);

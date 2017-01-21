@@ -28,6 +28,7 @@
 #include <vector>
 using std::string;
 using std::vector;
+using std::wstring;
 
 #include "sound.h"
 #include "inifile.h"
