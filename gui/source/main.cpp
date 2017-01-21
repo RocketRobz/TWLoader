@@ -1726,8 +1726,13 @@ int main()
 									const char *productCode = gamecardGetProductCode();
 									if (!romsel_gameline.empty() && productCode) {
 										// Display the product code and revision.
+										// FIXME: Figure out a way to get the revision for CTR cards.
 										char buf[48];
-										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										if (gamecardGetType() != CARD_TYPE_CTR) {
+											snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										} else {
+											snprintf(buf, sizeof(buf), "Slot-1: %s", productCode);
+										}
 										romsel_filename_w = latin1_to_wstring(buf);
 									} else {
 										romsel_filename_w.clear();
