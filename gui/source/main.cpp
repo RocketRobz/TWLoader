@@ -28,6 +28,7 @@
 #include <vector>
 using std::string;
 using std::vector;
+using std::wstring;
 
 #include "sound.h"
 #include "inifile.h"
@@ -203,9 +204,6 @@ static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 	
 bool keepsdvalue = false;
 int gbarunnervalue = 0;
-
-u64 applaunch_tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
-int applaunch_mediatype = MEDIATYPE_NAND;
 
 
 static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
@@ -695,7 +693,7 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[])
 	u8 batteryChargeState = 0;
 	u8 batteryLevel = 0;
 	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
-		batteryIcon = batterychrgtex;
+		batteryIcon = texchrg;
 	} else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
 		switch (batteryLevel) {
 			case 5: {
@@ -862,7 +860,7 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
-	
+
 	sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(0);
@@ -1013,10 +1011,10 @@ int main()
 	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
-	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%d", files.size());
+	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 	
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
-	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%d", fcfiles.size());
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
 
 	// Download box art
 	if (checkWifiStatus()) {
@@ -1116,14 +1114,8 @@ int main()
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
 
-	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
-	u8 param[0x300];
-	u8 hmac[0x20];
-	// Clear both buffers
-	memset(param, 0, sizeof(param));
-	memset(hmac, 0, sizeof(hmac));
-	
 	// Loop as long as the status is not exit
+	bool saveOnExit = true;
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
@@ -1512,12 +1504,6 @@ int main()
 							}
 						}
 					}
-					SaveSettings();
-					SetPerGameSettings();
-					SaveBootstrapConfig();
-					screenoff();
-					if (settings.twl.rainbowled)
-						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
@@ -1753,12 +1739,6 @@ int main()
 							}
 						}
 					}
-					SaveSettings();
-					SetPerGameSettings();
-					SaveBootstrapConfig();
-					screenoff();
-					if (settings.twl.rainbowled)
-						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
@@ -1830,8 +1810,13 @@ int main()
 									const char *productCode = gamecardGetProductCode();
 									if (!romsel_gameline.empty() && productCode) {
 										// Display the product code and revision.
+										// FIXME: Figure out a way to get the revision for CTR cards.
 										char buf[48];
-										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										if (gamecardGetType() != CARD_TYPE_CTR) {
+											snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+										} else {
+											snprintf(buf, sizeof(buf), "Slot-1: %s", productCode);
+										}
 										romsel_filename_w = latin1_to_wstring(buf);
 									} else {
 										romsel_filename_w.clear();
@@ -2159,10 +2144,7 @@ int main()
 					updatebotscreen = true;
 				} else if(hDown & KEY_A){
 					settings.twl.launchslot1 = false;
-					screenoff();
 					rom = files.at(cursorPosition).c_str();
-					SaveSettings();
-					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if(hDown & KEY_DOWN){
@@ -2195,9 +2177,6 @@ int main()
 					updatebotscreen = true;
 				} else if(hDown & KEY_X) {
 					settings.twl.launchslot1 = true;
-					screenoff();
-					SaveSettings();
-					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
@@ -2368,10 +2347,6 @@ int main()
 											keepsdvalue = true;
 											rom = "_nds/twloader.nds";
 										}
-										// if (gamecardGetType() == CARD_TYPE_TWL_ENH || gamecardGetType() == CARD_TYPE_TWL_ONLY) {
-										// 	applaunch_tid = 0x00048005544F4F42ULL;
-										// 	applaunch_mediatype = MEDIATYPE_GAME_CARD;
-										// }
 										applaunchprep = true;
 									}
 								} else {
@@ -2557,14 +2532,55 @@ int main()
 			settingsMoveCursor(hDown);
 		}
 		
-		while(applaunchon){
-			// Prepare for the app launch
-			// TODO: Launch TWL carts directly.
-			// Note that APT_PrepareToDoApplicationJump() doesn't
-			// seem to work right with NTR/TWL carts...
-			APT_PrepareToDoApplicationJump(0, applaunch_tid, applaunch_mediatype);
+		if (applaunchon) {
+			// Save settings.
+			saveOnExit = false;
+			SaveSettings();
+      SetPerGameSettings();
+			SaveBootstrapConfig();
+
+			// Prepare for the app launch.
+			u64 tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
+			FS_MediaType mediaType = MEDIATYPE_NAND;
+			bool switchToTwl = true;
+
+			if (!settings.twl.forwarder && settings.twl.launchslot1) {
+				// CTR cards should be launched directly.
+				// TODO: TWL cards should also be launched directly,
+				// but APT_PrepareToDoApplicationJump() ends up
+				// rebooting to the home screen for NTR/TWL...
+				if (gamecardGetType() == CARD_TYPE_CTR) {
+					u64 ctr_tid = gamecardGetTitleID();
+					if (ctr_tid != 0) {
+						tid = ctr_tid;
+						mediaType = MEDIATYPE_GAME_CARD;
+						switchToTwl = false;
+					}
+				}
+			}
+
+			if (switchToTwl) {
+				// Switching to TWL.
+				// Activate the rainbow LED and shut off the screen.
+				// TODO: Allow rainbow LED even in CTR? (It'll stay
+				// cycling as long as no event causes it to change.)
+				if (settings.twl.rainbowled) {
+					RainbowLED();
+				}
+				screenoff();
+			}
+
+			// Buffers for APT_DoApplicationJump().
+			u8 param[0x300];
+			u8 hmac[0x20];
+			// Clear both buffers
+			memset(param, 0, sizeof(param));
+			memset(hmac, 0, sizeof(hmac));
+
+			APT_PrepareToDoApplicationJump(0, tid, mediaType);
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
+			break;
 		}
 	//}	// run
 	}	// aptMainLoop
@@ -2572,18 +2588,11 @@ int main()
 	// Unregister the "returned from HOME Menu" handler.
 	aptUnhook(&rfhm_cookie);
 
-	SaveSettings();
-	SaveBootstrapConfig();
-
-	hidExit();
-	srvExit();
-	romfsExit();
-	sdmcExit();
-	ptmuxExit();
-	ptmuExit();
-	amExit();
-	cfguExit();
-	aptExit();
+	if (saveOnExit) {
+		// Save settings.
+		SaveSettings();
+		SaveBootstrapConfig();
+	}
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
@@ -2654,7 +2663,17 @@ int main()
 
 	sftd_free_font(font);
 	sftd_free_font(font_b);
+	sftd_fini();
 	sf2d_fini();
 
+	hidExit();
+	srvExit();
+	romfsExit();
+	sdmcExit();
+	ptmuxExit();
+	ptmuExit();
+	amExit();
+	cfguExit();
+	aptExit();
 	return 0;
 }

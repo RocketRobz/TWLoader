@@ -125,8 +125,11 @@ typedef struct {
 
 	u8 zero[0x90];
 
-	// TODO: DSi-specific fields.
-	u8 dsi[0x1B4];
+	// 0x200
+	// TODO: More DSi-specific fields.
+	u8 dsi1[0x30];
+	u32 dsi_tid;
+	u8 dsi2[0x180];
 } sNDSHeader;
 
 typedef struct {

@@ -46,6 +46,13 @@ const char *gamecardGetGameID(void);
 const char *gamecardGetProductCode(void);
 
 /**
+ * Get the game card's Title ID.
+ * NOTE: Only applicable to TWL and CTR titles.
+ * @return Title ID, or 0 if no card or the card doesn't have a title ID.
+ */
+u64 gamecardGetTitleID(void);
+
+/**
  * Get the game card's revision..
  * @return Game card revision. (0xFF if unknown.)
  */
