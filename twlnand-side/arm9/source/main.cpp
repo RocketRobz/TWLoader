@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
 	// REG_SCFG_CLK = 0x80;
 	REG_SCFG_CLK = 0x85;
 
-	bool HealthandSafety_MSG = false;
+	bool HealthandSafety_MSG = true;
 	bool UseNTRSplash = true;
 	bool TriggerExit = false;
 	// std::string	bootstrapPath = "";
@@ -127,13 +127,27 @@ int main(int argc, char **argv) {
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
-		// bootstrapPath = twloaderini.GetString( "TWL-MODE", "BOOTSTRAP_INI", "");
+		char *p = (char*)PersonalData->name;
 		
-		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 1) { HealthandSafety_MSG = true; }
+		// text
+		for (int i = 0; i < 10; i++) {
+			if (p[i*2] == 0x00)
+				p[i*2/2] = 0;
+			else
+				p[i*2/2] = p[i*2];
+		}
+		
+		LogFMA("TWL.Main", "Got username", p);
+		
+		twloaderini.SetString("FRONTEND","NAME", p);
+		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
+		LogFMA("TWL.Main", "Saved username to GUI", p);
+		
+		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 0) { HealthandSafety_MSG = false; }
 		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
 		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
 			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) {
-				BootSplashInit(UseNTRSplash, HealthandSafety_MSG);
+				BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
 				LogFM("TWL.Main.BootSplashInit", "Boot splash played");
 			}
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
@@ -252,6 +266,8 @@ int main(int argc, char **argv) {
 	std::string filename;
 
 	if (!fatInitDefault()) {
+		BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
+		
 		// Subscreen as a console
 		videoSetModeSub(MODE_0_2D);
 		vramSetBankH(VRAM_H_SUB_BG);

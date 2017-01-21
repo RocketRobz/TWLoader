@@ -32,8 +32,6 @@ typedef enum _StrID {
 	STR_SETTINGS_COLOR,			// "Color"
 	STR_SETTINGS_MENUCOLOR,			// "Menu Color"
 	STR_SETTINGS_FILENAME,			// "Show filename"
-	STR_SETTINGS_LOCSWITCH,			// "Game location switcher"
-	STR_SETTINGS_TOPBORDER,			// "Top border"
 	STR_SETTINGS_COUNTER,			// "Game counter"
 
 	STR_MAX

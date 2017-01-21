@@ -348,8 +348,6 @@ void settingsDrawBottomScreen(void)
 		const char *const menucolorvaluetext = menu_color_text[settings.ui.menucolor];
 
 		const char *const filenamevaluetext = (settings.ui.filename ? "On" : "Off");
-		const char *const locswitchvaluetext = (settings.ui.locswitch ? "On" : "Off");
-		const char *const topbordervaluetext = (settings.ui.topborder ? "On" : "Off");
 		const char *const countervaluetext = (settings.ui.counter ? "On" : "Off");
 		const char *const custombotvaluetext = (settings.ui.custombot ? "On" : "Off");
 
@@ -414,27 +412,6 @@ void settingsDrawBottomScreen(void)
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 4) {
-			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LOCSWITCH));
-			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, locswitchvaluetext);
-			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The R button switches the game location");
-			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "between the SD Card and the flashcard.");
-			Ypos += 12;
-		} else {
-			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LOCSWITCH));
-			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, locswitchvaluetext);
-			Ypos += 12;
-		}
-		if (cursor_pos[0] == 5) {
-			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_TOPBORDER));
-			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, topbordervaluetext);
-			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The border surrounding the top background.");
-			Ypos += 12;
-		} else {
-			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TOPBORDER));
-			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, topbordervaluetext);
-			Ypos += 12;
-		}
-		if (cursor_pos[0] == 6) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COUNTER));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
@@ -445,7 +422,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 7) {
+		if (cursor_pos[0] == 5) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_custombottext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
@@ -456,7 +433,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 8) {
+		if (cursor_pos[0] == 6) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -466,7 +443,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 9) {
+		if (cursor_pos[0] == 7) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -775,20 +752,14 @@ bool settingsMoveCursor(u32 hDown)
 				case 3:	// Show filename
 					settings.ui.filename = !settings.ui.filename;
 					break;
-				case 4:	// Game location switcher
-					settings.ui.locswitch = !settings.ui.locswitch;
-					break;
-				case 5:	// Top border
-					settings.ui.topborder = !settings.ui.topborder;
-					break;
-				case 6:	// Game counter
+				case 4:	// Game counter
 					settings.ui.counter = !settings.ui.counter;
 					break;
-				case 7:	// Custom bottom image
+				case 5:	// Custom bottom image
 					settings.ui.custombot = !settings.ui.custombot;
 					LoadBottomImage();
 					break;
-				case 8:	// Enable or disable autoupdate
+				case 6:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 2) {
@@ -801,12 +772,12 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 9:	// Enable or disable autodownload
+				case 7:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
 					break;
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 9) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 7) {
 			cursor_pos[0]++;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
@@ -1051,7 +1022,6 @@ void LoadSettings(void) {
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
-	settings.ui.locswitch = settingsini.GetInt("FRONTEND", "GAMELOC_SWITCH", 0);
 	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 0);
 	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
 	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
@@ -1095,7 +1065,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
 	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
-	settingsini.SetInt("FRONTEND", "GAMELOC_SWITCH", settings.ui.locswitch);
 	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
 	settingsini.SetInt("FRONTEND", "COUNTER", settings.ui.counter);
 	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);

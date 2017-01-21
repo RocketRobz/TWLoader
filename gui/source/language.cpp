@@ -9,6 +9,20 @@
 /** Language data. **/
 // NOTE: These strings must be encoded as UTF-8.
 
+// Japanese
+static const char *const lang_JP[STR_MAX] = {
+	": HOMEメニューに戻る",	// "Return to HOME Menu"
+	"スタート",			// "START" (used on cartridge indicator)
+
+	// Settings
+	"START：更新TWLoader",	// "START: Update TWLoader"
+	"言語",			// "Language"
+	"色",			// "Color"
+	"メニューの色",			// "Menu Color"
+	"表示するファイル名",		// "Show filename"
+	"ゲームのカウンター",			// "Game counter"
+};
+
 // English
 static const char *const lang_EN[STR_MAX] = {
 	": Return to HOME Menu",	// "Return to HOME Menu"
@@ -20,8 +34,6 @@ static const char *const lang_EN[STR_MAX] = {
 	"Color",			// "Color"
 	"Menu color",			// "Menu Color"
 	"Show filename",		// "Show filename"
-	"Game location switcher",	// "Game location switcher"
-	"Top border",			// "Top border"
 	"Game counter",			// "Game counter"
 };
 
@@ -36,8 +48,6 @@ static const char *const lang_FR[STR_MAX] = {
 	"Couleur",				// "Color"
 	"Couleur du menu",			// "Menu Color"
 	"Afficher le nom du fichier",		// "Show filename"
-	"Commutateur de position de jeu",	// "Game location switcher"
-	"Bordure supérieure",			// "Top border"
 	"Compteur de jeux",			// "Game counter"
 };
 
@@ -52,8 +62,6 @@ static const char *const lang_DE[STR_MAX] = {
 	"Farbe",				// "Color"
 	"Menüfarbe",				// "Menu Color"
 	"Dateiname anzeigen",			// "Show filename"
-	"Spielort-Umschalter",			// "Game location switcher"
-	"Top Grenze",				// "Top border"
 	"Spielzähler",				// "Game counter"
 };
 
@@ -68,8 +76,6 @@ static const char *const lang_IT[STR_MAX] = {
 	"Colore",				// "Color"
 	"colore Menu",				// "Menu Color"
 	"Visualizza il nome del file",		// "Show filename"
-	"Gioco posizione switcher",		// "Game location switcher"
-	"Top confine",				// "Top border"
 	"contatore Gioco",			// "Game counter"
 };
 
@@ -84,8 +90,6 @@ static const char *const lang_ES[STR_MAX] = {
 	"Color",				// "Color"
 	"Color del menú",			// "Menu Color"
 	"Mostrar nombre del archivo",		// "Show filename"
-	"Selector de ubicación de juegos",	// "Game location switcher"
-	"Borde superior",			// "Top border"
 	"Contador de juegos",			// "Game counter"
 };
 
@@ -100,8 +104,6 @@ static const char *const lang_NL[STR_MAX] = {
 	"Kleur",			// "Color"
 	"menukleur",			// "Menu Color"
 	"Toon bestandsnaam",		// "Show filename"
-	"Game locatie switcher",	// "Game location switcher"
-	"bovenkader",			// "Top border"
 	"Game teller",			// "Game counter"
 };
 
@@ -116,14 +118,12 @@ static const char *const lang_PT[STR_MAX] = {
 	"Cor",					// "Color"
 	"Cor do menu",				// "Menu Color"
 	"Mostrar nome do arquivo",		// "Show filename"
-	"Seletor de localização de jogos",	// "Game location switcher"
-	"Borda superior",			// "Top border"
 	"Contador de jogos",			// "Game counter"
 };
 
 // All languages.
 static const char *const *lang_all[12] = {
-	lang_EN,	// Japanese (TODO)
+	lang_JP,	// Japanese
 	lang_EN,	// English
 	lang_FR,	// French
 	lang_DE,	// German

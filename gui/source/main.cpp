@@ -1977,6 +1977,10 @@ int main()
 							sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
 						else
 							sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+						if (startmenu_cursorPosition == 3)
+							sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
+						else
+							sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
 
 						sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
 						if (!settings.twl.forwarder)
@@ -1991,6 +1995,10 @@ int main()
 							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
 						else
 							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
+						if (settings.ui.topborder)
+							sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
+						else
+							sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
 					}
 				// }
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -2285,13 +2293,13 @@ int main()
 					} else if (hDown & KEY_SELECT && cursorPosition >= 0) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							menudboxmode = DBOX_MODE_SETTINGS;
-					} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 2) {
+					} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 1) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							startmenu_cursorPosition++;
 					} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							startmenu_cursorPosition--;
-					} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 2) {
+					} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 3) {
 						if (menudboxmode == DBOX_MODE_OPTIONS)
 							startmenu_cursorPosition += 2;
 					} else if (hDown & KEY_UP && startmenu_cursorPosition != 0) {
@@ -2334,6 +2342,9 @@ int main()
 											playwrongsounddone = true;
 										}
 									}
+									break;
+								case 3:
+									settings.ui.topborder = !settings.ui.topborder;
 									break;
 							}
 						}
