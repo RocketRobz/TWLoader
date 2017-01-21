@@ -12,23 +12,16 @@ using std::wstring;
 #include "log.h"
 
 /**
- * Convert a color from BGR555 to RGBA8.
+ * Convert a color from NDS BGR555 to RGB5A1.
  * @param px16 BGR555 color value.
- * @return RGBA8 color.
+ * @return RGB5A1 color.
  */
-static inline u32 BGR555_to_RGBA8(u32 px16) {
-	u32 px32;
-
+static inline u16 BGR555_to_RGB5A1(u16 px16) {
 	// BGR555: xBBBBBGG GGGRRRRR
-	//  RGBA8: AAAAAAAA BBBBBBBB GGGGGGGG RRRRRRRR
-	// TODO: verify this
-	px32 = ((((px16 << 3) & 0x0000F8) | ((px16 >> 2) & 0x000007))) |	// Red
-	       ((((px16 << 6) & 0x00F800) | ((px16 << 1) & 0x000700))) |	// Green
-	       ((((px16 << 9) & 0xF80000) | ((px16 << 4) & 0x070000)));		// Blue
-
-	// No alpha channel.
-	px32 |= 0xFF000000U;
-	return px32;
+	// RGB5A1: RRRRRGGG GGBBBBBA
+	return   (px16 << 11) |	1 |		// Red (and alpha)
+		((px16 <<  1) & 0x07C0) |	// Green
+		((px16 >>  9) & 0x003E);	// Blue
 }
 
 /**
@@ -289,22 +282,28 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
  * @return Icon texture. (NULL on error)
  */
 sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
-	// Convert the palette first.
-	u32 palette[16];
+	// Convert the palette from RGB555 to RGB5A1.
+	// (We need to ensure the MSB is set for all except
+	// color 0, which is transparent.)
+	u16 palette[16];
 	palette[0] = 0;	// Color 0 is always transparent.
-	for (int i = 16; i > 0; i--) {
-		palette[i] = BGR555_to_RGBA8(ndsBanner->palette[i]);
+	for (int i = 16-1; i > 0; i--) {
+		// Convert from NDS BGR555 to RGB5A1.
+		// NOTE: The GPU expects byteswapped data.
+		palette[i] = BGR555_to_RGB5A1(ndsBanner->palette[i]);
 	}
 
 	// Un-tile the icon.
 	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8"
 	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
-	u32 *textureData = (u32*)linearAlloc(32*64*sizeof(u32));
+	static const int w = 64;
+	static const int h = 32;
+	u16 *textureData = (u16*)linearAlloc(w*h*sizeof(u16));
 	const u8 *offset = ndsBanner->icon;
 	for (int y = 0; y < 32; y += 8) {
 		for (int x = 0; x < 32; x += 8) {
 			for (int y2 = 0; y2 < 8; y2++) {
-				u32 *texptr = &textureData[x + ((y + y2) * 64)];
+				u16 *texptr = &textureData[x + ((y + y2) * 64)];
 				for (int x2 = 0; x2 < 8; x2 += 2) {
 					texptr[0] = palette[*offset & 0x0F];
 					texptr[1] = palette[*offset >> 4];
@@ -315,9 +314,32 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 		}
 	}
 
-	sf2d_texture *tex = sf2d_create_texture_mem_RGBA8(textureData, 64, 32, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+	// Create an RGB5A1 texture directly.
+	// NOTE: sf2d doesn't support this, so we'll do it manually.
+	// Based on sf2d_texture.c.
+	sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
+
+	// Tile the texture for the GPU.
+	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
+		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
+		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+
+	GSPGPU_FlushDataCache(textureData, (w*h)*2);
+	GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
+
+	C3D_SafeDisplayTransfer(
+		(u32*)textureData,
+		GX_BUFFER_DIM(w, h),
+		(u32*)texture->tex.data,
+		GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
+		flags
+	);
+
+	gspWaitForPPF();
+	texture->tiled = 1;
+
 	linearFree(textureData);
-	return tex;
+	return texture;
 }
 
 /**
