@@ -1995,9 +1995,9 @@ int main()
 								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
 							sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
 							if (!settings.pergame.lockarm9scfgext)
-								sftd_draw_text(font, 128, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
+								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
 							else
-								sftd_draw_text(font, 128, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
+								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
 						} else {
 							if (startmenu_cursorPosition == 0)
 								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
@@ -2382,7 +2382,7 @@ int main()
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 						if (hDown & KEY_START) {
 							menudboxmode = DBOX_MODE_OPTIONS;
-						} else if (hDown & KEY_RIGHT && gamesettings_cursorPosition != 1) {
+						} else if (hDown & KEY_RIGHT && gamesettings_cursorPosition != 1 && gamesettings_cursorPosition != 2) {
 							gamesettings_cursorPosition++;
 						} else if (hDown & KEY_LEFT && gamesettings_cursorPosition != 0) {
 							gamesettings_cursorPosition--;
