@@ -204,9 +204,6 @@ static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 bool keepsdvalue = false;
 int gbarunnervalue = 0;
 
-u64 applaunch_tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
-int applaunch_mediatype = MEDIATYPE_NAND;
-
 
 static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
@@ -795,7 +792,7 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
-	
+
 	sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(0);
@@ -1048,14 +1045,8 @@ int main()
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
 
-	// We need these 2 buffers for APT_DoAppJump() later. They can be smaller too
-	u8 param[0x300];
-	u8 hmac[0x20];
-	// Clear both buffers
-	memset(param, 0, sizeof(param));
-	memset(hmac, 0, sizeof(hmac));
-	
 	// Loop as long as the status is not exit
+	bool saveOnExit = true;
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
@@ -1429,11 +1420,6 @@ int main()
 							}
 						}
 					}
-					SaveSettings();
-					SaveBootstrapConfig();
-					screenoff();
-					if (settings.twl.rainbowled)
-						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
@@ -1669,11 +1655,6 @@ int main()
 							}
 						}
 					}
-					SaveSettings();
-					SaveBootstrapConfig();
-					screenoff();
-					if (settings.twl.rainbowled)
-						RainbowLED();
 					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
@@ -2045,10 +2026,7 @@ int main()
 					updatebotscreen = true;
 				} else if(hDown & KEY_A){
 					settings.twl.launchslot1 = false;
-					screenoff();
 					rom = files.at(cursorPosition).c_str();
-					SaveSettings();
-					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if(hDown & KEY_DOWN){
@@ -2081,9 +2059,6 @@ int main()
 					updatebotscreen = true;
 				} else if(hDown & KEY_X) {
 					settings.twl.launchslot1 = true;
-					screenoff();
-					SaveSettings();
-					SaveBootstrapConfig();
 					applaunchon = true;
 					updatebotscreen = true;
 				} else if (hDown & KEY_SELECT) {
@@ -2254,10 +2229,6 @@ int main()
 											keepsdvalue = true;
 											rom = "_nds/twloader.nds";
 										}
-										// if (gamecardGetType() == CARD_TYPE_TWL_ENH || gamecardGetType() == CARD_TYPE_TWL_ONLY) {
-										// 	applaunch_tid = 0x00048005544F4F42ULL;
-										// 	applaunch_mediatype = MEDIATYPE_GAME_CARD;
-										// }
 										applaunchprep = true;
 									}
 								} else {
@@ -2395,14 +2366,54 @@ int main()
 			settingsMoveCursor(hDown);
 		}
 		
-		while(applaunchon){
-			// Prepare for the app launch
-			// TODO: Launch TWL carts directly.
-			// Note that APT_PrepareToDoApplicationJump() doesn't
-			// seem to work right with NTR/TWL carts...
-			APT_PrepareToDoApplicationJump(0, applaunch_tid, applaunch_mediatype);
+		if (applaunchon) {
+			// Save settings.
+			saveOnExit = false;
+			SaveSettings();
+			SaveBootstrapConfig();
+
+			// Prepare for the app launch.
+			u64 tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
+			FS_MediaType mediaType = MEDIATYPE_NAND;
+			bool switchToTwl = true;
+
+			if (!settings.twl.forwarder && settings.twl.launchslot1) {
+				// CTR cards should be launched directly.
+				// TODO: TWL cards should also be launched directly,
+				// but APT_PrepareToDoApplicationJump() ends up
+				// rebooting to the home screen for NTR/TWL...
+				if (gamecardGetType() == CARD_TYPE_CTR) {
+					u64 ctr_tid = gamecardGetTitleID();
+					if (ctr_tid != 0) {
+						tid = ctr_tid;
+						mediaType = MEDIATYPE_GAME_CARD;
+						switchToTwl = false;
+					}
+				}
+			}
+
+			if (switchToTwl) {
+				// Switching to TWL.
+				// Activate the rainbow LED and shut off the screen.
+				// TODO: Allow rainbow LED even in CTR? (It'll stay
+				// cycling as long as no event causes it to change.)
+				if (settings.twl.rainbowled) {
+					RainbowLED();
+				}
+				screenoff();
+			}
+
+			// Buffers for APT_DoApplicationJump().
+			u8 param[0x300];
+			u8 hmac[0x20];
+			// Clear both buffers
+			memset(param, 0, sizeof(param));
+			memset(hmac, 0, sizeof(hmac));
+
+			APT_PrepareToDoApplicationJump(0, tid, mediaType);
 			// Tell APT to trigger the app launch and set the status of this app to exit
 			APT_DoApplicationJump(param, sizeof(param), hmac);
+			break;
 		}
 	//}	// run
 	}	// aptMainLoop
@@ -2410,18 +2421,11 @@ int main()
 	// Unregister the "returned from HOME Menu" handler.
 	aptUnhook(&rfhm_cookie);
 
-	SaveSettings();
-	SaveBootstrapConfig();
-
-	hidExit();
-	srvExit();
-	romfsExit();
-	sdmcExit();
-	ptmuxExit();
-	ptmuExit();
-	amExit();
-	cfguExit();
-	aptExit();
+	if (saveOnExit) {
+		// Save settings.
+		SaveSettings();
+		SaveBootstrapConfig();
+	}
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
@@ -2496,5 +2500,14 @@ int main()
 	sftd_free_font(font_b);
 	sf2d_fini();
 
+	hidExit();
+	srvExit();
+	romfsExit();
+	sdmcExit();
+	ptmuxExit();
+	ptmuExit();
+	amExit();
+	cfguExit();
+	aptExit();
 	return 0;
 }
