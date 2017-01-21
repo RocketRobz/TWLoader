@@ -1944,61 +1944,63 @@ int main()
 						}
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
-					sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
-					sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
-					sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-					sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
-					if (menudboxmode == DBOX_MODE_SETTINGS) {
-						bnriconnum = cursorPosition;
-						ChangeBNRIconNo();
-						bnricontexdbox = bnricontexnum;
-						sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-						sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
-						
-						if (cursorPosition >= 0) {
-							int y = 24, dy = 19;
-							// Print the banner text, center-aligned.
-							const size_t banner_lines = std::min(3U, romsel_gameline.size());
-							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-								sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+					if (menudbox_Ypos != -240) {
+						sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
+						sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
+						sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
+						sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
+						if (menudboxmode == DBOX_MODE_SETTINGS) {
+							bnriconnum = cursorPosition;
+							ChangeBNRIconNo();
+							bnricontexdbox = bnricontexnum;
+							sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+							sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+							
+							if (cursorPosition >= 0) {
+								int y = 24, dy = 19;
+								// Print the banner text, center-aligned.
+								const size_t banner_lines = std::min(3U, romsel_gameline.size());
+								for (size_t i = 0; i < banner_lines; i++, y += dy) {
+									const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+									sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								}
 							}
-						}
-					} else {
-						if (startmenu_cursorPosition == 0)
-							sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
-						else
-							sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-						if (startmenu_cursorPosition == 1)
-							sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
-						else
-							sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-						if (startmenu_cursorPosition == 2)
-							sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
-						else
-							sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
-						if (startmenu_cursorPosition == 3)
-							sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
-						else
-							sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+						} else {
+							if (startmenu_cursorPosition == 0)
+								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+							if (startmenu_cursorPosition == 1)
+								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+							if (startmenu_cursorPosition == 2)
+								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+							if (startmenu_cursorPosition == 3)
+								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
 
-						sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
-						if (!settings.twl.forwarder)
-							sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
-						else
-							sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
-						if (!settings.romselect.toplayout)
-							sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
-						else
-							sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
-						if (!is3DSX)
-							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
-						else
-							sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
-						if (settings.ui.topborder)
-							sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
-						else
-							sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
+							sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
+							if (!settings.twl.forwarder)
+								sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
+							else
+								sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
+							if (!settings.romselect.toplayout)
+								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
+							else
+								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
+							if (!is3DSX)
+								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
+							else
+								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
+							if (settings.ui.topborder)
+								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
+							else
+								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
+						}
 					}
 				// }
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
