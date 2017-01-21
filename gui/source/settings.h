@@ -68,7 +68,7 @@ typedef struct _Settings_t {
 			0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
 			1: R4DS (Original Non-SDHC version)/ M3 Simply
 			2: R4iDSN/R4i Gold RTS
-			3: Acekard 2(i)/M3DS Real/R4i-SDHC v1.4.x
+			3: Acekard 2(i)/Galaxy Eagle/M3DS Real
 			4: Acekard RPG
 			5: Ace 3DS+/Gateway Blue Card/R4iTT
 			6: SuperCard DSTWO
@@ -81,6 +81,12 @@ typedef struct _Settings_t {
 		int console;	// 0 = Off, 1 = On, 2 = On (Debug)
 		bool lockarm9scfgext;
 	} twl;
+	
+	struct {
+		bool cpuspeed;	// false == NTR, true == TWL
+		bool extvram;
+		bool lockarm9scfgext;
+	} pergame;
 } Settings_t;
 extern Settings_t settings;
 

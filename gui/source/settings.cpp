@@ -25,7 +25,10 @@ extern sf2d_texture *batteryIcon;	// Current battery level icon.
 void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 
 // Variables from main.cpp.
+extern bool is3DSX;
+
 extern u8 language;
+extern u8 ntrtwlmode_language;
 
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
@@ -160,8 +163,35 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-	dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
+	switch(ntrtwlmode_language) {
+		case 0:
+		case 6:
+		case 7:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 1:
+		default:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_EN.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
+			break;
+		case 2:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_FR.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_FR.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 3:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_DE.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_DE.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 4:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_IT.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_IT.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 5:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+	}
 	disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM); // Red circle with line
 
 	/** Bottom screen **/
@@ -256,7 +286,7 @@ void settingsDrawTopScreen(void)
 			if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 				sftd_draw_text(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, settings_xbuttontext);
 				sftd_draw_text(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, settings_ybuttontext);
-				sftd_draw_wtext(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, TR(STR_SETTINGS_START_UPDATE_TWLOADER));
+				if(!is3DSX) sftd_draw_wtext(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, TR(STR_SETTINGS_START_UPDATE_TWLOADER));
 			}
 		}
 
@@ -282,11 +312,13 @@ void settingsDrawBottomScreen(void)
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_draw_texture(settingstex, 0, 0);
-	const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-	const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-	const int home_x = (320-home_width)/2;
-	sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
-	sftd_draw_wtext(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
+	if(!is3DSX) {
+		const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+		const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+		const int home_x = (320-home_width)/2;
+		sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
+		sftd_draw_wtext(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
+	}
 
 	// X positions.
 	static const int Xpos = 24;
@@ -434,26 +466,28 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 6) {
-			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
-			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
-			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
-			Ypos += 12;
-		} else {
-			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
-			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
-			Ypos += 12;
-		}
-		if (cursor_pos[0] == 7) {
-			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
-			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
-			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
-			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "TWLoader version at launch.");
-			Ypos += 12;
-		} else {
-			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autodltext);
-			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autodlvaluetext);
-			Ypos += 12;
+		if(!is3DSX) {
+			if (cursor_pos[0] == 6) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
+				sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
+				sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
+				sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
+				Ypos += 12;
+			}
+			if (cursor_pos[0] == 7) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
+				sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
+				sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
+				sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "TWLoader version at launch.");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autodltext);
+				sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autodlvaluetext);
+				Ypos += 12;
+			}
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
@@ -803,7 +837,7 @@ bool settingsMoveCursor(u32 hDown)
 				// Wi-Fi is not connected.
 				sfx = sfx_wrong;
 			}
-		} else if (hDown & KEY_START && checkWifiStatus()) {
+		} else if (hDown & KEY_START && checkWifiStatus() && !is3DSX) {
 			if (checkUpdate() == 0) {
 				DownloadTWLoaderCIAs();
 			}

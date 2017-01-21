@@ -141,6 +141,7 @@ static const char *const *lang_all[12] = {
 
 // System language setting.
 u8 language = 1;	// Default to English.
+u8 ntrtwlmode_language;
 static const char *const *lang_data = lang_all[1];
 
 // Translation cache.
@@ -152,6 +153,7 @@ static wchar_t *lang_cache[STR_MAX] = { };
  */
 void langInit(void)
 {
+	CFGU_GetSystemLanguage(&ntrtwlmode_language);
 	language = settings.ui.language;
 	if (language < 0 || language >= 12) {
 		// Get the system language setting.

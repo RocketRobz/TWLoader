@@ -127,6 +127,11 @@ int main(int argc, char **argv) {
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		
+		// Didn't seem to work, aside from the language of the H&S screen changing.
+		// if(twloaderini.GetInt("TWL-MODE","USE_SYSLANG",0) == 0) {
+		// 	PersonalData->language = twloaderini.GetInt("TWL-MODE", "LANGUAGE", 0);
+		// }
+		
 		char *p = (char*)PersonalData->name;
 		
 		// text

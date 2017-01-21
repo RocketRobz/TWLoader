@@ -331,15 +331,11 @@ void DialogBoxDisappear(const char *text) {
  * @return 0 on success; non-zero on error.
  */
 static int CreateGameSave(const char *filename) {
-	DialogBoxAppear("Creating save file...");
-	static const int BUFFER_SIZE = 4096;
-	char buffer[BUFFER_SIZE];
-	memset(buffer, 0, sizeof(buffer));
-	
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 	if (!f_nds_file) {
+		DialogBoxAppear("fopen(nds_path) failed, continuing anyway.");
 		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.");
 		return -1;
 	}
@@ -349,33 +345,40 @@ static int CreateGameSave(const char *filename) {
 	game_TID[4] = 0;
 	fclose(f_nds_file);
 	
-	int savesize = 524288;	// 512KB (default size for most games)
-	
-	// Set save size to 1MB for the following games
-	if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-	    strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-	    strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-	    strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
-	{
-		savesize = 1048576;
-	}
+	if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
+		DialogBoxAppear("Creating save file...");
+		static const int BUFFER_SIZE = 4096;
+		char buffer[BUFFER_SIZE];
+		memset(buffer, 0, sizeof(buffer));
 
-	// Set save size to 32MB for the following games
-	if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-	    strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
-	{
-		savesize = 1048576*32;
-	}
-
-	FILE *pFile = fopen(filename, "wb");
-	if (pFile) {
-		for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-			fwrite(buffer, 1, sizeof(buffer), pFile);
+		int savesize = 524288;	// 512KB (default size for most games)
+		
+		// Set save size to 1MB for the following games
+		if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+			strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+			strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+			strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+		{
+			savesize = 1048576;
 		}
-		fclose(pFile);
-	}
 
-	DialogBoxDisappear("Done!");
+		// Set save size to 32MB for the following games
+		if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+			strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+		{
+			savesize = 1048576*32;
+		}
+
+		FILE *pFile = fopen(filename, "wb");
+		if (pFile) {
+			for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+				fwrite(buffer, 1, sizeof(buffer), pFile);
+			}
+			fclose(pFile);
+		}
+
+		DialogBoxDisappear("Done!");
+	}
 	return 0;
 }
 
@@ -818,6 +821,7 @@ int main()
 	// make folders if they don't exist
 	mkdir("sdmc:/roms/flashcard/nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
@@ -887,7 +891,7 @@ int main()
 	cartnulltex = sfil_load_PNG_file("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
 	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
-	cartctrtex = sfil_load_PNG_file("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // TWL cartridge
+	cartctrtex = sfil_load_PNG_file("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // CTR cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
@@ -965,8 +969,8 @@ int main()
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 		sftd_draw_text(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_text(font, 31, 48, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 36, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
+		sftd_draw_text(font, 39, 48, RGBA8(0, 0, 0, 255), 12, "/");
+		sftd_draw_text(font, 44, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 
 		wstring tempfile_w = utf8_to_wstring(tempfile);
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
@@ -997,13 +1001,13 @@ int main()
 		}
 	}
 
-	DialogBoxDisappear("Starting...");
+	DialogBoxDisappear(" ");
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
 	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
-	int startmenu_cursorPosition = 0;
+	int startmenu_cursorPosition = 0, gamesettings_cursorPosition = 0;
 	bool noromsfound = false;
 	
 	bool cursorPositionset = false;
@@ -1827,8 +1831,8 @@ int main()
 									sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
 								} else {
 									sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-									sftd_draw_textf(font, 30, 96, RGBA8(0, 0, 0, 255), 12, "/");
-									sftd_draw_textf(font, 36, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+									sftd_draw_textf(font, 35, 96, RGBA8(0, 0, 0, 255), 12, "/");
+									sftd_draw_textf(font, 40, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
 								}
 							}
 						}
@@ -1944,14 +1948,43 @@ int main()
 							sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 							
 							if (cursorPosition >= 0) {
-								int y = 24, dy = 19;
+								int y = 16, dy = 19;
 								// Print the banner text, center-aligned.
 								const size_t banner_lines = std::min(3U, romsel_gameline.size());
 								for (size_t i = 0; i < banner_lines; i++, y += dy) {
 									const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
 									sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 								}
+								sftd_draw_wtext(font, 16, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
 							}
+
+							if (gamesettings_cursorPosition == 0)
+								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+89);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
+							if (gamesettings_cursorPosition == 1)
+								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+89);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
+							if (gamesettings_cursorPosition == 2)
+								sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+129);
+							else
+								sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+129, RGBA8(127, 127, 127, 255));
+								
+							sftd_draw_text(font, 38, menudbox_Ypos+90, RGBA8(0, 0, 0, 255), 12, "ARM9 CPU Speed:");
+							if (!settings.pergame.cpuspeed)
+								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Off");
+							else
+								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "On");
+							if (!settings.pergame.extvram)
+								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Off");
+							else
+								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
+							sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
+							if (!settings.pergame.lockarm9scfgext)
+								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
+							else
+								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
 						} else {
 							if (startmenu_cursorPosition == 0)
 								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
@@ -2266,26 +2299,18 @@ int main()
 					}
 					
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
-					if (hDown & KEY_START) {
-						if (menudboxmode == DBOX_MODE_SETTINGS)
-							menudboxmode = DBOX_MODE_OPTIONS;
-					} else if (hDown & KEY_SELECT && cursorPosition >= 0) {
-						if (menudboxmode == DBOX_MODE_OPTIONS)
+					if (menudboxmode == DBOX_MODE_OPTIONS) {
+						if (hDown & KEY_SELECT && cursorPosition >= 0) {
 							menudboxmode = DBOX_MODE_SETTINGS;
-					} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 1) {
-						if (menudboxmode == DBOX_MODE_OPTIONS)
+						} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3) {
 							startmenu_cursorPosition++;
-					} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0) {
-						if (menudboxmode == DBOX_MODE_OPTIONS)
+						} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2) {
 							startmenu_cursorPosition--;
-					} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 3) {
-						if (menudboxmode == DBOX_MODE_OPTIONS)
+						} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 3) {
 							startmenu_cursorPosition += 2;
-					} else if (hDown & KEY_UP && startmenu_cursorPosition != 0) {
-						if (menudboxmode == DBOX_MODE_OPTIONS)
+						} else if (hDown & KEY_UP && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1) {
 							startmenu_cursorPosition -= 2;
-					} else if (hDown & KEY_A) {
-						if (menudboxmode == DBOX_MODE_OPTIONS) {
+						} else if (hDown & KEY_A) {
 							switch (startmenu_cursorPosition) {
 								case 0:
 								default:
@@ -2326,11 +2351,55 @@ int main()
 									settings.ui.topborder = !settings.ui.topborder;
 									break;
 							}
+						} else if (hDown & KEY_B) {
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
 						}
-					} else if (hDown & KEY_B) {
-						showdialogbox_menu = false;
-						menudbox_movespeed = 1;
-						menu_ctrlset = CTRL_SET_GAMESEL;
+					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
+						if (hDown & KEY_START) {
+							menudboxmode = DBOX_MODE_OPTIONS;
+						} else if (hDown & KEY_RIGHT && gamesettings_cursorPosition != 1 && gamesettings_cursorPosition != 2) {
+							gamesettings_cursorPosition++;
+						} else if (hDown & KEY_LEFT && gamesettings_cursorPosition != 0) {
+							gamesettings_cursorPosition--;
+						} else if (hDown & KEY_DOWN && gamesettings_cursorPosition != 2) {
+							if (gamesettings_cursorPosition == 1)
+								gamesettings_cursorPosition++;
+							else
+								gamesettings_cursorPosition += 2;
+						} else if (hDown & KEY_UP && gamesettings_cursorPosition != 0 && gamesettings_cursorPosition != 1) {
+							gamesettings_cursorPosition -= 2;
+						} else if (hDown & KEY_A) {
+							switch (gamesettings_cursorPosition) {
+								case 0:
+								default:
+									settings.pergame.cpuspeed = !settings.pergame.cpuspeed;
+									if (dspfirmfound) {
+										sfx_select->stop();	// Prevent freezing
+										sfx_select->play();
+									}
+									break;
+								case 1:
+									settings.pergame.extvram = !settings.pergame.extvram;
+									if (dspfirmfound) {
+										sfx_select->stop();	// Prevent freezing
+										sfx_select->play();
+									}
+									break;
+								case 2:
+									settings.pergame.lockarm9scfgext = !settings.pergame.lockarm9scfgext;
+									if (dspfirmfound) {
+										sfx_select->stop();	// Prevent freezing
+										sfx_select->play();
+									}
+									break;
+							}
+						} else if (hDown & KEY_B) {
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						}
 					}
 					
 					if (menudboxaction_switchloc) { menudboxaction_switchloc = false;
