@@ -626,7 +626,7 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[])
 	u8 batteryChargeState = 0;
 	u8 batteryLevel = 0;
 	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
-		batteryIcon = batterychrgtex;
+		batteryIcon = texchrg;
 	} else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
 		switch (batteryLevel) {
 			case 5: {
