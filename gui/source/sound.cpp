@@ -87,16 +87,19 @@ sound::sound(string path, int channel, bool toloop)
 
 sound::~sound()
 {
-	sampleRate = 0;
-	dataSize =0;
-	channels = 0;
-	bitsPerSample = 0;
-	data = NULL;
 	waveBuf.data_vaddr = 0;
 	waveBuf.nsamples = 0;
 	waveBuf.looping = false;
 	waveBuf.status = 0;
 	ndspChnWaveBufClear(chnl);
+
+	sampleRate = 0;
+	dataSize =0;
+	channels = 0;
+	bitsPerSample = 0;
+	if (data) {
+		linearFree(data);
+	}
 }
 
 void sound::play()
