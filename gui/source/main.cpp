@@ -2504,6 +2504,7 @@ int main()
 
 	sftd_free_font(font);
 	sftd_free_font(font_b);
+	sftd_fini();
 	sf2d_fini();
 
 	hidExit();
