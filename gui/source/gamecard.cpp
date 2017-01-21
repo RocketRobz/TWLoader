@@ -17,33 +17,34 @@ using std::wstring;
 // from main.cpp
 extern u8 language;
 
-// Current TWL card information.
+// Current card information.
 static union {
+	// TODO: Use this field for CTR as well?
 	u32 d;
 	char id4[4];
 } twl_gameid;	// 4-character game ID
-bool twl_inserted = false;
-static GameCardType twl_card_type = CARD_TYPE_UNKNOWN;
-static char twl_product_code[20] = { };
-static u8 twl_revision = 0xFF;
-static u64 twl_tid = 0;
-static sf2d_texture *twl_icon = NULL;
-static vector<wstring> twl_text;
+bool card_inserted = false;
+static GameCardType card_type = CARD_TYPE_UNKNOWN;
+static char card_product_code[20] = { };
+static u8 card_revision = 0xFF;
+static u64 card_tid = 0;
+static sf2d_texture *card_icon = NULL;
+static vector<wstring> card_text;
 
 /**
  * Clear the cached icon and text.
  */
 void gamecardClearCache(void)
 {
-	// NOTE: twl_inserted is NOT reset here.
+	// NOTE: card_inserted is NOT reset here.
 	twl_gameid.d = 0;
-	sf2d_free_texture(twl_icon);
-	twl_card_type = CARD_TYPE_UNKNOWN;
-	twl_product_code[0] = 0;
-	twl_revision = 0xFF;
-	twl_tid = 0;
-	twl_icon = NULL;
-	twl_text.clear();
+	sf2d_free_texture(card_icon);
+	card_type = CARD_TYPE_UNKNOWN;
+	card_product_code[0] = 0;
+	card_revision = 0xFF;
+	card_tid = 0;
+	card_icon = NULL;
+	card_text.clear();
 }
 
 /**
@@ -72,31 +73,31 @@ static void gamecardCacheTWL(void)
 	switch (header.unitCode & 0x03) {
 		case 0x00:
 		default:
-			twl_card_type = CARD_TYPE_NTR;
+			card_type = CARD_TYPE_NTR;
 			prefix = "NTR";
 			break;
 		case 0x02:
-			twl_card_type = CARD_TYPE_TWL_ENH;
+			card_type = CARD_TYPE_TWL_ENH;
 			prefix = "TWL";
 			break;
 		case 0x03:
-			twl_card_type = CARD_TYPE_TWL_ONLY;
+			card_type = CARD_TYPE_TWL_ONLY;
 			prefix = "TWL";
 			break;
 	}
 
 	// Product code. Format: NTR-P-XXXX or TWL-P-XXXX
-	snprintf(twl_product_code, sizeof(twl_product_code), "%s-P-%.4s", prefix, twl_gameid.id4);
+	snprintf(card_product_code, sizeof(card_product_code), "%s-P-%.4s", prefix, twl_gameid.id4);
 
 	// Revision.
-	twl_revision = header.romversion;
+	card_revision = header.romversion;
 
 	// Title ID.
 	if (header.dsi_tid != 0) {
-		twl_tid = (0x00030000ULL << 32) | header.dsi_tid;
+		card_tid = (0x00030000ULL << 32) | header.dsi_tid;
 	} else {
 		// No title ID.
-		twl_tid = 0;
+		card_tid = 0;
 	}
 
 	// Get the banner.
@@ -108,9 +109,9 @@ static void gamecardCacheTWL(void)
 	}
 
 	// Store the icon and banner text.
-	sf2d_free_texture(twl_icon);
-	twl_icon = grabIcon(&ndsBanner);
-	twl_text = grabText(&ndsBanner, language);
+	sf2d_free_texture(card_icon);
+	card_icon = grabIcon(&ndsBanner);
+	card_text = grabText(&ndsBanner, language);
 }
 
 /**
@@ -119,7 +120,7 @@ static void gamecardCacheTWL(void)
 static void gamecardCacheCTR(void)
 {
 	// Based on FBI 2.4.7's listtitles.c, task_populate_titles_add_ctr()
-	twl_card_type = CARD_TYPE_CTR;
+	card_type = CARD_TYPE_CTR;
 
 	// We need to get the title ID from the cartridge.
 	u32 titleCount = 0;
@@ -136,31 +137,31 @@ static void gamecardCacheCTR(void)
 	}
 
 	// First entry is the correct title ID.
-	twl_tid = titleIds[0];
+	card_tid = titleIds[0];
 	free(titleIds);
 
 	// Get the title entry.
 	AM_TitleEntry entry;
-	if (R_FAILED(AM_GetTitleInfo(MEDIATYPE_GAME_CARD, 1, &twl_tid, &entry))) {
+	if (R_FAILED(AM_GetTitleInfo(MEDIATYPE_GAME_CARD, 1, &card_tid, &entry))) {
 		// Unable to read the title entry.
 		return;
 	}
 
 	// Get the product code.
-	if (R_FAILED(AM_GetTitleProductCode(MEDIATYPE_GAME_CARD, twl_tid, twl_product_code))) {
+	if (R_FAILED(AM_GetTitleProductCode(MEDIATYPE_GAME_CARD, card_tid, card_product_code))) {
 		// Unable to get the product code.
 		gamecardClearCache();
 		return;
 	}
 	// Make sure it's NULL-terminated.
-	twl_product_code[20-1] = 0;
+	card_product_code[20-1] = 0;
 
 	// Get the SMDH, which contains the icon and banner.
 	static const u32 filePathData[] = {0x00000000, 0x00000000, 0x00000002, 0x6E6F6369, 0x00000000};
 	static const FS_Path filePath = {PATH_BINARY, sizeof(filePathData), filePathData};
 	const u32 archivePathData[4] = {
-		(u32)(twl_tid & 0xFFFFFFFFU),
-		(u32)((twl_tid >> 32) & 0xFFFFFFFFU),
+		(u32)(card_tid & 0xFFFFFFFFU),
+		(u32)((card_tid >> 32) & 0xFFFFFFFFU),
 		MEDIATYPE_GAME_CARD,
 		0x00000000
 	};
@@ -226,8 +227,8 @@ static void gamecardCacheCTR(void)
 
 	// Convert the lines.
 	// FIXME: longDescription might have a newline.
-	twl_text.push_back(utf16_to_wstring(smdh->titles[lang].longDescription));
-	twl_text.push_back(utf16_to_wstring(smdh->titles[lang].publisher));
+	card_text.push_back(utf16_to_wstring(smdh->titles[lang].longDescription));
+	card_text.push_back(utf16_to_wstring(smdh->titles[lang].publisher));
 	free(smdh);
 
 	// FIXME: Untile the large icon and load it.
@@ -250,22 +251,22 @@ bool gamecardPoll(bool force)
 	    R_FAILED(FSUSER_GetCardType(&type)))
 	{
 		// Card is not present.
-		if (twl_inserted || force) {
+		if (card_inserted || force) {
 			gamecardClearCache();
-			twl_inserted = false;
+			card_inserted = false;
 			return true;
 		}
 		return false;
 	}
 
-	if (twl_inserted && !force) {
+	if (card_inserted && !force) {
 		// No card change.
 		return false;
 	}
 
 	// New card detected.
 	gamecardClearCache();
-	twl_inserted = true;
+	card_inserted = true;
 
 	switch (type) {
 		case CARD_TWL:
@@ -291,7 +292,7 @@ bool gamecardPoll(bool force)
  */
 GameCardType gamecardGetType(void)
 {
-	return twl_card_type;
+	return card_type;
 }
 
 /**
@@ -309,7 +310,7 @@ const char *gamecardGetGameID(void)
  */
 const char *gamecardGetProductCode(void)
 {
-	return twl_product_code;
+	return card_product_code;
 }
 
 /**
@@ -318,7 +319,7 @@ const char *gamecardGetProductCode(void)
  */
 u8 gamecardGetRevision(void)
 {
-	return twl_revision;
+	return card_revision;
 }
 
 /**
@@ -328,7 +329,7 @@ u8 gamecardGetRevision(void)
  */
 u64 gamecardGetTitleID(void)
 {
-	return twl_tid;
+	return card_tid;
 }
 
 /**
@@ -337,7 +338,7 @@ u64 gamecardGetTitleID(void)
  */
 sf2d_texture *gamecardGetIcon(void)
 {
-	return twl_icon;
+	return card_icon;
 }
 
 /**
@@ -346,5 +347,5 @@ sf2d_texture *gamecardGetIcon(void)
  */
 vector<wstring> gamecardGetText(void)
 {
-	return twl_text;
+	return card_text;
 }
