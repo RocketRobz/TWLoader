@@ -997,7 +997,7 @@ int main()
 		}
 	}
 
-	DialogBoxDisappear(nullptr);
+	DialogBoxDisappear("Starting...");
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
