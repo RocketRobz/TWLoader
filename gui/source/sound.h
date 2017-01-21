@@ -11,11 +11,7 @@ public:
 	void stop();
 
 private:
-	u32 sampleRate;
 	u32 dataSize;
-	u16 channels;
-	u16 bitsPerSample;
-
 	ndspWaveBuf waveBuf;
 	u8* data = NULL;
 	int chnl;
