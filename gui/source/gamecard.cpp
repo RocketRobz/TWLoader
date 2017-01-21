@@ -221,7 +221,6 @@ static void gamecardCacheCTR(void)
 	}
 
 	// Check which description to use.
-	const u16 *desc;
 	if (smdh->titles[lang].longDescription[0]) {
 		// Use the long description.
 		card_text = utf16_nl_to_vwstring(smdh->titles[lang].longDescription, 128);
