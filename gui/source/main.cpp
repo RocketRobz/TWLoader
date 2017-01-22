@@ -87,10 +87,6 @@ static sf2d_texture *bnricontexdbox = NULL;
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
-// TODO: Some of this still needs reworking to fix
-// memory leaks, but switching to arrays is a start.
-static FILE* ndsFile[20] = { };
-static char* bnriconpath[20] = { };
 // bnricontex[]: 0-9 == regular; 10-19 == .nds icons only
 static sf2d_texture *bnricontex[20] = { };
 static char* boxartpath[20] = { };
@@ -437,32 +433,6 @@ static void ChangeBoxArtNo(void) {
 	}
 }
 
-static void OpenBNRIcon(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected banner icon is on the current page.
-		if (ndsFile[idx]) {
-			fclose(ndsFile[idx]);
-		}
-		ndsFile[idx] = fopen(bnriconpath[idx], "rb");
-	}
-}
-
-/**
- * Store a banner icon path.
- * @param path Banner icon path. (will be strdup()'d)
- */
-static void StoreBNRIconPath(const char *path) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected banner icon is on the current page.
-		free(bnriconpath[idx]);
-		bnriconpath[idx] = strdup(path);
-	}
-}
-
 /**
  * Store a boxart path.
  * @param path Boxart path. (will be strdup()'d)
@@ -477,46 +447,31 @@ static void StoreBoxArtPath(const char *path) {
 	}
 }
 
-static void LoadBNRIcon(void) {
+/**
+ * Load a banner icon at the current bnriconnum.
+ * @param filename Banner filename, or NULL for notextbanner.
+ */
+static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
 		bnricontex[idx] = NULL;
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
-		if (ndsFile[idx]) {
-			bnricontex[idx] = grabIcon(ndsFile[idx]);
-			fclose(ndsFile[idx]);
-			ndsFile[idx] = NULL;
+
+		if (!filename) {
+			filename = "romfs:/notextbanner";
 		}
-		if (!bnricontex[idx]) {
-			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
-			bnricontex[idx] = grabIcon(f_nobnr);
-			fclose(f_nobnr);
+		FILE *f_bnr = fopen(filename, "rb");
+		if (!f_bnr) {
+			filename = "romfs:/notextbanner";
+			f_bnr = fopen(filename, "rb");
 		}
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath[idx]);
+
+		bnricontex[idx] = grabIcon(f_bnr);
+		fclose(f_bnr);
 	}
 }
-
-// May not be needed
-/* static void LoadBNRIconatLaunch(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected bnriconnum is on the current page.
-		sf2d_free_texture(bnricontexlaunch);
-		bnricontexlaunch = NULL;
-		if (ndsFile[idx]) {
-			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
-		}
-		if (!bnricontexlaunch) {
-			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
-			bnricontexlaunch = grabIcon(f_nobnr);
-			fclose(f_nobnr);
-		}
-	}
-} */
 
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
@@ -1210,12 +1165,10 @@ int main()
 						if (bnriconnum < (int)files.size()) {
 							const char *tempfile = files.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-							StoreBNRIconPath(path);
+							LoadBNRIcon(path);
 						} else {
-							StoreBNRIconPath("romfs:/notextbanner");
+							LoadBNRIcon(NULL);
 						}
-						OpenBNRIcon();
-						LoadBNRIcon();
 					}
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -1228,15 +1181,13 @@ int main()
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
-								StoreBNRIconPath(path);
+								LoadBNRIcon(path);
 							} else {
-								StoreBNRIconPath("romfs:/notextbanner");
+								LoadBNRIcon(NULL);
 							}
 						} else {
-							StoreBNRIconPath("romfs:/notextbanner");
+							LoadBNRIcon(NULL);
 						}
-						OpenBNRIcon();
-						LoadBNRIcon();
 					}
 				}
 
@@ -2715,10 +2666,6 @@ int main()
 
 	// Free the arrays.
 	for (int i = 0; i < 20; i++) {
-		if (ndsFile[i]) {
-			fclose(ndsFile[i]);
-		}
-		free(bnriconpath[i]);
 		sf2d_free_texture(bnricontex[i]);
 		free(boxartpath[i]);
 	}
