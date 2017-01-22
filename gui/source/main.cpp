@@ -2382,7 +2382,7 @@ int main()
 								} else {
 									titleboxXmovetimer = 1;
 									if (settings.twl.forwarder) {
-										settings.twl.launchslot1 = false;
+										settings.twl.launchslot1 = true;
 										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										settings.twl.launchslot1 = false;
