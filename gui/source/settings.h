@@ -45,6 +45,7 @@ typedef struct _Settings_t {
 		std::string name;
 		std::string romfolder;
 		std::string fcromfolder;
+    
 		int language;	// Language. (0-11; other for system)
 		int color;
 		int menucolor;
@@ -83,9 +84,10 @@ typedef struct _Settings_t {
 	} twl;
 	
 	struct {
-		bool cpuspeed;	// false == NTR, true == TWL
-		bool extvram;
-		bool lockarm9scfgext;
+		// -1 == default; 0 == off, 1 == on
+		s8 cpuspeed;	// false == NTR, true == TWL
+		s8 extvram;
+		s8 lockarm9scfgext;
 	} pergame;
 } Settings_t;
 extern Settings_t settings;
