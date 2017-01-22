@@ -116,8 +116,9 @@ int main(int argc, char **argv) {
 
 	bool HealthandSafety_MSG = true;
 	bool UseNTRSplash = true;
+	bool TWLVRAM = false;
 	bool TriggerExit = false;
-	// std::string	bootstrapPath = "";
+	std::string	gamesettingsPath = "";
 
 	bool consoleOn = false;
 
@@ -148,8 +149,30 @@ int main(int argc, char **argv) {
 		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
 		LogFMA("TWL.Main", "Saved username to GUI", p);
 		
+		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
+		
+		if(!access(gamesettingsPath.c_str(), F_OK)) {
+			CIniFile gamesettingsini( gamesettingsPath );
+			CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 1) {
+				UseNTRSplash = false;
+				bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
+			} else {
+				bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 0);
+			}
+			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			if(gamesettingsini.GetInt("GAME-SETTINGS","LOCK_ARM9_SCFG_EXT",0) == 1) {
+				bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 1);
+			} else {
+				bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 0);
+			}
+			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+		} else {
+			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
+			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+		}
+		
 		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 0) { HealthandSafety_MSG = false; }
-		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
 		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
 			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) {
 				BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
@@ -159,7 +182,7 @@ int main(int argc, char **argv) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) {
+		if(!UseNTRSplash) {
 			REG_SCFG_CLK |= 0x1;
 			LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
@@ -219,7 +242,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) {
+		if(TWLVRAM) {
 			REG_SCFG_EXT |= 0x2000;
 			LogFM("TWL.Main", "VRAM boost on");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {

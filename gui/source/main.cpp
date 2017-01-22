@@ -638,15 +638,18 @@ static void SavePerGameSettings(void)
 static void SetPerGameSettings(void)
 {
 	std::string inifilename;
-	if (!settings.twl.forwarder)
+	if (!settings.twl.forwarder) {
 		inifilename = ReplaceAll(rom, ".nds", ".ini");
-	else {
 		char path[256];
-		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
+		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings", inifilename.c_str());
+		inifilename = path;
+	} else {
+		char path[256];
+		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings/flashcard", rom);
 		inifilename = path;
 	}
 	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
-	settingsini.SetString("TWL-MODE", "GAMESETTINGS_FILE", inifilename);
+	settingsini.SetString("TWL-MODE", "GAMESETTINGS_PATH", inifilename);
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 }
 
@@ -2275,6 +2278,12 @@ int main()
 					} else if (hDown & KEY_SELECT) {
 						if (!showdialogbox_menu) {
 							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
+								if (settings.twl.forwarder) {
+									rom = fcfiles.at(cursorPosition).c_str();
+								} else {
+									rom = files.at(cursorPosition).c_str();
+								}
+								LoadPerGameSettings();
 								showdialogbox_menu = true;
 								menu_ctrlset = CTRL_SET_DBOX;
 							}
@@ -2536,7 +2545,6 @@ int main()
 			// Save settings.
 			saveOnExit = false;
 			SaveSettings();
-      SetPerGameSettings();
 			SaveBootstrapConfig();
 
 			// Prepare for the app launch.
@@ -2591,6 +2599,7 @@ int main()
 	if (saveOnExit) {
 		// Save settings.
 		SaveSettings();
+		SetPerGameSettings();
 		SaveBootstrapConfig();
 	}
 
