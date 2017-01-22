@@ -195,7 +195,6 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-static const char flashcardfolder[] = "sdmc:/roms/flashcard/nds";
 static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
 static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
 static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
@@ -890,9 +889,9 @@ int main()
 	createLog();
 
 	// make folders if they don't exist
-	mkdir("sdmc:/roms/flashcard/nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
@@ -1013,9 +1012,20 @@ int main()
 	// Scan the ROMs directory for ".nds" files.
 	scan_dir_for_files(folder_path, ".nds", files);
 	
+	// Use default directory if none is specified
+	char folder_path2[256];
+	if (settings.ui.fcromfolder.empty()) {
+		settings.ui.fcromfolder = "roms/flashcard/nds";
+		// Make sure the directory exists.
+		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
+		mkdir(folder_path2, 0777);
+	} else {
+		// Use the custom ROMs directory.
+		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
+	}
+
 	// Scan the flashcard directory for configuration files.
-	// TODO: Customizable location based on romfolder?
-	scan_dir_for_files("sdmc:/roms/flashcard/nds", ".ini", fcfiles);
+	scan_dir_for_files(folder_path2, ".ini", fcfiles);
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
@@ -1270,7 +1280,7 @@ int main()
 					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
 						if (boxartnum < (int)fcfiles.size()) {
 							const char *tempfile = fcfiles.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/roms/flashcard/nds/%s", tempfile);
+							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
 
 							CIniFile setfcrompathini( path );
 							std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
@@ -1684,7 +1694,7 @@ int main()
 					applaunchprep = false;
 				} else {
 					if (settings.twl.forwarder) {
-						CIniFile setfcrompathini(flashcardfolder+slashchar+rom);
+						CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+slashchar+rom);
 						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
 						// TODO: Enum values for flash card type.
 						if (keepsdvalue) {
@@ -1716,7 +1726,7 @@ int main()
 								}
 							}
 						} else {
-							CIniFile setfcrompathini(sdmc+flashcardfolder+rom);
+							CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+rom);
 							switch (settings.twl.flashcard) {
 								case 0:
 								case 1:

@@ -1055,6 +1055,8 @@ void LoadSettings(void) {
 	settings.ui.name = settingsini.GetString("FRONTEND", "NAME", "");
 	settings.ui.romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(settings.ui.romfolder);
+	settings.ui.fcromfolder = settingsini.GetString("FRONTEND", "FCROM_FOLDER", "");
+	RemoveTrailingSlashes(settings.ui.fcromfolder);
 
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
