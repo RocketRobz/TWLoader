@@ -865,9 +865,12 @@ static void scanRomDirectories(void)
 	// Use default directory if none is specified
 	if (settings.ui.romfolder.empty()) {
 		settings.ui.romfolder = "roms/nds";
-		// Make sure the directory exists.
 		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.romfolder.c_str());
-		mkdir(path, 0777);
+		// Make sure the directory exists.
+		// NOTE: Parent directories might not exist, so we
+		// need to mkdir() each directory level.
+		mkdir("sdmc:/roms", 0777);
+		mkdir("sdmc:/roms/nds", 0777);
 	} else {
 		// Use the custom ROMs directory.
 		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.romfolder.c_str());
@@ -879,9 +882,13 @@ static void scanRomDirectories(void)
 	// Use default directory if none is specified
 	if (settings.ui.fcromfolder.empty()) {
 		settings.ui.fcromfolder = "roms/flashcard/nds";
-		// Make sure the directory exists.
 		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.fcromfolder.c_str());
-		mkdir(path, 0777);
+		// Make sure the directory exists.
+		// NOTE: Parent directories might not exist, so we
+		// need to mkdir() each directory level.
+		mkdir("sdmc:/roms", 0777);
+		mkdir("sdmc:/roms/flashcard", 0777);
+		mkdir("sdmc:/roms/flashcard/nds", 0777);
 	} else {
 		// Use the custom ROMs directory.
 		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.fcromfolder.c_str());
@@ -925,6 +932,7 @@ int main()
 	createLog();
 
 	// make folders if they don't exist
+	mkdir("sdmc:/_nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
