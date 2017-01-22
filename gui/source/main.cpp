@@ -82,7 +82,7 @@ enum Menu_ControlSet {
 Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
 static sf2d_texture *bnricontexnum = NULL;
-static sf2d_texture *bnricontexlaunch = NULL;
+static sf2d_texture *bnricontexlaunch = NULL;	// DO NOT FREE; points to bnricontex[]
 static sf2d_texture *bnricontexdbox = NULL;
 static sf2d_texture *boxarttexnum = NULL;
 
@@ -2658,11 +2658,10 @@ int main()
 	sf2d_free_texture(carttwltex);
 	gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
-	if (colortexloaded) { sf2d_free_texture(dotcircletex); }
-	if (colortexloaded) { sf2d_free_texture(startbordertex); }
-
-	// Launch banner.
-	sf2d_free_texture(bnricontexlaunch);
+	if (colortexloaded) {
+		sf2d_free_texture(dotcircletex);
+		sf2d_free_texture(startbordertex);
+	}
 
 	// Free the arrays.
 	for (int i = 0; i < 20; i++) {
