@@ -267,7 +267,7 @@ static string dialog_text;
  * Make the dialog box appear.
  * @param text Dialog box text.
  */
-void DialogBoxAppear(const char *text) {
+void DialogBoxAppear(const char *text, int mode) {
 	if (showdialogbox)
 		return;
 
@@ -289,7 +289,10 @@ void DialogBoxAppear(const char *text) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i-240);
-		sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
+		if (mode == 1) {
+			sftd_draw_textf(font, 40, 72+i-240, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
+		} else
+			sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -300,7 +303,7 @@ void DialogBoxAppear(const char *text) {
  * Make the dialog box disappear.
  * @param text Dialog box text.
  */
-void DialogBoxDisappear(const char *text) {
+void DialogBoxDisappear(const char *text, int mode) {
 	if (!showdialogbox)
 		return;
 
@@ -318,7 +321,10 @@ void DialogBoxDisappear(const char *text) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i);
-		sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
+		if (mode == 1) {
+			sftd_draw_textf(font, 40, 72+i, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
+		} else
+			sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -335,8 +341,8 @@ static int CreateGameSave(const char *filename) {
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 	if (!f_nds_file) {
-		DialogBoxAppear("fopen(nds_path) failed, continuing anyway.");
-		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.");
+		DialogBoxAppear("fopen(nds_path) failed, continuing anyway.", 0);
+		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.", 0);
 		return -1;
 	}
 
@@ -346,7 +352,7 @@ static int CreateGameSave(const char *filename) {
 	fclose(f_nds_file);
 	
 	if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
-		DialogBoxAppear("Creating save file...");
+		DialogBoxAppear("Creating save file...", 1);
 		static const int BUFFER_SIZE = 4096;
 		char buffer[BUFFER_SIZE];
 		memset(buffer, 0, sizeof(buffer));
@@ -377,7 +383,7 @@ static int CreateGameSave(const char *filename) {
 			fclose(pFile);
 		}
 
-		DialogBoxDisappear("Done!");
+		DialogBoxDisappear("Done!", 1);
 	}
 	return 0;
 }
@@ -542,7 +548,6 @@ static void LoadBootstrapConfig(void)
 			settings.twl.console = 0;
 			break;
 	}
-	settings.twl.lockarm9scfgext = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
 	LogFM("Main.LoadBootstrapConfig", "Bootstrap configuration loaded successfully");
 }
 
@@ -582,7 +587,6 @@ static void SaveBootstrapConfig(void)
 			break;
 	}
 
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, settings.twl.lockarm9scfgext);
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
@@ -602,9 +606,9 @@ static void LoadPerGameSettings(void)
 	char path[256];
 	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/gamesettings/%s", inifilename.c_str());
 	CIniFile gamesettingsini(path);
-	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", 0);
-	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", 0);
-	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, 0);
+	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
+	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
+	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
 
 	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
 }
@@ -1031,7 +1035,7 @@ int main()
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 		const char *tempfile = files.at(bnriconnum).c_str();
-		DialogBoxAppear(title);
+		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
@@ -1068,7 +1072,7 @@ int main()
 		}
 	}
 
-	DialogBoxDisappear(" ");
+	DialogBoxDisappear(" ", 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
@@ -2039,6 +2043,24 @@ int main()
 								}
 								sftd_draw_wtext(font, 16, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
 							}
+							
+							char romsel_counter1[16];
+							snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
+							const char *p_romsel_counter;
+							if (settings.twl.forwarder) {
+								p_romsel_counter = romsel_counter2fc;
+							} else {
+								p_romsel_counter = romsel_counter2sd;
+							}
+							if (file_count < 100) {
+								sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+								sftd_draw_textf(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+								sftd_draw_textf(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+							} else {
+								sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+								sftd_draw_textf(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+								sftd_draw_textf(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+							}
 
 							if (gamesettings_cursorPosition == 0)
 								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+89);
@@ -2054,19 +2076,43 @@ int main()
 								sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+129, RGBA8(127, 127, 127, 255));
 								
 							sftd_draw_text(font, 38, menudbox_Ypos+90, RGBA8(0, 0, 0, 255), 12, "ARM9 CPU Speed:");
-							if (!settings.pergame.cpuspeed)
+							switch (settings.pergame.cpuspeed) {
+								case -1:
+								default:
+								sftd_draw_text(font, 72, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Default");
+								break;
+								case 0:
 								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Off");
-							else
+								break;
+								case 1:
 								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "On");
-							if (!settings.pergame.extvram)
+								break;
+							}
+							switch (settings.pergame.extvram) {
+								case -1:
+								default:
+								sftd_draw_text(font, 172, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Default");
+								break;
+								case 0:
 								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Off");
-							else
+								break;
+								case 1:
 								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
+								break;
+							}
 							sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
-							if (!settings.pergame.lockarm9scfgext)
+							switch (settings.pergame.lockarm9scfgext) {
+								case -1:
+								default:
+								sftd_draw_text(font, 136, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Default");
+								break;
+								case 0:
 								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
-							else
+								break;
+								case 1:
 								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
+								break;
+							}
 						} else {
 							if (startmenu_cursorPosition == 0)
 								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
@@ -2468,21 +2514,27 @@ int main()
 							switch (gamesettings_cursorPosition) {
 								case 0:
 								default:
-									settings.pergame.cpuspeed = !settings.pergame.cpuspeed;
+									settings.pergame.cpuspeed++;
+									if(settings.pergame.cpuspeed == 2)
+										settings.pergame.cpuspeed = -1;
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
 									break;
 								case 1:
-									settings.pergame.extvram = !settings.pergame.extvram;
+									settings.pergame.extvram++;
+									if(settings.pergame.extvram == 2)
+										settings.pergame.extvram = -1;
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
 									break;
 								case 2:
-									settings.pergame.lockarm9scfgext = !settings.pergame.lockarm9scfgext;
+									settings.pergame.lockarm9scfgext++;
+									if(settings.pergame.lockarm9scfgext == 2)
+										settings.pergame.lockarm9scfgext = -1;
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
@@ -2545,6 +2597,7 @@ int main()
 			// Save settings.
 			saveOnExit = false;
 			SaveSettings();
+			SetPerGameSettings();
 			SaveBootstrapConfig();
 
 			// Prepare for the app launch.

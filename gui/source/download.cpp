@@ -23,8 +23,8 @@ using std::vector;
 #include <sftd.h>
 
 // Functions and variables defined in main.cpp.
-extern void DialogBoxAppear(const char *text);
-extern void DialogBoxDisappear(const char *text);
+extern void DialogBoxAppear(const char *text, int mode);
+extern void DialogBoxDisappear(const char *text, int mode);
 extern sftd_font *font;
 extern sftd_font *font_b;
 extern sf2d_texture *dialogboxtex; // Dialog box
@@ -171,7 +171,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 int checkUpdate(void) {
 	LogFM("checkUpdate", "Checking updates...");
 	static const char title[] = "Now checking TWLoader version...";
-	DialogBoxAppear(title);
+	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -261,10 +261,10 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_swapbuffers();
 			run = false;
 		} else {
-			DialogBoxDisappear("Download failed.");
+			DialogBoxDisappear("Download failed.", 0);
 		}
 	} else {
-		DialogBoxDisappear("Update failed.");
+		DialogBoxDisappear("Update failed.", 0);
 	}
 }
 
@@ -273,7 +273,7 @@ void DownloadTWLoaderCIAs(void) {
  */
 void UpdateBootstrapUnofficial(void) {
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
-	DialogBoxAppear(title);
+	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -285,7 +285,7 @@ void UpdateBootstrapUnofficial(void) {
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
-		DialogBoxDisappear("Done!");
+		DialogBoxDisappear("Done!", 0);
 	}
 }
 
@@ -294,7 +294,7 @@ void UpdateBootstrapUnofficial(void) {
  */
 void UpdateBootstrapRelease(void) {
 	static const char title[] = "Now updating bootstrap (Release)...";
-	DialogBoxAppear(title);
+	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -306,7 +306,7 @@ void UpdateBootstrapRelease(void) {
 	remove("sdmc:/_nds/bootstrap.nds");
 	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
-		DialogBoxDisappear("Done!");
+		DialogBoxDisappear("Done!", 0);
 	}
 }
 
@@ -601,7 +601,7 @@ void downloadBoxArt(void)
 		ba_TID[4] = 0;
 
 		// Show the dialog.
-		DialogBoxAppear(title);
+		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
