@@ -82,15 +82,11 @@ enum Menu_ControlSet {
 Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
 static sf2d_texture *bnricontexnum = NULL;
-static sf2d_texture *bnricontexlaunch = NULL;
+static sf2d_texture *bnricontexlaunch = NULL;	// DO NOT FREE; points to bnricontex[]
 static sf2d_texture *bnricontexdbox = NULL;
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
-// TODO: Some of this still needs reworking to fix
-// memory leaks, but switching to arrays is a start.
-static FILE* ndsFile[20] = { };
-static char* bnriconpath[20] = { };
 // bnricontex[]: 0-9 == regular; 10-19 == .nds icons only
 static sf2d_texture *bnricontex[20] = { };
 static char* boxartpath[20] = { };
@@ -437,32 +433,6 @@ static void ChangeBoxArtNo(void) {
 	}
 }
 
-static void OpenBNRIcon(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected banner icon is on the current page.
-		if (ndsFile[idx]) {
-			fclose(ndsFile[idx]);
-		}
-		ndsFile[idx] = fopen(bnriconpath[idx], "rb");
-	}
-}
-
-/**
- * Store a banner icon path.
- * @param path Banner icon path. (will be strdup()'d)
- */
-static void StoreBNRIconPath(const char *path) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected banner icon is on the current page.
-		free(bnriconpath[idx]);
-		bnriconpath[idx] = strdup(path);
-	}
-}
-
 /**
  * Store a boxart path.
  * @param path Boxart path. (will be strdup()'d)
@@ -477,46 +447,31 @@ static void StoreBoxArtPath(const char *path) {
 	}
 }
 
-static void LoadBNRIcon(void) {
+/**
+ * Load a banner icon at the current bnriconnum.
+ * @param filename Banner filename, or NULL for notextbanner.
+ */
+static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
 		bnricontex[idx] = NULL;
-		// LogFMA("Main.LoadBNRIcon", "Loading banner icon", bnriconpath[idx]);
-		if (ndsFile[idx]) {
-			bnricontex[idx] = grabIcon(ndsFile[idx]);
-			fclose(ndsFile[idx]);
-			ndsFile[idx] = NULL;
+
+		if (!filename) {
+			filename = "romfs:/notextbanner";
 		}
-		if (!bnricontex[idx]) {
-			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
-			bnricontex[idx] = grabIcon(f_nobnr);
-			fclose(f_nobnr);
+		FILE *f_bnr = fopen(filename, "rb");
+		if (!f_bnr) {
+			filename = "romfs:/notextbanner";
+			f_bnr = fopen(filename, "rb");
 		}
-		// LogFMA("Main.LoadBNRIcon", "Banner icon loaded", bnriconpath[idx]);
+
+		bnricontex[idx] = grabIcon(f_bnr);
+		fclose(f_bnr);
 	}
 }
-
-// May not be needed
-/* static void LoadBNRIconatLaunch(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
-		// Selected bnriconnum is on the current page.
-		sf2d_free_texture(bnricontexlaunch);
-		bnricontexlaunch = NULL;
-		if (ndsFile[idx]) {
-			bnricontexlaunch = grabIcon(ndsFile[idx]); // Banner icon
-		}
-		if (!bnricontexlaunch) {
-			FILE *f_nobnr = fopen("romfs:/notextbanner", "rb");
-			bnricontexlaunch = grabIcon(f_nobnr);
-			fclose(f_nobnr);
-		}
-	}
-} */
 
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
@@ -525,7 +480,8 @@ static void LoadBoxArt(void) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		sf2d_free_texture(boxarttex[idx % 6]);
-		boxarttex[idx % 6] = sfil_load_PNG_file(boxartpath[idx], SF2D_PLACE_RAM); // Box art
+		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/boxart_null.png");
+		boxarttex[idx % 6] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
 	}
 }
 
@@ -855,6 +811,43 @@ static void loadSlot1BoxArt(void)
 	slot1boxarttexloaded = true;
 }
 
+/**
+ * Scan the ROM directories.
+ */
+static void scanRomDirectories(void)
+{
+	char path[256];
+
+	// Use default directory if none is specified
+	if (settings.ui.romfolder.empty()) {
+		settings.ui.romfolder = "roms/nds";
+		// Make sure the directory exists.
+		// NOTE: Parent directories might not exist, so we
+		// need to mkdir() each directory level.
+		mkdir("sdmc:/roms", 0777);
+		mkdir("sdmc:/roms/nds", 0777);
+	}
+	snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.romfolder.c_str());
+
+	// Scan the ROMs directory for ".nds" files.
+	scan_dir_for_files(path, ".nds", files);
+	
+	// Use default directory if none is specified
+	if (settings.ui.fcromfolder.empty()) {
+		settings.ui.fcromfolder = "roms/flashcard/nds";
+		// Make sure the directory exists.
+		// NOTE: Parent directories might not exist, so we
+		// need to mkdir() each directory level.
+		mkdir("sdmc:/roms", 0777);
+		mkdir("sdmc:/roms/flashcard", 0777);
+		mkdir("sdmc:/roms/flashcard/nds", 0777);
+	}
+	snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.fcromfolder.c_str());
+
+	// Scan the flashcard directory for configuration files.
+	scan_dir_for_files(path, ".ini", fcfiles);
+}
+
 int main()
 {
 	aptInit();
@@ -889,6 +882,7 @@ int main()
 	createLog();
 
 	// make folders if they don't exist
+	mkdir("sdmc:/_nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
@@ -996,36 +990,9 @@ int main()
 		sfx_wrong = new sound("romfs:/sounds/wrong.wav", 2, false);
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
-	
-	// Use default directory if none is specified
-	char folder_path[256];
-	if (settings.ui.romfolder.empty()) {
-		settings.ui.romfolder = "roms/nds";
-		// Make sure the directory exists.
-		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
-		mkdir(folder_path, 0777);
-	} else {
-		// Use the custom ROMs directory.
-		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
-	}
 
-	// Scan the ROMs directory for ".nds" files.
-	scan_dir_for_files(folder_path, ".nds", files);
-	
-	// Use default directory if none is specified
-	char folder_path2[256];
-	if (settings.ui.fcromfolder.empty()) {
-		settings.ui.fcromfolder = "roms/flashcard/nds";
-		// Make sure the directory exists.
-		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
-		mkdir(folder_path2, 0777);
-	} else {
-		// Use the custom ROMs directory.
-		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
-	}
-
-	// Scan the flashcard directory for configuration files.
-	scan_dir_for_files(folder_path2, ".ini", fcfiles);
+	// Scan the ROM directories.
+	scanRomDirectories();
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
@@ -1198,12 +1165,10 @@ int main()
 						if (bnriconnum < (int)files.size()) {
 							const char *tempfile = files.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-							StoreBNRIconPath(path);
+							LoadBNRIcon(path);
 						} else {
-							StoreBNRIconPath("romfs:/notextbanner");
+							LoadBNRIcon(NULL);
 						}
-						OpenBNRIcon();
-						LoadBNRIcon();
 					}
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -1216,15 +1181,13 @@ int main()
 							const char *tempfile = fcfiles.at(bnriconnum).c_str();
 							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 							if (access(path, F_OK) != -1) {
-								StoreBNRIconPath(path);
+								LoadBNRIcon(path);
 							} else {
-								StoreBNRIconPath("romfs:/notextbanner");
+								LoadBNRIcon(NULL);
 							}
 						} else {
-							StoreBNRIconPath("romfs:/notextbanner");
+							LoadBNRIcon(NULL);
 						}
-						OpenBNRIcon();
-						LoadBNRIcon();
 					}
 				}
 
@@ -2695,18 +2658,13 @@ int main()
 	sf2d_free_texture(carttwltex);
 	gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
-	if (colortexloaded) { sf2d_free_texture(dotcircletex); }
-	if (colortexloaded) { sf2d_free_texture(startbordertex); }
-
-	// Launch banner.
-	sf2d_free_texture(bnricontexlaunch);
+	if (colortexloaded) {
+		sf2d_free_texture(dotcircletex);
+		sf2d_free_texture(startbordertex);
+	}
 
 	// Free the arrays.
 	for (int i = 0; i < 20; i++) {
-		if (ndsFile[i]) {
-			fclose(ndsFile[i]);
-		}
-		free(bnriconpath[i]);
 		sf2d_free_texture(bnricontex[i]);
 		free(boxartpath[i]);
 	}
