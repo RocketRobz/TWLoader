@@ -1926,11 +1926,13 @@ int main()
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 					}
 
-					const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-					const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-					const int home_x = (320-home_width)/2;
-					sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
-					sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+					if(!is3DSX) {
+						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+						const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+						const int home_x = (320-home_width)/2;
+						sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
+						sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+					}
 
 					if (pagenum == 0) {
 						sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);

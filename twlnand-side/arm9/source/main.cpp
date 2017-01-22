@@ -127,6 +127,7 @@ int main(int argc, char **argv) {
 
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
+		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		
 		// Didn't seem to work, aside from the language of the H&S screen changing.
 		// if(twloaderini.GetInt("TWL-MODE","USE_SYSLANG",0) == 0) {
@@ -153,7 +154,6 @@ int main(int argc, char **argv) {
 		
 		if(!access(gamesettingsPath.c_str(), F_OK)) {
 			CIniFile gamesettingsini( gamesettingsPath );
-			CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
 				if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
 			} else {
