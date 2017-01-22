@@ -507,6 +507,12 @@ void downloadBoxArt(void)
 		u32 tid;
 		memcpy(&tid, ba_TID, sizeof(tid));
 		tid = __builtin_bswap32(tid);
+		if (tid == 0x4E54524A) {
+			// NTRJ: Generic game code used for
+			// prototypes and some DL Play games.
+			// No boxart is available.
+			continue;
+		}
 		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
 			// Already checked for this boxart.
 			continue;
@@ -540,6 +546,12 @@ void downloadBoxArt(void)
 		u32 tid;
 		memcpy(&tid, ba_TID.c_str(), sizeof(tid));
 		tid = __builtin_bswap32(tid);
+		if (tid == 0x4E54524A) {
+			// NTRJ: Generic game code used for
+			// prototypes and some DL Play games.
+			// No boxart is available.
+			continue;
+		}
 		if (boxart_all_tids.find(tid) != boxart_all_tids.end()) {
 			// Already checked for this boxart.
 			continue;
