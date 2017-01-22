@@ -525,7 +525,8 @@ static void LoadBoxArt(void) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		sf2d_free_texture(boxarttex[idx % 6]);
-		boxarttex[idx % 6] = sfil_load_PNG_file(boxartpath[idx], SF2D_PLACE_RAM); // Box art
+		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/boxart_null.png");
+		boxarttex[idx % 6] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
 	}
 }
 
