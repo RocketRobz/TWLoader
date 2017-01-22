@@ -57,7 +57,6 @@ extern vector<string> fcfiles;
 bool checkWifiStatus(void) {
 	acInit();
 	u32 wifiStatus;
-	ACU_GetWifiStatus(&wifiStatus);
 	bool res = false;
 
 	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
