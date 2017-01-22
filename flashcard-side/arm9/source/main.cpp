@@ -113,6 +113,17 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+void RemoveTrailingSlashes(string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
+
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
@@ -121,18 +132,27 @@ int main(int argc, char **argv) {
 	REG_SCFG_CLK = 0x85;
 
 	bool TriggerExit = false;
+	std::string fcromfolder;
+	char fcfolder_path[256];
 	
 
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 		LogFM("Flashcard.Main", "Fat inited");
-	}
 
 	// overwrite reboot stub identifier
 	/* extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler(); */
+		
+		fcromfolder = twloaderini.GetString( "FRONTEND", "FCROM_FOLDER", "");
+		RemoveTrailingSlashes(fcromfolder);
+		if (fcromfolder.empty()) {
+			fcromfolder = "roms/flashcard/nds";
+		}
+		snprintf(fcfolder_path, sizeof(fcfolder_path), "sd:/%s/", fcromfolder.c_str());
+	}
 
 	int pathLen;
 	std::string filename;
@@ -211,7 +231,7 @@ int main(int argc, char **argv) {
 			// Set .ini path
 			free(inifilepath);
 			inifilepath = malloc(256);
-			strcpy(inifilepath, "sd:/roms/flashcard/nds/");
+			strcpy(inifilepath, fcfolder_path);
 			strcat(inifilepath, filename.c_str());
 			inifilepathfixed = ReplaceAll(inifilepath, ".nds", ".ini");
 			
