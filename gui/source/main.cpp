@@ -855,6 +855,42 @@ static void loadSlot1BoxArt(void)
 	slot1boxarttexloaded = true;
 }
 
+/**
+ * Scan the ROM directories.
+ */
+static void scanRomDirectories(void)
+{
+	char path[256];
+
+	// Use default directory if none is specified
+	if (settings.ui.romfolder.empty()) {
+		settings.ui.romfolder = "roms/nds";
+		// Make sure the directory exists.
+		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.romfolder.c_str());
+		mkdir(path, 0777);
+	} else {
+		// Use the custom ROMs directory.
+		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.romfolder.c_str());
+	}
+
+	// Scan the ROMs directory for ".nds" files.
+	scan_dir_for_files(path, ".nds", files);
+	
+	// Use default directory if none is specified
+	if (settings.ui.fcromfolder.empty()) {
+		settings.ui.fcromfolder = "roms/flashcard/nds";
+		// Make sure the directory exists.
+		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.fcromfolder.c_str());
+		mkdir(path, 0777);
+	} else {
+		// Use the custom ROMs directory.
+		snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.fcromfolder.c_str());
+	}
+
+	// Scan the flashcard directory for configuration files.
+	scan_dir_for_files(path, ".ini", fcfiles);
+}
+
 int main()
 {
 	aptInit();
@@ -996,36 +1032,9 @@ int main()
 		sfx_wrong = new sound("romfs:/sounds/wrong.wav", 2, false);
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
-	
-	// Use default directory if none is specified
-	char folder_path[256];
-	if (settings.ui.romfolder.empty()) {
-		settings.ui.romfolder = "roms/nds";
-		// Make sure the directory exists.
-		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
-		mkdir(folder_path, 0777);
-	} else {
-		// Use the custom ROMs directory.
-		snprintf(folder_path, sizeof(folder_path), "sdmc:/%s", settings.ui.romfolder.c_str());
-	}
 
-	// Scan the ROMs directory for ".nds" files.
-	scan_dir_for_files(folder_path, ".nds", files);
-	
-	// Use default directory if none is specified
-	char folder_path2[256];
-	if (settings.ui.fcromfolder.empty()) {
-		settings.ui.fcromfolder = "roms/flashcard/nds";
-		// Make sure the directory exists.
-		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
-		mkdir(folder_path2, 0777);
-	} else {
-		// Use the custom ROMs directory.
-		snprintf(folder_path2, sizeof(folder_path2), "sdmc:/%s", settings.ui.fcromfolder.c_str());
-	}
-
-	// Scan the flashcard directory for configuration files.
-	scan_dir_for_files(folder_path2, ".ini", fcfiles);
+	// Scan the ROM directories.
+	scanRomDirectories();
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
