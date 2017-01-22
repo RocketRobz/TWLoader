@@ -44,7 +44,7 @@ typedef struct _Settings_t {
 	struct {
 		std::string name;
 		std::string romfolder;
-
+		std::string fcromfolder;
 		int language;	// Language. (0-11; other for system)
 		int color;
 		int menucolor;
