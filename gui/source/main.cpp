@@ -2084,10 +2084,10 @@ int main()
 								sftd_draw_text(font, 72, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Default");
 								break;
 								case 0:
-								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Off");
+								sftd_draw_text(font, 54, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "67mhz (NTR)");
 								break;
 								case 1:
-								sftd_draw_text(font, 80, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "On");
+								sftd_draw_text(font, 50, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "133mhz (TWL)");
 								break;
 							}
 							switch (settings.pergame.extvram) {

@@ -466,17 +466,17 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
+		if (cursor_pos[0] == 6) {
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
+			Ypos += 12;
+		} else {
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
+			Ypos += 12;
+		}
 		if(!is3DSX) {
-			if (cursor_pos[0] == 6) {
-				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
-				sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
-				sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
-				Ypos += 12;
-			} else {
-				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, settings_autoupdatetext);
-				sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
-				Ypos += 12;
-			}
 			if (cursor_pos[0] == 7) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
 				sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
@@ -814,6 +814,10 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 7) {
 			cursor_pos[0]++;
+			if(is3DSX) {
+				if(cursor_pos[0] == 7)
+					cursor_pos[0]--;
+			}
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
 			cursor_pos[0]--;
@@ -1069,6 +1073,7 @@ void LoadSettings(void) {
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
 	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 0);
+	settings.twl.lockarm9scfgext = settingsini.GetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", 0);
 	settings.twl.bootscreen = settingsini.GetInt("TWL-MODE", "BOOT_ANIMATION", 0);
 	settings.twl.healthsafety = settingsini.GetInt("TWL-MODE", "HEALTH&SAFETY_MSG", 0);
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
@@ -1112,6 +1117,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
 	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
 	settingsini.SetInt("TWL-MODE", "TWL_VRAM", settings.twl.extvram);
+	settingsini.SetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", settings.twl.lockarm9scfgext);
 	settingsini.SetInt("TWL-MODE", "BOOT_ANIMATION", settings.twl.bootscreen);
 	settingsini.SetInt("TWL-MODE", "HEALTH&SAFETY_MSG", settings.twl.healthsafety);
 	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
