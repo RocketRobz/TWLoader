@@ -67,16 +67,16 @@ static const char *const lang_DE[STR_MAX] = {
 
 // Italian
 static const char *const lang_IT[STR_MAX] = {
-	": Ritorna al Menu Home",	// "Return to HOME Menu"
-	"INIZIO",			// "START" (used on cartridge indicator)
+    ": Ritorna al menu HOME",    // "Return to HOME Menu"
+    "AVVIA",            // "START" (used on cartridge indicator)
 
-	// Settings
-	"START: Aggiornamento TWLoader",	// "START: Update TWLoader"
-	"Lingua",				// "Language"
-	"Colore",				// "Color"
-	"colore Menu",				// "Menu Color"
-	"Visualizza il nome del file",		// "Show filename"
-	"contatore Gioco",			// "Game counter"
+    // Settings
+    "START: Aggiornamento TWLoader",    // "START: Update TWLoader"
+    "Lingua",                // "Language"
+    "Colore",                // "Color"
+    "Colore menu",                // "Menu Color"
+    "Visualizza il nome del file",        // "Show filename"
+    "Contatore giochi",            // "Game counter"
 };
 
 // Spanish
