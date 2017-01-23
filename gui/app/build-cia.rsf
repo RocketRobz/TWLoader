@@ -210,7 +210,7 @@ AccessControlInfo:
   # Maximum 34 services (32 if firmware is prior to 9.6.0)
   ServiceAccessControl:
    - APT:U
-   #- ac:u
+   - ac:u
    - am:net
    #- boss:U
    #- cam:u
