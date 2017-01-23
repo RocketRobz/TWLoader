@@ -827,22 +827,35 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_switch;
 		} else if (hDown & KEY_X) {
 			if (checkWifiStatus()) {
+				// Play the sound now instead of waiting.
+				if (dspfirmfound && sfx_select) {
+					sfx_select->stop();	// Prevent freezing
+					sfx_select->play();
+				}
 				UpdateBootstrapRelease();
-				sfx = sfx_select;
 			} else {
 				// Wi-Fi is not connected.
 				sfx = sfx_wrong;
 			}
 		} else if (hDown & KEY_Y) {
 			if (checkWifiStatus()) {
+				// Play the sound now instead of waiting.
+				if (dspfirmfound && sfx_select) {
+					sfx_select->stop();	// Prevent freezing
+					sfx_select->play();
+				}
 				UpdateBootstrapUnofficial();
-				sfx = sfx_select;
 			} else {
 				// Wi-Fi is not connected.
 				sfx = sfx_wrong;
 			}
 		} else if (hDown & KEY_START && checkWifiStatus() && !is3DSX) {
 			if (checkUpdate() == 0) {
+				// Play the sound now instead of waiting.
+				if (dspfirmfound && sfx_select) {
+					sfx_select->stop();	// Prevent freezing
+					sfx_select->play();
+				}
 				DownloadTWLoaderCIAs();
 			}
 		} else if (hDown & KEY_B) {

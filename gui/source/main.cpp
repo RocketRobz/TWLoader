@@ -859,6 +859,7 @@ int main()
 	romfsInit();
 	srvInit();
 	hidInit();
+	acInit();
 
 	sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
@@ -2698,6 +2699,7 @@ int main()
 	sftd_fini();
 	sf2d_fini();
 
+	acExit();
 	hidExit();
 	srvExit();
 	romfsExit();
