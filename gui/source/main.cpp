@@ -997,10 +997,12 @@ int main()
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+	LogFMA("Main. ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
 	
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
 	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
-
+	LogFMA("Main. ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
+	
 	// Download box art
 	if (checkWifiStatus()) {
 		downloadBoxArt();
@@ -1008,6 +1010,7 @@ int main()
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
+	Log("********************************************************\n");
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
@@ -1029,7 +1032,8 @@ int main()
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		if (!f_nds_file)
 			continue;
-		cacheBanner(f_nds_file, tempfile, font);
+		LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
+		cacheBanner(f_nds_file, tempfile, font) == 0 ? LogFM("Main. Banner scanning", "Done!") : LogFM("Main. Banner scanning", "Error!");			
 		fclose(f_nds_file);
 	}
 

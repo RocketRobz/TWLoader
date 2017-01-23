@@ -426,6 +426,7 @@ static int downloadBoxArt_internal(const char *ba_TID)
 {
 	char path[256];
 	char http_url[256];
+	LogFMA("downloadBoxArt_internal", "Downloading boxart for TID", ba_TID);
 
 	const char *ba_region_fallback = NULL;
 	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
@@ -481,7 +482,7 @@ void downloadBoxArt(void)
 	vector<u32> boxart_dl_tids;	// Title IDs of boxart to download.
 	boxart_all_tids.reserve(files.size() + fcfiles.size());
 	boxart_dl_tids.reserve(files.size() + fcfiles.size());
-	LogFM("Download.downloadBoxArt", "Checking for missing boxart...");
+	LogFM("Download.downloadBoxArt", "Checking missing boxart on SD card...");
 
 	// Check if we're missing any boxart for ROMs on the SD card.
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
@@ -491,7 +492,8 @@ void downloadBoxArt(void)
 		FILE *f_nds_file = fopen(path, "rb");
 		if (!f_nds_file)
 			continue;
-
+		
+		LogFMA("DownloadBoxArt.SD CARD", "Path: ", path);
 		char ba_TID[5];
 		grabTID(f_nds_file, ba_TID);
 		ba_TID[4] = 0;
@@ -535,7 +537,8 @@ void downloadBoxArt(void)
 			// Invalid TID.
 			continue;
 		}
-
+		
+		LogFMA("DownloadBoxArt.FLASHCARD", "TID: ", ba_TID.c_str());		
 		// Did we already check for this boxart?
 		// NOTE: Storing byteswapped in order to sort correctly.
 		u32 tid;
@@ -585,7 +588,8 @@ void downloadBoxArt(void)
 			}
 		}
 	}
-
+	
+	LogFM("DownloadBoxArt.Read_BoxArt", "Boxart read correctly.");
 	if (boxart_dl_tids.empty()) {
 		// No boxart to download.
 		LogFM("Download.downloadBoxArt", "No boxart to download.");
@@ -598,6 +602,7 @@ void downloadBoxArt(void)
 	// Download the boxart.
 	char s_boxart_total[12];
 	snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
+	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart");
 	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
 		static const char title[] = "Downloading missing boxart...";
 
@@ -606,7 +611,7 @@ void downloadBoxArt(void)
 		u32 tid = __builtin_bswap32(boxart_dl_tids[boxartnum]);
 		memcpy(ba_TID, &tid, 4);
 		ba_TID[4] = 0;
-
+		
 		// Show the dialog.
 		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
