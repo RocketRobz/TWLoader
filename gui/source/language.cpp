@@ -53,8 +53,8 @@ static const char *const lang_FR[STR_MAX] = {
 
 // German
 static const char *const lang_DE[STR_MAX] = {
-	": Zuruck zum HOME-Menu",	// "Return to HOME Menu"
-	"ANFANG",			// "START" (used on cartridge indicator)
+	": Zurück zum HOME-Menü",	// "Return to HOME Menu"
+	"START",			// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: TWLoader aktualisieren",	// "START: Update TWLoader"
