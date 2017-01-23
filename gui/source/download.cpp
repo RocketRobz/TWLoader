@@ -55,7 +55,6 @@ extern vector<string> fcfiles;
  * @return True if Wi-Fi is connected; false if not.
  */
 bool checkWifiStatus(void) {
-	acInit();
 	u32 wifiStatus;
 	bool res = false;
 
@@ -66,7 +65,6 @@ bool checkWifiStatus(void) {
 		LogFMA("WifiStatus", "No Internet connetion active found", RetTime().c_str());
 	}
 
-	acExit();
 	return res;
 }
 
@@ -81,7 +79,6 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 	if (!checkWifiStatus())
 		return -1;
 
-	acInit();
 	fsInit();
 	httpcInit(0x1000);
 	u8 method = 0;
@@ -158,7 +155,6 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 	httpcCloseContext(&context);
 
 	httpcExit();
-	acExit();
 	fsExit();
 	return 0;
 }
