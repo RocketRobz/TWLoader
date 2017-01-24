@@ -1,17 +1,11 @@
 language: cpp
 
-"before_install": [
-    "wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl",
-    "export DEVKITPRO=/home/travis/devkitPro",
-    "export DEVKITARM=${DEVKITPRO}/devkitARM"
-  ],
-"install": [
-    "sudo perl devkitARMupdate.pl",
-    "wget --no-check-certificate https://codeload.github.com/ahezard/libnds/zip/master -O /tmp/libnds.zip",
-    "unzip /tmp/libnds.zip",
-    "cd libnds-master",
-    "make && sudo make install",
-    "cd .."
+before_install:
+  - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
+  - export DEVKITPRO=/home/travis/devkitPro
+  - export DEVKITARM=${DEVKITPRO}/devkitARM
+
+install:
   - sudo perl devkitARMupdate.pl
   - wget --no-check-certificate https://codeload.github.com/smealum/ctrulib/zip/master -O /tmp/ctrulib.zip
   - unzip /tmp/ctrulib.zip
