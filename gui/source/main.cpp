@@ -34,7 +34,6 @@ using std::wstring;
 #include "inifile.h"
 #include "date.h"
 #include "log.h"
-
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 bool is3DSX = false;
@@ -2094,40 +2093,36 @@ int main()
 								break;
 							}
 						} else {
-							if (startmenu_cursorPosition == 0)
-								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 1)
-								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 2)
-								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 3)
-								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+							startmenu_cursorPosition == 0 ? sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31) : sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255)); // Game location
+							startmenu_cursorPosition == 1 ? sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31) : sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255)); // Box Art
+							startmenu_cursorPosition == 2 ? sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71) : sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255)); // GBARunner2
+							startmenu_cursorPosition == 3 ? sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71) : sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255)); // Top border
+							startmenu_cursorPosition == 4 ? sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+111) : sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+111, RGBA8(127, 127, 127, 255)); // Search
 
+							/**/
 							sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
 							if (!settings.twl.forwarder)
 								sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
 							else
 								sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
+							/**/
 							if (!settings.romselect.toplayout)
 								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
 							else
 								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
+							/**/
 							if (!is3DSX)
 								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
 							else
 								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
+							/**/
 							if (settings.ui.topborder)
 								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
 							else
 								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
+							/**/							
+							sftd_draw_text(font, 135, menudbox_Ypos+120, RGBA8(0, 0, 0, 255), 12, "Search"); // Search function
+							
 						}
 					}
 				// }
@@ -2300,7 +2295,7 @@ int main()
 							}
 						}
 						if (menudboxmode == DBOX_MODE_SETTINGS)
-							menudboxmode = DBOX_MODE_OPTIONS;
+							menudboxmode = DBOX_MODE_OPTIONS;					
 					} else if (hDown & KEY_SELECT) {
 						if (!showdialogbox_menu) {
 							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
@@ -2416,13 +2411,13 @@ int main()
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT && cursorPosition >= 0) {
 							menudboxmode = DBOX_MODE_SETTINGS;
-						} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3) {
+						} else if (hDown & KEY_RIGHT && (startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
 							startmenu_cursorPosition++;
-						} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2) {
+						} else if (hDown & KEY_LEFT && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 4)) {
 							startmenu_cursorPosition--;
-						} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 3) {
-							startmenu_cursorPosition += 2;
-						} else if (hDown & KEY_UP && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1) {
+						} else if (hDown & KEY_DOWN && (startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
+							startmenu_cursorPosition == 2 ? startmenu_cursorPosition = 4 : startmenu_cursorPosition += 2;							
+						} else if (hDown & KEY_UP && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1)) {
 							startmenu_cursorPosition -= 2;
 						} else if (hDown & KEY_A) {
 							switch (startmenu_cursorPosition) {
@@ -2463,6 +2458,17 @@ int main()
 									break;
 								case 3:
 									settings.ui.topborder = !settings.ui.topborder;
+									break;
+								case 4:
+									/*
+									// Search									
+									sf2d_end_frame();
+									sf2d_swapbuffers();
+									SwkbdState keyState;
+									char input[64];
+									swkbdInit(&keyState, SWKBD_TYPE_NORMAL, 2, 64);
+									swkbdSetHintText(&keyState, "Search");
+									*/
 									break;
 							}
 						} else if (hDown & KEY_B) {
