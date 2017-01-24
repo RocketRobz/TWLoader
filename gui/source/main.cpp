@@ -902,56 +902,57 @@ static void drawMenuDialogBox(void)
 			sftd_draw_text(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 		}
 
-		if (gamesettings_cursorPosition == 0)
-			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+89);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
-		if (gamesettings_cursorPosition == 1)
-			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+89);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
-		if (gamesettings_cursorPosition == 2)
-			sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+129);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+129, RGBA8(127, 127, 127, 255));
-			
-		sftd_draw_text(font, 38, menudbox_Ypos+90, RGBA8(0, 0, 0, 255), 12, "ARM9 CPU Speed:");
-		switch (settings.pergame.cpuspeed) {
-			case -1:
-			default:
-			sftd_draw_text(font, 72, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Default");
-			break;
-			case 0:
-			sftd_draw_text(font, 54, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "67mhz (NTR)");
-			break;
-			case 1:
-			sftd_draw_text(font, 50, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "133mhz (TWL)");
-			break;
-		}
-		switch (settings.pergame.extvram) {
-			case -1:
-			default:
-			sftd_draw_text(font, 172, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Default");
-			break;
-			case 0:
-			sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Off");
-			break;
-			case 1:
-			sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
-			break;
-		}
-		sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
-		switch (settings.pergame.lockarm9scfgext) {
-			case -1:
-			default:
-			sftd_draw_text(font, 136, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Default");
-			break;
-			case 0:
-			sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
-			break;
-			case 1:
-			sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
-			break;
+		static const struct {
+			int x;
+			int y;
+			const s8 *value;
+			const char *title;
+			const char *value_desc[2];	// 0 == off, 1 == on
+		} buttons[] = {
+			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
+			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
+			{ 91, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
+		};
+
+		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
+			if (startmenu_cursorPosition == i) {
+				// Button is highlighted.
+				sf2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
+			} else {
+				// Button is not highlighted. Darken the texture.
+				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
+			}
+
+			const char *title = buttons[i].title;
+			const char *value_desc;
+			switch (*(buttons[i].value)) {
+				case -1:
+				default:
+					value_desc = "Default";
+					break;
+				case 0:
+					value_desc = buttons[i].value_desc[0];
+					break;
+				case 1:
+					value_desc = buttons[i].value_desc[1];
+					break;
+			}
+
+			// Determine the text height.
+			// NOTE: Button texture size is 132x34.
+			const int h = 32;
+
+			// Draw the title.
+			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+			int w = sftd_get_text_width(font, 12, title);
+			int x = ((132 - w) / 2) + buttons[i].x;
+			sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+			y += 16;
+
+			// Draw the value.
+			w = sftd_get_text_width(font, 12, value_desc);
+			x = ((132 - w) / 2) + buttons[i].x;
+			sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
 		}
 	} else {
 		// UI options.
