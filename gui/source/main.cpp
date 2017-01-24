@@ -2483,9 +2483,8 @@ int main()
 									std::string gameName = keyboardInput();
 									LogFMA("Main.search","Text written", gameName.c_str());
 									
-									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);
+									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);									
 									
-									vector<string> matching_files; 
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
 										if (iter->size() < gameName.size()) {
 											// Filename we're checking is shorter than the search term,
@@ -2496,10 +2495,7 @@ int main()
 										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
 										//TODO: if (compareString(iter->c_str(), gameName.c_str()) == 0){
 											// String matches.
-											Log("FOUND\n");
 											matching_files.push_back(*iter);
-										}else{
-											Log("Not found\n");
 										}
 									}
 									
