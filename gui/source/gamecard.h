@@ -28,6 +28,12 @@ enum GameCardType {
 };
 
 /**
+ * Is a game card inserted?
+ * @return True if a game card is inserted.
+ */
+bool gamecardIsInserted(void);
+
+/**
  * Get the game card's type.
  * @return Game card type.
  */

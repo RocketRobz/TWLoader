@@ -1963,13 +1963,19 @@ int main()
 										romsel_filename_w.clear();
 									}
 								}
+
 								if (romsel_gameline.empty()) {
-									// No cartridge.
-									// TODO: Indicate if it's a CTR cartridge?
-									// TODO: Prevent starting if no cartridge is present.
-									static const char no_cartridge[] = "No Cartridge";
-									const int text_width = sftd_get_text_width(font_b, 18, no_cartridge);
-									sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, no_cartridge);
+									const char *msg;
+									if (gamecardIsInserted()) {
+										// Game card is inserted, but unrecognized.
+										// It may be a blocked flashcard.
+										msg = "Unknown Cartridge";
+									} else {
+										// No game card is inserted.
+										msg = "No Cartridge";
+									}
+									const int text_width = sftd_get_text_width(font_b, 18, msg);
+									sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, msg);
 									drawBannerText = false;
 								}
 							}
@@ -2074,7 +2080,13 @@ int main()
 
 						if (!settings.twl.forwarder) {
 							// Poll for Slot-1 changes.
-							bool s1chg = gamecardPoll(false);
+							bool forcePoll = false;
+							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+								// Card is inserted, but we don't know its type.
+								// Force an update.
+								forcePoll = true;
+							}
+							bool s1chg = gamecardPoll(forcePoll);
 							if (s1chg) {
 								if (cursorPosition == -1) {
 									// Slot 1 card has changed.
@@ -2115,7 +2127,7 @@ int main()
 							startbordermovepos = 0;
 							startborderscalesize = 1.0;
 						}
-						if (!settings.twl.forwarder && cursorPosition == -1 && romsel_gameline.empty()) {
+						if (!settings.twl.forwarder && cursorPosition == -1 && !gamecardIsInserted()) {
 							// Slot-1 selected, but no cartridge is present.
 							// Don't print "START" and the cursor border.
 						} else {
@@ -2395,7 +2407,7 @@ int main()
 									screenmodeswitch = true;
 									applaunchprep = true;
 								} else if(cursorPosition == -1) {
-									if (!settings.twl.forwarder && romsel_gameline.empty()) {
+									if (!settings.twl.forwarder && !gamecardIsInserted()) {
 										// Slot-1 is selected, but no
 										// cartridge is present.
 										if (!playwrongsounddone) {
