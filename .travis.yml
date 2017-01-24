@@ -48,8 +48,8 @@ install:
   - sudo cp makerom-linux /usr/bin/makerom
   
 script:
- 
-  
+  -cd gui
+  -make
 addons:
   apt:
     sources:
