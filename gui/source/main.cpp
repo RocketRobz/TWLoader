@@ -739,6 +739,9 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 vector<string> files;
 vector<string> fcfiles;
 
+// Vector with found roms
+vector<string> matching_files;
+
 // APT hook for "returned from HOME menu".
 static aptHookCookie rfhm_cookie;
 static void rfhm_callback(APT_HookType hook, void *param)
@@ -847,7 +850,22 @@ static void scanRomDirectories(void)
 	// Scan the flashcard directory for configuration files.
 	scan_dir_for_files(path, ".ini", fcfiles);
 }
+/** TODO
+int compareString(const char *a, const char *b)
+{
+    char c;
 
+    while(*a)
+    {
+        c = toupper(*a) - toupper(*b);
+        if( c != 0 )
+            return(c);
+        a++;
+        b++;
+    }
+    return(c);
+}
+*/
 int main()
 {
 	aptInit();
@@ -2465,7 +2483,9 @@ int main()
 									std::string gameName = keyboardInput();
 									LogFMA("Main.search","Text written", gameName.c_str());
 									
-									vector<string> matching_files;
+									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);
+									
+									vector<string> matching_files; 
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
 										if (iter->size() < gameName.size()) {
 											// Filename we're checking is shorter than the search term,
@@ -2474,6 +2494,7 @@ int main()
 										}
 										// Use C string comparison for case-insensitive checks.
 										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
+										//TODO: if (compareString(iter->c_str(), gameName.c_str()) == 0){
 											// String matches.
 											Log("FOUND\n");
 											matching_files.push_back(*iter);
