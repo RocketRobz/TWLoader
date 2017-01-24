@@ -89,7 +89,6 @@ Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
 static sf2d_texture *bnricontexnum = NULL;
 static sf2d_texture *bnricontexlaunch = NULL;	// DO NOT FREE; points to bnricontex[]
-static sf2d_texture *bnricontexdbox = NULL;
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
@@ -872,9 +871,8 @@ static void drawMenuDialogBox(void)
 	if (menudboxmode == DBOX_MODE_SETTINGS) {
 		bnriconnum = cursorPosition;
 		ChangeBNRIconNo();
-		bnricontexdbox = bnricontexnum;
 		sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		sf2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (cursorPosition >= 0) {
 			int y = 16, dy = 19;
