@@ -2461,12 +2461,11 @@ int main()
 									settings.ui.topborder = !settings.ui.topborder;
 									break;
 								case 4:
-									// Search									
-								/*	sf2d_end_frame();
-									sf2d_swapbuffers();
-									SwkbdState keyState;*/
-									std::string Ret = keyboardInput();
-									//TODO filter
+									// Search
+									std::string gameName = keyboardInput();
+									std::vector<std::string>::const_iterator it = std::find(files.begin(), files.end(), gameName);
+									LogFMA("Main.search","Text written", gameName.c_str());
+									it != files.end() ? Log("FOUND\n") : Log("ERROR\n");
 									break;
 							}
 						} else if (hDown & KEY_B) {
