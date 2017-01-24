@@ -954,40 +954,50 @@ static void drawMenuDialogBox(void)
 			break;
 		}
 	} else {
-		if (startmenu_cursorPosition == 0)
-			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-		if (startmenu_cursorPosition == 1)
-			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-		if (startmenu_cursorPosition == 2)
-			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
-		if (startmenu_cursorPosition == 3)
-			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
-		else
-			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+		// UI options.
+		static const struct {
+			int x;
+			int y;
+			const bool *value;
+			const char *title;
+			const char *value_desc[2];	// 0 == off, 1 == on
+		} buttons[] = {
+			{ 23, 31, &settings.twl.forwarder, "Game location:", {"SD Card", "Flashcard"}},
+			{161, 31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
+			{ 23, 71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
+			{161, 71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
+		};
 
-		sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
-		if (!settings.twl.forwarder)
-			sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
-		else
-			sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
-		if (!settings.romselect.toplayout)
-			sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
-		else
-			sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
-		if (!is3DSX)
-			sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
-		else
-			sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
-		if (settings.ui.topborder)
-			sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
-		else
-			sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
+		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
+			if (startmenu_cursorPosition == i) {
+				// Button is highlighted.
+				sf2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
+			} else {
+				// Button is not highlighted. Darken the texture.
+				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
+			}
+
+			const char *title = buttons[i].title;
+			const char *value_desc = buttons[i].value_desc[!!*(buttons[i].value)];
+
+			// Determine width and height.
+			const int h = (title && value_desc ? 32 : 16);
+
+			// Draw the text.
+			// NOTE: Button texture size is 132x34.
+			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+			if (title) {
+				const int w = sftd_get_text_width(font, 12, title);
+				const int x = ((132 - w) / 2) + buttons[i].x;
+				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+				y += 16;
+			}
+			if (value_desc) {
+				const int w = sftd_get_text_width(font, 12, value_desc);
+				const int x = ((132 - w) / 2) + buttons[i].x;
+				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			}
+		}
 	}
 }
 
