@@ -2463,9 +2463,25 @@ int main()
 								case 4:
 									// Search
 									std::string gameName = keyboardInput();
-									std::vector<std::string>::const_iterator it = std::find(files.begin(), files.end(), gameName);
 									LogFMA("Main.search","Text written", gameName.c_str());
-									it != files.end() ? Log("FOUND\n") : Log("ERROR\n");
+									
+									vector<string> matching_files;
+									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+										if (iter->size() < gameName.size()) {
+											// Filename we're checking is shorter than the search term,
+											// so it can't match.
+											continue;
+										}
+										// Use C string comparison for case-insensitive checks.
+										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
+											// String matches.
+											Log("FOUND\n");
+											matching_files.push_back(*iter);
+										}else{
+											Log("Not found\n");
+										}
+									}
+									
 									break;
 							}
 						} else if (hDown & KEY_B) {
