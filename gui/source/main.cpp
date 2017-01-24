@@ -893,13 +893,13 @@ static void drawMenuDialogBox(void)
 		snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
 
 		if (file_count < 100) {
-			sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_textf(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+			sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_text(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_text(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 		} else {
-			sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			sftd_draw_textf(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-			sftd_draw_textf(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+			sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_text(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_text(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 		}
 
 		if (gamesettings_cursorPosition == 0)
@@ -1041,8 +1041,8 @@ int main()
 	sftd_init();
 	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
-	sftd_draw_textf(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
-	sftd_draw_textf(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
+	sftd_draw_text(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+	sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
 	LogFM("Main.Font loading", "Fonts load correctly");
 	
 	sVerfile Verfile;
