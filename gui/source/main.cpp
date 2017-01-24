@@ -57,7 +57,13 @@ int equals;
 
 sftd_font *font;
 sftd_font *font_b;
+
+// Dialog box textures.
 sf2d_texture *dialogboxtex;	// Dialog box
+static sf2d_texture *dboxtex_iconbox = NULL;
+static sf2d_texture *dboxtex_button = NULL;
+static sf2d_texture *dboxtex_buttonback = NULL;
+
 sf2d_texture *settingslogotex;	// TWLoader logo.
 
 static sf2d_texture *slot1boxarttex = NULL;
@@ -848,6 +854,145 @@ static void scanRomDirectories(void)
 	scan_dir_for_files(path, ".ini", fcfiles);
 }
 
+// Cursor position.
+static int cursorPosition = 0;
+static int storedcursorPosition = 0;
+static int startmenu_cursorPosition = 0;
+static int gamesettings_cursorPosition = 0;
+
+/**
+ * Draw the menu dialog box.
+ */
+static void drawMenuDialogBox(void)
+{
+	sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
+	sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
+	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
+	sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
+	if (menudboxmode == DBOX_MODE_SETTINGS) {
+		bnriconnum = cursorPosition;
+		ChangeBNRIconNo();
+		bnricontexdbox = bnricontexnum;
+		sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+		sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		
+		if (cursorPosition >= 0) {
+			int y = 16, dy = 19;
+			// Print the banner text, center-aligned.
+			const size_t banner_lines = std::min(3U, romsel_gameline.size());
+			for (size_t i = 0; i < banner_lines; i++, y += dy) {
+				const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+				sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+			}
+			sftd_draw_wtext(font, 16, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
+		}
+		
+		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		char romsel_counter1[16];
+		char romsel_counter2[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
+		snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+
+		if (file_count < 100) {
+			sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_textf(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+		} else {
+			sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+			sftd_draw_textf(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
+			sftd_draw_textf(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+		}
+
+		if (gamesettings_cursorPosition == 0)
+			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+89);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
+		if (gamesettings_cursorPosition == 1)
+			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+89);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
+		if (gamesettings_cursorPosition == 2)
+			sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+129);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+129, RGBA8(127, 127, 127, 255));
+			
+		sftd_draw_text(font, 38, menudbox_Ypos+90, RGBA8(0, 0, 0, 255), 12, "ARM9 CPU Speed:");
+		switch (settings.pergame.cpuspeed) {
+			case -1:
+			default:
+			sftd_draw_text(font, 72, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Default");
+			break;
+			case 0:
+			sftd_draw_text(font, 54, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "67mhz (NTR)");
+			break;
+			case 1:
+			sftd_draw_text(font, 50, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "133mhz (TWL)");
+			break;
+		}
+		switch (settings.pergame.extvram) {
+			case -1:
+			default:
+			sftd_draw_text(font, 172, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Default");
+			break;
+			case 0:
+			sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Off");
+			break;
+			case 1:
+			sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
+			break;
+		}
+		sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
+		switch (settings.pergame.lockarm9scfgext) {
+			case -1:
+			default:
+			sftd_draw_text(font, 136, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Default");
+			break;
+			case 0:
+			sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
+			break;
+			case 1:
+			sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
+			break;
+		}
+	} else {
+		if (startmenu_cursorPosition == 0)
+			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+		if (startmenu_cursorPosition == 1)
+			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
+		if (startmenu_cursorPosition == 2)
+			sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+		if (startmenu_cursorPosition == 3)
+			sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
+		else
+			sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
+
+		sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
+		if (!settings.twl.forwarder)
+			sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
+		else
+			sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
+		if (!settings.romselect.toplayout)
+			sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
+		else
+			sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
+		if (!is3DSX)
+			sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
+		else
+			sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
+		if (settings.ui.topborder)
+			sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
+		else
+			sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
+	}
+}
+
 int main()
 {
 	aptInit();
@@ -919,10 +1064,13 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
+
+	// Dialog box textures.
 	dialogboxtex = sfil_load_PNG_file("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
-		sf2d_texture *dboxtex_iconbox = sfil_load_PNG_file("romfs:/graphics/dbox/iconbox.png", SF2D_PLACE_RAM); // Icon box
-		sf2d_texture *dboxtex_button = sfil_load_PNG_file("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
-		sf2d_texture *dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
+	dboxtex_iconbox = sfil_load_PNG_file("romfs:/graphics/dbox/iconbox.png", SF2D_PLACE_RAM); // Icon box
+	dboxtex_button = sfil_load_PNG_file("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
+	dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
+
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
 
@@ -1059,8 +1207,7 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
-	int cursorPosition = 0, storedcursorPosition = 0, filenum = 0;
-	int startmenu_cursorPosition = 0, gamesettings_cursorPosition = 0;
+	int filenum = 0;
 	bool noromsfound = false;
 	
 	bool cursorPositionset = false;
@@ -2002,133 +2149,8 @@ int main()
 						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
 					if (menudbox_Ypos != -240) {
-						sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
-						sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
-						sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-						sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
-						if (menudboxmode == DBOX_MODE_SETTINGS) {
-							bnriconnum = cursorPosition;
-							ChangeBNRIconNo();
-							bnricontexdbox = bnricontexnum;
-							sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-							sf2d_draw_texture_part(bnricontexdbox, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
-							
-							if (cursorPosition >= 0) {
-								int y = 16, dy = 19;
-								// Print the banner text, center-aligned.
-								const size_t banner_lines = std::min(3U, romsel_gameline.size());
-								for (size_t i = 0; i < banner_lines; i++, y += dy) {
-									const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-									sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
-								}
-								sftd_draw_wtext(font, 16, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
-							}
-							
-							char romsel_counter1[16];
-							snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-							const char *p_romsel_counter;
-							if (settings.twl.forwarder) {
-								p_romsel_counter = romsel_counter2fc;
-							} else {
-								p_romsel_counter = romsel_counter2sd;
-							}
-							if (file_count < 100) {
-								sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								sftd_draw_textf(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-								sftd_draw_textf(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
-							} else {
-								sftd_draw_textf(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								sftd_draw_textf(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-								sftd_draw_textf(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
-							}
-
-							if (gamesettings_cursorPosition == 0)
-								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+89);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
-							if (gamesettings_cursorPosition == 1)
-								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+89);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+89, RGBA8(127, 127, 127, 255));
-							if (gamesettings_cursorPosition == 2)
-								sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+129);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+129, RGBA8(127, 127, 127, 255));
-								
-							sftd_draw_text(font, 38, menudbox_Ypos+90, RGBA8(0, 0, 0, 255), 12, "ARM9 CPU Speed:");
-							switch (settings.pergame.cpuspeed) {
-								case -1:
-								default:
-								sftd_draw_text(font, 72, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "Default");
-								break;
-								case 0:
-								sftd_draw_text(font, 54, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "67mhz (NTR)");
-								break;
-								case 1:
-								sftd_draw_text(font, 50, menudbox_Ypos+106, RGBA8(0, 0, 0, 255), 12, "133mhz (TWL)");
-								break;
-							}
-							switch (settings.pergame.extvram) {
-								case -1:
-								default:
-								sftd_draw_text(font, 172, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Default");
-								break;
-								case 0:
-								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: Off");
-								break;
-								case 1:
-								sftd_draw_text(font, 180, menudbox_Ypos+98, RGBA8(0, 0, 0, 255), 12, "VRAM boost: On");
-								break;
-							}
-							sftd_draw_text(font, 93, menudbox_Ypos+130, RGBA8(0, 0, 0, 255), 12, "Lock ARM9 SCFG_EXT:");
-							switch (settings.pergame.lockarm9scfgext) {
-								case -1:
-								default:
-								sftd_draw_text(font, 136, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Default");
-								break;
-								case 0:
-								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "Off");
-								break;
-								case 1:
-								sftd_draw_text(font, 144, menudbox_Ypos+146, RGBA8(0, 0, 0, 255), 12, "On");
-								break;
-							}
-						} else {
-							if (startmenu_cursorPosition == 0)
-								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+31);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 1)
-								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 2)
-								sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
-							if (startmenu_cursorPosition == 3)
-								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71);
-							else
-								sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255));
-
-							sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
-							if (!settings.twl.forwarder)
-								sftd_draw_text(font, 64, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "SD Card");
-							else
-								sftd_draw_text(font, 62, menudbox_Ypos+48, RGBA8(0, 0, 0, 255), 12, "Flashcard");
-							if (!settings.romselect.toplayout)
-								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: On");
-							else
-								sftd_draw_text(font, 188, menudbox_Ypos+40, RGBA8(0, 0, 0, 255), 12, "Box Art: Off");
-							if (!is3DSX)
-								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Start GBARunner2");
-							else
-								sftd_draw_text(font, 40, menudbox_Ypos+80, RGBA8(0, 0, 0, 127), 12, "Start GBARunner2");
-							if (settings.ui.topborder)
-								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: On");
-							else
-								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
-						}
+						// Draw the menu dialog box.
+						drawMenuDialogBox();
 					}
 				// }
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -2679,6 +2701,9 @@ int main()
 	}
 
 	// Remaining common textures.
+	sf2d_free_texture(dboxtex_iconbox);
+	sf2d_free_texture(dboxtex_button);
+	sf2d_free_texture(dboxtex_buttonback);
 	sf2d_free_texture(dialogboxtex);
 	sf2d_free_texture(settingslogotex);
 
