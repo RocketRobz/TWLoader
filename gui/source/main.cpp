@@ -34,6 +34,7 @@ using std::wstring;
 #include "inifile.h"
 #include "date.h"
 #include "log.h"
+#include "keyboard.h"
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 bool is3DSX = false;
@@ -2097,7 +2098,7 @@ int main()
 							startmenu_cursorPosition == 1 ? sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+31) : sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+31, RGBA8(127, 127, 127, 255)); // Box Art
 							startmenu_cursorPosition == 2 ? sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+71) : sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+71, RGBA8(127, 127, 127, 255)); // GBARunner2
 							startmenu_cursorPosition == 3 ? sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos+71) : sf2d_draw_texture_blend(dboxtex_button, 161, menudbox_Ypos+71, RGBA8(127, 127, 127, 255)); // Top border
-							startmenu_cursorPosition == 4 ? sf2d_draw_texture(dboxtex_button, 91, menudbox_Ypos+111) : sf2d_draw_texture_blend(dboxtex_button, 91, menudbox_Ypos+111, RGBA8(127, 127, 127, 255)); // Search
+							startmenu_cursorPosition == 4 ? sf2d_draw_texture(dboxtex_button, 23, menudbox_Ypos+111) : sf2d_draw_texture_blend(dboxtex_button, 23, menudbox_Ypos+111, RGBA8(127, 127, 127, 255)); // Search
 
 							/**/
 							sftd_draw_text(font, 48, menudbox_Ypos+32, RGBA8(0, 0, 0, 255), 12, "Game location:");
@@ -2121,7 +2122,7 @@ int main()
 							else
 								sftd_draw_text(font, 180, menudbox_Ypos+80, RGBA8(0, 0, 0, 255), 12, "Top border: Off");
 							/**/							
-							sftd_draw_text(font, 135, menudbox_Ypos+120, RGBA8(0, 0, 0, 255), 12, "Search"); // Search function
+							sftd_draw_text(font, 55, menudbox_Ypos+120, RGBA8(0, 0, 0, 255), 12, "Search"); // Search function
 							
 						}
 					}
@@ -2460,15 +2461,12 @@ int main()
 									settings.ui.topborder = !settings.ui.topborder;
 									break;
 								case 4:
-									/*
 									// Search									
-									sf2d_end_frame();
+								/*	sf2d_end_frame();
 									sf2d_swapbuffers();
-									SwkbdState keyState;
-									char input[64];
-									swkbdInit(&keyState, SWKBD_TYPE_NORMAL, 2, 64);
-									swkbdSetHintText(&keyState, "Search");
-									*/
+									SwkbdState keyState;*/
+									std::string Ret = keyboardInput();
+									//TODO filter
 									break;
 							}
 						} else if (hDown & KEY_B) {
