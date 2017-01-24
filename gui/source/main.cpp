@@ -793,7 +793,7 @@ static inline sf2d_texture *carttex(void)
  */
 static void loadSlot1BoxArt(void)
 {
-	sf2d_free_texture(slot1boxarttex);
+	sf2d_texture *new_tex;
 	const char *gameID = gamecardGetGameID();
 	if (gameID) {
 		if (checkWifiStatus()) {
@@ -804,15 +804,20 @@ static void loadSlot1BoxArt(void)
 		LogFMA("Main", "Loading Slot-1 box art", gameID);
 		snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
 		if (access(path, F_OK) != -1) {
-			slot1boxarttex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
+			new_tex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 		} else {
-			slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
+			new_tex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 		}
 		LogFMA("Main", "Done loading Slot-1 box art", gameID);
 	} else {
 		// No cartridge, or unrecognized cartridge.
-		slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
+		new_tex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
 	}
+
+	// Replace slot1boxarttex with the new boxart.
+	sf2d_texture *old_tex = slot1boxarttex;
+	slot1boxarttex = new_tex;
+	sf2d_free_texture(old_tex);
 	slot1boxarttexloaded = true;
 }
 
