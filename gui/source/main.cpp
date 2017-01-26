@@ -1284,7 +1284,7 @@ int main()
 	int boxartXpos;
 	int boxartXmovepos = 0;
 
-	int filenameYpos;
+	//int filenameYpos;
 	//int filenameYmovepos = 0;
 	int setsboxXpos = 0;
 	int cartXpos = 64;
@@ -1629,12 +1629,12 @@ int main()
 				sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 				// sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 				// Draw the "Prev" and "Next" text for X/Y.
-				u32 lr_color = (pagenum != 0 && file_count <= -pagenum*20)
+				u32 lr_color = (pagenum != 0 && file_count <= (size_t)-pagenum*20)
 						? RGBA8(0, 0, 0, 255)
 						: RGBA8(127, 127, 127, 255);
 				sftd_draw_text(font, 17, LshoulderYpos+5, lr_color, 11, "Prev. Page");
 
-				lr_color = (file_count > 20+pagenum*20)
+				lr_color = (file_count > (size_t)20+pagenum*20)
 						? RGBA8(0, 0, 0, 255)
 						: RGBA8(127, 127, 127, 255);
 				sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
@@ -2224,7 +2224,7 @@ int main()
 
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
-					filenameYpos = 0;
+					//filenameYpos = 0;
 					for (filenum = pagenum*20; filenum < pagemax; filenum++) {
 						sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 						titleboxXpos += 64;
@@ -2488,7 +2488,7 @@ int main()
 					if (menuaction_nextpage) {
 						// Don't run the action again 'til R is pressed again
 						menuaction_nextpage = false;
-						if (file_count > pagemax) {
+						if (file_count > (size_t)pagemax) {
 							pagenum++;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
@@ -2507,7 +2507,7 @@ int main()
 					} else if (menuaction_prevpage) {
 						// Don't run the action again 'til L is pressed again
 						menuaction_prevpage = false;
-						if (pagenum != 0 && file_count <= 0-pagenum*20) {
+						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
 							pagenum--;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
