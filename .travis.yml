@@ -47,8 +47,8 @@ install:
   - make && sudo make install
   - cd ..  
 script:
-  -cd gui
-  -make
+  - cd gui
+  - make
 addons:
   apt:
     sources:
