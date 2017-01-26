@@ -1020,22 +1020,29 @@ static void drawMenuDialogBox(void)
 	}
 }
 
-/** TODO
-int compareString(const char *a, const char *b)
-{
-    char c;
-
-    while(*a)
-    {
-        c = toupper(*a) - toupper(*b);
-        if( c != 0 )
-            return(c);
-        a++;
-        b++;
-    }
-    return(c);
-}
+/**
+* compare two strings case insensitive.
+* @param iterator const char*
+* @param input const char*
 */
+bool compareString(const char *iter, const char *input)
+{
+	// First transform input to lower case
+    std::string inputText = input;
+	std::transform(inputText.begin(), inputText.end(), inputText.begin(), ::tolower);
+	
+	// Transform iterator string to lower case
+	std::string fileName = iter;
+	std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::tolower);
+	
+	// Compare
+	if(strstr(fileName.c_str(), inputText.c_str())){
+		return true;
+	}
+	
+	return false;
+}
+
 
 int main()
 {
@@ -2575,9 +2582,7 @@ int main()
 									// Search
 									std::string gameName = keyboardInput();
 									LogFMA("Main.search","Text written", gameName.c_str());
-									
-									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);									
-									
+																		
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
 										if (iter->size() < gameName.size()) {
 											// Filename we're checking is shorter than the search term,
@@ -2585,10 +2590,13 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
-										//TODO: if (compareString(iter->c_str(), gameName.c_str()) == 0){
+										if (compareString(iter->c_str(), gameName.c_str())){
 											// String matches.
+											Log("FOUND\n");
 											matching_files.push_back(*iter);
+										}else
+										{
+											Log("NOT FOUND\n");
 										}
 									}
 									
