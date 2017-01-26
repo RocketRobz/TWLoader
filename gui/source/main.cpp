@@ -2487,16 +2487,32 @@ int main()
 					
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
-						if (hDown & KEY_SELECT && cursorPosition >= 0) {
-							menudboxmode = DBOX_MODE_SETTINGS;
-						} else if (hDown & KEY_RIGHT && (startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
-							startmenu_cursorPosition++;
-						} else if (hDown & KEY_LEFT && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 4)) {
-							startmenu_cursorPosition--;
-						} else if (hDown & KEY_DOWN && (startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
-							startmenu_cursorPosition == 2 ? startmenu_cursorPosition = 4 : startmenu_cursorPosition += 2;							
-						} else if (hDown & KEY_UP && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1)) {
-							startmenu_cursorPosition -= 2;
+						if (hDown & KEY_SELECT) {
+							if (cursorPosition >= 0) {
+								// Switch to game-specific settings.
+								menudboxmode = DBOX_MODE_SETTINGS;
+							}
+						} else if (hDown & KEY_RIGHT) {
+							if (startmenu_cursorPosition % 2 != 1 &&
+							    startmenu_cursorPosition != 4)
+							{
+								// Move right.
+								startmenu_cursorPosition++;
+							}
+						} else if (hDown & KEY_LEFT) {
+							if (startmenu_cursorPosition % 2 != 0) {
+								// Move left.
+								startmenu_cursorPosition--;
+							}
+						} else if (hDown & KEY_DOWN) {
+							if (startmenu_cursorPosition < 3) {
+								startmenu_cursorPosition += 2;
+							}
+	
+						} else if (hDown & KEY_UP) {
+							if (startmenu_cursorPosition > 1) {
+								startmenu_cursorPosition -= 2;
+							}
 						} else if (hDown & KEY_A) {
 							switch (startmenu_cursorPosition) {
 								case 0:
