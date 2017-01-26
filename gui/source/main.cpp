@@ -2103,15 +2103,21 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot-1 changes.
 							bool forcePoll = false;
-							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
-								// Card is inserted, but we don't know its type.
-								// Force an update twice a second, five seconds max.
-								if (slot1pollcounter < 120*5) {
-									slot1pollcounter++;
-									if (slot1pollcounter % 60 == 0) {
-										forcePoll = true;
+							if (gamecardIsInserted()) {
+								if (gamecardGetType() == CARD_TYPE_UNKNOWN) {
+									// Card is inserted, but we don't know its type.
+									// Force an update twice a second, five seconds max.
+									if (slot1pollcounter < 120*5) {
+										slot1pollcounter++;
+										if (slot1pollcounter % 60 == 0) {
+											forcePoll = true;
+										}
 									}
 								}
+							} else {
+								// No game card.
+								// Reset the poll timer.
+								slot1pollcounter = 0;
 							}
 							bool s1chg = gamecardPoll(forcePoll);
 							if (s1chg) {
