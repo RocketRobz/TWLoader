@@ -1368,7 +1368,7 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					if(matching_files.size() != 0){
+					if(matching_files.size() == 0){
 						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
 							if (bnriconnum < (int)files.size()) {
 								const char *tempfile = files.at(bnriconnum).c_str();
