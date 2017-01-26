@@ -1020,22 +1020,29 @@ static void drawMenuDialogBox(void)
 	}
 }
 
-/** TODO
-int compareString(const char *a, const char *b)
-{
-    char c;
-
-    while(*a)
-    {
-        c = toupper(*a) - toupper(*b);
-        if( c != 0 )
-            return(c);
-        a++;
-        b++;
-    }
-    return(c);
-}
+/**
+* compare two strings case insensitive.
+* @param iterator const char*
+* @param input const char*
 */
+bool compareString(const char *iter, const char *input)
+{
+	// First transform input to lower case
+    std::string inputText = input;
+	std::transform(inputText.begin(), inputText.end(), inputText.begin(), ::tolower);
+	
+	// Transform iterator string to lower case
+	std::string fileName = iter;
+	std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::tolower);
+	
+	// Compare
+	if(strstr(fileName.c_str(), inputText.c_str())){
+		return true;
+	}
+	
+	return false;
+}
+
 
 int main()
 {
@@ -1277,7 +1284,7 @@ int main()
 	int boxartXpos;
 	int boxartXmovepos = 0;
 
-	int filenameYpos;
+	//int filenameYpos;
 	//int filenameYmovepos = 0;
 	int setsboxXpos = 0;
 	int cartXpos = 64;
@@ -1341,7 +1348,11 @@ int main()
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
 
-		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		if(matching_files.size() != 0) {
+			file_count = (settings.twl.forwarder ? fcfiles.size() : matching_files.size());
+		}
 		const int pagemax = std::min((20+pagenum*20), (int)file_count);
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
@@ -1357,13 +1368,25 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
-						if (bnriconnum < (int)files.size()) {
-							const char *tempfile = files.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-							LoadBNRIcon(path);
-						} else {
-							LoadBNRIcon(NULL);
+					if(matching_files.size() == 0){
+						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+							if (bnriconnum < (int)files.size()) {
+								const char *tempfile = files.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+								LoadBNRIcon(path);
+							} else {
+								LoadBNRIcon(NULL);
+							}
+						}
+					}else{
+						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+							if (bnriconnum < (int)matching_files.size()) {
+								const char *tempfile = matching_files.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+								LoadBNRIcon(path);
+							} else {
+								LoadBNRIcon(NULL);
+							}
 						}
 					}
 				} else {
@@ -1397,37 +1420,73 @@ int main()
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
 					char path[256];
-					for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
-						if (boxartnum < (int)files.size()) {
-							const char *tempfile = files.at(boxartnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
-							FILE *f_nds_file = fopen(path, "rb");
-							if (!f_nds_file) {
-								// Can't open the NDS file.
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-								continue;
-							}
+					if(matching_files.size() == 0){
+						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+							if (boxartnum < (int)files.size()) {
+								const char *tempfile = files.at(boxartnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+								FILE *f_nds_file = fopen(path, "rb");
+								if (!f_nds_file) {
+									// Can't open the NDS file.
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									continue;
+								}
 
-							char ba_TID[5];
-							grabTID(f_nds_file, ba_TID);
-							ba_TID[4] = 0;
-							fclose(f_nds_file);
+								char ba_TID[5];
+								grabTID(f_nds_file, ba_TID);
+								ba_TID[4] = 0;
+								fclose(f_nds_file);
 
-							// example: SuperMario64DS.nds.png
-							snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
-							if (access(path, F_OK ) != -1 ) {
-								StoreBoxArtPath(path);
-							} else {
-								// example: ASME.png
-								snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-								if (access(path, F_OK) != -1) {
+								// example: SuperMario64DS.nds.png
+								snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
+								if (access(path, F_OK ) != -1 ) {
 									StoreBoxArtPath(path);
 								} else {
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									// example: ASME.png
+									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+									if (access(path, F_OK) != -1) {
+										StoreBoxArtPath(path);
+									} else {
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									}
 								}
+							} else {
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 							}
-						} else {
-							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+						}
+					}else{
+						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+							if (boxartnum < (int)matching_files.size()) {
+								const char *tempfile = matching_files.at(boxartnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+								FILE *f_nds_file = fopen(path, "rb");
+								if (!f_nds_file) {
+									// Can't open the NDS file.
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									continue;
+								}
+
+								char ba_TID[5];
+								grabTID(f_nds_file, ba_TID);
+								ba_TID[4] = 0;
+								fclose(f_nds_file);
+
+								// example: SuperMario64DS.nds.png
+								snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
+								if (access(path, F_OK ) != -1 ) {
+									StoreBoxArtPath(path);
+								} else {
+									// example: ASME.png
+									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+									if (access(path, F_OK) != -1) {
+										StoreBoxArtPath(path);
+									} else {
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									}
+								}
+							} else {
+								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+							}
 						}
 					}
 				} else {
@@ -1570,12 +1629,12 @@ int main()
 				sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 				// sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 				// Draw the "Prev" and "Next" text for X/Y.
-				u32 lr_color = (pagenum != 0 && file_count <= -pagenum*20)
+				u32 lr_color = (pagenum != 0 && file_count <= (size_t)-pagenum*20)
 						? RGBA8(0, 0, 0, 255)
 						: RGBA8(127, 127, 127, 255);
 				sftd_draw_text(font, 17, LshoulderYpos+5, lr_color, 11, "Prev. Page");
 
-				lr_color = (file_count > 20+pagenum*20)
+				lr_color = (file_count > (size_t)20+pagenum*20)
 						? RGBA8(0, 0, 0, 255)
 						: RGBA8(127, 127, 127, 255);
 				sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
@@ -1648,6 +1707,9 @@ int main()
 					// the Slot-1 cartridge was changed
 					// or the UI language was changed.
 					bannertextloaded = false;
+					
+					// Clear matching_files vector
+					matching_files.clear();
 				} else if (gbarunnervalue == 1) {
 					// run = false;
 					if (settings.twl.forwarder) {
@@ -2026,14 +2088,25 @@ int main()
 									}
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
-									if (files.size() != 0) {
-										romsel_filename = files.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									} else {
-										romsel_filename = " ";
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									}
-									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+									if(matching_files.size() == 0){
+										if (files.size() != 0) {
+											romsel_filename = files.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
+										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+									}else {
+										if (matching_files.size() != 0) {
+											romsel_filename = matching_files.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
+										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+									}									
 								}
 
 								if (access(path, F_OK) == -1) {
@@ -2151,7 +2224,7 @@ int main()
 
 					titleboxXpos = 128;
 					ndsiconXpos = 144;
-					filenameYpos = 0;
+					//filenameYpos = 0;
 					for (filenum = pagenum*20; filenum < pagemax; filenum++) {
 						sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
 						titleboxXpos += 64;
@@ -2396,7 +2469,11 @@ int main()
 								if (settings.twl.forwarder) {
 									rom = fcfiles.at(cursorPosition).c_str();
 								} else {
-									rom = files.at(cursorPosition).c_str();
+									if(matching_files.size() == 0){
+										rom = files.at(cursorPosition).c_str();
+									} else {
+										rom = matching_files.at(cursorPosition).c_str();
+									}
 								}
 								LoadPerGameSettings();
 								showdialogbox_menu = true;
@@ -2411,7 +2488,7 @@ int main()
 					if (menuaction_nextpage) {
 						// Don't run the action again 'til R is pressed again
 						menuaction_nextpage = false;
-						if (file_count > pagemax) {
+						if (file_count > (size_t)pagemax) {
 							pagenum++;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
@@ -2430,7 +2507,7 @@ int main()
 					} else if (menuaction_prevpage) {
 						// Don't run the action again 'til L is pressed again
 						menuaction_prevpage = false;
-						if (pagenum != 0 && file_count <= 0-pagenum*20) {
+						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
 							pagenum--;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
@@ -2482,7 +2559,11 @@ int main()
 										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										settings.twl.launchslot1 = false;
-										rom = files.at(cursorPosition).c_str();
+										if(matching_files.size() == 0){
+											rom = files.at(cursorPosition).c_str();
+										}else {
+											rom = matching_files.at(cursorPosition).c_str();
+										}
 										sav = ReplaceAll(rom, ".nds", ".sav");
 									}
 									applaunchprep = true;
@@ -2573,11 +2654,14 @@ int main()
 									break;
 								case 4:
 									// Search
-									std::string gameName = keyboardInput();
+									if(matching_files.size() != 0){
+										matching_files.clear();
+										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+									}
+									
+									std::string gameName = keyboardInput("Use the keyboard to find roms");
 									LogFMA("Main.search","Text written", gameName.c_str());
-									
-									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);									
-									
+																		
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
 										if (iter->size() < gameName.size()) {
 											// Filename we're checking is shorter than the search term,
@@ -2585,12 +2669,19 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
-										//TODO: if (compareString(iter->c_str(), gameName.c_str()) == 0){
+										if (compareString(iter->c_str(), gameName.c_str())){
 											// String matches.
 											matching_files.push_back(*iter);
 										}
 									}
+									
+									if (matching_files.size() != 0){
+										/** Prepare some stuff to show correctly the filtered roms */
+										
+										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
+										boxarttexloaded = false; // Reload boxarts
+										bnricontexloaded = false; // Reload banner icons
+									}		
 									
 									break;
 							}
@@ -2605,7 +2696,12 @@ int main()
 							if (settings.twl.forwarder) {
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
-								rom = files.at(cursorPosition).c_str();
+								if (matching_files.size() == 0) {
+									rom = files.at(cursorPosition).c_str();
+								}else{
+									rom = matching_files.at(cursorPosition).c_str();
+								}
+								
 							}
 							SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
@@ -2660,7 +2756,11 @@ int main()
 							if (settings.twl.forwarder) {
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
-								rom = files.at(cursorPosition).c_str();
+								if(matching_files.size() == 0){
+									rom = files.at(cursorPosition).c_str();
+								}else{
+									rom = matching_files.at(cursorPosition).c_str();
+								}
 							}
 							SavePerGameSettings();
 							showdialogbox_menu = false;
