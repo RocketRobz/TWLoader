@@ -46,6 +46,12 @@ GameCardType gamecardGetType(void);
 const char *gamecardGetGameID(void);
 
 /**
+ * Get the game card's game ID as a u32.
+ * @return Game ID, or 0 if not a TWL card.
+ */
+u32 gamecardGetGameID_u32(void);
+
+/**
  * Get the game card's product code.
  * @return Product code, or NULL if not a TWL card.
  */

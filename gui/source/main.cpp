@@ -68,8 +68,7 @@ static sf2d_texture *dboxtex_buttonback = NULL;
 sf2d_texture *settingslogotex;	// TWLoader logo.
 
 static sf2d_texture *slot1boxarttex = NULL;
-static bool slot1boxarttexloaded = false;
-static int slot1pollcounter = 0;	// Polling for unrecognized cartridges.
+
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -798,6 +797,22 @@ static inline sf2d_texture *carttex(void)
  */
 static void loadSlot1BoxArt(void)
 {
+	// Previously loaded boxart game ID.
+	static u32 prev_gameID_u32 = 0;
+
+	// Get the current game ID.
+	u32 gameID_u32 = gamecardGetGameID_u32();
+	if (gameID_u32 == prev_gameID_u32) {
+		// No change in the game ID.
+		if (!slot1boxarttex) {
+			// No boxart loaded yet.
+			// Load boxart_null.png.
+			slot1boxarttex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
+		}
+		return;
+	}
+	prev_gameID_u32 = gameID_u32;
+
 	sf2d_texture *new_tex;
 	const char *gameID = gamecardGetGameID();
 	if (gameID) {
@@ -823,7 +838,6 @@ static void loadSlot1BoxArt(void)
 	sf2d_texture *old_tex = slot1boxarttex;
 	slot1boxarttex = new_tex;
 	sf2d_free_texture(old_tex);
-	slot1boxarttexloaded = true;
 }
 
 /**
@@ -1465,8 +1479,8 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!slot1boxarttexloaded && !settings.twl.forwarder) {
-				// Load the boxart for the Slot-1 cartridge.
+			if (!settings.twl.forwarder) {
+				// Load the boxart for the Slot-1 cartridge if necessary.
 				loadSlot1BoxArt();
 			}
 
@@ -1630,11 +1644,9 @@ int main()
 					// Poll for Slot-1 changes.
 					gamecardPoll(true);
 
-					// Force boxart and banner text reloads
-					// in case the Slot-1 cartridge was changed
+					// Force banner text reload in case
+					// the Slot-1 cartridge was changed
 					// or the UI language was changed.
-					slot1boxarttexloaded = false;
-					slot1pollcounter = 0;
 					bannertextloaded = false;
 				} else if (gbarunnervalue == 1) {
 					// run = false;
@@ -2103,32 +2115,27 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot-1 changes.
 							bool forcePoll = false;
-							if (gamecardIsInserted()) {
-								if (gamecardGetType() == CARD_TYPE_UNKNOWN) {
-									// Card is inserted, but we don't know its type.
-									// Force an update twice a second, five seconds max.
-									if (slot1pollcounter < 120*5) {
-										slot1pollcounter++;
-										if (slot1pollcounter % 60 == 0) {
-											forcePoll = true;
-										}
-									}
-								}
-							} else {
-								// No game card.
-								// Reset the poll timer.
-								slot1pollcounter = 0;
+							bool doSlot1Update = false;
+							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+								// Card is inserted, but we don't know its type.
+								// Force an update.
+								forcePoll = true;
 							}
 							bool s1chg = gamecardPoll(forcePoll);
 							if (s1chg) {
+								// Update Slot-1 if:
+								// - forcePoll is false
+								// - forcePoll is true, and card is no longer unknown.
+								doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+							}
+							if (doSlot1Update) {
+								// Slot-1 card has changed.
 								if (cursorPosition == -1) {
-									// Slot 1 card has changed.
 									// Reload the banner text.
 									bannertextloaded = false;
 								}
-								slot1boxarttexloaded = false;
-								slot1pollcounter = 0;
 							}
+
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
 							if (!cardicontex)
@@ -2406,8 +2413,6 @@ int main()
 						menuaction_nextpage = false;
 						if (file_count > pagemax) {
 							pagenum++;
-							slot1boxarttexloaded = false;
-							slot1pollcounter = 0;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -2427,8 +2432,6 @@ int main()
 						menuaction_prevpage = false;
 						if (pagenum != 0 && file_count <= 0-pagenum*20) {
 							pagenum--;
-							slot1boxarttexloaded = false;
-							slot1pollcounter = 0;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -2672,8 +2675,6 @@ int main()
 							sfx_switch->play();
 						}
 						pagenum = 0;
-						slot1boxarttexloaded = false;
-						slot1pollcounter = 0;
 						bannertextloaded = false;
 						cursorPosition = 0;
 						storedcursorPosition = cursorPosition;
@@ -2692,6 +2693,7 @@ int main()
 						if (!settings.twl.forwarder) {
 							// Poll for Slot-1 changes.
 							gamecardPoll(true);
+
 							// Load the Slot-1 boxart.
 							// NOTE: This is needed here; otherwise, the
 							// boxart won't be visible for a few frames

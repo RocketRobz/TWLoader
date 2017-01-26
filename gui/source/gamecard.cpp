@@ -250,7 +250,6 @@ bool gamecardPoll(bool force)
 {
 	// Check if a TWL card is present.
 	bool inserted;
-	FS_CardType type;
 	if (R_FAILED(FSUSER_CardSlotIsInserted(&inserted)) || !inserted) {
 		// Card is not present.
 		if (card_inserted || force) {
@@ -261,6 +260,7 @@ bool gamecardPoll(bool force)
 		return false;
 	}
 
+	FS_CardType type;
 	if (R_FAILED(FSUSER_GetCardType(&type))) {
 		// Unable to get card type.
 		// This may be a blocked flashcard.
@@ -323,6 +323,15 @@ GameCardType gamecardGetType(void)
 const char *gamecardGetGameID(void)
 {
 	return (twl_gameid.d != 0 ? twl_gameid.id4 : NULL);
+}
+
+/**
+ * Get the game card's game ID as a u32.
+ * @return Game ID, or 0 if not a TWL card.
+ */
+u32 gamecardGetGameID_u32(void)
+{
+	return twl_gameid.d;
 }
 
 /**
