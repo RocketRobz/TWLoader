@@ -14,6 +14,6 @@
 
 #include <string>
 
-std::string keyboardInput(void);
+std::string keyboardInput(const char* hint);
 
 #endif // KEYBOARD_H
