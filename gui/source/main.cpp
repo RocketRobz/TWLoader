@@ -2364,15 +2364,20 @@ int main()
 						}
 						// updatebotscreen = true;
 					} else if (hDown & KEY_START) {
+						// Switch to the "Start" menu.
+						menudboxmode = DBOX_MODE_OPTIONS;
 						if (!showdialogbox_menu) {
 							if (menudbox_Ypos == -240) {
 								showdialogbox_menu = true;
 								menu_ctrlset = CTRL_SET_DBOX;
+								// Reset the cursor positions.
+								startmenu_cursorPosition = 0;
+								gamesettings_cursorPosition = 0;
 							}
 						}
-						if (menudboxmode == DBOX_MODE_SETTINGS)
-							menudboxmode = DBOX_MODE_OPTIONS;					
 					} else if (hDown & KEY_SELECT) {
+						// Switch to per-game settings.
+						menudboxmode = DBOX_MODE_SETTINGS;
 						if (!showdialogbox_menu) {
 							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
 								if (settings.twl.forwarder) {
@@ -2383,14 +2388,16 @@ int main()
 								LoadPerGameSettings();
 								showdialogbox_menu = true;
 								menu_ctrlset = CTRL_SET_DBOX;
+								// Reset the cursor positions.
+								startmenu_cursorPosition = 0;
+								gamesettings_cursorPosition = 0;
 							}
 						}
-						if (menudboxmode == DBOX_MODE_OPTIONS)
-							menudboxmode = DBOX_MODE_SETTINGS;
-						
 					}
 					
-					if (menuaction_nextpage) { menuaction_nextpage = false;	// Don't run the action again 'til R is pressed again
+					if (menuaction_nextpage) {
+						// Don't run the action again 'til R is pressed again
+						menuaction_nextpage = false;
 						if (file_count > pagemax) {
 							pagenum++;
 							slot1boxarttexloaded = false;
@@ -2409,7 +2416,9 @@ int main()
 							}
 							// updatebotscreen = true;
 						}
-					} else if (menuaction_prevpage) { menuaction_prevpage = false;	// Don't run the action again 'til L is pressed again
+					} else if (menuaction_prevpage) {
+						// Don't run the action again 'til L is pressed again
+						menuaction_prevpage = false;
 						if (pagenum != 0 && file_count <= 0-pagenum*20) {
 							pagenum--;
 							slot1boxarttexloaded = false;
