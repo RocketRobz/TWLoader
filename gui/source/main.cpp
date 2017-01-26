@@ -2659,7 +2659,7 @@ int main()
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									}
 									
-									std::string gameName = keyboardInput();
+									std::string gameName = keyboardInput("Use the keyboard to find roms");
 									LogFMA("Main.search","Text written", gameName.c_str());
 																		
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
