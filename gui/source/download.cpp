@@ -459,7 +459,7 @@ void downloadSlot1BoxArt(const char* TID)
 	ba_TID[4] = 0;
 
 	char path[256];
-	snprintf(path, sizeof(path), "/_nds/twloader/boxart/flashcard/%.4s.png", ba_TID);
+	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
 	if (!access(path, F_OK)) {
 		// File already exists.
 		return;
