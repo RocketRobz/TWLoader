@@ -23,7 +23,7 @@ static union {
 	u32 d;
 	char id4[4];
 } twl_gameid;	// 4-character game ID
-bool card_inserted = false;
+static bool card_inserted = false;
 static GameCardType card_type = CARD_TYPE_UNKNOWN;
 static char card_product_code[20] = { };
 static u8 card_revision = 0xFF;
@@ -250,14 +250,22 @@ bool gamecardPoll(bool force)
 {
 	// Check if a TWL card is present.
 	bool inserted;
-	FS_CardType type;
-	if (R_FAILED(FSUSER_CardSlotIsInserted(&inserted)) || !inserted ||
-	    R_FAILED(FSUSER_GetCardType(&type)))
-	{
+	if (R_FAILED(FSUSER_CardSlotIsInserted(&inserted)) || !inserted) {
 		// Card is not present.
 		if (card_inserted || force) {
 			gamecardClearCache();
 			card_inserted = false;
+			return true;
+		}
+		return false;
+	}
+
+	FS_CardType type;
+	if (R_FAILED(FSUSER_GetCardType(&type))) {
+		// Unable to get card type.
+		// This may be a blocked flashcard.
+		if (card_inserted || force) {
+			gamecardClearCache();
 			return true;
 		}
 		return false;
@@ -291,6 +299,15 @@ bool gamecardPoll(bool force)
 }
 
 /**
+ * Is a game card inserted?
+ * @return True if a game card is inserted.
+ */
+bool gamecardIsInserted(void)
+{
+	return card_inserted;
+}
+
+/**
  * Get the game card's type.
  * @return Game card type.
  */
@@ -306,6 +323,15 @@ GameCardType gamecardGetType(void)
 const char *gamecardGetGameID(void)
 {
 	return (twl_gameid.d != 0 ? twl_gameid.id4 : NULL);
+}
+
+/**
+ * Get the game card's game ID as a u32.
+ * @return Game ID, or 0 if not a TWL card.
+ */
+u32 gamecardGetGameID_u32(void)
+{
+	return twl_gameid.d;
 }
 
 /**

@@ -28,6 +28,12 @@ enum GameCardType {
 };
 
 /**
+ * Is a game card inserted?
+ * @return True if a game card is inserted.
+ */
+bool gamecardIsInserted(void);
+
+/**
  * Get the game card's type.
  * @return Game card type.
  */
@@ -38,6 +44,12 @@ GameCardType gamecardGetType(void);
  * @return Game ID, or NULL if not a TWL card.
  */
 const char *gamecardGetGameID(void);
+
+/**
+ * Get the game card's game ID as a u32.
+ * @return Game ID, or 0 if not a TWL card.
+ */
+u32 gamecardGetGameID_u32(void);
 
 /**
  * Get the game card's product code.
