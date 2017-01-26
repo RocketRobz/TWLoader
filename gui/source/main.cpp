@@ -1367,17 +1367,28 @@ int main()
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
 					sf2d_end_frame();
 					sf2d_swapbuffers(); */
-					char path[256];					
-					for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
-						if (bnriconnum < (int)files.size()) {
-							const char *tempfile = files.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-							LoadBNRIcon(path);
-						} else {
-							LoadBNRIcon(NULL);
+					char path[256];
+					if(matching_files.size() != 0){
+						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+							if (bnriconnum < (int)files.size()) {
+								const char *tempfile = files.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+								LoadBNRIcon(path);
+							} else {
+								LoadBNRIcon(NULL);
+							}
 						}
-					}					
-					
+					}else{
+						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+							if (bnriconnum < (int)matching_files.size()) {
+								const char *tempfile = matching_files.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+								LoadBNRIcon(path);
+							} else {
+								LoadBNRIcon(NULL);
+							}
+						}
+					}
 				} else {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
@@ -2642,6 +2653,7 @@ int main()
 									// Search
 									if(matching_files.size() != 0){
 										matching_files.clear();
+										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									}
 									
 									std::string gameName = keyboardInput();
@@ -2663,9 +2675,10 @@ int main()
 									if (matching_files.size() != 0){
 										/** Prepare some stuff to show correctly the filtered roms */
 										
-										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size());										
-										boxarttexloaded = false;									
-									}									
+										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
+										boxarttexloaded = false; // Reload boxarts
+										bnricontexloaded = false; // Reload banner icons
+									}		
 									
 									break;
 							}
