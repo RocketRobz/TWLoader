@@ -918,7 +918,7 @@ static void drawMenuDialogBox(void)
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
-			if (startmenu_cursorPosition == i) {
+			if (gamesettings_cursorPosition == i) {
 				// Button is highlighted.
 				sf2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
 			} else {
