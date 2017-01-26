@@ -69,6 +69,7 @@ sf2d_texture *settingslogotex;	// TWLoader logo.
 
 static sf2d_texture *slot1boxarttex = NULL;
 static bool slot1boxarttexloaded = false;
+static int slot1pollcounter = 0;	// Polling for unrecognized cartridges.
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -1612,6 +1613,7 @@ int main()
 					// in case the Slot-1 cartridge was changed
 					// or the UI language was changed.
 					slot1boxarttexloaded = false;
+					slot1pollcounter = 0;
 					bannertextloaded = false;
 				} else if (gbarunnervalue == 1) {
 					// run = false;
@@ -2082,8 +2084,13 @@ int main()
 							bool forcePoll = false;
 							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
 								// Card is inserted, but we don't know its type.
-								// Force an update.
-								forcePoll = true;
+								// Force an update twice a second, five seconds max.
+								if (slot1pollcounter < 120*5) {
+									slot1pollcounter++;
+									if (slot1pollcounter % 60 == 0) {
+										forcePoll = true;
+									}
+								}
 							}
 							bool s1chg = gamecardPoll(forcePoll);
 							if (s1chg) {
@@ -2093,6 +2100,7 @@ int main()
 									bannertextloaded = false;
 								}
 								slot1boxarttexloaded = false;
+								slot1pollcounter = 0;
 							}
 							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
@@ -2365,6 +2373,7 @@ int main()
 						if (file_count > pagemax) {
 							pagenum++;
 							slot1boxarttexloaded = false;
+							slot1pollcounter = 0;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -2383,6 +2392,7 @@ int main()
 						if (pagenum != 0 && file_count <= 0-pagenum*20) {
 							pagenum--;
 							slot1boxarttexloaded = false;
+							slot1pollcounter = 0;
 							bannertextloaded = false;
 							cursorPosition = 0+pagenum*20;
 							storedcursorPosition = cursorPosition;
@@ -2583,6 +2593,7 @@ int main()
 						}
 						pagenum = 0;
 						slot1boxarttexloaded = false;
+						slot1pollcounter = 0;
 						bannertextloaded = false;
 						cursorPosition = 0;
 						storedcursorPosition = cursorPosition;
