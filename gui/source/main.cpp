@@ -1707,6 +1707,9 @@ int main()
 					// the Slot-1 cartridge was changed
 					// or the UI language was changed.
 					bannertextloaded = false;
+					
+					// Clear matching_files vector
+					matching_files.clear();
 				} else if (gbarunnervalue == 1) {
 					// run = false;
 					if (settings.twl.forwarder) {
