@@ -57,10 +57,10 @@ AccessControlInfo:
    #- CategoryHomeMenu
    #- SeedDB
   IoAccessControl:
-   #- FsMountNand
-   #- FsMountNandRoWrite
+   - FsMountNand
+   - FsMountNandRoWrite
    - FsMountTwln
-   #- FsMountWnand
+   - FsMountWnand
    - FsMountCardSpi
    - UseSdif3
    #- CreateSeed
