@@ -2583,6 +2583,7 @@ int main()
 						}
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 						if (hDown & KEY_START) {
+							// Switch to the "Start" menu.
 							if (settings.twl.forwarder) {
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
@@ -2590,17 +2591,22 @@ int main()
 							}
 							SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
-						} else if (hDown & KEY_RIGHT && gamesettings_cursorPosition != 1 && gamesettings_cursorPosition != 2) {
-							gamesettings_cursorPosition++;
-						} else if (hDown & KEY_LEFT && gamesettings_cursorPosition != 0) {
-							gamesettings_cursorPosition--;
-						} else if (hDown & KEY_DOWN && gamesettings_cursorPosition != 2) {
-							if (gamesettings_cursorPosition == 1)
-								gamesettings_cursorPosition++;
-							else
-								gamesettings_cursorPosition += 2;
-						} else if (hDown & KEY_UP && gamesettings_cursorPosition != 0 && gamesettings_cursorPosition != 1) {
-							gamesettings_cursorPosition -= 2;
+						} else if (hDown & KEY_RIGHT) {
+							if (gamesettings_cursorPosition == 0) {
+								gamesettings_cursorPosition = 1;
+							}
+						} else if (hDown & KEY_LEFT) {
+							if (gamesettings_cursorPosition == 1) {
+								gamesettings_cursorPosition = 0;
+							}
+						} else if (hDown & KEY_DOWN) {
+							if (gamesettings_cursorPosition < 2) {
+								gamesettings_cursorPosition = 2;
+							}
+						} else if (hDown & KEY_UP) {
+							if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 0;
+							}
 						} else if (hDown & KEY_A) {
 							switch (gamesettings_cursorPosition) {
 								case 0:
