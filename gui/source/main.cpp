@@ -35,7 +35,7 @@ using std::wstring;
 #include "inifile.h"
 #include "date.h"
 #include "log.h"
-
+#include "keyboard.h"
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 bool is3DSX = false;
@@ -746,6 +746,9 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 vector<string> files;
 vector<string> fcfiles;
 
+// Vector with found roms
+vector<string> matching_files;
+
 // APT hook for "returned from HOME menu".
 static aptHookCookie rfhm_cookie;
 static void rfhm_callback(APT_HookType hook, void *param)
@@ -963,10 +966,11 @@ static void drawMenuDialogBox(void)
 			const char *title;
 			const char *value_desc[2];	// 0 == off, 1 == on
 		} buttons[] = {
-			{ 23, 31, &settings.twl.forwarder, "Game location:", {"SD Card", "Flashcard"}},
-			{161, 31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
-			{ 23, 71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
-			{161, 71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
+			{ 23,  31, &settings.twl.forwarder, "Game location:", {"SD Card", "Flashcard"}},
+			{161,  31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
+			{ 23,  71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
+			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
+			{ 23, 111, NULL, "Search", {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -979,7 +983,7 @@ static void drawMenuDialogBox(void)
 			}
 
 			const char *title = buttons[i].title;
-			const char *value_desc = buttons[i].value_desc[!!*(buttons[i].value)];
+			const char *value_desc = (buttons[i].value ? buttons[i].value_desc[!!*(buttons[i].value)] : NULL);
 
 			// Determine width and height.
 			const int h = (title && value_desc ? 32 : 16);
@@ -1001,6 +1005,23 @@ static void drawMenuDialogBox(void)
 		}
 	}
 }
+
+/** TODO
+int compareString(const char *a, const char *b)
+{
+    char c;
+
+    while(*a)
+    {
+        c = toupper(*a) - toupper(*b);
+        if( c != 0 )
+            return(c);
+        a++;
+        b++;
+    }
+    return(c);
+}
+*/
 
 int main()
 {
@@ -2350,7 +2371,7 @@ int main()
 							}
 						}
 						if (menudboxmode == DBOX_MODE_SETTINGS)
-							menudboxmode = DBOX_MODE_OPTIONS;
+							menudboxmode = DBOX_MODE_OPTIONS;					
 					} else if (hDown & KEY_SELECT) {
 						if (!showdialogbox_menu) {
 							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
@@ -2468,13 +2489,13 @@ int main()
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT && cursorPosition >= 0) {
 							menudboxmode = DBOX_MODE_SETTINGS;
-						} else if (hDown & KEY_RIGHT && startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3) {
+						} else if (hDown & KEY_RIGHT && (startmenu_cursorPosition != 1 && startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
 							startmenu_cursorPosition++;
-						} else if (hDown & KEY_LEFT && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2) {
+						} else if (hDown & KEY_LEFT && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 4)) {
 							startmenu_cursorPosition--;
-						} else if (hDown & KEY_DOWN && startmenu_cursorPosition != 2 && startmenu_cursorPosition != 3) {
-							startmenu_cursorPosition += 2;
-						} else if (hDown & KEY_UP && startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1) {
+						} else if (hDown & KEY_DOWN && (startmenu_cursorPosition != 3 && startmenu_cursorPosition != 4)) {
+							startmenu_cursorPosition == 2 ? startmenu_cursorPosition = 4 : startmenu_cursorPosition += 2;							
+						} else if (hDown & KEY_UP && (startmenu_cursorPosition != 0 && startmenu_cursorPosition != 1)) {
 							startmenu_cursorPosition -= 2;
 						} else if (hDown & KEY_A) {
 							switch (startmenu_cursorPosition) {
@@ -2515,6 +2536,28 @@ int main()
 									break;
 								case 3:
 									settings.ui.topborder = !settings.ui.topborder;
+									break;
+								case 4:
+									// Search
+									std::string gameName = keyboardInput();
+									LogFMA("Main.search","Text written", gameName.c_str());
+									
+									//std::transform(gameName.begin(), gameName.end(), gameName.begin(), ::tolower);									
+									
+									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+										if (iter->size() < gameName.size()) {
+											// Filename we're checking is shorter than the search term,
+											// so it can't match.
+											continue;
+										}
+										// Use C string comparison for case-insensitive checks.
+										if (!strncasecmp(iter->c_str(), gameName.c_str(), gameName.size())) {
+										//TODO: if (compareString(iter->c_str(), gameName.c_str()) == 0){
+											// String matches.
+											matching_files.push_back(*iter);
+										}
+									}
+									
 									break;
 							}
 						} else if (hDown & KEY_B) {
