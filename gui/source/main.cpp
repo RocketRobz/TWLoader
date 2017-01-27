@@ -956,9 +956,13 @@ static void drawMenuDialogBox(void)
 
 		char romsel_counter1[16];
 		char romsel_counter2[16];
-		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-		snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
-
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);		
+		if(matching_files.size() == 0){
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+		}else{
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+		}
+		
 		if (file_count < 100) {
 			sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 			sftd_draw_text(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
@@ -1136,6 +1140,7 @@ int main()
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
+	mkdir("sdmc:/_nds/twloader/cia", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
@@ -1759,7 +1764,17 @@ int main()
 					bannertextloaded = false;
 					
 					// Clear matching_files vector
-					matching_files.clear();
+					if(matching_files.size() != 0) {
+						matching_files.clear(); // Clear filter
+						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
+						boxarttexloaded = false; // Reload boxarts
+						bnricontexloaded = false; // Reload banner icons
+					
+						/** This is better than a glitched screen */
+						sf2d_start_frame(GFX_TOP, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+					}
 				} else if (gbarunnervalue == 1) {
 					// run = false;
 					if (settings.twl.forwarder) {
@@ -2728,6 +2743,11 @@ int main()
 									if (matching_files.size() != 0){
 										/** Prepare some stuff to show correctly the filtered roms */
 										
+										pagenum = 0; // Go to page 0
+										cursorPosition = 0; // Move the cursor to 0
+										storedcursorPosition = cursorPosition; // Move the cursor to 0
+										titleboxXmovepos = 0; // Move the cursor to 0
+										boxartXmovepos = 0; // Move the cursor to 0
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
@@ -2735,7 +2755,7 @@ int main()
 									
 									break;
 							}
-						} else if (hDown & KEY_B) {
+						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
 							menu_ctrlset = CTRL_SET_GAMESEL;
@@ -2802,7 +2822,7 @@ int main()
 									}
 									break;
 							}
-						} else if (hDown & KEY_B) {
+						} else if (hDown & (KEY_B | KEY_SELECT)) {
 							if (settings.twl.forwarder) {
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
