@@ -2742,6 +2742,7 @@ int main()
 									if (matching_files.size() != 0){
 										/** Prepare some stuff to show correctly the filtered roms */
 										
+										pagenum = 0; // Go to page 0
 										cursorPosition = 0; // Move the cursor to 0
 										storedcursorPosition = cursorPosition; // Move the cursor to 0
 										titleboxXmovepos = 0; // Move the cursor to 0
