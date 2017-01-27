@@ -398,9 +398,6 @@ void SetMPUSettings() {
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
-	if (!f_nds_file) {
-		return -1;
-	}
 
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
@@ -556,8 +553,8 @@ static void SaveBootstrapConfig(void)
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
 			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize;
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
