@@ -151,6 +151,8 @@ static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
 static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 static const char bootstrapini_ndspath[] = "NDS_PATH";
 static const char bootstrapini_savpath[] = "SAV_PATH";
+static const char bootstrapini_mpuregion[] = "SET_MPU_REGION";
+static const char bootstrapini_mpusize[] = "SET_MPU_SIZE";
 static const char bootstrapini_boostcpu[] = "BOOST_CPU";
 static const char bootstrapini_debug[] = "DEBUG";
 static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
@@ -390,6 +392,38 @@ static int CreateGameSave(const char *filename) {
 }
 
 /**
+ * Set MPU settings for a specific game.
+ */
+void SetMPUSettings() {
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+	if (!f_nds_file) {
+		return -1;
+	}
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	fclose(f_nds_file);
+	
+	// settings.twl.mpuregion = 0;
+	// settings.twl.mpusize = 0;
+		
+	if (strcmp(game_TID, "ARZJ") == 0 ||	// Rockman ZX
+		strcmp(game_TID, "ARZE") == 0 ||	// MegaMan ZX
+		strcmp(game_TID, "ARZP") == 0 ||	// MegaMan ZX
+		strcmp(game_TID, "YZXJ") == 0 ||	// Rockman ZX Advent
+		strcmp(game_TID, "YZXE") == 0 ||	// MegaMan ZX Advent
+		strcmp(game_TID, "YZXP") == 0 )	// MegaMan ZX Advent
+	{
+		settings.twl.mpuregion = 1;
+		settings.twl.mpusize = 3145728;
+	}
+
+}
+
+/**
  * Set a rainbow cycle pattern on the notification LED.
  * @return 0 on success; non-zero on error.
  */
@@ -520,7 +554,10 @@ static void SaveBootstrapConfig(void)
 	if (applaunchprep || fadeout) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
+			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize;
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
