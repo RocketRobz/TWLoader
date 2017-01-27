@@ -395,6 +395,8 @@ static int CreateGameSave(const char *filename) {
  * Set MPU settings for a specific game.
  */
 void SetMPUSettings() {
+	const u32 hHeld = hidKeysHeld();
+
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
@@ -404,8 +406,20 @@ void SetMPUSettings() {
 	game_TID[4] = 0;
 	fclose(f_nds_file);
 	
-	// settings.twl.mpuregion = 0;
-	// settings.twl.mpusize = 0;
+	if(hHeld & KEY_B){
+		settings.twl.mpuregion = 1;
+	} else if(hHeld & KEY_X){
+		settings.twl.mpuregion = 2;
+	} else if(hHeld & KEY_Y){
+		settings.twl.mpuregion = 3;
+	} else {
+		settings.twl.mpuregion = 0;
+	}
+	if(hHeld & KEY_RIGHT){
+		settings.twl.mpusize = 3145728;
+	} else {
+		settings.twl.mpusize = 0;
+	}
 		
 	if (strcmp(game_TID, "ARZJ") == 0 ||	// Rockman ZX
 		strcmp(game_TID, "ARZE") == 0 ||	// MegaMan ZX
