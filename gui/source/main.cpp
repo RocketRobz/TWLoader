@@ -1764,8 +1764,10 @@ int main()
 					
 					// Clear matching_files vector
 					if(matching_files.size() != 0) {
-						matching_files.clear();
-						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+						matching_files.clear(); // Clear filter
+						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
+						boxarttexloaded = false; // Reload boxarts
+						bnricontexloaded = false; // Reload banner icons
 					}
 				} else if (gbarunnervalue == 1) {
 					// run = false;
