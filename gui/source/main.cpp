@@ -2754,7 +2754,7 @@ int main()
 									
 									break;
 							}
-						} else if (hDown & KEY_B) {
+						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
 							menu_ctrlset = CTRL_SET_GAMESEL;
@@ -2821,7 +2821,7 @@ int main()
 									}
 									break;
 							}
-						} else if (hDown & KEY_B) {
+						} else if (hDown & (KEY_B | KEY_SELECT)) {
 							if (settings.twl.forwarder) {
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
