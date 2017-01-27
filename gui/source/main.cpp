@@ -1768,6 +1768,11 @@ int main()
 						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+					
+						/** This is better than a glitched screen */
+						sf2d_start_frame(GFX_TOP, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
 					}
 				} else if (gbarunnervalue == 1) {
 					// run = false;
