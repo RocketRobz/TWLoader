@@ -520,6 +520,14 @@ void downloadBoxArt(void)
 		if (!access(path, F_OK)) {
 			// Boxart file exists.
 			continue;
+		}else{
+			// Maybe boxart exist with fullname instead of TID
+			Log(tempfile);
+			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%s.png", tempfile);
+			if(!access(path, F_OK)){
+				// Boxart with fullname exist
+				continue;
+			}
 		}
 
 		// Boxart file does not exist. Download it.
