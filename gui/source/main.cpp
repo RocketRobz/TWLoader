@@ -2728,6 +2728,10 @@ int main()
 									if (matching_files.size() != 0){
 										/** Prepare some stuff to show correctly the filtered roms */
 										
+										cursorPosition = 0; // Move the cursor to 0
+										storedcursorPosition = cursorPosition; // Move the cursor to 0
+										titleboxXmovepos = 0; // Move the cursor to 0
+										boxartXmovepos = 0; // Move the cursor to 0
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
