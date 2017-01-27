@@ -956,9 +956,13 @@ static void drawMenuDialogBox(void)
 
 		char romsel_counter1[16];
 		char romsel_counter2[16];
-		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-		snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
-
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);		
+		if(matching_files.size() == 0){
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+		}else{
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+		}
+		
 		if (file_count < 100) {
 			sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
 			sftd_draw_text(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
@@ -1759,7 +1763,10 @@ int main()
 					bannertextloaded = false;
 					
 					// Clear matching_files vector
-					matching_files.clear();
+					if(matching_files.size() != 0) {
+						matching_files.clear();
+						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+					}
 				} else if (gbarunnervalue == 1) {
 					// run = false;
 					if (settings.twl.forwarder) {
