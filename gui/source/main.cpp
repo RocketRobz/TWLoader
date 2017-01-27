@@ -417,6 +417,8 @@ void SetMPUSettings() {
 	}
 	if(hHeld & KEY_RIGHT){
 		settings.twl.mpusize = 3145728;
+	} else if(hHeld & KEY_LEFT){
+		settings.twl.mpusize = 1;
 	} else {
 		settings.twl.mpusize = 0;
 	}
