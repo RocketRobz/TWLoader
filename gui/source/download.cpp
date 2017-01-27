@@ -598,13 +598,6 @@ void downloadBoxArt(void)
 			if (access(path, F_OK) != 0) {
 				// Boxart file does not exist. Download it.
 				boxart_dl_tids.push_back(tid);
-			}else{
-				// Maybe boxart exist with fullname instead of TID
-				snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%s.png", tempfile);
-				if(!access(path, F_OK)){
-					// Boxart with fullname exist
-					continue;
-				}
 			}
 		}
 	}
