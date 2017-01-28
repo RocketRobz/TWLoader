@@ -230,8 +230,9 @@ void DownloadTWLoaderCIAs(void) {
 	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
 	sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 	sf2d_end_frame();
-	sf2d_swapbuffers();
-
+	sf2d_swapbuffers();	
+	
+	mkdir("sdmc:/_nds/twloader/cia", 0777);
 	int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
