@@ -985,7 +985,8 @@ static void drawMenuDialogBox(void)
 		} buttons[] = {
 			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
-			{ 91, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
+			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
+			{161, 129, &settings.pergame.lockarm9scfgext, "Set as donor ROM", {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -2783,18 +2784,26 @@ int main()
 						} else if (hDown & KEY_RIGHT) {
 							if (gamesettings_cursorPosition == 0) {
 								gamesettings_cursorPosition = 1;
+							} else if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 3;
 							}
 						} else if (hDown & KEY_LEFT) {
 							if (gamesettings_cursorPosition == 1) {
 								gamesettings_cursorPosition = 0;
+							} else if (gamesettings_cursorPosition == 3) {
+								gamesettings_cursorPosition = 2;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (gamesettings_cursorPosition < 2) {
+							if (gamesettings_cursorPosition == 0) {
 								gamesettings_cursorPosition = 2;
+							} else if (gamesettings_cursorPosition == 1) {
+								gamesettings_cursorPosition = 3;
 							}
 						} else if (hDown & KEY_UP) {
 							if (gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 0;
+							} else if (gamesettings_cursorPosition == 3) {
+								gamesettings_cursorPosition = 1;
 							}
 						} else if (hDown & KEY_A) {
 							switch (gamesettings_cursorPosition) {
@@ -2825,6 +2834,9 @@ int main()
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
+									break;
+								case 3:
+									// Set ARM7_DONOR_PATH to nds-bootstrap.ini
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
