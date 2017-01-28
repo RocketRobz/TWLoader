@@ -47,11 +47,12 @@ void UpdateBootstrapRelease(void);
  * Download bootstrap version files
  */
 
-void downloadBootstrapVersion(bool type);
+int downloadBootstrapVersion(bool type);
 
 /**
-* Download store bootstrap version
-*/
+ * Download store bootstrap version
+ * @return non zero if error
+ */
 
 void checkBootstrapVersion(void);
  

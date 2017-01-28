@@ -58,8 +58,8 @@ const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/
 const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
 const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/beta/official-bootstrap?raw=true";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/beta/unofficial-bootstrap?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
 
 /**
  * Check Wi-Fi status.
@@ -467,15 +467,20 @@ static int downloadBoxArt_internal(const char *ba_TID)
 
 /**
  * Download bootstrap version files
+ * @return non zero if error
  */
 
-void downloadBootstrapVersion(bool type)
+int downloadBootstrapVersion(bool type
+)
 {
+	int res = 0;
 	if (type){		
-		downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
+		res = downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
 	}else{
-		downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
+		res = downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
 	}
+	
+	return res;
 }
 
 /**
@@ -483,21 +488,51 @@ void downloadBootstrapVersion(bool type)
  */
 
 void checkBootstrapVersion(void){
+	
+	bool res = false;
+	char buf[26];
+	
+	// Clean buf array
+	for (int i=0; i<= sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
 	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
 	if (!VerFile){
 		if(checkWifiStatus()){
-			downloadBootstrapVersion(true); // true == release
+			res = downloadBootstrapVersion(true); // true == release
 		}else{
 			settings_releasebootstrapver = "No version available";
 		}
 	}else{
-		char buf[26];
-		fread(buf,1,20,VerFile);
+		fread(buf,1,sizeof(buf),VerFile);
 		buf[25] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
 	}
+	
 	fclose(VerFile);
+	
+	// Clean buf array
+	for (int i=0; i<= sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	if(res == 0){
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
+		if (!VerFile){			
+				settings_releasebootstrapver = "No version available";
+		}else{
+			char buf[26];
+			fread(buf,1,sizeof(buf),VerFile);
+			buf[25] = '\0';
+			settings_releasebootstrapver = buf;
+			fclose(VerFile);
+		}
+	}
+	
+	res = false; // Just to be sure	
 	
 	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
 	if (!VerFile){
@@ -508,12 +543,27 @@ void checkBootstrapVersion(void){
 		}
 	}else{
 		char buf[26];
-		fread(buf,1,20,VerFile);		
+		fread(buf,1,sizeof(buf),VerFile);
 		buf[25] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
 	}
+	
 	fclose(VerFile);
+	
+	if(res == 0){
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+		if (!VerFile){			
+				settings_unofficialbootstrapver = "No version available";
+		}else{
+			char buf[26];
+			fread(buf,1,sizeof(buf),VerFile);
+			buf[25] = '\0';
+			settings_unofficialbootstrapver = buf;
+			fclose(VerFile);
+		}
+	}
 }
  
 /**
