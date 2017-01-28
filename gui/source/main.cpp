@@ -986,7 +986,7 @@ static void drawMenuDialogBox(void)
 			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
-			{161, 129, NULL, "Set as donor ROM", {NULL, NULL}},
+			{161, 129, &settings.pergame.cpuspeed, "Set as donor ROM", {" ", " "}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
