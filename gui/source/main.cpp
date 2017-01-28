@@ -1141,6 +1141,7 @@ int main()
 	mkdir("sdmc:/_nds/twloader/cia", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
+	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
