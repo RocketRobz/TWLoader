@@ -40,6 +40,9 @@ using std::wstring;
 
 bool is3DSX = false;
 
+#include "logo_png.h"
+#include "logo_demo_png.h"
+
 
 touchPosition touch;
 u32 kUp;
@@ -404,6 +407,7 @@ void SetMPUSettings() {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
+	game_TID[3] = 0;
 	fclose(f_nds_file);
 	
 	if(hHeld & KEY_B){
@@ -423,12 +427,9 @@ void SetMPUSettings() {
 		settings.twl.mpusize = 0;
 	}
 		
-	if (strcmp(game_TID, "ARZJ") == 0 ||	// Rockman ZX
-		strcmp(game_TID, "ARZE") == 0 ||	// MegaMan ZX
-		strcmp(game_TID, "ARZP") == 0 ||	// MegaMan ZX
-		strcmp(game_TID, "YZXJ") == 0 ||	// Rockman ZX Advent
-		strcmp(game_TID, "YZXE") == 0 ||	// MegaMan ZX Advent
-		strcmp(game_TID, "YZXP") == 0 )	// MegaMan ZX Advent
+	if (strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
+		strcmp(game_TID, "YZX") == 0 ||	// Rockman ZX Advent/MegaMan ZX Advent
+		strcmp(game_TID, "B6Z") == 0 )		// Rockman Zero Collection/MegaMan Zero Collection
 	{
 		settings.twl.mpuregion = 1;
 		settings.twl.mpusize = 3145728;
@@ -982,7 +983,8 @@ static void drawMenuDialogBox(void)
 		} buttons[] = {
 			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
-			{ 91, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
+			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
+			{161, 129, &settings.pergame.cpuspeed, "Set as donor ROM", {" ", " "}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1038,7 +1040,8 @@ static void drawMenuDialogBox(void)
 			{161,  31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
 			{ 23,  71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
 			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
-			{ 23, 111, NULL, "Search", {NULL, NULL}},
+			{ 23, 111, NULL, "Unset donor ROM", {NULL, NULL}},
+			{161, 111, NULL, "Search", {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -1100,25 +1103,14 @@ bool compareString(const char *iter, const char *input)
 
 int main()
 {
-	aptInit();
-	cfguInit();
-	amInit();
-	ptmuInit();	// For battery status
-	ptmuxInit();	// For AC adapter status
-	sdmcInit();
-	romfsInit();
-	srvInit();
-	hidInit();
-	acInit();
-
 	sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(0);
 
 	if(is3DSX)
-		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo.png", SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
+		settingslogotex = sfil_load_PNG_buffer(logo_demo_png, SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
 	else
-		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on top screen
+		settingslogotex = sfil_load_PNG_buffer(logo_png, SF2D_PLACE_RAM); // TWLoader logo on top screen
 
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
@@ -1129,18 +1121,31 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
+
+
+	aptInit();
+	cfguInit();
+	amInit();
+	ptmuInit();	// For battery status
+	ptmuxInit();	// For AC adapter status
+	sdmcInit();
+	romfsInit();
+	srvInit();
+	hidInit();
+	acInit();
 	
 	createLog();
 
 	// make folders if they don't exist
 	mkdir("sdmc:/_nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
 	mkdir("sdmc:/_nds/twloader/cia", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
+	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
@@ -1785,6 +1790,8 @@ int main()
 							default: {
 								CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
 								fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 								fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
 								break;
 							}
@@ -2658,7 +2665,7 @@ int main()
 							}
 						} else if (hDown & KEY_RIGHT) {
 							if (startmenu_cursorPosition % 2 != 1 &&
-							    startmenu_cursorPosition != 4)
+							    startmenu_cursorPosition != 5)
 							{
 								// Move right.
 								startmenu_cursorPosition++;
@@ -2669,7 +2676,7 @@ int main()
 								startmenu_cursorPosition--;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (startmenu_cursorPosition < 3) {
+							if (startmenu_cursorPosition < 4) {
 								startmenu_cursorPosition += 2;
 							}
 	
@@ -2718,6 +2725,11 @@ int main()
 									settings.ui.topborder = !settings.ui.topborder;
 									break;
 								case 4:
+									// Unset donor ROM path
+									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
+									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									break;
+								case 5: {
 									// Search
 									if(matching_files.size() != 0){
 										matching_files.clear();
@@ -2753,7 +2765,7 @@ int main()
 										bnricontexloaded = false; // Reload banner icons
 									}		
 									
-									break;
+								}	break;
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
@@ -2778,18 +2790,26 @@ int main()
 						} else if (hDown & KEY_RIGHT) {
 							if (gamesettings_cursorPosition == 0) {
 								gamesettings_cursorPosition = 1;
+							} else if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 3;
 							}
 						} else if (hDown & KEY_LEFT) {
 							if (gamesettings_cursorPosition == 1) {
 								gamesettings_cursorPosition = 0;
+							} else if (gamesettings_cursorPosition == 3) {
+								gamesettings_cursorPosition = 2;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (gamesettings_cursorPosition < 2) {
+							if (gamesettings_cursorPosition == 0) {
 								gamesettings_cursorPosition = 2;
+							} else if (gamesettings_cursorPosition == 1) {
+								gamesettings_cursorPosition = 3;
 							}
 						} else if (hDown & KEY_UP) {
 							if (gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 0;
+							} else if (gamesettings_cursorPosition == 3) {
+								gamesettings_cursorPosition = 1;
 							}
 						} else if (hDown & KEY_A) {
 							switch (gamesettings_cursorPosition) {
@@ -2819,6 +2839,19 @@ int main()
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
+									}
+									break;
+								case 3:
+									if (settings.twl.forwarder) {
+										rom = fcfiles.at(cursorPosition).c_str();
+									} else {
+										if(matching_files.size() == 0){
+											rom = files.at(cursorPosition).c_str();
+										}else{
+											rom = matching_files.at(cursorPosition).c_str();
+										}
+										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									}
 									break;
 							}
