@@ -431,7 +431,10 @@ void SetMPUSettings() {
 		strcmp(game_TID, "ARZP") == 0 ||	// MegaMan ZX
 		strcmp(game_TID, "YZXJ") == 0 ||	// Rockman ZX Advent
 		strcmp(game_TID, "YZXE") == 0 ||	// MegaMan ZX Advent
-		strcmp(game_TID, "YZXP") == 0 )	// MegaMan ZX Advent
+		strcmp(game_TID, "YZXP") == 0 ||	// MegaMan ZX Advent
+		strcmp(game_TID, "B6ZJ") == 0 ||	// Rockman Zero Collection
+		strcmp(game_TID, "B6ZE") == 0 ||	// MegaMan Zero Collection
+		strcmp(game_TID, "B6ZP") == 0 )	// MegaMan Zero Collection
 	{
 		settings.twl.mpuregion = 1;
 		settings.twl.mpusize = 3145728;
