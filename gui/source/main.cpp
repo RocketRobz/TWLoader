@@ -184,6 +184,9 @@ typedef struct {
 char settings_vertext[13];
 char settings_latestvertext[13];
 
+std::string settings_releasebootstrapver;
+std::string settings_unofficialbootstrapver;
+
 static bool applaunchprep = false;
 
 int fadealpha = 255;
@@ -1104,6 +1107,38 @@ bool compareString(const char *iter, const char *input)
 }
 
 
+void checkBootstrapVersion(void){
+	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			downloadBootstrapVersion(true); // true == release
+		}else{
+			settings_releasebootstrapver = "No version available";
+		}
+	}else{
+		char buf[21];
+		fread(buf,1,20,VerFile);
+		settings_releasebootstrapver = buf;
+		fclose(VerFile);
+	}
+	fclose(VerFile);
+	
+	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			downloadBootstrapVersion(false); // false == unofficial
+		}else{
+			settings_unofficialbootstrapver = "No version available";
+		}
+	}else{
+		char buf[21];
+		fread(buf,1,20,VerFile);	
+		settings_unofficialbootstrapver = buf;
+		fclose(VerFile);
+	}
+	fclose(VerFile);
+}
+
 int main()
 {
 	sf2d_init();
@@ -1170,6 +1205,9 @@ int main()
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
 	LoadBootstrapConfig();
 
+	// Write bootstrap version
+	checkBootstrapVersion();
+	
 	// Initialize translations.
 	langInit();
 

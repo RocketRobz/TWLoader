@@ -56,6 +56,8 @@ const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/
 const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
 const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/beta/official-bootstrap?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/beta/unofficial-bootstrap?raw=true";
 
 /**
  * Check Wi-Fi status.
@@ -285,6 +287,8 @@ void UpdateBootstrapUnofficial(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	downloadBootstrapVersion(false);
 	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
@@ -306,6 +310,8 @@ void UpdateBootstrapRelease(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	downloadBootstrapVersion(true);
 	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/official-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
@@ -455,6 +461,20 @@ static int downloadBoxArt_internal(const char *ba_TID)
 	return res;
 }
 
+/**
+ * Download bootstrap version files
+ */
+
+void downloadBootstrapVersion(bool type)
+{
+	if (type){		
+		downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
+	}else{
+		downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
+	}
+}
+
+ 
 /**
  * Download Slot-1 boxart.
  */

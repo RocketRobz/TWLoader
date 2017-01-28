@@ -44,6 +44,12 @@ void UpdateBootstrapUnofficial(void);
 void UpdateBootstrapRelease(void);
 
 /**
+ * Download bootstrap version files
+ */
+
+void downloadBootstrapVersion(bool type);
+ 
+/**
  * Download Slot-1 boxart.
  */
 void downloadSlot1BoxArt(const char* TID);
