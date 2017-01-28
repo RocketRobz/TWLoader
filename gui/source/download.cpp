@@ -493,7 +493,7 @@ void checkBootstrapVersion(void){
 	char buf[26];
 	
 	// Clean buf array
-	for (int i=0; i<= sizeof(buf); i++){
+	for (int i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
 	}
 	
@@ -514,7 +514,7 @@ void checkBootstrapVersion(void){
 	fclose(VerFile);
 	
 	// Clean buf array
-	for (int i=0; i<= sizeof(buf); i++){
+	for (int i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
 	}
 	
