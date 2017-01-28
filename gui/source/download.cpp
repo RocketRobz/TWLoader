@@ -51,6 +51,12 @@ extern u8 language;
 extern vector<string> files;
 extern vector<string> fcfiles;
 
+const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/ver?raw=true";
+const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
+const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
+
 /**
  * Check Wi-Fi status.
  * @return True if Wi-Fi is connected; false if not.
@@ -177,7 +183,7 @@ int checkUpdate(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
-	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", MEDIA_SD_FILE);
+	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
 	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
 		sVerfile Verfile;
@@ -234,7 +240,7 @@ void DownloadTWLoaderCIAs(void) {
 	sf2d_swapbuffers();	
 	
 	mkdir("sdmc:/_nds/twloader/cia", 0777);
-	int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	int res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -245,7 +251,7 @@ void DownloadTWLoaderCIAs(void) {
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
@@ -279,7 +285,7 @@ void UpdateBootstrapUnofficial(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -300,7 +306,7 @@ void UpdateBootstrapRelease(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/official-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
 	}
