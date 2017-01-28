@@ -66,7 +66,7 @@ extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
 extern bool dspfirmfound;
 static bool settings_tex_loaded = false;
 static sf2d_texture *whomeicontex = NULL;	// HOME icon.
-static sf2d_texture *setvoltex[5] = { };	// Volume levels.
+static sf2d_texture *setvoltex[6] = { };	// Volume levels.
 static sf2d_texture *setbatterychrgtex = NULL;	// Fully charged.
 static sf2d_texture *setbatterytex[6] = { };	// Battery levels.
 
@@ -154,8 +154,9 @@ void settingsLoadTextures(void)
 	setvoltex[0] = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
 	setvoltex[1] = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
 	setvoltex[2] = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
-	setvoltex[3] = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)
-	setvoltex[4] = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
+	setvoltex[3] = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)	
+	setvoltex[4] = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // 100% (settings)
+	setvoltex[5] = sfil_load_PNG_file("romfs:/graphics/settings/volume5.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
 
 	setbatterychrgtex = sfil_load_PNG_file("romfs:/graphics/settings/battery_charging.png", SF2D_PLACE_RAM);
 	setbatterytex[0] = sfil_load_PNG_file("romfs:/graphics/settings/battery0.png", SF2D_PLACE_RAM);
@@ -215,7 +216,7 @@ void settingsUnloadTextures(void)
 		return;
 
 	/** Top screen **/
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		sf2d_free_texture(setvoltex[i]);
 		setvoltex[i] = NULL;
 	}
