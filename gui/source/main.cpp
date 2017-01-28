@@ -689,7 +689,7 @@ void draw_volume_slider(sf2d_texture *texarray[])
 	u8 volumeLevel = 0;
 	if (!dspfirmfound) {
 		// No DSP Firm.
-		sf2d_draw_texture(texarray[4], 5, 2);
+		sf2d_draw_texture(texarray[5], 5, 2);
 	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
