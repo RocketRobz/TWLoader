@@ -84,6 +84,8 @@ typedef struct _Settings_t {
 		
 		int mpuregion; // Region 0, 1, 2, 3
 		int mpusize; // Size 0, 1, 3145728
+		
+		bool bootstrapfile; // true == release, false == unofficial
 	} twl;
 	
 	struct {

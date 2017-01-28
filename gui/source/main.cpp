@@ -72,6 +72,7 @@ sf2d_texture *settingslogotex;	// TWLoader logo.
 
 static sf2d_texture *slot1boxarttex = NULL;
 
+std::string	bootstrapPath;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -159,6 +160,7 @@ static const char bootstrapini_mpusize[] = "PATCH_MPU_SIZE";
 static const char bootstrapini_boostcpu[] = "BOOST_CPU";
 static const char bootstrapini_debug[] = "DEBUG";
 static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
+static const char bootstrapini_bootstrappath[] = "BOOTSTRAP_PATH";
 // End
 
 // Run
@@ -572,6 +574,7 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
@@ -1147,8 +1150,6 @@ int main()
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
-
-	std::string	bootstrapPath = "";
 	
 	// Font loading
 	sftd_init();
@@ -1166,7 +1167,8 @@ int main()
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
-	LoadSettings();
+	LoadSettings();	
+	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
 	LoadBootstrapConfig();
 
 	// Initialize translations.
