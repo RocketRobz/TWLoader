@@ -1135,12 +1135,12 @@ int main()
 	// make folders if they don't exist
 	mkdir("sdmc:/_nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
 	mkdir("sdmc:/_nds/twloader/cia", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
+	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 
 	std::string	bootstrapPath = "";
