@@ -675,6 +675,8 @@ static sf2d_texture *voltex[5] = { };
 /**
  * Draw the volume slider.
  * @param texarray Texture array to use, (voltex or setvoltex)
+ * The Dsi has 8 positions for volume and the 3ds has 64
+ * Remap volume to simulate the 8 positions
  */
 void draw_volume_slider(sf2d_texture *texarray[])
 {
@@ -685,13 +687,15 @@ void draw_volume_slider(sf2d_texture *texarray[])
 	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
-			voltex_id = 0;	// No slide = volume0 texture
-		} else if (volumeLevel <= 21) {
-			voltex_id = 1;	// 25% or less = volume1 texture
-		} else if (volumeLevel <= 42) {
-			voltex_id = 2;	// about 50% = volume2 texture
-		} else if (volumeLevel >= 43) {
-			voltex_id = 3;	// above 75% = volume3 texture
+			voltex_id = 0;	// 3ds 0, dsi 0 = volume0 texture
+		} else if (volumeLevel <= 20) {
+			voltex_id = 1;	// 3ds  1-20, dsi 1,2 = volume1 texture
+		} else if (volumeLevel <= 41) {
+			voltex_id = 1;	// 3ds 21-41, dsi 3,4 = volume2 texture
+		} else if (volumeLevel <= 62) {
+			voltex_id = 2;	// 3ds 42-62, dsi 5,6 = volume3 texture
+		} else if (volumeLevel = 63) {
+			voltex_id = 3;	// 3ds 63, dsi 8  = volume4 texture
 		}
 		sf2d_draw_texture(texarray[voltex_id], 5, 2);
 	}
