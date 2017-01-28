@@ -539,8 +539,10 @@ void downloadBoxArt(void)
 	for (size_t boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
 		// Get the title ID from the INI file.
 		const char *tempfile = fcfiles.at(boxartnum).c_str();
-		CIniFile setfcrompathini(tempfile);
-		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
+		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
+		CIniFile setfcrompathini(path);							
+		
+		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");		
 		if (ba_TID.size() < 4) {
 			// Invalid TID.
 			continue;
