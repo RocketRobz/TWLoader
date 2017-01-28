@@ -297,7 +297,7 @@ void settingsDrawTopScreen(void)
 		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 		sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 		
-		settings.twl.bootstrapfile ? sftd_draw_text(font, 300, 207, RGBA8(0, 0, 255, 255), 14, settings_releasebootstrapver.c_str()) : sftd_draw_text(font, 300, 207, RGBA8(0, 255, 0, 255), 14, settings_unofficialbootstrapver.c_str());
+		settings.twl.bootstrapfile ? sftd_draw_text(font, 5, 222, RGBA8(0, 0, 255, 255), 14, settings_releasebootstrapver.c_str()) : sftd_draw_text(font, 5, 222, RGBA8(0, 255, 0, 255), 14, settings_unofficialbootstrapver.c_str());
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);

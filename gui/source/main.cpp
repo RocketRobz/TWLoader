@@ -1118,6 +1118,7 @@ void checkBootstrapVersion(void){
 	}else{
 		char buf[21];
 		fread(buf,1,20,VerFile);
+		buf[20] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
 	}
@@ -1132,7 +1133,8 @@ void checkBootstrapVersion(void){
 		}
 	}else{
 		char buf[21];
-		fread(buf,1,20,VerFile);	
+		fread(buf,1,20,VerFile);		
+		buf[20] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
 	}
