@@ -676,7 +676,7 @@ static void SetPerGameSettings(void)
 }
 
 bool dspfirmfound = false;
-static sf2d_texture *voltex[5] = { };
+static sf2d_texture *voltex[6] = { };
 
 /**
  * Draw the volume slider.
@@ -697,11 +697,11 @@ void draw_volume_slider(sf2d_texture *texarray[])
 		} else if (volumeLevel <= 21) {
 			voltex_id = 1;	// 3ds  1-21, dsi 1,2 = volume1 texture
 		} else if (volumeLevel <= 42) {
-			voltex_id = 1;	// 3ds 22-42, dsi 3,4 = volume2 texture
+			voltex_id = 2;	// 3ds 22-42, dsi 3,4 = volume2 texture
 		} else if (volumeLevel <= 62) {
-			voltex_id = 2;	// 3ds 43-62, dsi 5,6 = volume3 texture
+			voltex_id = 3;	// 3ds 43-62, dsi 5,6 = volume3 texture
 		} else if (volumeLevel = 63) {
-			voltex_id = 3;	// 3ds 63, dsi 8  = volume4 texture
+			voltex_id = 4;	// 3ds 63, dsi 8  = volume4 texture
 		}
 		sf2d_draw_texture(texarray[voltex_id], 5, 2);
 	}
@@ -1200,7 +1200,8 @@ int main()
 	voltex[1] = sfil_load_PNG_file("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
 	voltex[2] = sfil_load_PNG_file("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
 	voltex[3] = sfil_load_PNG_file("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
-	voltex[4] = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
+	voltex[4] = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // 100%
+	voltex[5] = sfil_load_PNG_file("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // No DSP firm found
 
 	shoulderLtex = sfil_load_PNG_file("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
 	shoulderRtex = sfil_load_PNG_file("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
@@ -2989,7 +2990,7 @@ int main()
 
 	if (colortexloaded) { sf2d_free_texture(topbgtex); }
 	sf2d_free_texture(toptex);
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		sf2d_free_texture(voltex[i]);
 	}
 
