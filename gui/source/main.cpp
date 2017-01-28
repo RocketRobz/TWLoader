@@ -986,7 +986,7 @@ static void drawMenuDialogBox(void)
 			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
-			{161, 129, &settings.pergame.lockarm9scfgext, "Set as donor ROM", {NULL, NULL}},
+			{161, 129, NULL, "Set as donor ROM", {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1042,7 +1042,8 @@ static void drawMenuDialogBox(void)
 			{161,  31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
 			{ 23,  71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
 			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
-			{ 23, 111, NULL, "Search", {NULL, NULL}},
+			{ 23, 111, NULL, "Unset donor ROM", {NULL, NULL}},
+			{161, 111, NULL, "Search", {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -2664,7 +2665,7 @@ int main()
 							}
 						} else if (hDown & KEY_RIGHT) {
 							if (startmenu_cursorPosition % 2 != 1 &&
-							    startmenu_cursorPosition != 4)
+							    startmenu_cursorPosition != 5)
 							{
 								// Move right.
 								startmenu_cursorPosition++;
@@ -2675,7 +2676,7 @@ int main()
 								startmenu_cursorPosition--;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (startmenu_cursorPosition < 3) {
+							if (startmenu_cursorPosition < 4) {
 								startmenu_cursorPosition += 2;
 							}
 	
@@ -2724,6 +2725,11 @@ int main()
 									settings.ui.topborder = !settings.ui.topborder;
 									break;
 								case 4:
+									// Unset donor ROM path
+									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
+									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									break;
+								case 5: {
 									// Search
 									if(matching_files.size() != 0){
 										matching_files.clear();
@@ -2759,7 +2765,7 @@ int main()
 										bnricontexloaded = false; // Reload banner icons
 									}		
 									
-									break;
+								}	break;
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
@@ -2836,7 +2842,17 @@ int main()
 									}
 									break;
 								case 3:
-									// Set ARM7_DONOR_PATH to nds-bootstrap.ini
+									if (settings.twl.forwarder) {
+										rom = fcfiles.at(cursorPosition).c_str();
+									} else {
+										if(matching_files.size() == 0){
+											rom = files.at(cursorPosition).c_str();
+										}else{
+											rom = matching_files.at(cursorPosition).c_str();
+										}
+										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									}
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
