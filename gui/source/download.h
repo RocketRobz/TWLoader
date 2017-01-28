@@ -48,6 +48,12 @@ void UpdateBootstrapRelease(void);
  */
 
 void downloadBootstrapVersion(bool type);
+
+/**
+* Download store bootstrap version
+*/
+
+void checkBootstrapVersion(void);
  
 /**
  * Download Slot-1 boxart.

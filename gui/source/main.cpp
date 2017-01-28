@@ -1106,41 +1106,6 @@ bool compareString(const char *iter, const char *input)
 	return false;
 }
 
-
-void checkBootstrapVersion(void){
-	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
-	if (!VerFile){
-		if(checkWifiStatus()){
-			downloadBootstrapVersion(true); // true == release
-		}else{
-			settings_releasebootstrapver = "No version available";
-		}
-	}else{
-		char buf[21];
-		fread(buf,1,20,VerFile);
-		buf[20] = '\0';
-		settings_releasebootstrapver = buf;
-		fclose(VerFile);
-	}
-	fclose(VerFile);
-	
-	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
-	if (!VerFile){
-		if(checkWifiStatus()){
-			downloadBootstrapVersion(false); // false == unofficial
-		}else{
-			settings_unofficialbootstrapver = "No version available";
-		}
-	}else{
-		char buf[21];
-		fread(buf,1,20,VerFile);		
-		buf[20] = '\0';
-		settings_unofficialbootstrapver = buf;
-		fclose(VerFile);
-	}
-	fclose(VerFile);
-}
-
 int main()
 {
 	sf2d_init();
@@ -1207,7 +1172,7 @@ int main()
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
 	LoadBootstrapConfig();
 
-	// Write bootstrap version
+	// Store bootstrap version
 	checkBootstrapVersion();
 	
 	// Initialize translations.

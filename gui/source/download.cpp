@@ -32,6 +32,8 @@ extern sf2d_texture *dialogboxtex; // Dialog box
 extern sf2d_texture *settingstex; // Bottom of settings screen
 extern bool showdialogbox;
 extern bool run;	// Set to false to exit to the Home Menu.
+extern std::string settings_releasebootstrapver;
+extern std::string settings_unofficialbootstrapver;
 
 extern int screenmode;
 // 0: ROM select
@@ -289,6 +291,7 @@ void UpdateBootstrapUnofficial(void) {
 	remove("sdmc:/_nds/bootstrap.nds");
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
 	downloadBootstrapVersion(false);
+	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
@@ -312,6 +315,7 @@ void UpdateBootstrapRelease(void) {
 	remove("sdmc:/_nds/bootstrap.nds");
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
 	downloadBootstrapVersion(true);
+	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/official-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
@@ -474,6 +478,43 @@ void downloadBootstrapVersion(bool type)
 	}
 }
 
+/**
+ * check, download and store bootstrap version
+ */
+
+void checkBootstrapVersion(void){
+	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			downloadBootstrapVersion(true); // true == release
+		}else{
+			settings_releasebootstrapver = "No version available";
+		}
+	}else{
+		char buf[26];
+		fread(buf,1,20,VerFile);
+		buf[25] = '\0';
+		settings_releasebootstrapver = buf;
+		fclose(VerFile);
+	}
+	fclose(VerFile);
+	
+	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			downloadBootstrapVersion(false); // false == unofficial
+		}else{
+			settings_unofficialbootstrapver = "No version available";
+		}
+	}else{
+		char buf[26];
+		fread(buf,1,20,VerFile);		
+		buf[25] = '\0';
+		settings_unofficialbootstrapver = buf;
+		fclose(VerFile);
+	}
+	fclose(VerFile);
+}
  
 /**
  * Download Slot-1 boxart.
