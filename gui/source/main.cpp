@@ -700,7 +700,7 @@ void draw_volume_slider(sf2d_texture *texarray[])
 			voltex_id = 2;	// 3ds 22-42, dsi 3,4 = volume2 texture
 		} else if (volumeLevel <= 62) {
 			voltex_id = 3;	// 3ds 43-62, dsi 5,6 = volume3 texture
-		} else if (volumeLevel = 63) {
+		} else if (volumeLevel == 63) {
 			voltex_id = 4;	// 3ds 63, dsi 8  = volume4 texture
 		}
 		sf2d_draw_texture(texarray[voltex_id], 5, 2);
