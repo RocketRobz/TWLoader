@@ -93,6 +93,7 @@ typedef struct _Settings_t {
 		s8 cpuspeed;	// false == NTR, true == TWL
 		s8 extvram;
 		s8 lockarm9scfgext;
+		s8 donor;
 	} pergame;
 } Settings_t;
 extern Settings_t settings;
