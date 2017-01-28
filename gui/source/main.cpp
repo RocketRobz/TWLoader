@@ -688,12 +688,12 @@ void draw_volume_slider(sf2d_texture *texarray[])
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
 			voltex_id = 0;	// 3ds 0, dsi 0 = volume0 texture
-		} else if (volumeLevel <= 20) {
-			voltex_id = 1;	// 3ds  1-20, dsi 1,2 = volume1 texture
-		} else if (volumeLevel <= 41) {
-			voltex_id = 1;	// 3ds 21-41, dsi 3,4 = volume2 texture
+		} else if (volumeLevel <= 21) {
+			voltex_id = 1;	// 3ds  1-21, dsi 1,2 = volume1 texture
+		} else if (volumeLevel <= 42) {
+			voltex_id = 1;	// 3ds 22-42, dsi 3,4 = volume2 texture
 		} else if (volumeLevel <= 62) {
-			voltex_id = 2;	// 3ds 42-62, dsi 5,6 = volume3 texture
+			voltex_id = 2;	// 3ds 43-62, dsi 5,6 = volume3 texture
 		} else if (volumeLevel = 63) {
 			voltex_id = 3;	// 3ds 63, dsi 8  = volume4 texture
 		}
