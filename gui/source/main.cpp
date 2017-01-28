@@ -40,6 +40,9 @@ using std::wstring;
 
 bool is3DSX = false;
 
+#include "logo_png.h"
+#include "logo_demo_png.h"
+
 
 touchPosition touch;
 u32 kUp;
@@ -1100,25 +1103,14 @@ bool compareString(const char *iter, const char *input)
 
 int main()
 {
-	aptInit();
-	cfguInit();
-	amInit();
-	ptmuInit();	// For battery status
-	ptmuxInit();	// For AC adapter status
-	sdmcInit();
-	romfsInit();
-	srvInit();
-	hidInit();
-	acInit();
-
 	sf2d_init();
 	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
 	sf2d_set_3D(0);
 
 	if(is3DSX)
-		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo.png", SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
+		settingslogotex = sfil_load_PNG_buffer(logo_demo_png, SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
 	else
-		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo on top screen
+		settingslogotex = sfil_load_PNG_buffer(logo_png, SF2D_PLACE_RAM); // TWLoader logo on top screen
 
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
@@ -1129,6 +1121,18 @@ int main()
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
+
+
+	aptInit();
+	cfguInit();
+	amInit();
+	ptmuInit();	// For battery status
+	ptmuxInit();	// For AC adapter status
+	sdmcInit();
+	romfsInit();
+	srvInit();
+	hidInit();
+	acInit();
 	
 	createLog();
 
