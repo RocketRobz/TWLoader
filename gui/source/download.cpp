@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <sys/stat.h>
 using std::string;
 using std::unordered_set;
 using std::vector;
