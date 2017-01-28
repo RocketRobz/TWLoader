@@ -407,6 +407,7 @@ void SetMPUSettings() {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
+	game_TID[3] = 0;
 	fclose(f_nds_file);
 	
 	if(hHeld & KEY_B){
@@ -426,15 +427,9 @@ void SetMPUSettings() {
 		settings.twl.mpusize = 0;
 	}
 		
-	if (strcmp(game_TID, "ARZJ") == 0 ||	// Rockman ZX
-		strcmp(game_TID, "ARZE") == 0 ||	// MegaMan ZX
-		strcmp(game_TID, "ARZP") == 0 ||	// MegaMan ZX
-		strcmp(game_TID, "YZXJ") == 0 ||	// Rockman ZX Advent
-		strcmp(game_TID, "YZXE") == 0 ||	// MegaMan ZX Advent
-		strcmp(game_TID, "YZXP") == 0 ||	// MegaMan ZX Advent
-		strcmp(game_TID, "B6ZJ") == 0 ||	// Rockman Zero Collection
-		strcmp(game_TID, "B6ZE") == 0 ||	// MegaMan Zero Collection
-		strcmp(game_TID, "B6ZP") == 0 )	// MegaMan Zero Collection
+	if (strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
+		strcmp(game_TID, "YZX") == 0 ||	// Rockman ZX Advent/MegaMan ZX Advent
+		strcmp(game_TID, "B6Z") == 0 )		// Rockman Zero Collection/MegaMan Zero Collection
 	{
 		settings.twl.mpuregion = 1;
 		settings.twl.mpusize = 3145728;
