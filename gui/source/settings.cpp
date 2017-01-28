@@ -46,6 +46,8 @@ extern bool fadeout;
 
 extern sf2d_texture *settingslogotex;	// TWLoader logo.
 extern char settings_vertext[13];
+extern std::string settings_releasebootstrapver;
+extern std::string settings_unofficialbootstrapver;
 
 extern bool keepsdvalue;
 extern int gbarunnervalue;
@@ -128,6 +130,8 @@ static const char twlsettings_healthsafetytext[] = "Health and Safety message";
 static const char twlsettings_resetslot1text[] = "Reset Slot-1";
 static const char twlsettings_consoletext[] = "Console output";
 static const char twlsettings_lockarm9scfgexttext[] = "Lock ARM9 SCFG_EXT";
+static const char twlsettings_bootstrapfiletext[] = "Bootstrap";
+
 
 /**
  * Reset the settings screen's subscreen mode.
@@ -292,6 +296,8 @@ void settingsDrawTopScreen(void)
 
 		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 		sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+		
+		settings.twl.bootstrapfile ? sftd_draw_text(font, 5, 222, RGBA8(0, 0, 255, 255), 14, settings_releasebootstrapver.c_str()) : sftd_draw_text(font, 5, 222, RGBA8(0, 255, 0, 255), 14, settings_unofficialbootstrapver.c_str());
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
@@ -501,6 +507,7 @@ void settingsDrawBottomScreen(void)
 		const char *bootscreenvaluetext = (settings.twl.bootscreen ? "On" : "Off");
 		const char *healthsafetyvaluetext = (settings.twl.healthsafety ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
+		const char *bootstrapfilevaluetext = (settings.twl.bootstrapfile ? "Release" : "Unofficial");
 
 		const char *consolevaluetext;
 		switch (settings.twl.console) {
@@ -615,6 +622,17 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, lockarm9scfgextvaluetext);
 			Ypos += 12;
 		}
+		if (cursor_pos[1] == 9) {
+			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, twlsettings_bootstrapfiletext);
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, bootstrapfilevaluetext);
+			Ypos += 12;
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Change between release and");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "unofficial bootstrap file.");
+		} else {
+			sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, twlsettings_bootstrapfiletext);
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, bootstrapfilevaluetext);
+			Ypos += 12;
+		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		// Flash card options.
 		static const char *const flash_card_options[][6] = {
@@ -720,9 +738,12 @@ bool settingsMoveCursor(u32 hDown)
 				case 8:	// Lock ARM9 SCFG_EXT
 					settings.twl.lockarm9scfgext = !settings.twl.lockarm9scfgext;
 					break;
+				case 9: // Bootstrap version
+					settings.twl.bootstrapfile = ! settings.twl.bootstrapfile;
+					break;					
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 8) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 9) {
 			cursor_pos[1]++;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[1] > 0) {
@@ -1094,6 +1115,7 @@ void LoadSettings(void) {
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
+	settings.twl.bootstrapfile = settingsini.GetInt("TWL-MODE", "BOOTSTRAP_FILE", 0);
 
 	// TODO: Change the default to -1?
 	switch (settingsini.GetInt("TWL-MODE", "DEBUG", 0)) {
@@ -1138,6 +1160,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
 	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
 	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
+	settingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
 
 	// TODO: Change default to 0?
 	switch (settings.twl.console) {

@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <sys/stat.h>
 using std::string;
 using std::unordered_set;
 using std::vector;
@@ -31,6 +32,8 @@ extern sf2d_texture *dialogboxtex; // Dialog box
 extern sf2d_texture *settingstex; // Bottom of settings screen
 extern bool showdialogbox;
 extern bool run;	// Set to false to exit to the Home Menu.
+extern std::string settings_releasebootstrapver;
+extern std::string settings_unofficialbootstrapver;
 
 extern int screenmode;
 // 0: ROM select
@@ -49,6 +52,14 @@ extern u8 language;
 // Files
 extern vector<string> files;
 extern vector<string> fcfiles;
+
+const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/ver?raw=true";
+const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
+const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
 
 /**
  * Check Wi-Fi status.
@@ -176,7 +187,7 @@ int checkUpdate(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
-	int res = downloadFile("https://www.dropbox.com/s/v00qw6unyzntsgn/ver?dl=1", "/_nds/twloader/ver", MEDIA_SD_FILE);
+	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
 	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
 		sVerfile Verfile;
@@ -230,9 +241,10 @@ void DownloadTWLoaderCIAs(void) {
 	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
 	sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 	sf2d_end_frame();
-	sf2d_swapbuffers();
-
-	int res = downloadFile("https://www.dropbox.com/s/01vifhf49lkailx/TWLoader.cia?dl=1","/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	sf2d_swapbuffers();	
+	
+	mkdir("sdmc:/_nds/twloader/cia", 0777);
+	int res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -243,7 +255,7 @@ void DownloadTWLoaderCIAs(void) {
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		res = downloadFile("https://www.dropbox.com/s/jjb5u83pskrruij/TWLoader%20-%20TWLNAND%20side.cia?dl=1","/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
@@ -277,7 +289,10 @@ void UpdateBootstrapUnofficial(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/m3jmxhr4b5tn1yi/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	downloadBootstrapVersion(false);
+	checkBootstrapVersion();
+	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -298,7 +313,10 @@ void UpdateBootstrapRelease(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	downloadFile("https://www.dropbox.com/s/eb6e8nsa2eyjmb3/bootstrap.nds?dl=1","/_nds/bootstrap.nds", MEDIA_SD_FILE);
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	downloadBootstrapVersion(true);
+	checkBootstrapVersion();
+	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/official-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -448,6 +466,107 @@ static int downloadBoxArt_internal(const char *ba_TID)
 }
 
 /**
+ * Download bootstrap version files
+ * @return non zero if error
+ */
+
+int downloadBootstrapVersion(bool type
+)
+{
+	int res = 0;
+	if (type){		
+		res = downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
+	}else{
+		res = downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
+	}
+	
+	return res;
+}
+
+/**
+ * check, download and store bootstrap version
+ */
+
+void checkBootstrapVersion(void){
+	
+	bool res = false;
+	char buf[26];
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			res = downloadBootstrapVersion(true); // true == release
+		}else{
+			settings_releasebootstrapver = "No version available";
+		}
+	}else{
+		fread(buf,1,sizeof(buf),VerFile);
+		buf[25] = '\0';
+		settings_releasebootstrapver = buf;
+		fclose(VerFile);
+	}
+	
+	fclose(VerFile);
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	if(res == 0){
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
+		if (!VerFile){			
+				settings_releasebootstrapver = "No version available";
+		}else{
+			char buf[26];
+			fread(buf,1,sizeof(buf),VerFile);
+			buf[25] = '\0';
+			settings_releasebootstrapver = buf;
+			fclose(VerFile);
+		}
+	}
+	
+	res = false; // Just to be sure	
+	
+	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+	if (!VerFile){
+		if(checkWifiStatus()){
+			downloadBootstrapVersion(false); // false == unofficial
+		}else{
+			settings_unofficialbootstrapver = "No version available";
+		}
+	}else{
+		char buf[26];
+		fread(buf,1,sizeof(buf),VerFile);
+		buf[25] = '\0';
+		settings_unofficialbootstrapver = buf;
+		fclose(VerFile);
+	}
+	
+	fclose(VerFile);
+	
+	if(res == 0){
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+		if (!VerFile){			
+				settings_unofficialbootstrapver = "No version available";
+		}else{
+			char buf[26];
+			fread(buf,1,sizeof(buf),VerFile);
+			buf[25] = '\0';
+			settings_unofficialbootstrapver = buf;
+			fclose(VerFile);
+		}
+	}
+}
+ 
+/**
  * Download Slot-1 boxart.
  */
 void downloadSlot1BoxArt(const char* TID)
@@ -537,8 +656,10 @@ void downloadBoxArt(void)
 	for (size_t boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
 		// Get the title ID from the INI file.
 		const char *tempfile = fcfiles.at(boxartnum).c_str();
-		CIniFile setfcrompathini(tempfile);
-		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");
+		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
+		CIniFile setfcrompathini(path);							
+		
+		std::string ba_TID = setfcrompathini.GetString("FLASHCARD-ROM", "TID", "");		
 		if (ba_TID.size() < 4) {
 			// Invalid TID.
 			continue;

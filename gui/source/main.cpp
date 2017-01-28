@@ -72,6 +72,7 @@ sf2d_texture *settingslogotex;	// TWLoader logo.
 
 static sf2d_texture *slot1boxarttex = NULL;
 
+std::string	bootstrapPath;
 
 enum ScreenMode {
 	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
@@ -159,6 +160,7 @@ static const char bootstrapini_mpusize[] = "PATCH_MPU_SIZE";
 static const char bootstrapini_boostcpu[] = "BOOST_CPU";
 static const char bootstrapini_debug[] = "DEBUG";
 static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
+static const char bootstrapini_bootstrappath[] = "BOOTSTRAP_PATH";
 // End
 
 // Run
@@ -181,6 +183,9 @@ typedef struct {
 
 char settings_vertext[13];
 char settings_latestvertext[13];
+
+std::string settings_releasebootstrapver;
+std::string settings_unofficialbootstrapver;
 
 static bool applaunchprep = false;
 
@@ -572,6 +577,7 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
@@ -984,7 +990,7 @@ static void drawMenuDialogBox(void)
 			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
-			{161, 129, &settings.pergame.cpuspeed, "Set as donor ROM", {" ", " "}},
+			{161, 129, &settings.pergame.donor, "Set as donor ROM", {" ", " "}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1100,7 +1106,6 @@ bool compareString(const char *iter, const char *input)
 	return false;
 }
 
-
 int main()
 {
 	sf2d_init();
@@ -1142,13 +1147,10 @@ int main()
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
-	mkdir("sdmc:/_nds/twloader/cia", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
-
-	std::string	bootstrapPath = "";
 	
 	// Font loading
 	sftd_init();
@@ -1166,9 +1168,13 @@ int main()
 	fclose(VerFile);
 	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
-	LoadSettings();
+	LoadSettings();	
+	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
 	LoadBootstrapConfig();
 
+	// Store bootstrap version
+	checkBootstrapVersion();
+	
 	// Initialize translations.
 	langInit();
 

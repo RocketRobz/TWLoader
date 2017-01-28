@@ -84,6 +84,8 @@ typedef struct _Settings_t {
 		
 		int mpuregion; // Region 0, 1, 2, 3
 		int mpusize; // Size 0, 1, 3145728
+		
+		bool bootstrapfile; // true == release, false == unofficial
 	} twl;
 	
 	struct {
@@ -91,6 +93,7 @@ typedef struct _Settings_t {
 		s8 cpuspeed;	// false == NTR, true == TWL
 		s8 extvram;
 		s8 lockarm9scfgext;
+		s8 donor;
 	} pergame;
 } Settings_t;
 extern Settings_t settings;
