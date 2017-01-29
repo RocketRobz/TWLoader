@@ -4,6 +4,8 @@
 #define FORMAT_YDM 0
 #define FORMAT_YMD 1
 #define FORMAT_DM  2
+#define FORMAT_MD  3
+#define FORMAT_M_D 4
 
 #include <string>
 
