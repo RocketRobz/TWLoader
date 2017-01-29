@@ -296,8 +296,13 @@ void settingsDrawTopScreen(void)
 		}
 
 		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
-		sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
 		
+		std::string version = settings_vertext;		
+		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
+			sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+		}else{
+			sftd_draw_text(font, 347, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+		}
 		settings.twl.bootstrapfile ? sftd_draw_text(font, 5, 222, RGBA8(0, 0, 255, 255), 14, settings_releasebootstrapver.c_str()) : sftd_draw_text(font, 5, 222, RGBA8(0, 255, 0, 255), 14, settings_unofficialbootstrapver.c_str());
 
 		draw_volume_slider(setvoltex);
