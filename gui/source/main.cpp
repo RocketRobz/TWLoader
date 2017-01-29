@@ -2742,7 +2742,7 @@ int main()
 								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
 								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 111 && touch_y <= 145){ // Search button
-								startmenu_cursorPosition = 5;
+								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
 								if(matching_files.size() != 0){
 									matching_files.clear();
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
@@ -2763,7 +2763,6 @@ int main()
 										matching_files.push_back(*iter);
 									}
 								}
-								
 								if (matching_files.size() != 0){
 									/** Prepare some stuff to show correctly the filtered roms */
 									
@@ -2775,7 +2774,8 @@ int main()
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
-								}				
+								}
+								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always								
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
