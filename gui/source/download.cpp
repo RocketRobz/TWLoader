@@ -316,7 +316,7 @@ void UpdateBootstrapRelease(void) {
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
-	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/official-bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == 1) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -505,7 +505,7 @@ void checkBootstrapVersion(void){
 			settings_releasebootstrapver = "No version available";
 		}
 	}else{
-		fread(buf,1,sizeof(buf),VerFile);
+		fread(buf,1,sizeof(buf)-1,VerFile);
 		buf[25] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
@@ -525,7 +525,7 @@ void checkBootstrapVersion(void){
 				settings_releasebootstrapver = "No version available";
 		}else{
 			char buf[26];
-			fread(buf,1,sizeof(buf),VerFile);
+			fread(buf,1,sizeof(buf)-1,VerFile);
 			buf[25] = '\0';
 			settings_releasebootstrapver = buf;
 			fclose(VerFile);
@@ -543,7 +543,7 @@ void checkBootstrapVersion(void){
 		}
 	}else{
 		char buf[26];
-		fread(buf,1,sizeof(buf),VerFile);
+		fread(buf,1,sizeof(buf)-1,VerFile);
 		buf[25] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
@@ -558,7 +558,7 @@ void checkBootstrapVersion(void){
 				settings_unofficialbootstrapver = "No version available";
 		}else{
 			char buf[26];
-			fread(buf,1,sizeof(buf),VerFile);
+			fread(buf,1,sizeof(buf)-1,VerFile);
 			buf[25] = '\0';
 			settings_unofficialbootstrapver = buf;
 			fclose(VerFile);
