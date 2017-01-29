@@ -2776,7 +2776,7 @@ int main()
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
 								}				
-							}else if (touch_x >= 223 && touch_x <= 289 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
@@ -2953,7 +2953,7 @@ int main()
 									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
 									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 								}
-							}else if (touch_x >= 223 && touch_x <= 289 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									rom = fcfiles.at(cursorPosition).c_str();
 								} else {
