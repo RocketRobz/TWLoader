@@ -490,6 +490,7 @@ int downloadBootstrapVersion(bool type
 void checkBootstrapVersion(void){
 	
 	bool res = false;
+	long fileSize;
 	char buf[26];
 	
 	// Clean buf array
@@ -505,8 +506,11 @@ void checkBootstrapVersion(void){
 			settings_releasebootstrapver = "No version available";
 		}
 	}else{
-		fread(buf,1,sizeof(buf)-1,VerFile);
-		buf[25] = '\0';
+		fseek(VerFile , 0 , SEEK_END);
+		fileSize = ftell(VerFile);
+		rewind(VerFile);
+		fread(buf,1,fileSize,VerFile);
+		buf[fileSize - 1] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
 	}
@@ -524,9 +528,11 @@ void checkBootstrapVersion(void){
 		if (!VerFile){			
 				settings_releasebootstrapver = "No version available";
 		}else{
-			char buf[26];
-			fread(buf,1,sizeof(buf)-1,VerFile);
-			buf[25] = '\0';
+			fseek(VerFile , 0 , SEEK_END);
+			fileSize = ftell(VerFile);
+			rewind(VerFile);
+			fread(buf,1,fileSize,VerFile);
+			buf[fileSize - 1] = '\0';
 			settings_releasebootstrapver = buf;
 			fclose(VerFile);
 		}
@@ -542,9 +548,11 @@ void checkBootstrapVersion(void){
 			settings_unofficialbootstrapver = "No version available";
 		}
 	}else{
-		char buf[26];
-		fread(buf,1,sizeof(buf)-1,VerFile);
-		buf[25] = '\0';
+		fseek(VerFile , 0 , SEEK_END);
+		fileSize = ftell(VerFile);
+		rewind(VerFile);
+		fread(buf,1,fileSize,VerFile);
+		buf[fileSize - 1] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
 	}
@@ -557,9 +565,11 @@ void checkBootstrapVersion(void){
 		if (!VerFile){			
 				settings_unofficialbootstrapver = "No version available";
 		}else{
-			char buf[26];
-			fread(buf,1,sizeof(buf)-1,VerFile);
-			buf[25] = '\0';
+			fseek(VerFile , 0 , SEEK_END);
+			fileSize = ftell(VerFile);
+			rewind(VerFile);
+			fread(buf,1,fileSize,VerFile);
+			buf[fileSize - 1] = '\0';
 			settings_unofficialbootstrapver = buf;
 			fclose(VerFile);
 		}
