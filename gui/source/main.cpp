@@ -674,7 +674,7 @@ static void SetPerGameSettings(void)
 	settingsini.SetString("TWL-MODE", "GAMESETTINGS_PATH", inifilename);
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 }
-
+ 
 bool dspfirmfound = false;
 static sf2d_texture *voltex[6] = { };
 
@@ -1692,7 +1692,55 @@ int main()
 				draw_volume_slider(voltex);
 				sf2d_draw_texture(batteryIcon, 371, 2);
 				if (!settings.ui.name.empty()) {
-					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
+					sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
+				}
+				if(settings.ui.language != -1){
+					switch(settings.ui.language){			
+						case 3: // German
+						case 10: // Russian
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
+							break;
+						case 2: // French
+						case 4: // Italian
+						case 5: // Spanish			
+						case 8: // Dutch
+						case 9: // Portuguese			
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
+							break;
+						case 0: // Japanese
+						case 1: // English
+						case 6: // Simplified Chinese
+						case 7: // Korean			
+						case 11: // Traditional Chinese
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
+							break;
+					}
+				}else{
+					u8 language;
+					CFGU_GetSystemLanguage(&language);
+					if (language < 0 || language >= 12) {
+						language = 1;
+					}
+					switch(language){			
+						case 3: // German
+						case 10: // Russian
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
+							break;
+						case 2: // French
+						case 4: // Italian
+						case 5: // Spanish			
+						case 8: // Dutch
+						case 9: // Portuguese			
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
+							break;
+						case 0: // Japanese
+						case 1: // English
+						case 6: // Simplified Chinese
+						case 7: // Korean			
+						case 11: // Traditional Chinese
+							sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
+							break;
+					}
 				}
 				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
@@ -2668,6 +2716,10 @@ int main()
 					}
 					
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
+					hidTouchRead(&touch);
+					touch_x = touch.px;
+					touch_y = touch.py;
+					
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT) {
 							if (cursorPosition >= 0) {
@@ -2694,6 +2746,88 @@ int main()
 						} else if (hDown & KEY_UP) {
 							if (startmenu_cursorPosition > 1) {
 								startmenu_cursorPosition -= 2;
+							}
+						} else if(hDown & KEY_TOUCH){
+							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 31 && touch_y <= 65) { // Game location button
+								startmenu_cursorPosition = 0;
+								menudboxaction_switchloc = true;
+							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 31 && touch_y <= 65){ // Box art button
+								startmenu_cursorPosition = 1;
+								settings.romselect.toplayout = !settings.romselect.toplayout;
+								if (dspfirmfound) {
+									sfx_switch->stop();	// Prevent freezing
+									sfx_switch->play();
+								}
+							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 71 && touch_y <= 105){ // Start GBARunner2 button
+								startmenu_cursorPosition = 2;
+								if (!is3DSX) {
+									gbarunnervalue = 1;
+									rom = "GBARunner2.nds";
+									if (settings.twl.forwarder) {
+										settings.twl.launchslot1 = true;
+									} else {
+										settings.twl.launchslot1 = false;
+									}
+									fadeout = true;
+									if (dspfirmfound) {
+										bgm_menu->stop();
+										sfx_launch->play();
+									}
+								} else {
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong->stop();
+											sfx_wrong->play();
+										}
+										playwrongsounddone = true;
+									}
+								}
+							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 71 && touch_y <= 105){ // Top border button
+								startmenu_cursorPosition = 3;
+								settings.ui.topborder = !settings.ui.topborder;
+							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 111 && touch_y <= 145){ // Unset donor ROM button
+								startmenu_cursorPosition = 4;
+								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
+								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 111 && touch_y <= 145){ // Search button
+								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
+								if(matching_files.size() != 0){
+									matching_files.clear();
+									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+								}
+								
+								std::string gameName = keyboardInput("Use the keyboard to find roms");
+								LogFMA("Main.search","Text written", gameName.c_str());
+																	
+								for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+									if (iter->size() < gameName.size()) {
+										// Filename we're checking is shorter than the search term,
+										// so it can't match.
+										continue;
+									}
+									// Use C string comparison for case-insensitive checks.
+									if (compareString(iter->c_str(), gameName.c_str())){
+										// String matches.
+										matching_files.push_back(*iter);
+									}
+								}
+								if (matching_files.size() != 0){
+									/** Prepare some stuff to show correctly the filtered roms */
+									
+									pagenum = 0; // Go to page 0
+									cursorPosition = 0; // Move the cursor to 0
+									storedcursorPosition = cursorPosition; // Move the cursor to 0
+									titleboxXmovepos = 0; // Move the cursor to 0
+									boxartXmovepos = 0; // Move the cursor to 0
+									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
+									boxarttexloaded = false; // Reload boxarts
+									bnricontexloaded = false; // Reload banner icons
+								}
+								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always								
+							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
 							}
 						} else if (hDown & KEY_A) {
 							switch (startmenu_cursorPosition) {
@@ -2774,9 +2908,9 @@ int main()
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
-									}		
-									
-								}	break;
+									}									
+									break;
+								}
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
@@ -2784,6 +2918,10 @@ int main()
 							menu_ctrlset = CTRL_SET_GAMESEL;
 						}
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
+						hidTouchRead(&touch);
+						touch_x = touch.px;
+						touch_y = touch.py;
+						
 						if (hDown & KEY_START) {
 							// Switch to the "Start" menu.
 							if (settings.twl.forwarder) {
@@ -2822,7 +2960,63 @@ int main()
 							} else if (gamesettings_cursorPosition == 3) {
 								gamesettings_cursorPosition = 1;
 							}
-						} else if (hDown & KEY_A) {
+						} else if(hDown & KEY_TOUCH){
+							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 89 && touch_y <= 123) { // ARM9 CPU Speed
+								gamesettings_cursorPosition = 0;
+								settings.pergame.cpuspeed++;
+								if(settings.pergame.cpuspeed == 2)
+									settings.pergame.cpuspeed = -1;
+								if (dspfirmfound) {
+									sfx_select->stop();	// Prevent freezing
+									sfx_select->play();
+								}
+							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 89 && touch_y <= 123){ // VRAM boost
+								gamesettings_cursorPosition = 1;
+								settings.pergame.extvram++;
+								if(settings.pergame.extvram == 2)
+									settings.pergame.extvram = -1;
+								if (dspfirmfound) {
+									sfx_select->stop();	// Prevent freezing
+									sfx_select->play();
+								}
+							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 129 && touch_y <= 163){ // Lock ARM9 SCFG_EXT
+								gamesettings_cursorPosition = 2;
+								settings.pergame.lockarm9scfgext++;
+								if(settings.pergame.lockarm9scfgext == 2)
+									settings.pergame.lockarm9scfgext = -1;
+								if (dspfirmfound) {
+									sfx_select->stop();	// Prevent freezing
+									sfx_select->play();
+								}
+							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 129 && touch_y <= 163){ // Set as donor ROM
+								gamesettings_cursorPosition = 3;
+								if (settings.twl.forwarder) {
+									rom = fcfiles.at(cursorPosition).c_str();
+								} else {
+									if(matching_files.size() == 0){
+										rom = files.at(cursorPosition).c_str();
+									}else{
+										rom = matching_files.at(cursorPosition).c_str();
+									}
+									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+								}
+							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+								if (settings.twl.forwarder) {
+									rom = fcfiles.at(cursorPosition).c_str();
+								} else {
+									if(matching_files.size() == 0){
+										rom = files.at(cursorPosition).c_str();
+									}else{
+										rom = matching_files.at(cursorPosition).c_str();
+									}
+								}
+								SavePerGameSettings();
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
+							}
+						}else if (hDown & KEY_A) {
 							switch (gamesettings_cursorPosition) {
 								case 0:
 								default:

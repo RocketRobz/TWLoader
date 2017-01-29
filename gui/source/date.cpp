@@ -28,6 +28,15 @@ char *GetDate(int Format)
 		case FORMAT_YMD:
 			strftime(Ret, 24, "%Y-%m-%d_%k-%M", Time);
 			break;
+		case FORMAT_DM:
+			strftime(Ret, 24, "%d/%m", Time); // Ex: 26/12
+			break;
+		case FORMAT_MD:
+			strftime(Ret, 24, "%m/%d", Time); // Ex: 12/26
+			break;
+		case FORMAT_M_D:
+			strftime(Ret, 24, "%d.%m.", Time); // Ex: 26.12.
+			break;
 	}
 
 	return Ret;
