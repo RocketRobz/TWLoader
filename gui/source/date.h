@@ -3,6 +3,7 @@
 
 #define FORMAT_YDM 0
 #define FORMAT_YMD 1
+#define FORMAT_DM  2
 
 #include <string>
 

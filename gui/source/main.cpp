@@ -674,7 +674,7 @@ static void SetPerGameSettings(void)
 	settingsini.SetString("TWL-MODE", "GAMESETTINGS_PATH", inifilename);
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
 }
-
+ 
 bool dspfirmfound = false;
 static sf2d_texture *voltex[6] = { };
 
@@ -1692,8 +1692,9 @@ int main()
 				draw_volume_slider(voltex);
 				sf2d_draw_texture(batteryIcon, 371, 2);
 				if (!settings.ui.name.empty()) {
-					sftd_draw_textf(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
+					sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 				}
+				sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
 				// sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 				sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 				// sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);

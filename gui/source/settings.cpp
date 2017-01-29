@@ -302,7 +302,10 @@ void settingsDrawTopScreen(void)
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
-		sftd_draw_text(font, 32, 2, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
+		if (!settings.ui.name.empty()) {
+			sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
+		}
+		sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
