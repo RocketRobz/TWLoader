@@ -2774,9 +2774,9 @@ int main()
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
-									}		
-									
-								}	break;
+									}									
+									break;
+								}
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
