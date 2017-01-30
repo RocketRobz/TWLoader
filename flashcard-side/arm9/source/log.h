@@ -12,7 +12,7 @@
 #ifndef LOG_H
 #define LOG_H
 
-#define LOG_PATH "sdmc:/_nds/twloader/log.ini"
+#define LOG_PATH "sd:/_nds/twloader/log.ini"
 
 extern bool LogCreated;
 
