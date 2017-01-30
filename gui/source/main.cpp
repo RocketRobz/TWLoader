@@ -2133,6 +2133,8 @@ int main()
 								default: {
 									CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
 									fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+									fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+									fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 									fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
 									break;
 								}

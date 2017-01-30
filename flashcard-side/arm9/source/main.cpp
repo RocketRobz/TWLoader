@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
 		// extern u64 *fake_heap_end;
 		// *fake_heap_end = 0;
 
-		defaultExceptionHandler();
+		// defaultExceptionHandler();
 		
 		fcromfolder = twloaderini.GetString( "FRONTEND", "FCROM_FOLDER", "");
 		RemoveTrailingSlashes(fcromfolder);
