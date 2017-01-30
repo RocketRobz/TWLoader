@@ -1,59 +1,59 @@
 #include <stdio.h>
 #include "log.h"
 
-bool LogCreated = true;	// It's already done by the GUI
+bool LogCreated = true; // It's already done by the GUI
 
-int createLog() {
+int createLog(void) {
 	if (!LogCreated){
 		FILE* log = fopen(LOG_PATH, "w");
+		if (!log){
+			return -1;
+		}
 		LogCreated = true;
-		Log("************** Log file created at ");
-		Log("??:??");
-		Log(" **************");
+		Log("************** Log file created in GUI **************");
 		Log("\n");
+		fclose(log);
 	}
+	return 0;
 }
 
-void Log(char *message) {
+void Log(const char *message) {
 	FILE *log;
  
 	if (!LogCreated) {
 		log = fopen(LOG_PATH, "w");
 		LogCreated = true;
-	}
-	else		
+	} else {
 		log = fopen(LOG_PATH, "a");
-		
-	if (log == NULL) {
-		if (LogCreated)
-			LogCreated = false;
-		return;
 	}
-	else
-	{
+
+	if (log == NULL) {
+		if (LogCreated) {
+			LogCreated = false;
+		}
+		return;
+	} else {
 		fputs(message, log);
 		fclose(log);
 	} 
-	if (log)
-		fclose(log);
 }
-void LogFM(char *from, char *message) {
+
+void LogFM(const char *from, const char *message) {
 	FILE *log;
- 
+
 	if (!LogCreated) {
 		log = fopen(LOG_PATH, "w");
 		LogCreated = true;
-	}
-	else		
+	} else {
 		log = fopen(LOG_PATH, "a");
-		
-	if (log == NULL) {
-		if (LogCreated)
-			LogCreated = false;
-		return;
 	}
-	else
-	{
+
+	if (log == NULL) {
+		if (LogCreated) {
+			LogCreated = false;
+		}
+		return;
+	} else {
 		fputs("Method: <", log);
 		fputs(from, log);
 		fputs("> :\r\t\tMessage:<", log);
@@ -61,27 +61,25 @@ void LogFM(char *from, char *message) {
 		fputs(">", log);
 		fputs("\n", log);
 		fclose(log);
-	} 
-	if (log)
-		fclose(log);	
+	}
 }
-void LogFMA(char *from, char *message, char *additional_info) {
+
+void LogFMA(const char *from, const char *message, const char *additional_info) {
 	FILE *log;
- 
+
 	if (!LogCreated) {
 		log = fopen(LOG_PATH, "w");
 		LogCreated = true;
-	}
-	else		
+	} else {
 		log = fopen(LOG_PATH, "a");
-		
-	if (log == NULL) {
-		if (LogCreated)
-			LogCreated = false;
-		return;
 	}
-	else
-	{
+
+	if (log == NULL) {
+		if (LogCreated) {
+			LogCreated = false;
+		}
+		return;
+	} else {
 		fputs("Method: <", log);
 		fputs(from, log);
 		fputs("> :\r\t\tMessage: <", log);
@@ -92,7 +90,4 @@ void LogFMA(char *from, char *message, char *additional_info) {
 		fputs("\n", log);
 		fclose(log);
 	} 
-	if (log)
-		fclose(log);
 }
-
