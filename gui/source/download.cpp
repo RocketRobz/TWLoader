@@ -34,6 +34,7 @@ extern bool showdialogbox;
 extern bool run;	// Set to false to exit to the Home Menu.
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
+extern bool logEnabled;
 
 extern int screenmode;
 // 0: ROM select
@@ -70,10 +71,10 @@ bool checkWifiStatus(void) {
 	bool res = false;
 
 	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
-		LogFMA("WifiStatus", "Active internet connection found", RetTime().c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime().c_str());
 		res = true;
 	} else {
-		LogFMA("WifiStatus", "No Internet connection found!", RetTime().c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime().c_str());
 	}
 
 	return res;
@@ -175,7 +176,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
  * @return 0 if an update is available; non-zero if up to date or an error occurred.
  */
 int checkUpdate(void) {
-	LogFM("checkUpdate", "Checking updates...");
+	if (logEnabled)	LogFM("checkUpdate", "Checking updates...");
 	static const char title[] = "Now checking TWLoader version...";
 	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -188,7 +189,7 @@ int checkUpdate(void) {
 	sf2d_swapbuffers();
 
 	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
-	LogFM("checkUpdate", "downloadFile() end");
+	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
 		sVerfile Verfile;
 
@@ -203,8 +204,8 @@ int checkUpdate(void) {
 			strcpy(settings_latestvertext, "Unknown");
 			isUnknown = true;
 		}
-		LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
-		LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
+		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
+		if (logEnabled)	LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
 
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
@@ -213,7 +214,7 @@ int checkUpdate(void) {
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (!isUnknown && !strcmp(settings_latestvertext, settings_vertext)) {
 			// Version is different.
-			LogFMA("checkUpdate", "Comparing...", "Are equals");
+			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are equals");
 		
 			if (screenmode == 1) {				
 				showdialogbox = false;
@@ -222,14 +223,14 @@ int checkUpdate(void) {
 				sf2d_swapbuffers();
 			}
 			
-			LogFM("checkUpdate", "TWLoader is up-to-date!");			
+			if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");			
 			return -1;
 		}
-		LogFMA("checkUpdate", "Comparing...", "NO equals");
+		if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "NO equals");
 		showdialogbox = false;
 		return 0;
 	}
-	LogFM("checkUpdate", "Problem downloading ver file!");
+	if (logEnabled)	LogFM("checkUpdate", "Problem downloading ver file!");
 	showdialogbox = false;
 	return -1;
 }
@@ -243,8 +244,18 @@ void DownloadTWLoaderCIAs(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
 	
-	mkdir("sdmc:/_nds/twloader/cia", 0777);
-	int res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	int res;
+	
+	// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
+	struct stat st;
+	if(stat("sdmc:/cia",&st) == 0){		
+		// Use root/cia folder instead
+		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
+	}else{		
+		mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	}
+	
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -254,8 +265,13 @@ void DownloadTWLoaderCIAs(void) {
 		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
-		sf2d_swapbuffers();
-		res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		sf2d_swapbuffers();		
+		if(stat("sdmc:/cia",&st) == 0){		
+			// Use root/cia folder instead
+			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		}else{		
+			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
@@ -443,7 +459,7 @@ static int downloadBoxArt_internal(const char *ba_TID)
 {
 	char path[256];
 	char http_url[256];
-	LogFMA("downloadBoxArt_internal", "Downloading boxart for TID", ba_TID);
+	if (logEnabled)	LogFMA("downloadBoxArt_internal", "Downloading boxart for TID", ba_TID);
 
 	const char *ba_region_fallback = NULL;
 	const char *ba_region = getGameTDBRegion(ba_TID[3], &ba_region_fallback);
@@ -581,7 +597,7 @@ void checkBootstrapVersion(void){
  */
 void downloadSlot1BoxArt(const char* TID)
 {
-	LogFM("Main.downloadSlot1BoxArt", "Checking box art (Slot-1 card).");
+	if (logEnabled)	LogFM("Main.downloadSlot1BoxArt", "Checking box art (Slot-1 card).");
 	
 	char ba_TID[5];
 	snprintf(ba_TID, sizeof(ba_TID), "%.4s", TID);
@@ -594,7 +610,7 @@ void downloadSlot1BoxArt(const char* TID)
 		return;
 	}
 
-	LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
+	if (logEnabled)	LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
 	downloadBoxArt_internal(ba_TID);
 }
 
@@ -610,7 +626,7 @@ void downloadBoxArt(void)
 	vector<u32> boxart_dl_tids;	// Title IDs of boxart to download.
 	boxart_all_tids.reserve(files.size() + fcfiles.size());
 	boxart_dl_tids.reserve(files.size() + fcfiles.size());
-	LogFM("Download.downloadBoxArt", "Checking missing boxart on SD card...");
+	if (logEnabled)	LogFM("Download.downloadBoxArt", "Checking missing boxart on SD card...");
 
 	// Check if we're missing any boxart for ROMs on the SD card.
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
@@ -621,7 +637,7 @@ void downloadBoxArt(void)
 		if (!f_nds_file)
 			continue;
 		
-		LogFMA("DownloadBoxArt.SD CARD", "Path: ", path);
+		if (logEnabled)	LogFMA("DownloadBoxArt.SD CARD", "Path: ", path);
 		char ba_TID[5];
 		grabTID(f_nds_file, ba_TID);
 		ba_TID[4] = 0;
@@ -675,7 +691,7 @@ void downloadBoxArt(void)
 			continue;
 		}
 		
-		LogFMA("DownloadBoxArt.FLASHCARD", "TID: ", ba_TID.c_str());		
+		if (logEnabled)	LogFMA("DownloadBoxArt.FLASHCARD", "TID: ", ba_TID.c_str());		
 		// Did we already check for this boxart?
 		// NOTE: Storing byteswapped in order to sort correctly.
 		u32 tid;
@@ -733,10 +749,10 @@ void downloadBoxArt(void)
 		}
 	}
 	
-	LogFM("DownloadBoxArt.Read_BoxArt", "Boxart read correctly.");
+	if (logEnabled)	LogFM("DownloadBoxArt.Read_BoxArt", "Boxart read correctly.");
 	if (boxart_dl_tids.empty()) {
 		// No boxart to download.
-		LogFM("Download.downloadBoxArt", "No boxart to download.");
+		if (logEnabled)	LogFM("Download.downloadBoxArt", "No boxart to download.");
 		return;
 	}
 
@@ -746,7 +762,7 @@ void downloadBoxArt(void)
 	// Download the boxart.
 	char s_boxart_total[12];
 	snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
-	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart");
+	if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart");
 	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
 		static const char title[] = "Downloading missing boxart...";
 
