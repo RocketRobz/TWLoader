@@ -216,6 +216,7 @@ static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 bool keepsdvalue = false;
 int gbarunnervalue = 0;
 
+bool logEnabled = false;
 
 static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
@@ -469,7 +470,7 @@ static int RainbowLED(void) {
 		return -1;
 	ptmsysmSetInfoLedPattern(&pat);
 	ptmsysmExit();
-	LogFM("Main.RainbowLED", "Rainbow LED is on");
+	if (logEnabled)	LogFM("Main.RainbowLED", "Rainbow LED is on");
 	return 0;
 }
 
@@ -562,7 +563,7 @@ static void LoadBootstrapConfig(void)
 			settings.twl.console = 0;
 			break;
 	}
-	LogFM("Main.LoadBootstrapConfig", "Bootstrap configuration loaded successfully");
+	if (logEnabled)	LogFM("Main.LoadBootstrapConfig", "Bootstrap configuration loaded successfully");
 }
 
 /**
@@ -628,7 +629,7 @@ static void LoadPerGameSettings(void)
 	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
 	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
 
-	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
+	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
 }
 
 /**
@@ -651,7 +652,7 @@ static void SavePerGameSettings(void)
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
 	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
 	gamesettingsini.SaveIniFile(path);
-	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
+	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
 }
 
 /**
@@ -882,14 +883,14 @@ static void loadSlot1BoxArt(void)
 		}
 		char path[256];
 		// example: ASME.png
-		LogFMA("Main", "Loading Slot-1 box art", gameID);
+		if (logEnabled)	LogFMA("Main", "Loading Slot-1 box art", gameID);
 		snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
 		if (access(path, F_OK) != -1) {
 			new_tex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 		} else {
 			new_tex = sfil_load_PNG_file("romfs:/graphics/boxart_unknown.png", SF2D_PLACE_RAM);
 		}
-		LogFMA("Main", "Done loading Slot-1 box art", gameID);
+		if (logEnabled)	LogFMA("Main", "Done loading Slot-1 box art", gameID);
 	} else {
 		// No cartridge, or unrecognized cartridge.
 		new_tex = sfil_load_PNG_file("romfs:/graphics/boxart_null.png", SF2D_PLACE_RAM);
@@ -1143,7 +1144,12 @@ int main()
 	hidInit();
 	acInit();
 	
-	createLog();
+	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
+	struct stat logBuf;
+	logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
+	/* Log configuration file end */ 
+	
+	if (logEnabled)	createLog();
 
 	// make folders if they don't exist
 	mkdir("sdmc:/_nds", 0777);
@@ -1162,7 +1168,7 @@ int main()
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
 	sftd_draw_text(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
 	sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
-	LogFM("Main.Font loading", "Fonts load correctly");
+	if (logEnabled)	LogFM("Main.Font loading", "Fonts load correctly");
 	
 	sVerfile Verfile;
 	
@@ -1170,7 +1176,7 @@ int main()
 	fread(&Verfile,1,sizeof(Verfile),VerFile);
 	strcpy(settings_vertext, Verfile.text);
 	fclose(VerFile);
-	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
+	if (logEnabled)	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
 
 	LoadSettings();	
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
@@ -1231,23 +1237,23 @@ int main()
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
 
-	LogFM("Main.sf2d_textures", "Textures load successfully");
+	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures load successfully");
 
 	dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
-		LogFM("Main.dspfirm", "DSP Firm found!");
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
-		LogFM("Main.dspfirm", "DSP Firm not found");
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found");
 	}
 
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
-		LogFM("Main.music", "Custom music file found!");
+		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
-		LogFM("Main.dspfirm", "No music file found");
+		if (logEnabled)	LogFM("Main.dspfirm", "No music file found");
 	}
 
 	// Load the sound effects if DSP is available.
@@ -1267,11 +1273,11 @@ int main()
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
-	LogFMA("Main. ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
+	if (logEnabled)	LogFMA("Main. ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
 	
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
 	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
-	LogFMA("Main. ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
+	if (logEnabled)	LogFMA("Main. ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
 	
 	// Download box art
 	if (checkWifiStatus()) {
@@ -1280,7 +1286,7 @@ int main()
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
-	Log("********************************************************\n");
+	if (logEnabled)	Log("********************************************************\n");
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking if banner data exists (SD Card)...";
 		char romsel_counter1[16];
@@ -1302,8 +1308,14 @@ int main()
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		if (!f_nds_file)
 			continue;
-		LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
-		cacheBanner(f_nds_file, tempfile, font) == 0 ? LogFM("Main. Banner scanning", "Done!") : LogFM("Main. Banner scanning", "Error!");			
+		if (logEnabled)	LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
+		
+		if(cacheBanner(f_nds_file, tempfile, font) == 0) {
+			if (logEnabled)	LogFM("Main. Banner scanning", "Done!");
+		}else {
+			if (logEnabled)	LogFM("Main. Banner scanning", "Error!");
+		}
+		
 		fclose(f_nds_file);
 	}
 
@@ -1920,7 +1932,7 @@ int main()
 							}
 						}
 					}
-					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
+					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
 			}
@@ -2157,7 +2169,7 @@ int main()
 							}
 						}
 					}
-					LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
+					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
 			}
@@ -2847,7 +2859,7 @@ int main()
 								}
 								
 								std::string gameName = keyboardInput("Use the keyboard to find roms");
-								LogFMA("Main.search","Text written", gameName.c_str());
+								if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 								
 								if (!gameName.empty()){
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
@@ -2937,7 +2949,7 @@ int main()
 									}
 									
 									std::string gameName = keyboardInput("Use the keyboard to find roms");
-									LogFMA("Main.search","Text written", gameName.c_str());
+									if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 									
 									if (!gameName.empty()){
 										for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {

@@ -12,6 +12,8 @@ using std::string;
 using std::vector;
 using std::wstring;
 
+extern bool logEnabled;
+
 /**
  * Convert a color from NDS BGR555 to RGB5A1.
  * @param px16 BGR555 color value.
@@ -145,11 +147,11 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 		return 0;
 	}
 
-	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
+	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
-	LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
+	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
 
 	sNDSBanner ndsBanner;
 	memset(&ndsBanner, 0, sizeof(ndsBanner));
@@ -162,7 +164,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
+		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
 			case NDS_BANNER_VER_DSi:
@@ -185,7 +187,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Now caching banner data (SD Card)...");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
+		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
 		fread(&ndsBanner, 1, bannersize, nobannerFile);
@@ -194,7 +196,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 
 	if (bannersize == 0) {
 		// Invalid banner.
-		LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
+		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Invalid banner loaded; not caching.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -205,7 +207,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 	FILE* filetosave = fopen(bannerpath, "wb");
 	if (!filetosave) {
 		// Error opening the banner cache file.
-		LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
+		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
 		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Error writing the banner cache file.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -213,7 +215,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
 	}
 	fwrite(&ndsBanner, 1, bannersize, filetosave);
 	fclose(filetosave);
-	LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);
+	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);
 	return 0;
 }
 
