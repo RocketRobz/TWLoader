@@ -244,8 +244,18 @@ void DownloadTWLoaderCIAs(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
 	
-	mkdir("sdmc:/_nds/twloader/cia", 0777);
-	int res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	int res;
+	
+	// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
+	struct stat st;
+	if(stat("sdmc:/cia",&st) == 0){		
+		// Use root/cia folder instead
+		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
+	}else{		
+		mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+	}
+	
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == 1) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -255,8 +265,13 @@ void DownloadTWLoaderCIAs(void) {
 		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
-		sf2d_swapbuffers();
-		res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		sf2d_swapbuffers();		
+		if(stat("sdmc:/cia",&st) == 0){		
+			// Use root/cia folder instead
+			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		}else{		
+			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
 			sf2d_draw_texture(settingstex, 0, 0);
