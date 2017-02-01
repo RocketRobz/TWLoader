@@ -1111,6 +1111,40 @@ bool compareString(const char *iter, const char *input)
 	return false;
 }
 
+/**
+* check if TWLNand side is installed or not
+* Title ID: 0x0004800554574C44ULL
+* MediaType: MEDIATYPE_NAND
+* @return: true if installed, false if not
+*/
+
+bool checkTWLNANDSide(void){
+	bool res = false;
+	
+	u32 count = 0;
+	FS_MediaType mediaType = MEDIATYPE_NAND;
+	u64 id = 0x0004800554574C44ULL;
+	
+	if(R_SUCCEEDED(AM_GetTitleCount(mediaType, &count))){
+		u64* titleIds = (u64*)calloc(count, sizeof(u64));
+        if(titleIds != NULL) {
+			if(R_SUCCEEDED(AM_GetTitleList(&count, mediaType, count, titleIds))) {
+				// Now we have the list of cia's installed on NAND
+				for(u32 i = 0; i < count; i++) {
+					// Try to find TWLNand ID
+					if(titleIds[i] == id){
+						res = true;
+						break;
+					}
+				}
+			}
+		}
+		free(titleIds);
+	}
+	
+	return res;
+}
+
 int main()
 {
 	sf2d_init();
@@ -1147,7 +1181,7 @@ int main()
 	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
 	struct stat logBuf;
 	logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
-	/* Log configuration file end */ 
+	/* Log configuration file end */
 	
 	if (logEnabled)	createLog();
 
@@ -1176,7 +1210,7 @@ int main()
 	fread(&Verfile,1,sizeof(Verfile),VerFile);
 	strcpy(settings_vertext, Verfile.text);
 	fclose(VerFile);
-	if (logEnabled)	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS",Verfile.text);
+	if (logEnabled)	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS", Verfile.text);
 
 	LoadSettings();	
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
@@ -1383,7 +1417,7 @@ int main()
 
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
-
+	
 	// Loop as long as the status is not exit
 	bool saveOnExit = true;
 	while(run && aptMainLoop()) {
@@ -3193,12 +3227,21 @@ int main()
 			SaveSettings();
 			SetPerGameSettings();
 			SaveBootstrapConfig();
-
+			
+			// Check if TWLNAND side is installed (0x0004800554574C44ULL)
+			if(!checkTWLNANDSide()){
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Please, install TWLNand side and retry again");
+				sftd_draw_text(font, 12, 28, RGBA8(0, 0, 0, 255), 12, "Returning to Home...");
+				break;
+			}
+			
 			// Prepare for the app launch.
 			u64 tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
 			FS_MediaType mediaType = MEDIATYPE_NAND;
-			bool switchToTwl = true;
-
+			bool switchToTwl = true;	
+			
 			if (!settings.twl.forwarder && settings.twl.launchslot1) {
 				// CTR cards should be launched directly.
 				// TODO: TWL cards should also be launched directly,
