@@ -2895,31 +2895,29 @@ int main()
 								std::string gameName = keyboardInput("Use the keyboard to find roms");
 								if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 								
-								if (!gameName.empty()){
-									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
-										if (iter->size() < gameName.size()) {
-											// Filename we're checking is shorter than the search term,
-											// so it can't match.
-											continue;
-										}
-										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
-											// String matches.
-											matching_files.push_back(*iter);
-										}
+								for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+									if (iter->size() < gameName.size()) {
+										// Filename we're checking is shorter than the search term,
+										// so it can't match.
+										continue;
 									}
-									if (matching_files.size() != 0){
-										/** Prepare some stuff to show correctly the filtered roms */
-										
-										pagenum = 0; // Go to page 0
-										cursorPosition = 0; // Move the cursor to 0
-										storedcursorPosition = cursorPosition; // Move the cursor to 0
-										titleboxXmovepos = 0; // Move the cursor to 0
-										boxartXmovepos = 0; // Move the cursor to 0
-										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
-										boxarttexloaded = false; // Reload boxarts
-										bnricontexloaded = false; // Reload banner icons
+									// Use C string comparison for case-insensitive checks.
+									if (compareString(iter->c_str(), gameName.c_str())){
+										// String matches.
+										matching_files.push_back(*iter);
 									}
+								}
+								if (matching_files.size() != 0){
+									/** Prepare some stuff to show correctly the filtered roms */
+									
+									pagenum = 0; // Go to page 0
+									cursorPosition = 0; // Move the cursor to 0
+									storedcursorPosition = cursorPosition; // Move the cursor to 0
+									titleboxXmovepos = 0; // Move the cursor to 0
+									boxartXmovepos = 0; // Move the cursor to 0
+									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
+									boxarttexloaded = false; // Reload boxarts
+									bnricontexloaded = false; // Reload banner icons
 								}
 								sf2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always
 								showdialogbox_menu = false;
@@ -2985,31 +2983,29 @@ int main()
 									std::string gameName = keyboardInput("Use the keyboard to find roms");
 									if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 									
-									if (!gameName.empty()){
-										for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
-											if (iter->size() < gameName.size()) {
-												// Filename we're checking is shorter than the search term,
-												// so it can't match.
-												continue;
-											}
-											// Use C string comparison for case-insensitive checks.
-											if (compareString(iter->c_str(), gameName.c_str())){
-												// String matches.
-												matching_files.push_back(*iter);
-											}
+									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+										if (iter->size() < gameName.size()) {
+											// Filename we're checking is shorter than the search term,
+											// so it can't match.
+											continue;
 										}
-										if (matching_files.size() != 0){
-											/** Prepare some stuff to show correctly the filtered roms */
-											
-											pagenum = 0; // Go to page 0
-											cursorPosition = 0; // Move the cursor to 0
-											storedcursorPosition = cursorPosition; // Move the cursor to 0
-											titleboxXmovepos = 0; // Move the cursor to 0
-											boxartXmovepos = 0; // Move the cursor to 0
-											snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
-											boxarttexloaded = false; // Reload boxarts
-											bnricontexloaded = false; // Reload banner icons
+										// Use C string comparison for case-insensitive checks.
+										if (compareString(iter->c_str(), gameName.c_str())){
+											// String matches.
+											matching_files.push_back(*iter);
 										}
+									}
+									if (matching_files.size() != 0){
+										/** Prepare some stuff to show correctly the filtered roms */
+										
+										pagenum = 0; // Go to page 0
+										cursorPosition = 0; // Move the cursor to 0
+										storedcursorPosition = cursorPosition; // Move the cursor to 0
+										titleboxXmovepos = 0; // Move the cursor to 0
+										boxartXmovepos = 0; // Move the cursor to 0
+										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
+										boxarttexloaded = false; // Reload boxarts
+										bnricontexloaded = false; // Reload banner icons
 									}
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
