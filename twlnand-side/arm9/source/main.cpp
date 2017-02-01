@@ -38,6 +38,8 @@
 
 using namespace std;
 
+bool logEnabled = false;
+
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -122,6 +124,11 @@ int main(int argc, char **argv) {
 
 	bool consoleOn = false;
 
+	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
+	struct stat logBuf;
+	logEnabled = stat("sd:/_nds/twloader/log", &logBuf) == 0;
+	/* Log configuration file end */
+	
 	/* scanKeys();
 	int pressed = keysDown(); */
 
@@ -144,11 +151,11 @@ int main(int argc, char **argv) {
 				p[i*2/2] = p[i*2];
 		}
 		
-		LogFMA("TWL.Main", "Got username", p);
+		if (logEnabled)	LogFMA("TWL.Main", "Got username", p);
 		
 		twloaderini.SetString("FRONTEND","NAME", p);
 		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
-		LogFMA("TWL.Main", "Saved username to GUI", p);
+		if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
 		
 		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
 		
@@ -198,7 +205,7 @@ int main(int argc, char **argv) {
 		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
 			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) {
 				BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
-				LogFM("TWL.Main.BootSplashInit", "Boot splash played");
+				if (logEnabled)	LogFM("TWL.Main.BootSplashInit", "Boot splash played");
 			}
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
@@ -206,14 +213,14 @@ int main(int argc, char **argv) {
 		}
 		if(!UseNTRSplash) {
 			REG_SCFG_CLK |= 0x1;
-			LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
+			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_CLOCK ON\n");		
 			}
 		} else {
 			REG_SCFG_CLK = 0x80;
 			fifoSendValue32(FIFO_USER_04, 1);
-			LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
+			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
@@ -232,14 +239,14 @@ int main(int argc, char **argv) {
 			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 				if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 2 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {} else {
 					fifoSendValue32(FIFO_USER_02, 1);
-					LogFM("TWL.Main", "Reset Slot-1 ON");
+					if (logEnabled)	LogFM("TWL.Main", "Reset Slot-1 ON");
 					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 						printf("RESET_SLOT1 ON\n");		
 					}
 				}
 			} else {
 				fifoSendValue32(FIFO_USER_02, 1);
-				LogFM("TWL.Main", "Reset Slot-1 ON");
+				if (logEnabled)	LogFM("TWL.Main", "Reset Slot-1 ON");
 				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 					printf("RESET_SLOT1 ON\n");		
 				}
@@ -266,7 +273,7 @@ int main(int argc, char **argv) {
 		
 		if(TWLVRAM) {
 			REG_SCFG_EXT |= 0x2000;
-			LogFM("TWL.Main", "VRAM boost on");
+			if (logEnabled)	LogFM("TWL.Main", "VRAM boost on");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_VRAM ON\n");		
 			}
@@ -280,7 +287,7 @@ int main(int argc, char **argv) {
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 				printf("Now booting Slot-1 card\n");					
-				LogFM("TWL.Main", "Now booting Slot-1 card");
+				if (logEnabled)	LogFM("TWL.Main", "Now booting Slot-1 card");
 			}
 		}
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
@@ -300,7 +307,7 @@ int main(int argc, char **argv) {
 		}
 		
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
-			LogFM("TWL.Main", "Now booting bootstrap");
+			if (logEnabled)	LogFM("TWL.Main", "Now booting bootstrap");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 				printf("Now booting bootstrap\n");					
 			}
