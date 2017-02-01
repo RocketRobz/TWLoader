@@ -57,9 +57,9 @@ extern vector<string> fcfiles;
 const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/ver?raw=true";
 const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
 const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/official-bootstrap?raw=true";
+const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap.nds?raw=true";
+const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
 
 /**
@@ -329,7 +329,7 @@ void UpdateBootstrapRelease(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
-	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	remove("sdmc:/_nds/twloader/release-bootstrap");
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
