@@ -628,6 +628,9 @@ static void LoadPerGameSettings(void)
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
 	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
 	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
+	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED RED", -1);
+	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED GREEN", -1);
+	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED BLUE", -1);
 
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
 }
@@ -651,6 +654,9 @@ static void SavePerGameSettings(void)
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
 	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED RED", settings.pergame.red);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED GREEN", settings.pergame.green);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED BLUE", settings.pergame.blue);
 	gamesettingsini.SaveIniFile(path);
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
 }
@@ -996,6 +1002,7 @@ static void drawMenuDialogBox(void)
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
 			{161, 129, &settings.pergame.donor, "Set as donor ROM", {" ", " "}},
+			{23, 169, NULL, "Set LED color", {NULL, NULL}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1008,18 +1015,20 @@ static void drawMenuDialogBox(void)
 			}
 
 			const char *title = buttons[i].title;
-			const char *value_desc;
-			switch (*(buttons[i].value)) {
-				case -1:
-				default:
-					value_desc = "Default";
-					break;
-				case 0:
-					value_desc = buttons[i].value_desc[0];
-					break;
-				case 1:
-					value_desc = buttons[i].value_desc[1];
-					break;
+			const char *value_desc = "Default";
+			if(i != 4){
+				switch (*(buttons[i].value)) {
+					case -1:
+					default:
+						value_desc = "Default";
+						break;
+					case 0:
+						value_desc = buttons[i].value_desc[0];
+						break;
+					case 1:
+						value_desc = buttons[i].value_desc[1];
+						break;
+				}
 			}
 
 			// Determine the text height.
@@ -1034,9 +1043,11 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			w = sftd_get_text_width(font, 12, value_desc);
-			x = ((132 - w) / 2) + buttons[i].x;
-			sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			if(i != 4){
+				w = sftd_get_text_width(font, 12, value_desc);
+				x = ((132 - w) / 2) + buttons[i].x;
+				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			}
 		}
 	} else {
 		// UI options.

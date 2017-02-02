@@ -94,6 +94,9 @@ typedef struct _Settings_t {
 		s8 extvram;
 		s8 lockarm9scfgext;
 		s8 donor;
+		s8 red;
+		s8 green;
+		s8 blue;
 	} pergame;
 } Settings_t;
 extern Settings_t settings;
