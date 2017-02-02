@@ -189,9 +189,7 @@ int main(int argc, char **argv) {
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
 	
-	bool whileloop = true;
-
-	while(whileloop) {
+	while(1) {
 
 		if(TriggerExit) { 
 		do { swiWaitForVBlank(); scanKeys(); } while (!keysDown());
@@ -286,7 +284,7 @@ int main(int argc, char **argv) {
 			fclose(ndsFile);
 		}
 		
-		whileloop = true;
+		runFile("fat:/_nds/twloader.nds");	// Restart "Add Games"
 
 		/* while (1) {
 			swiWaitForVBlank();
