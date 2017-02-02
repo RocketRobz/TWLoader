@@ -386,6 +386,7 @@ static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 
 	switch (tid_region) {
 		case 'E':
+		case 'T':
 			ba_region = "US";	// USA
 			break;
 		case 'J':
@@ -791,6 +792,7 @@ void downloadBoxArt(void)
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
-		downloadBoxArt_internal(ba_TID);
+		if (strcmp (ba_TID, "####") != 0)
+			downloadBoxArt_internal(ba_TID);
 	}
 }
