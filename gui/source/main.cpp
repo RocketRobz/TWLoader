@@ -997,7 +997,7 @@ static void drawMenuDialogBox(void)
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
 			{161, 129, &settings.pergame.donor, "Set as donor ROM", {" ", " "}},
 		};
-
+		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
 			if (gamesettings_cursorPosition == i) {
 				// Button is highlighted.
@@ -2885,6 +2885,9 @@ int main()
 								startmenu_cursorPosition = 4;
 								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
 								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 111 && touch_y <= 145){ // Search button
 								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
 								if(matching_files.size() != 0){
@@ -2972,6 +2975,9 @@ int main()
 									// Unset donor ROM path
 									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
 									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									showdialogbox_menu = false;
+									menudbox_movespeed = 1;
+									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 5: {
 									// Search
@@ -3102,6 +3108,9 @@ int main()
 									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
 									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 								}
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									rom = fcfiles.at(cursorPosition).c_str();
@@ -3159,6 +3168,9 @@ int main()
 										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
 										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									}
+									showdialogbox_menu = false;
+									menudbox_movespeed = 1;
+									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
