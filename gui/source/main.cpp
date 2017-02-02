@@ -3353,12 +3353,23 @@ int main()
 				// Activate the rainbow LED and shut off the screen.
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
+				if (cursorPosition >= 0 && gbarunnervalue == 0) {
+					if (settings.twl.forwarder) {
+						rom = fcfiles.at(cursorPosition).c_str();
+					} else {
+						if(matching_files.size() == 0){
+							rom = files.at(cursorPosition).c_str();
+						} else {
+							rom = matching_files.at(cursorPosition).c_str();
+						}
+					}
+					LoadPerGameSettings();
+				}
 				if((RGB[0] >= 0) && (RGB[1] >= 0) && (RGB[2] >= 0)){
 					// Use pergame led
-					// FIXME: if user doesn't press select, LoadPerGameSettings doesn't load and notification led keep turn off
 					PergameLed();
 				}else{
-					// If RGB in pergame is less than 0, use standar rainbowled patern
+					// If RGB in pergame is less than 0, use standard rainbowled patern
 					if (settings.twl.rainbowled) {
 						RainbowLED();
 					}
