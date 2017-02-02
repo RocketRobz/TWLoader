@@ -676,6 +676,11 @@ static void LoadPerGameSettings(void)
 	RGB[1] = settings.pergame.green;
 	RGB[2] = settings.pergame.blue;
 
+	// In case if the .ini was manually edited
+	if(RGB[0] > 255) RGB[0] = 255;
+	if(RGB[1] > 255) RGB[1] = 255;
+	if(RGB[2] > 255) RGB[2] = 255;
+
 	if((RGB[0] < 0) || (RGB[1] < 0) || (RGB[2] < 0)){
 		RGB[0] = 0; RGB[1] = 0; RGB[2] = 0;
 	}
