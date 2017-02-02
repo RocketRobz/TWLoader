@@ -1386,17 +1386,11 @@ int main()
 	// TODO: Re-cache if it's 0 bytes?
 	if (logEnabled)	Log("********************************************************\n");
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
-		static const char title[] = "Now checking if banner data exists (SD Card)...";
+		static const char title[] = "Now checking banner data (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 		const char *tempfile = files.at(bnriconnum).c_str();
 		DialogBoxAppear(title, 0);
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_text(font, 12, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-		sftd_draw_text(font, 39, 48, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 44, 48, RGBA8(0, 0, 0, 255), 12, romsel_counter2sd);
 
 		wstring tempfile_w = utf8_to_wstring(tempfile);
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
@@ -1408,7 +1402,7 @@ int main()
 			continue;
 		if (logEnabled)	LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
 		
-		if(cacheBanner(f_nds_file, tempfile, font) == 0) {
+		if(cacheBanner(f_nds_file, tempfile, font, dialogboxtex, title, romsel_counter1, romsel_counter2sd) == 0) {
 			if (logEnabled)	LogFM("Main. Banner scanning", "Done!");
 		}else {
 			if (logEnabled)	LogFM("Main. Banner scanning", "Error!");

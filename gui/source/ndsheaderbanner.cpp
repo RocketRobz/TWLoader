@@ -134,18 +134,24 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
  * @param setfont Font to use for messages.
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont) {
+int cacheBanner(FILE* ndsFile, const char* filename, sftd_font* setfont, sf2d_texture* dbox, const char* title, const char* counter1, const char* counter2) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
 	if (!access(bannerpath, F_OK)) {
 		// Banner is already cached.
 		// TODO: If it's 0 bytes, re-cache it?
-		sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		// sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
+		// sf2d_end_frame();
+		// sf2d_swapbuffers();
 		return 0;
 	}
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_draw_texture(dbox, 0, 0);
+	sftd_draw_text(setfont, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	sftd_draw_text(setfont, 12, 48, RGBA8(0, 0, 0, 255), 12, counter1);
+	sftd_draw_text(setfont, 39, 48, RGBA8(0, 0, 0, 255), 12, "/");
+	sftd_draw_text(setfont, 44, 48, RGBA8(0, 0, 0, 255), 12, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
