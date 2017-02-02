@@ -669,14 +669,12 @@ static void LoadPerGameSettings(void)
 	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
 	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED_BLUE", -1);
 
-	if(settings.pergame.red < 0 || settings.pergame.green < 0 || settings.pergame.blue < 0){
-		RGB[0] = 0;
-		RGB[1] = 0;
-		RGB[2] = 0;
-	}else {
-		RGB[0] = settings.pergame.red;
-		RGB[1] = settings.pergame.green;
-		RGB[2] = settings.pergame.blue;
+	RGB[0] = settings.pergame.red;
+	RGB[1] = settings.pergame.green;
+	RGB[2] = settings.pergame.blue;
+
+	if((RGB[0] < 0) || (RGB[1] < 0) || (RGB[2] < 0)){
+		RGB[0] = 0; RGB[1] = 0; RGB[2] = 0;
 	}
 	
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
@@ -3176,9 +3174,9 @@ int main()
 							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 169 && touch_y <= 203){ // Set LED Color
 								gamesettings_cursorPosition = 4;								
 
-								RGB[0] = keyboardInputInt("255");
-								RGB[1] = keyboardInputInt("255");
-								RGB[2] = keyboardInputInt("255");
+								RGB[0] = keyboardInputInt("Red color: max is 255");
+								RGB[1] = keyboardInputInt("Green color: max is 255");
+								RGB[2] = keyboardInputInt("Blue color: max is 255");
 								
 								settings.pergame.red = RGB[0];
 								settings.pergame.green = RGB[1];
@@ -3246,9 +3244,9 @@ int main()
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 4:
-									RGB[0] = keyboardInputInt("255");
-									RGB[1] = keyboardInputInt("255");
-									RGB[2] = keyboardInputInt("255");
+									RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[1] = keyboardInputInt("Green color: max is 255");
+									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
