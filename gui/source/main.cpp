@@ -665,9 +665,9 @@ static void LoadPerGameSettings(void)
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
 	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
 	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
-	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED RED", -1);
-	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED GREEN", -1);
-	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED BLUE", -1);
+	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED_RED", -1);
+	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
+	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED_BLUE", -1);
 
 	if(settings.pergame.red < 0 || settings.pergame.green < 0 || settings.pergame.blue < 0){
 		RGB[0] = 0;
@@ -701,9 +701,9 @@ static void SavePerGameSettings(void)
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
 	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
-	gamesettingsini.SetInt("GAME-SETTINGS", "LED RED", settings.pergame.red);
-	gamesettingsini.SetInt("GAME-SETTINGS", "LED GREEN", settings.pergame.green);
-	gamesettingsini.SetInt("GAME-SETTINGS", "LED BLUE", settings.pergame.blue);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_RED", settings.pergame.red);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_GREEN", settings.pergame.green);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_BLUE", settings.pergame.blue);
 	gamesettingsini.SaveIniFile(path);
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
 }
