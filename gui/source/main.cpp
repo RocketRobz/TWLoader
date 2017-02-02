@@ -176,7 +176,7 @@ int menudbox_bgalpha = 0;
 const char* noromtext1;
 const char* noromtext2;
 
-u8 RGB[3]; // Pergame LED
+int RGB[3]; // Pergame LED
 
 // Version numbers.
 typedef struct {
@@ -487,20 +487,23 @@ static int PergameLed(void) {
 		
 		// Red color
 		{
-			RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0],
-			RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0]
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0]
 		},
 		
 		// Green color
 		{
-			RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1],
-			RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1]			
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1]			
 		},
 		
 		// Blue color
 		{
-			RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2],
-			RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2]
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2]
 		},		
 	};
 	
@@ -3350,11 +3353,12 @@ int main()
 				// Activate the rainbow LED and shut off the screen.
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
-				if((RGB[0] != 0) && (RGB[1] != 0) && (RGB[2] != 0)){
+				if((RGB[0] >= 0) && (RGB[1] >= 0) && (RGB[2] >= 0)){
 					// Use pergame led
+					// FIXME: if user doesn't press select, LoadPerGameSettings doesn't load and notification led keep turn off
 					PergameLed();
 				}else{
-					// If RGB in pergame is 0, use standar rainbowled patern
+					// If RGB in pergame is less than 0, use standar rainbowled patern
 					if (settings.twl.rainbowled) {
 						RainbowLED();
 					}
