@@ -33,7 +33,7 @@ int keyboardInputInt(const char* hint) {
 	SwkbdState keyState;
     char input[4];
 
-    swkbdInit(&keyState, SWKBD_TYPE_NUMPAD, 2, sizeof(input));
+    swkbdInit(&keyState, SWKBD_TYPE_NUMPAD, 2, 4);
     swkbdSetHintText(&keyState, hint);
 
     SwkbdButton pressed = swkbdInputText(&keyState, input, 4);
