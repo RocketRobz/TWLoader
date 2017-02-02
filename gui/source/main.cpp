@@ -3071,12 +3071,16 @@ int main()
 								gamesettings_cursorPosition = 2;
 							} else if (gamesettings_cursorPosition == 1) {
 								gamesettings_cursorPosition = 3;
+							} else if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 4;
 							}
 						} else if (hDown & KEY_UP) {
 							if (gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 0;
 							} else if (gamesettings_cursorPosition == 3) {
 								gamesettings_cursorPosition = 1;
+							} else if (gamesettings_cursorPosition == 4) {
+								gamesettings_cursorPosition = 2;
 							}
 						} else if(hDown & KEY_TOUCH){
 							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 89 && touch_y <= 123) { // ARM9 CPU Speed
@@ -3122,6 +3126,9 @@ int main()
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 169 && touch_y <= 203){ // Set LED Color
+								gamesettings_cursorPosition = 4;
+								
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									rom = fcfiles.at(cursorPosition).c_str();
@@ -3182,6 +3189,8 @@ int main()
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
 									menu_ctrlset = CTRL_SET_GAMESEL;
+									break;
+								case 4:
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
