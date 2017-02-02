@@ -30,6 +30,10 @@ extern bool is3DSX;
 extern u8 language;
 extern u8 ntrtwlmode_language;
 
+extern touchPosition touch;
+u16 touch_x = 320/2;
+u16 touch_y = 240/2;
+
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -726,6 +730,10 @@ void settingsDrawBottomScreen(void)
  */
 bool settingsMoveCursor(u32 hDown)
 {
+	hidTouchRead(&touch);
+	touch_x = touch.px;
+	touch_y = touch.py;
+
 	Lshouldertext = "GUI";
 	Rshouldertext = "NTR/TWL";
 
@@ -814,6 +822,12 @@ bool settingsMoveCursor(u32 hDown)
 			fadeout = true;
 			//bgm_settings->stop();
 			sfx = sfx_back;
+		}
+		if(hDown & KEY_TOUCH){
+			if (touch_x <= 72 && touch_y >= 220) {
+				subscreenmode = SUBSCREEN_MODE_FRONTEND;
+				sfx = sfx_switch;
+			}
 		}
 	} else /*if (subscreenmode == SUBSCREEN_MODE_FRONTEND)*/ {
 		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
@@ -940,6 +954,12 @@ bool settingsMoveCursor(u32 hDown)
 			titleboxXmovetimer = 1;
 			fadeout = true;
 			sfx = sfx_back;
+		}
+		if(hDown & KEY_TOUCH){
+			if (touch_x >= 248 && touch_y >= 220) {
+				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				sfx = sfx_switch;
+			}
 		}
 	}
 
