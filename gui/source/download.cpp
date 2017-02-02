@@ -35,6 +35,7 @@ extern bool run;	// Set to false to exit to the Home Menu.
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 extern bool logEnabled;
+extern bool checkTWLNANDSide();
 
 extern int screenmode;
 // 0: ROM select
@@ -187,7 +188,7 @@ int checkUpdate(void) {
 	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
+	remove("sdmc:/_nds/twloader/ver");
 	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
 	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
@@ -265,7 +266,13 @@ void DownloadTWLoaderCIAs(void) {
 		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
 		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
-		sf2d_swapbuffers();		
+		sf2d_swapbuffers();
+		// Delete first if installed.
+		if(checkTWLNANDSide()){
+			amInit();
+			AM_DeleteTitle(MEDIATYPE_NAND, 0x0004800554574C44ULL);
+			amExit();
+		}
 		if(stat("sdmc:/cia",&st) == 0){		
 			// Use root/cia folder instead
 			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);

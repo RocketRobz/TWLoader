@@ -176,6 +176,8 @@ int menudbox_bgalpha = 0;
 const char* noromtext1;
 const char* noromtext2;
 
+int RGB[3]; // Pergame LED
+
 // Version numbers.
 typedef struct {
 	char text[13];
@@ -474,6 +476,44 @@ static int RainbowLED(void) {
 	return 0;
 }
 
+/**
+ * Set a user led color for notification LED
+ * @return 0 on success; non-zero on error.
+ */
+
+static int PergameLed(void) {
+	static const RGBLedPattern pattern = {
+		32, // Need to be 32 in order to be it constant
+		
+		// Red color
+		{
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
+			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0]
+		},
+		
+		// Green color
+		{
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
+			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1]			
+		},
+		
+		// Blue color
+		{
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
+			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2]
+		},		
+	};
+	
+	if (ptmsysmInit() < 0)
+		return -1;
+	ptmsysmSetInfoLedPattern(&pattern);
+	ptmsysmExit();
+	return 0;
+}
+
 static void ChangeBNRIconNo(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
@@ -628,7 +668,18 @@ static void LoadPerGameSettings(void)
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
 	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
 	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
+	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED_RED", -1);
+	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
+	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED_BLUE", -1);
 
+	RGB[0] = settings.pergame.red;
+	RGB[1] = settings.pergame.green;
+	RGB[2] = settings.pergame.blue;
+
+	if((RGB[0] < 0) || (RGB[1] < 0) || (RGB[2] < 0)){
+		RGB[0] = 0; RGB[1] = 0; RGB[2] = 0;
+	}
+	
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
 }
 
@@ -651,6 +702,9 @@ static void SavePerGameSettings(void)
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
 	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_RED", settings.pergame.red);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_GREEN", settings.pergame.green);
+	gamesettingsini.SetInt("GAME-SETTINGS", "LED_BLUE", settings.pergame.blue);
 	gamesettingsini.SaveIniFile(path);
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings saved successfully");
 }
@@ -996,6 +1050,7 @@ static void drawMenuDialogBox(void)
 			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
 			{161, 129, &settings.pergame.donor, "Set as donor ROM", {" ", " "}},
+			{23, 169, NULL, "Set LED color", {NULL, NULL}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1008,18 +1063,20 @@ static void drawMenuDialogBox(void)
 			}
 
 			const char *title = buttons[i].title;
-			const char *value_desc;
-			switch (*(buttons[i].value)) {
-				case -1:
-				default:
-					value_desc = "Default";
-					break;
-				case 0:
-					value_desc = buttons[i].value_desc[0];
-					break;
-				case 1:
-					value_desc = buttons[i].value_desc[1];
-					break;
+			const char *value_desc = "Default";
+			if(i != 4){
+				switch (*(buttons[i].value)) {
+					case -1:
+					default:
+						value_desc = "Default";
+						break;
+					case 0:
+						value_desc = buttons[i].value_desc[0];
+						break;
+					case 1:
+						value_desc = buttons[i].value_desc[1];
+						break;
+				}
 			}
 
 			// Determine the text height.
@@ -1034,9 +1091,11 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			w = sftd_get_text_width(font, 12, value_desc);
-			x = ((132 - w) / 2) + buttons[i].x;
-			sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			if(i != 4){
+				w = sftd_get_text_width(font, 12, value_desc);
+				x = ((132 - w) / 2) + buttons[i].x;
+				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			}
 		}
 	} else {
 		// UI options.
@@ -3060,12 +3119,16 @@ int main()
 								gamesettings_cursorPosition = 2;
 							} else if (gamesettings_cursorPosition == 1) {
 								gamesettings_cursorPosition = 3;
+							} else if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 4;
 							}
 						} else if (hDown & KEY_UP) {
 							if (gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 0;
 							} else if (gamesettings_cursorPosition == 3) {
 								gamesettings_cursorPosition = 1;
+							} else if (gamesettings_cursorPosition == 4) {
+								gamesettings_cursorPosition = 2;
 							}
 						} else if(hDown & KEY_TOUCH){
 							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 89 && touch_y <= 123) { // ARM9 CPU Speed
@@ -3111,6 +3174,17 @@ int main()
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 169 && touch_y <= 203){ // Set LED Color
+								gamesettings_cursorPosition = 4;								
+
+								RGB[0] = keyboardInputInt("Red color: max is 255");
+								RGB[1] = keyboardInputInt("Green color: max is 255");
+								RGB[2] = keyboardInputInt("Blue color: max is 255");
+								
+								settings.pergame.red = RGB[0];
+								settings.pergame.green = RGB[1];
+								settings.pergame.blue = RGB[2];
+								
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									rom = fcfiles.at(cursorPosition).c_str();
@@ -3171,6 +3245,15 @@ int main()
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
 									menu_ctrlset = CTRL_SET_GAMESEL;
+									break;
+								case 4:
+									RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[1] = keyboardInputInt("Green color: max is 255");
+									RGB[2] = keyboardInputInt("Blue color: max is 255");
+									
+									settings.pergame.red = RGB[0];
+									settings.pergame.green = RGB[1];
+									settings.pergame.blue = RGB[2];
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
@@ -3270,8 +3353,15 @@ int main()
 				// Activate the rainbow LED and shut off the screen.
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
-				if (settings.twl.rainbowled) {
-					RainbowLED();
+				if((RGB[0] >= 0) && (RGB[1] >= 0) && (RGB[2] >= 0)){
+					// Use pergame led
+					// FIXME: if user doesn't press select, LoadPerGameSettings doesn't load and notification led keep turn off
+					PergameLed();
+				}else{
+					// If RGB in pergame is less than 0, use standar rainbowled patern
+					if (settings.twl.rainbowled) {
+						RainbowLED();
+					}
 				}
 				screenoff();
 			}
