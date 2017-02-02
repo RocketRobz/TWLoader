@@ -188,7 +188,7 @@ int checkUpdate(void) {
 	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
+	remove("sdmc:/_nds/twloader/ver");
 	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
 	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
