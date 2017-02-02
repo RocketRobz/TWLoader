@@ -176,6 +176,8 @@ int menudbox_bgalpha = 0;
 const char* noromtext1;
 const char* noromtext2;
 
+u8 RGB[3]; // Pergame LED
+
 // Version numbers.
 typedef struct {
 	char text[13];
@@ -474,6 +476,41 @@ static int RainbowLED(void) {
 	return 0;
 }
 
+/**
+ * Set a user led color for notification LED
+ * @return 0 on success; non-zero on error.
+ */
+
+static int PergameLed(void) {
+	static const RGBLedPattern pattern = {
+		32, // Need to be 32 in order to be it constant
+		
+		// Red color
+		{
+			RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0],
+			RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0], RGB[0]
+		},
+		
+		// Green color
+		{
+			RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1],
+			RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1], RGB[1]			
+		},
+		
+		// Blue color
+		{
+			RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2],
+			RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2], RGB[2]
+		},		
+	};
+	
+	if (ptmsysmInit() < 0)
+		return -1;
+	ptmsysmSetInfoLedPattern(&pattern);
+	ptmsysmExit();
+	return 0;
+}
+
 static void ChangeBNRIconNo(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (pagenum * 20);
@@ -632,6 +669,16 @@ static void LoadPerGameSettings(void)
 	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED GREEN", -1);
 	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED BLUE", -1);
 
+	if(settings.pergame.red < 0 || settings.pergame.green < 0 || settings.pergame.blue < 0){
+		RGB[0] = 0;
+		RGB[1] = 0;
+		RGB[2] = 0;
+	}else {
+		RGB[0] = settings.pergame.red;
+		RGB[1] = settings.pergame.green;
+		RGB[2] = settings.pergame.blue;
+	}
+	
 	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
 }
 
@@ -3127,7 +3174,15 @@ int main()
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 169 && touch_y <= 203){ // Set LED Color
-								gamesettings_cursorPosition = 4;
+								gamesettings_cursorPosition = 4;								
+
+								RGB[0] = keyboardInputInt("255");
+								RGB[1] = keyboardInputInt("255");
+								RGB[2] = keyboardInputInt("255");
+								
+								settings.pergame.red = RGB[0];
+								settings.pergame.green = RGB[1];
+								settings.pergame.blue = RGB[2];
 								
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
@@ -3191,6 +3246,13 @@ int main()
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 4:
+									RGB[0] = keyboardInputInt("255");
+									RGB[1] = keyboardInputInt("255");
+									RGB[2] = keyboardInputInt("255");
+									
+									settings.pergame.red = RGB[0];
+									settings.pergame.green = RGB[1];
+									settings.pergame.blue = RGB[2];
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
@@ -3290,8 +3352,14 @@ int main()
 				// Activate the rainbow LED and shut off the screen.
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
-				if (settings.twl.rainbowled) {
-					RainbowLED();
+				if((RGB[0] != 0) && (RGB[1] != 0) && (RGB[2] != 0)){
+					// Use pergame led
+					PergameLed();
+				}else{
+					// If RGB in pergame is 0, use standar rainbowled patern
+					if (settings.twl.rainbowled) {
+						RainbowLED();
+					}
 				}
 				screenoff();
 			}
