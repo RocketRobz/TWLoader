@@ -146,7 +146,7 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	switch(sys_language) {
+	switch (sys_language) {
 		case 0:
 		case 6:
 		case 7:
@@ -292,54 +292,7 @@ void settingsDrawTopScreen(void)
 		if (!settings.ui.name.empty()) {
 			sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		}
-		if(settings.ui.language != -1){
-			switch(settings.ui.language){			
-				case 3: // German
-				case 10: // Russian
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-					break;
-				case 2: // French
-				case 4: // Italian
-				case 5: // Spanish			
-				case 8: // Dutch
-				case 9: // Portuguese			
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-					break;
-				case 0: // Japanese
-				case 1: // English
-				case 6: // Simplified Chinese
-				case 7: // Korean			
-				case 11: // Traditional Chinese
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-					break;
-			}
-		}else{
-			u8 language;
-			CFGU_GetSystemLanguage(&language);
-			if (language < 0 || language >= 12) {
-				language = 1;
-			}
-			switch(language){			
-				case 3: // German
-				case 10: // Russian
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-					break;
-				case 2: // French
-				case 4: // Italian
-				case 5: // Spanish			
-				case 8: // Dutch
-				case 9: // Portuguese			
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-					break;
-				case 0: // Japanese
-				case 1: // English
-				case 6: // Simplified Chinese
-				case 7: // Korean			
-				case 11: // Traditional Chinese
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-					break;
-			}
-		}
+		DrawDate(RGBA8(255, 255, 255, 255));
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}

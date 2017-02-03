@@ -2052,104 +2052,10 @@ int main()
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
 						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(0).c_str());
-						if(settings.ui.language != -1){
-							switch(settings.ui.language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(3));
-									break;
-							}
-						}else{
-							u8 language;
-							CFGU_GetSystemLanguage(&language);
-							if (language < 0 || language >= 12) {
-								language = 1;
-							}
-							switch(language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(3));
-									break;
-							}
-						}
+						DrawDate(RGBA8(0, 0, 0, 255));
 					} else {
 						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
-						if(settings.ui.language != -1){
-							switch(settings.ui.language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-									break;
-							}
-						}else{
-							u8 language;
-							CFGU_GetSystemLanguage(&language);
-							if (language < 0 || language >= 12) {
-								language = 1;
-							}
-							switch(language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-									break;
-							}
-						}
+						DrawDate(RGBA8(255, 255, 255, 255));
 					}
 
 					draw_volume_slider(voltex);

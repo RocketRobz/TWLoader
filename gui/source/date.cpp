@@ -1,11 +1,17 @@
 #include "date.h"
+#include "language.h"
 
-#include <time.h>
-#include <stdio.h>
+#include <sftd.h>
+
+#include <ctime>
+#include <cstdio>
 #include <malloc.h>
 
 #include <string>
 using std::string;
+
+// from main.cpp
+extern sftd_font *font;
 
 /**
  * Get the current date as a C string.
@@ -72,4 +78,37 @@ string RetTime(int donotblink)
 	}
 
 	return string(Tmp);
+}
+
+/**
+ * Draw the date using the specified color.
+ * Date format depends on language setting.
+ * @param color Text color.
+ */
+void DrawDate(u32 color)
+{
+	// Date formats.
+	// - Index: Language ID.
+	// - Value: Date format.
+	static const uint8_t date_fmt[12] = {
+		FORMAT_MD,	// Japanese
+		FORMAT_MD,	// English
+		FORMAT_DM,	// French
+		FORMAT_M_D,	// German
+		FORMAT_DM,	// Italian
+		FORMAT_DM,	// Spanish
+		FORMAT_MD,	// Simplified Chinese
+		FORMAT_MD,	// Korean
+		FORMAT_DM,	// Dutch
+		FORMAT_DM,	// Portuguese
+		FORMAT_M_D,	// Russian
+		FORMAT_MD,	// Traditional Chinese
+	};
+
+	// NOTE: GetDate() malloc()'s the date string.
+	char *date_str = GetDate(date_fmt[language]);
+	if (!date_str)
+		return;
+	sftd_draw_text(font, 282, 3, color, 12, date_str);
+	free(date_str);
 }

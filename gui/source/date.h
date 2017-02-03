@@ -7,6 +7,7 @@
 #define FORMAT_MD  3
 #define FORMAT_M_D 4
 
+#include <3ds/types.h>
 #include <string>
 
 /**
@@ -22,5 +23,12 @@ char *GetDate(int Format);
  * @return std::string containing the time.
  */
 std::string RetTime(int donotblink);
+
+/**
+ * Draw the date using the specified color.
+ * Date format depends on language setting.
+ * @param color Text color.
+ */
+void DrawDate(u32 color);
 
 #endif // DATE_H
