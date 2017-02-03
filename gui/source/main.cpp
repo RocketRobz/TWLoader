@@ -1523,10 +1523,28 @@ int main()
 
 		// Check if the TWLNAND-side title is installed.
 		if (!isTWLNANDInstalled) {
+			static const char twlnand_msg[] =
+				"The TWLNAND-side title has not been installed.\n"
+				"Please install the TWLNAND-side CIA:\n"
+				"\n"
+				"/_nds/twloader/cias/TWLoader - TWLNAND side.cia\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"                 Press the HOME button to exit.";
+			DialogBoxAppear(twlnand_msg, 0);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
-			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Please, install TWLNand side and retry again");
-			sftd_draw_text(font, 12, 28, RGBA8(0, 0, 0, 255), 12, "Returning to Home...");
+			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, twlnand_msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			continue;
