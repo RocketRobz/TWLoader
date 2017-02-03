@@ -509,33 +509,15 @@ static int RainbowLED(void) {
  * Set a user led color for notification LED
  * @return 0 on success; non-zero on error.
  */
-
 static int PergameLed(void) {
-	static const RGBLedPattern pattern = {
-		32, // Need to be 32 in order to be it constant
-		
-		// Red color
-		{
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0]
-		},
-		
-		// Green color
-		{
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1]			
-		},
-		
-		// Blue color
-		{
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2]
-		},		
-	};
-	
+	RGBLedPattern pattern;
+	pattern.ani = 32;	// Need to be 32 in order to be it constant
+
+	// Set the color values to a single RGB value.
+	memset(&pattern.r, (u8)RGB[0], sizeof(pattern.r));
+	memset(&pattern.g, (u8)RGB[1], sizeof(pattern.g));
+	memset(&pattern.b, (u8)RGB[2], sizeof(pattern.b));
+
 	if (ptmsysmInit() < 0)
 		return -1;
 	ptmsysmSetInfoLedPattern(&pattern);
