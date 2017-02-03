@@ -1150,6 +1150,21 @@ static void drawMenuDialogBox(void)
 				w = sftd_get_wtext_width(font, 12, value_desc);
 				x = ((132 - w) / 2) + buttons[i].x;
 				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			} else if (i == 4) {
+				// Show the RGB value.
+				char rgb_str[32];
+				snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
+					settings.pergame.red,
+					settings.pergame.green,
+					settings.pergame.blue);
+				w = sftd_get_text_width(font, 12, rgb_str);
+				x = ((132 - w) / 2) + buttons[i].x;
+
+				// Print the RGB value using its color.
+				const u32 color = RGBA8(settings.pergame.red,
+					settings.pergame.green,
+					settings.pergame.blue, 255);
+				sftd_draw_text(font, x, y, color, 12, rgb_str);
 			}
 		}
 	} else {
