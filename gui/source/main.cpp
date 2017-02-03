@@ -1225,38 +1225,20 @@ bool compareString(const char *iter, const char *input)
 	return false;
 }
 
+// TWLNAND side Title ID.
+extern const u64 TWLNAND_TID;
+const u64 TWLNAND_TID = 0x0004800554574C44ULL;
+
 /**
-* check if TWLNand side is installed or not
+* Check if the TWLNAND-side title is installed or not
 * Title ID: 0x0004800554574C44ULL
 * MediaType: MEDIATYPE_NAND
 * @return: true if installed, false if not
 */
-
-bool checkTWLNANDSide(void){
-	bool res = false;
-	
-	u32 count = 0;
-	FS_MediaType mediaType = MEDIATYPE_NAND;
-	u64 id = 0x0004800554574C44ULL;
-	
-	if(R_SUCCEEDED(AM_GetTitleCount(mediaType, &count))){
-		u64* titleIds = (u64*)calloc(count, sizeof(u64));
-        if(titleIds != NULL) {
-			if(R_SUCCEEDED(AM_GetTitleList(&count, mediaType, count, titleIds))) {
-				// Now we have the list of cia's installed on NAND
-				for(u32 i = 0; i < count; i++) {
-					// Try to find TWLNand ID
-					if(titleIds[i] == id){
-						res = true;
-						break;
-					}
-				}
-			}
-		}
-		free(titleIds);
-	}
-	
-	return res;
+bool checkTWLNANDSide(void) {
+	u64 tid = TWLNAND_TID;
+	AM_TitleEntry entry;
+	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
 
 int main()
@@ -4136,7 +4118,7 @@ int main()
 			SetPerGameSettings();
 			SaveBootstrapConfig();
 			
-			// Check if TWLNAND side is installed (0x0004800554574C44ULL)
+			// Check if TWLNAND side is installed.
 			if(!checkTWLNANDSide()){
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -4146,7 +4128,7 @@ int main()
 			}
 			
 			// Prepare for the app launch.
-			u64 tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
+			u64 tid = TWLNAND_TID;
 			FS_MediaType mediaType = MEDIATYPE_NAND;
 			bool switchToTwl = true;	
 			
