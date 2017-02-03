@@ -1,3 +1,6 @@
+// for strcasestr()
+#define _GNU_SOURCE 1
+
 #include "download.h"
 #include "settings.h"
 #include "textfns.h"
@@ -1215,29 +1218,6 @@ static void drawMenuDialogBox(void)
 			}
 		}
 	}
-}
-
-/**
-* compare two strings case insensitive.
-* @param iterator const char*
-* @param input const char*
-*/
-bool compareString(const char *iter, const char *input)
-{
-	// First transform input to lower case
-    std::string inputText = input;
-	std::transform(inputText.begin(), inputText.end(), inputText.begin(), ::tolower);
-	
-	// Transform iterator string to lower case
-	std::string fileName = iter;
-	std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::tolower);
-	
-	// Compare
-	if(strstr(fileName.c_str(), inputText.c_str())){
-		return true;
-	}
-	
-	return false;
 }
 
 // TWLNAND side Title ID.
@@ -3674,7 +3654,7 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
@@ -3688,16 +3668,15 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
 									}
 								}							
-								
-								if (matching_files.size() != 0){
+
+								if (matching_files.size() != 0) {
 									/** Prepare some stuff to show correctly the filtered roms */
-									
 									pagenum = 0; // Go to page 0
 									cursorPosition = 0; // Move the cursor to 0
 									storedcursorPosition = cursorPosition; // Move the cursor to 0
@@ -3781,15 +3760,17 @@ int main()
 											// so it can't match.
 											continue;
 										}
-										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+
+										// Check if the game name contains the search term.
+										// (Case-insensitive search.)
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
 									}
-									if (matching_files.size() != 0){
+
+									if (matching_files.size() != 0) {
 										/** Prepare some stuff to show correctly the filtered roms */
-										
 										pagenum = 0; // Go to page 0
 										cursorPosition = 0; // Move the cursor to 0
 										storedcursorPosition = cursorPosition; // Move the cursor to 0
