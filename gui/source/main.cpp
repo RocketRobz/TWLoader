@@ -1507,7 +1507,7 @@ int main()
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
-	bool saveOnExit = !isTWLNANDInstalled;
+	bool saveOnExit = isTWLNANDInstalled;
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
