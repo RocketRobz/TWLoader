@@ -15,37 +15,39 @@ extern sftd_font *font;
 
 /**
  * Get the current date as a C string.
- * @param Format Date format.
+ * @param format Date format.
+ * @param buf Output buffer.
+ * @param size Size of the output buffer.
+ * @return Number of bytes written, excluding the NULL terminator.
  * @return Current date. (Caller must free() this string.)
  */
-char *GetDate(int Format)
+size_t GetDate(int format, char *buf, size_t size)
 {
-	char *Ret = (char*)malloc(24);
-
 	time_t Raw;
 	time(&Raw);
-	tm *Time = localtime(&Raw);
+	const struct tm *Time = localtime(&Raw);
 
-	switch(Format) {
+	switch (format) {
 		case FORMAT_YDM:
-			strftime(Ret, 24, "%Y-%d-%m_%k-%M", Time);
-			break;
-
+			return strftime(buf, size, "%Y-%d-%m_%k-%M", Time);
 		case FORMAT_YMD:
-			strftime(Ret, 24, "%Y-%m-%d_%k-%M", Time);
-			break;
+			return strftime(buf, size, "%Y-%m-%d_%k-%M", Time);
 		case FORMAT_DM:
-			strftime(Ret, 24, "%d/%m", Time); // Ex: 26/12
-			break;
+			return strftime(buf, size, "%d/%m", Time); // Ex: 26/12
 		case FORMAT_MD:
-			strftime(Ret, 24, "%m/%d", Time); // Ex: 12/26
-			break;
+			return strftime(buf, size, "%m/%d", Time); // Ex: 12/26
 		case FORMAT_M_D:
-			strftime(Ret, 24, "%d.%m.", Time); // Ex: 26.12.
+			return strftime(buf, size, "%d.%m.", Time); // Ex: 26.12.
+		default:
 			break;
 	}
 
-	return Ret;
+	// Invalid format.
+	// Should not get here...
+	if (size > 0) {
+		*buf = 0;
+	}
+	return 0;
 }
 
 /**
@@ -57,7 +59,7 @@ string RetTime(int donotblink)
 {
 	time_t Raw;
 	time(&Raw);
-	tm *Time = localtime(&Raw);
+	const struct tm *Time = localtime(&Raw);
 
 	// Blink the ':' approximately once per second.
 	// (120 is because two top frames are drawn every 1/60th
@@ -105,10 +107,9 @@ void DrawDate(u32 color)
 		FORMAT_MD,	// Traditional Chinese
 	};
 
-	// NOTE: GetDate() malloc()'s the date string.
-	char *date_str = GetDate(date_fmt[language]);
-	if (!date_str)
+	char date_str[24];
+	GetDate(date_fmt[language], date_str, sizeof(date_str));
+	if (date_str[0] == 0)
 		return;
 	sftd_draw_text(font, 282, 3, color, 12, date_str);
-	free(date_str);
 }

@@ -1,21 +1,27 @@
 #ifndef DATE_H
 #define DATE_H
 
-#define FORMAT_YDM 0
-#define FORMAT_YMD 1
-#define FORMAT_DM  2
-#define FORMAT_MD  3
-#define FORMAT_M_D 4
-
 #include <3ds/types.h>
 #include <string>
+#include <stddef.h>
+
+typedef enum {
+	FORMAT_YDM	= 0,
+	FORMAT_YMD	= 1,
+	FORMAT_DM	= 2,
+	FORMAT_MD	= 3,
+	FORMAT_M_D	= 4,
+} DateFormat;
 
 /**
  * Get the current date as a C string.
- * @param Format Date format.
+ * @param format Date format.
+ * @param buf Output buffer.
+ * @param size Size of the output buffer.
+ * @return Number of bytes written, excluding the NULL terminator.
  * @return Current date. (Caller must free() this string.)
  */
-char *GetDate(int Format);
+size_t GetDate(int format, char *buf, size_t size);
 
 /**
  * Get the current time formatted for the top bar.
