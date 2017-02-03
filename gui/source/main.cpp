@@ -1509,15 +1509,29 @@ int main()
 		sf2d_set_3D(1);
 
 	// Loop as long as the status is not exit
-	bool saveOnExit = true;
+	const bool isTWLNANDInstalled = checkTWLNANDSide();
+	// Save by default if the TWLNAND-side title is installed.
+	// Otherwise, we don't want to save anything.
+	bool saveOnExit = !isTWLNANDInstalled;
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
 		hidScanInput();
-		
+
 		const u32 hDown = hidKeysDown();
 		const u32 hHeld = hidKeysHeld();
-		
+
+		// Check if the TWLNAND-side title is installed.
+		if (!isTWLNANDInstalled) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Please, install TWLNand side and retry again");
+			sftd_draw_text(font, 12, 28, RGBA8(0, 0, 0, 255), 12, "Returning to Home...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			continue;
+		}
+
 		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
 		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
 		offset3D[0].boxart = CONFIG_3D_SLIDERSTATE * -5.0f;
@@ -4117,16 +4131,7 @@ int main()
 			SaveSettings();
 			SetPerGameSettings();
 			SaveBootstrapConfig();
-			
-			// Check if TWLNAND side is installed.
-			if(!checkTWLNANDSide()){
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Please, install TWLNand side and retry again");
-				sftd_draw_text(font, 12, 28, RGBA8(0, 0, 0, 255), 12, "Returning to Home...");
-				break;
-			}
-			
+
 			// Prepare for the app launch.
 			u64 tid = TWLNAND_TID;
 			FS_MediaType mediaType = MEDIATYPE_NAND;
