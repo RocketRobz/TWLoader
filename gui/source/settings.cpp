@@ -27,9 +27,6 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern bool is3DSX;
 
-extern u8 language;
-extern u8 ntrtwlmode_language;
-
 extern touchPosition touch;
 u16 touch_x = 320/2;
 u16 touch_y = 240/2;
@@ -149,7 +146,7 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	switch(ntrtwlmode_language) {
+	switch(sys_language) {
 		case 0:
 		case 6:
 		case 7:
