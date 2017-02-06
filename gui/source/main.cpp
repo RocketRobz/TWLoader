@@ -590,8 +590,7 @@ static void LoadBoxArt(void) {
  */
 static void LoadBootstrapConfig(void)
 {
-	// TODO: Change the default to -1?
-	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 0)) {
+	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1)) {
 		case 1:
 			settings.twl.console = 2;
 			break;
