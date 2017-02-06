@@ -1174,7 +1174,7 @@ void LoadSettings(void) {
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
-	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 0);
+	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 1);
 	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
 	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
 	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
@@ -1185,10 +1185,10 @@ void LoadSettings(void) {
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
-	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 0);
+	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 1);
 	settings.twl.lockarm9scfgext = settingsini.GetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", 0);
-	settings.twl.bootscreen = settingsini.GetInt("TWL-MODE", "BOOT_ANIMATION", 0);
-	settings.twl.healthsafety = settingsini.GetInt("TWL-MODE", "HEALTH&SAFETY_MSG", 0);
+	settings.twl.bootscreen = settingsini.GetInt("TWL-MODE", "BOOT_ANIMATION", 1);
+	settings.twl.healthsafety = settingsini.GetInt("TWL-MODE", "HEALTH&SAFETY_MSG", 1);
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
