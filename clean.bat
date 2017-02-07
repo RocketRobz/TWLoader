@@ -7,3 +7,5 @@ make clean
 cd ..
 cd gui
 make clean
+cd ..
+rmdir /s /q "7zfile"
