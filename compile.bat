@@ -4,7 +4,7 @@ mkdir "7zfile/sdroot/_nds/twloader/loadflashcard"
 mkdir "7zfile/sdroot/_nds/twloader/cia"
 cd prebuilts
 copy "ace_rpg.nds" "../7zfile/sdroot/_nds/twloader/loadflashcard/ace_rpg.nds"
-copy "GBARunner2.nds" "../7zfile/flashcardroot/GBARunner2.nds"
+copy "GBARunner2_flashcard.nds" "../7zfile/flashcardroot/GBARunner2.nds"
 copy "GBARunner2.nds" "../7zfile/sdroot/_nds/GBARunner2.nds"
 copy "loadcard_dstt.nds" "../7zfile/sdroot/_nds/loadcard_dstt.nds"
 copy "r4.nds" "../7zfile/sdroot/_nds/twloader/loadflashcard/r4.nds"
