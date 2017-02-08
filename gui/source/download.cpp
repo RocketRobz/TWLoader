@@ -41,10 +41,6 @@ extern int screenmode;
 // 0: ROM select
 // 1: Settings
 
-typedef struct {
-	char text[13];
-} sVerfile;
-
 extern char settings_vertext[13];
 extern char settings_latestvertext[13];
 
@@ -192,14 +188,29 @@ int checkUpdate(void) {
 	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
 	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
-		sVerfile Verfile;
 
 		bool isUnknown = false;
 		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
 		if (VerFile) {
-			fread(&Verfile, 1, sizeof(Verfile), VerFile);
-			strcpy(settings_latestvertext, Verfile.text);
+			/** This is the same method as checkBootstrapVersion() **/
+			long fileSize;
+			
+			fseek(VerFile , 0 , SEEK_END);
+			fileSize = ftell(VerFile);
+			
+			char buf[fileSize + 1];
+
+			// Clean buf array
+			for (size_t i=0; i< sizeof(buf); i++){
+				buf[i] = '\0';
+			}	
+			
+			rewind(VerFile);
+			fread(buf,1,sizeof(settings_latestvertext),VerFile);
+			buf[sizeof(buf) - 1] = '\0';
+			strcpy(settings_latestvertext, buf);
 			fclose(VerFile);
+			/** End **/
 		} else {
 			// Unable to open the version file.
 			strcpy(settings_latestvertext, "Unknown");
@@ -214,7 +225,7 @@ int checkUpdate(void) {
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (!isUnknown && !strcmp(settings_latestvertext, settings_vertext)) {
-			// Version is different.
+			// Version is not different.
 			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are equals");
 		
 			if (screenmode == 1) {				
@@ -240,7 +251,7 @@ int checkUpdate(void) {
  * Download the TWLoader CIAs.
  */
 void DownloadTWLoaderCIAs(void) {
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading TWLoader to latest version...");
 	sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
@@ -252,7 +263,7 @@ void DownloadTWLoaderCIAs(void) {
 	if(stat("sdmc:/cia",&st) == 0){		
 		// Use root/cia folder instead
 		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
-	}else{		
+	}else{
 		mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
 		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 	}
