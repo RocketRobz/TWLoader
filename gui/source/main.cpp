@@ -3028,18 +3028,36 @@ int main()
 								std::string gameName = keyboardInput("Use the keyboard to find roms");
 								if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 								
-								for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
-									if (iter->size() < gameName.size()) {
-										// Filename we're checking is shorter than the search term,
-										// so it can't match.
-										continue;
+								if(!settings.twl.forwarder){
+									// SD CARD
+									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {
+										if (iter->size() < gameName.size()) {
+											// Filename we're checking is shorter than the search term,
+											// so it can't match.
+											continue;
+										}
+										// Use C string comparison for case-insensitive checks.
+										if (compareString(iter->c_str(), gameName.c_str())){
+											// String matches.
+											matching_files.push_back(*iter);
+										}
 									}
-									// Use C string comparison for case-insensitive checks.
-									if (compareString(iter->c_str(), gameName.c_str())){
-										// String matches.
-										matching_files.push_back(*iter);
+								}else{
+									// FLASHCARD
+									for (auto iter = fcfiles.cbegin(); iter != fcfiles.cend(); ++iter) {
+										if (iter->size() < gameName.size()) {
+											// Filename we're checking is shorter than the search term,
+											// so it can't match.
+											continue;
+										}
+										// Use C string comparison for case-insensitive checks.
+										if (compareString(iter->c_str(), gameName.c_str())){
+											// String matches.
+											matching_files.push_back(*iter);
+										}
 									}
-								}
+								}							
+								
 								if (matching_files.size() != 0){
 									/** Prepare some stuff to show correctly the filtered roms */
 									
