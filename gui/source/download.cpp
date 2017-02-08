@@ -251,7 +251,7 @@ int checkUpdate(void) {
  * Download the TWLoader CIAs.
  */
 void DownloadTWLoaderCIAs(void) {
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now updating TWLoader to latest version...");
+	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading TWLoader to latest version...");
 	sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
@@ -263,7 +263,7 @@ void DownloadTWLoaderCIAs(void) {
 	if(stat("sdmc:/cia",&st) == 0){		
 		// Use root/cia folder instead
 		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
-	}else{		
+	}else{
 		mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
 		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 	}
