@@ -684,7 +684,7 @@ static void LoadPerGameSettings(void)
 		RGB[0] = 0; RGB[1] = 0; RGB[2] = 0;
 	}
 	
-	if (logEnabled)	LogFM("Main.SavePerGameSettings", "Per-game settings loaded successfully");
+	if (logEnabled)	LogFM("Main.LoadPerGameSettings", "Per-game settings loaded successfully");
 }
 
 /**
@@ -718,16 +718,18 @@ static void SavePerGameSettings(void)
  */
 static void SetPerGameSettings(void)
 {
-	std::string inifilename;
-	if (!settings.twl.forwarder) {
+	std::string inifilename = "sd:/_nds/twloader/gamesettings/null";
+	if (!settings.twl.launchslot1) {
 		inifilename = ReplaceAll(rom, ".nds", ".ini");
 		char path[256];
 		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings", inifilename.c_str());
 		inifilename = path;
 	} else {
-		char path[256];
-		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings/flashcard", rom);
-		inifilename = path;
+		if (settings.twl.forwarder) {
+			char path[256];
+			snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings/flashcard", rom);
+			inifilename = path;
+		}
 	}
 	CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 	settingsini.SetString("TWL-MODE", "GAMESETTINGS_PATH", inifilename);
