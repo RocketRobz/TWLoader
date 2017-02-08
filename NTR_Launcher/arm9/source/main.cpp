@@ -35,8 +35,6 @@ int main(int argc, const char* argv[]) {
 	
 	bool EnableSD = false;
 
-	REG_SCFG_CLK = 0x85;
-
 	bool consoleOn = false;
 
 	swiWaitForVBlank();
@@ -51,12 +49,12 @@ int main(int argc, const char* argv[]) {
 	char gameid[4];
 	uint32_t headerCRC;
 	
-	scanKeys();
-	int pressed = keysDown();
+	/* scanKeys();
+	int pressed = keysDown(); */
 
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
-		
+
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;
