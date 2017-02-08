@@ -2816,7 +2816,7 @@ int main()
 							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										rom = matching_files.at(cursorPosition).c_str();
 									}
@@ -2909,7 +2909,7 @@ int main()
 									if (settings.twl.forwarder) {
 										settings.twl.launchslot1 = true;
 										if(matching_files.size() == 0){
-											rom = files.at(cursorPosition).c_str();
+											rom = fcfiles.at(cursorPosition).c_str();
 										}else {
 											rom = matching_files.at(cursorPosition).c_str();
 										}
@@ -3163,7 +3163,7 @@ int main()
 							// Switch to the "Start" menu.
 							if (settings.twl.forwarder) {
 								if(matching_files.size() == 0){
-									rom = files.at(cursorPosition).c_str();
+									rom = fcfiles.at(cursorPosition).c_str();
 								} else {
 									rom = matching_files.at(cursorPosition).c_str();
 								}
@@ -3237,7 +3237,7 @@ int main()
 								gamesettings_cursorPosition = 3;
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										rom = matching_files.at(cursorPosition).c_str();
 									}
@@ -3267,7 +3267,7 @@ int main()
 							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = fcfiles.at(cursorPosition).c_str();
 									} else {
 										rom = matching_files.at(cursorPosition).c_str();
 									}
