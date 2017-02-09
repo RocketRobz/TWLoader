@@ -179,12 +179,9 @@ const char* noromtext2;
 int RGB[3]; // Pergame LED
 
 // Version numbers.
-typedef struct {
-	char text[13];
-} sVerfile;
 
-char settings_vertext[13];
 char settings_latestvertext[13];
+char settings_vertext[64];
 
 std::string settings_releasebootstrapver;
 std::string settings_unofficialbootstrapver;
@@ -1269,13 +1266,7 @@ int main()
 	sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
 	if (logEnabled)	LogFM("Main.Font loading", "Fonts load correctly");
 	
-	sVerfile Verfile;
-	
-	FILE* VerFile = fopen("romfs:/ver", "r");
-	fread(&Verfile,1,sizeof(Verfile),VerFile);
-	strcpy(settings_vertext, Verfile.text);
-	fclose(VerFile);
-	if (logEnabled)	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS", Verfile.text);
+    snprintf(settings_vertext, 64, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 
 	LoadSettings();	
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
