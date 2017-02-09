@@ -1175,6 +1175,7 @@ void LoadSettings(void) {
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
 	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 1);
+	settings.ui.iconsize = settingsini.GetInt("FRONTEND", "ICON_SIZE", 0);
 	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
 	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
 	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
@@ -1220,6 +1221,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
 	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
+	settingsini.SetInt("FRONTEND", "ICON_SIZE", settings.ui.iconsize);
 	settingsini.SetInt("FRONTEND", "COUNTER", settings.ui.counter);
 	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
 	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);

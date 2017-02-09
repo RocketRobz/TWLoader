@@ -97,7 +97,7 @@ static sf2d_texture *bnricontexlaunch = NULL;	// DO NOT FREE; points to bnricont
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
-// bnricontex[]: 0-9 == regular; 10-19 == .nds icons only
+// bnricontex[]: 0-19
 static sf2d_texture *bnricontex[20] = { };
 static char* boxartpath[20] = { };
 static sf2d_texture *boxarttex[6] = { };
@@ -1413,7 +1413,6 @@ int main()
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 		const char *tempfile = files.at(bnriconnum).c_str();
-		DialogBoxAppear(title, 0);
 
 		wstring tempfile_w = utf8_to_wstring(tempfile);
 		sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
@@ -2554,8 +2553,13 @@ int main()
 					}
 
 					if (pagenum == 0) {
-						sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-						sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+						if (settings.ui.iconsize) {
+							sf2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+							sf2d_draw_texture_scale(settingsboxtex, -40+setsboxXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
+						} else {
+							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
+							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+						}
 
 						if (!settings.twl.forwarder) {
 							// Poll for Slot-1 changes.
@@ -2581,33 +2585,61 @@ int main()
 								}
 							}
 
-							sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
+							else
+								sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
 							sf2d_texture *cardicontex = gamecardGetIcon();
 							if (!cardicontex)
 								cardicontex = iconnulltex;
-							sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+							else
+								sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
 						} else {
 							// Get flash cart games.
- 							sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 119);
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
+							else
+								sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 119);
 						}
 					} else {
 						sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
 					}
 
-					titleboxXpos = 128;
-					ndsiconXpos = 144;
+					if (settings.ui.iconsize) {
+						titleboxXpos = 120;
+						ndsiconXpos = 140;
+					} else {
+						titleboxXpos = 128;
+						ndsiconXpos = 144;
+					}
 					//filenameYpos = 0;
 					for (filenum = pagenum*20; filenum < pagemax; filenum++) {
-						sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-						titleboxXpos += 64;
+						if (settings.ui.iconsize) {
+							sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
+							titleboxXpos += 80;
 
-						bnriconnum = filenum;
-						ChangeBNRIconNo();
-						sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-						ndsiconXpos += 64;
+							bnriconnum = filenum;
+							ChangeBNRIconNo();
+							sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+							ndsiconXpos += 80;
+						} else {
+							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+							titleboxXpos += 64;
+
+							bnriconnum = filenum;
+							ChangeBNRIconNo();
+							sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
+							ndsiconXpos += 64;
+						}
 					}
 
-					sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
+					if (settings.ui.iconsize) {
+						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 108, -1.25, 1.25);
+					} else {
+						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
+					}
 					if (!applaunchprep) {
 						if (titleboxXmovetimer == 0) {
 							startbordermovepos = 0;
@@ -2619,10 +2651,17 @@ int main()
 						} else {
 							if (!is3DSX || cursorPosition == -2) {
 								// Print "START" and the cursor border.
-								sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-								const wchar_t *start_text = TR(STR_START);
-								const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-								sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+								if (settings.ui.iconsize) {
+									sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
+									const wchar_t *start_text = TR(STR_START);
+									const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
+									sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
+								} else {
+									sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
+									const wchar_t *start_text = TR(STR_START);
+									const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+									sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+								}
 							}
 						}
 					} else {
@@ -2759,6 +2798,13 @@ int main()
 						menuaction_nextpage = true;
 					} else if(hDown & KEY_L) {
 						menuaction_prevpage = true;
+					}
+					if(hDown & KEY_Y) {
+						if (dspfirmfound) {
+							sfx_switch->stop();	// Prevent freezing
+							sfx_switch->play();
+						}
+						settings.ui.iconsize = !settings.ui.iconsize;
 					}
 					hidTouchRead(&touch);
 					touch_x = touch.px;

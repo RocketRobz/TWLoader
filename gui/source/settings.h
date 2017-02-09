@@ -52,6 +52,7 @@ typedef struct _Settings_t {
 		bool filename;
 		bool locswitch;
 		bool topborder;
+		bool iconsize;
 		bool counter;
 		bool custombot;
 		int autoupdate;	// 0 = Off, 1 = Release, 2 = Unofficial
