@@ -435,10 +435,31 @@ void SetMPUSettings() {
 		settings.twl.mpusize = 0;
 	}
 		
-	if (strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
+	if (
+		strcmp(game_TID, "A7A") == 0 ||	// DS Download Station - Vol 1
+		strcmp(game_TID, "A7B") == 0 ||	// DS Download Station - Vol 2
+		strcmp(game_TID, "A7C") == 0 ||	// DS Download Station - Vol 3
+		strcmp(game_TID, "A7D") == 0 ||	// DS Download Station - Vol 4
+		strcmp(game_TID, "A7E") == 0 ||	// DS Download Station - Vol 5
+		strcmp(game_TID, "A7F") == 0 ||	// DS Download Station - Vol 6 (EUR)
+		strcmp(game_TID, "A7G") == 0 ||	// DS Download Station - Vol 6 (USA)
+		strcmp(game_TID, "A7H") == 0 ||	// DS Download Station - Vol 7
+		strcmp(game_TID, "A7I") == 0 ||	// DS Download Station - Vol 8
+		strcmp(game_TID, "A7J") == 0 ||	// DS Download Station - Vol 9
+		strcmp(game_TID, "A7K") == 0 ||	// DS Download Station - Vol 10
+		strcmp(game_TID, "A7L") == 0 ||	// DS Download Station - Vol 11
+		strcmp(game_TID, "A7M") == 0 ||	// DS Download Station - Vol 12
+		strcmp(game_TID, "A7N") == 0 ||	// DS Download Station - Vol 13
+		strcmp(game_TID, "A7O") == 0 ||	// DS Download Station - Vol 14
+		strcmp(game_TID, "A7P") == 0 ||	// DS Download Station - Vol 15
+		strcmp(game_TID, "A7Q") == 0 ||	// DS Download Station - Vol 16
+		strcmp(game_TID, "A7R") == 0 ||	// DS Download Station - Vol 17
+		strcmp(game_TID, "A7S") == 0 ||	// DS Download Station - Vol 18
+		strcmp(game_TID, "A7T") == 0 ||	// DS Download Station - Vol 19
+		strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
 		strcmp(game_TID, "YZX") == 0 ||	// Rockman ZX Advent/MegaMan ZX Advent
-		strcmp(game_TID, "B6Z") == 0 )		// Rockman Zero Collection/MegaMan Zero Collection
-	{
+		strcmp(game_TID, "B6Z") == 0 	// Rockman Zero Collection/MegaMan Zero Collection
+	) {
 		settings.twl.mpuregion = 1;
 		settings.twl.mpusize = 3145728;
 	}
