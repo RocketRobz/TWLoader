@@ -1278,7 +1278,8 @@ int main()
 	if (logEnabled)	LogFMA("Main.Verfile (ROMFS)", "Successful reading ver from ROMFS", Verfile.text);
 
 	LoadSettings();	
-	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";	
+	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";
+	if (logEnabled) LogFMA("Main.bootstrapPath", "Using path:", bootstrapPath.c_str());
 	LoadBootstrapConfig();
 
 	// Store bootstrap version
