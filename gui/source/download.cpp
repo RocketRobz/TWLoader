@@ -112,53 +112,88 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 		httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
 
 		if (ret==0) {
-			httpcBeginRequest(&context);
-			u32 contentsize=0;
-			httpcGetResponseStatusCode(&context, &statuscode);
-			if (statuscode == 200) {
-				u32 readSize = 0;
-				long int bytesWritten = 0;
-
-				Handle fileHandle;
-				FS_Path filePath=fsMakePath(PATH_ASCII, file);
-				FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
-
-				httpcGetDownloadSizeState(&context, NULL, &contentsize);
-				u8* buf = (u8*)malloc(contentsize);
-				memset(buf, 0, contentsize);
-
-				do {
-					ret = httpcDownloadData(&context, buf, contentsize, &readSize);
-					FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
-					bytesWritten += readSize;
-				} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
-
-				FSFILE_Close(fileHandle);
-				svcCloseHandle(fileHandle);
-
-				if (mediaType != MEDIA_SD_FILE) {
-					// This is a CIA, so we should install it.
-					amInit();
-					Handle handle;
-					// FIXME: Should check the return values.
-					switch (mediaType) {
-						case MEDIA_SD_CIA:
-							AM_QueryAvailableExternalTitleDatabase(NULL);
-							AM_StartCiaInstall(MEDIATYPE_SD, &handle);
-							break;
-						case MEDIA_NAND_CIA:
-							AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
-							break;
-						default:
-							break;
-					}
-					FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
-					AM_FinishCiaInstall(handle);
-					amExit();
+			if(R_SUCCEEDED(httpcBeginRequest(&context))){
+				u32 contentsize=0;
+				if(R_FAILED(httpcGetResponseStatusCode(&context, &statuscode))){
+					if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get response status code");
+					httpcCloseContext(&context);
+					httpcExit();
+					fsExit();
+					return -1;
 				}
+				if (statuscode == 200) {
+					u32 readSize = 0;
+					long int bytesWritten = 0;
 
-				free(buf);
+					Handle fileHandle;
+					FS_Path filePath=fsMakePath(PATH_ASCII, file);
+					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
+
+					if(R_FAILED(httpcGetDownloadSizeState(&context, NULL, &contentsize))){
+						if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get download size");
+						httpcCloseContext(&context);
+						httpcExit();
+						fsExit();
+						return -1;
+					}
+					u8* buf = (u8*)malloc(contentsize);
+					memset(buf, 0, contentsize);
+
+					do {
+						if(R_FAILED(ret = httpcDownloadData(&context, buf, contentsize, &readSize))){
+							// In case there is an error
+							if (logEnabled) LogFM("downloadFile.error", "An error has ocurred while downloading data");
+							free(buf);
+							httpcCloseContext(&context);
+							httpcExit();
+							fsExit();
+							return -1;
+						}
+						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
+						bytesWritten += readSize;
+					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
+
+					FSFILE_Close(fileHandle);
+					svcCloseHandle(fileHandle);
+
+					if (mediaType != MEDIA_SD_FILE) {
+						// This is a CIA, so we should install it.
+						amInit();
+						Handle handle;
+						// FIXME: Should check the return values.
+						switch (mediaType) {
+							case MEDIA_SD_CIA:
+								AM_QueryAvailableExternalTitleDatabase(NULL);
+								AM_StartCiaInstall(MEDIATYPE_SD, &handle);
+								break;
+							case MEDIA_NAND_CIA:
+								AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
+								break;
+							default:
+								break;
+						}
+						FSFILE_Write(handle, NULL, 0, buf, contentsize, 0);
+						AM_FinishCiaInstall(handle);
+						amExit();
+					}
+
+					free(buf);
+				}
+			}else{
+				// There was an error begining the request
+				if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to request server");
+				httpcCloseContext(&context);
+				httpcExit();
+				fsExit();
+				return -1;
 			}
+		}else{
+			// There was a problem opening HTTP context
+			if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to open HTTP context");
+			httpcCloseContext(&context);
+			httpcExit();
+			fsExit();
+			return -1;
 		}
 	} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
 	httpcCloseContext(&context);
@@ -508,7 +543,7 @@ static int downloadBoxArt_internal(const char *ba_TID)
 int downloadBootstrapVersion(bool type
 )
 {
-	int res = 0;
+	int res = -1;
 	if (type){		
 		res = downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
 	}else{
@@ -524,10 +559,10 @@ int downloadBootstrapVersion(bool type
 
 void checkBootstrapVersion(void){
 	
-	bool res = false;
+	int res = false;
 	long fileSize;
 	char buf[26];
-	
+	if (logEnabled) LogFM("download.checkBootstrapVersion()", "Checking bootstrap version");
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
@@ -535,9 +570,12 @@ void checkBootstrapVersion(void){
 	
 	FILE* VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
 	if (!VerFile){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "release-bootstrap ver file not found.");
 		if(checkWifiStatus()){
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading release-bootstrap ver file.");
 			res = downloadBootstrapVersion(true); // true == release
 		}else{
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No release version file available.");
 			settings_releasebootstrapver = "No version available";
 		}
 	}else{
@@ -548,7 +586,10 @@ void checkBootstrapVersion(void){
 		buf[fileSize - 1] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
+		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file:", settings_releasebootstrapver.c_str());
 	}
+	
+	if (res == -1) settings_releasebootstrapver = "No version available";
 	
 	fclose(VerFile);
 	
@@ -558,9 +599,11 @@ void checkBootstrapVersion(void){
 	}
 	
 	if(res == 0){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening release bootstrap ver file.");
 		// Try to open again
 		VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap", "r");
-		if (!VerFile){			
+		if (!VerFile){
+				if (logEnabled) LogFM("download.checkBootstrapVersion()", "No release version file available #2.");
 				settings_releasebootstrapver = "No version available";
 		}else{
 			fseek(VerFile , 0 , SEEK_END);
@@ -570,16 +613,20 @@ void checkBootstrapVersion(void){
 			buf[fileSize - 1] = '\0';
 			settings_releasebootstrapver = buf;
 			fclose(VerFile);
+			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file #2:", settings_releasebootstrapver.c_str());
 		}
 	}
 	
-	res = false; // Just to be sure	
+	res = -1; // Just to be sure	
 	
 	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
 	if (!VerFile){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "unofficial-bootstrap ver file not found.");
 		if(checkWifiStatus()){
-			downloadBootstrapVersion(false); // false == unofficial
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading unofficial-bootstrap ver file.");
+			res = downloadBootstrapVersion(false); // false == unofficial
 		}else{
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No unofficial version file available.");
 			settings_unofficialbootstrapver = "No version available";
 		}
 	}else{
@@ -590,14 +637,18 @@ void checkBootstrapVersion(void){
 		buf[fileSize - 1] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
+		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file:", settings_unofficialbootstrapver.c_str());
 	}
-	
+	if (res == -1) settings_unofficialbootstrapver = "No version available";
+
 	fclose(VerFile);
 	
 	if(res == 0){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening unofficial bootstrap ver file.");
 		// Try to open again
 		VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
-		if (!VerFile){			
+		if (!VerFile){
+				if (logEnabled) LogFM("download.checkBootstrapVersion()", "No unofficial version file available #2.");		
 				settings_unofficialbootstrapver = "No version available";
 		}else{
 			fseek(VerFile , 0 , SEEK_END);
@@ -607,6 +658,7 @@ void checkBootstrapVersion(void){
 			buf[fileSize - 1] = '\0';
 			settings_unofficialbootstrapver = buf;
 			fclose(VerFile);
+			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file #2:", settings_releasebootstrapver.c_str());
 		}
 	}
 }
