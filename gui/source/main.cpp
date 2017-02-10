@@ -1803,7 +1803,6 @@ int main()
 				sf2d_set_3D(0);
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 				sf2d_draw_texture(topbgtex, 40, 0);
-				sf2d_end_frame();
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					filenameYpos = 15;
 					for(filenum = 0; filenum < files.size(); filenum++){
@@ -1819,6 +1818,7 @@ int main()
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+				sf2d_end_frame();
 			} else {	// DSi-Menu theme
 				if (!musicbool) {
 					if (dspfirmfound) { bgm_menu->play(); }
