@@ -935,10 +935,10 @@ bool settingsMoveCursor(u32 hDown)
 					break;
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 7) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 8) {
 			cursor_pos[0]++;
 			if(is3DSX) {
-				if(cursor_pos[0] == 7)
+				if(cursor_pos[0] == 8)
 					cursor_pos[0]--;
 			}
 			sfx = sfx_select;

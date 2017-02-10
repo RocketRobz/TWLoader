@@ -188,7 +188,7 @@ int RGB[3]; // Pergame LED
 // Version numbers.
 
 char settings_latestvertext[13];
-char settings_vertext[64];
+char settings_vertext[13];
 
 std::string settings_releasebootstrapver;
 std::string settings_unofficialbootstrapver;
@@ -1295,7 +1295,8 @@ int main()
 	sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
 	if (logEnabled)	LogFM("Main.Font loading", "Fonts load correctly");
 	
-    snprintf(settings_vertext, 64, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+    snprintf(settings_vertext, 14, "Ver. %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 
 	LoadSettings();	
 	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";
@@ -1805,7 +1806,7 @@ int main()
 				sf2d_draw_texture(topbgtex, 40, 0);
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					filenameYpos = 15;
-					for(filenum = 0; filenum < files.size(); filenum++){
+					for(filenum = 0; filenum < (int)files.size(); filenum++){
 						if(cursorPosition == filenum) {
 							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
 						} else {
@@ -2114,6 +2115,7 @@ int main()
 						if (cursorPosition < 0)
 							cursorPosition = 0;
 					} else {
+						cursorPosition = 0; // This is to reset cursor position after switching from R4 theme.
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				} else if (gbarunnervalue == 1) {
