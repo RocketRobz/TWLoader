@@ -47,6 +47,7 @@ typedef struct _Settings_t {
 		std::string fcromfolder;
     
 		int language;	// Language. (0-11; other for system)
+		int theme;
 		int color;
 		int menucolor;
 		bool filename;

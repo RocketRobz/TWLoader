@@ -29,6 +29,7 @@ typedef enum _StrID {
 	// Settings
 	STR_SETTINGS_START_UPDATE_TWLOADER,	// "START: Update TWLoader"
 	STR_SETTINGS_LANGUAGE,			// Language
+	STR_SETTINGS_THEME,			// "Theme"
 	STR_SETTINGS_COLOR,			// "Color"
 	STR_SETTINGS_MENUCOLOR,			// "Menu Color"
 	STR_SETTINGS_FILENAME,			// "Show filename"

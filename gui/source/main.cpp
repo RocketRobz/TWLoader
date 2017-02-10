@@ -2103,7 +2103,12 @@ int main()
 					if (settings.ui.theme == 1) {
 						menu_ctrlset = CTRL_SET_MENU;
 						r4menucursorPosition = 2;
-						sf2d_set_3D(0);
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						if (cursorPosition < 0)
+							cursorPosition = 0;
+					} else {
+						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				} else if (gbarunnervalue == 1) {
 					// run = false;

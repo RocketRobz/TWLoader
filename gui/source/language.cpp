@@ -16,6 +16,7 @@ static const char *const lang_JP[STR_MAX] = {
 
 	// Settings
 	"START：更新TWLoader",	// "START: Update TWLoader"
+	"Theme",			// "Theme"
 	"言語",			// "Language"
 	"色",			// "Color"
 	"メニューの色",			// "Menu Color"
@@ -31,6 +32,7 @@ static const char *const lang_EN[STR_MAX] = {
 	// Settings
 	"START: Update TWLoader",	// "START: Update TWLoader"
 	"Language",			// "Language"
+	"Theme",			// "Theme"
 	"Color",			// "Color"
 	"Menu color",			// "Menu Color"
 	"Show filename",		// "Show filename"
@@ -45,6 +47,7 @@ static const char *const lang_FR[STR_MAX] = {
 	// Settings
 	"START: Mettre à jour TWLoader",	// "START: Update TWLoader"
 	"Langue",				// "Language"
+	"Theme",			// "Theme"
 	"Couleur",				// "Color"
 	"Couleur du menu",			// "Menu Color"
 	"Afficher le nom du fichier",		// "Show filename"
@@ -59,6 +62,7 @@ static const char *const lang_DE[STR_MAX] = {
 	// Settings
 	"START: TWLoader aktualisieren",	// "START: Update TWLoader"
 	"Sprache",				// "Language"
+	"Theme",			// "Theme"
 	"Farbe",				// "Color"
 	"Menüfarbe",				// "Menu Color"
 	"Dateiname anzeigen",			// "Show filename"
@@ -72,7 +76,8 @@ static const char *const lang_IT[STR_MAX] = {
 
     // Settings
     "START: Aggiornamento TWLoader",    // "START: Update TWLoader"
-    "Lingua",                // "Language"
+   "Lingua",                // "Language"
+	"Theme",			// "Theme"
     "Colore",                // "Color"
     "Colore menu",                // "Menu Color"
     "Visualizza il nome del file",        // "Show filename"
@@ -87,6 +92,7 @@ static const char *const lang_ES[STR_MAX] = {
 	// Settings
 	"START: Actualizar TWLoader",		// "START: Update TWLoader"
 	"Idioma",				// "Language"
+	"Theme",			// "Theme"
 	"Color",				// "Color"
 	"Color del menú",			// "Menu Color"
 	"Mostrar nombre del archivo",		// "Show filename"
@@ -101,6 +107,7 @@ static const char *const lang_NL[STR_MAX] = {
 	// Settings
 	"START: update TWLoader",	// "START: Update TWLoader"
 	"Taal",				// "Language"
+	"Theme",			// "Theme"
 	"Kleur",			// "Color"
 	"menukleur",			// "Menu Color"
 	"Toon bestandsnaam",		// "Show filename"
@@ -115,6 +122,7 @@ static const char *const lang_PT[STR_MAX] = {
 	// Settings
 	"START: Atualizar o TWLoader",		// "START: Update TWLoader"
 	"Língua",				// "Language"
+	"Theme",			// "Theme"
 	"Cor",					// "Color"
 	"Cor do menu",				// "Menu Color"
 	"Mostrar nome do arquivo",		// "Show filename"

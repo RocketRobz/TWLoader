@@ -363,7 +363,8 @@ void settingsDrawTopScreen(void)
 					break;
 			}
 		}
-		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		if (settings.ui.theme == 0)
+			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
 }
@@ -423,6 +424,14 @@ void settingsDrawBottomScreen(void)
 			languagevaluetext = latin1_to_wstring("System");
 		}
 
+		// Theme text.
+		static const char *const theme_text[] = {
+			"DSi Menu", "R4"
+		};
+		if (settings.ui.theme < 0 || settings.ui.theme > 1)
+			settings.ui.theme = 0;
+		const char *const themevaluetext = theme_text[settings.ui.theme];
+
 		// Color text.
 		static const char *const color_text[] = {
 			"Gray", "Brown", "Red", "Pink",
@@ -480,6 +489,16 @@ void settingsDrawBottomScreen(void)
 			Ypos += 12;
 		}
 		if (cursor_pos[0] == 1) {
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_THEME));
+			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, themevaluetext);
+			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The theme to use in TWLoader.");
+			Ypos += 12;
+		} else {
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_THEME));
+			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, themevaluetext);
+			Ypos += 12;
+		}
+		if (cursor_pos[0] == 2) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COLOR));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top background,");
@@ -490,7 +509,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 2) {
+		if (cursor_pos[0] == 3) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The color of the top border,");
@@ -501,7 +520,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 3) {
+		if (cursor_pos[0] == 4) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_FILENAME));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Shows game filename at the top of the bubble.");
@@ -511,7 +530,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 4) {
+		if (cursor_pos[0] == 5) {
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COUNTER));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A number of selected game and listed games");
@@ -522,7 +541,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 5) {
+		if (cursor_pos[0] == 6) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_custombottext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Loads a custom bottom screen image");
@@ -533,7 +552,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
 			Ypos += 12;
 		}
-		if (cursor_pos[0] == 6) {
+		if (cursor_pos[0] == 7) {
 			sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autoupdatetext);
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-update nds-bootstrap at launch.");
@@ -544,7 +563,7 @@ void settingsDrawBottomScreen(void)
 			Ypos += 12;
 		}
 		if(!is3DSX) {
-			if (cursor_pos[0] == 7) {
+			if (cursor_pos[0] == 8) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, settings_autodltext);
 				sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
 				sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "Auto-download the CIA of the latest");
@@ -822,6 +841,8 @@ bool settingsMoveCursor(u32 hDown)
 			fadeout = true;
 			//bgm_settings->stop();
 			sfx = sfx_back;
+			if (settings.ui.theme == 1)
+				sf2d_set_3D(0);
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch_x <= 72 && touch_y >= 220) {
@@ -847,8 +868,20 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					langInit();
 					break;
-
-				case 1:	// Color
+				case 1:	// Theme
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.ui.theme++;
+						if (settings.ui.theme > 1) {
+							settings.ui.theme = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.ui.theme--;
+						if (settings.ui.theme < 0) {
+							settings.ui.theme = 1;
+						}
+					}
+					break;
+				case 2:	// Color
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.color++;
 						if (settings.ui.color > 18) {
@@ -862,7 +895,7 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					LoadColor();
 					break;
-				case 2:	// Menu color
+				case 3:	// Menu color
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.menucolor++;
 						if (settings.ui.menucolor > 16) {
@@ -876,17 +909,17 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					LoadMenuColor();
 					break;
-				case 3:	// Show filename
+				case 4:	// Show filename
 					settings.ui.filename = !settings.ui.filename;
 					break;
-				case 4:	// Game counter
+				case 5:	// Game counter
 					settings.ui.counter = !settings.ui.counter;
 					break;
-				case 5:	// Custom bottom image
+				case 6:	// Custom bottom image
 					settings.ui.custombot = !settings.ui.custombot;
 					LoadBottomImage();
 					break;
-				case 6:	// Enable or disable autoupdate
+				case 7:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 2) {
@@ -899,7 +932,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 7:	// Enable or disable autodownload
+				case 8:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
 					break;
 			}
@@ -954,6 +987,8 @@ bool settingsMoveCursor(u32 hDown)
 			titleboxXmovetimer = 1;
 			fadeout = true;
 			sfx = sfx_back;
+			if (settings.ui.theme == 1)
+				sf2d_set_3D(0);
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch_x >= 248 && touch_y >= 220) {
@@ -1171,6 +1206,7 @@ void LoadSettings(void) {
 
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
+	settings.ui.theme = settingsini.GetInt("FRONTEND", "THEME", 0);
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
@@ -1217,6 +1253,7 @@ void LoadSettings(void) {
 void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
+	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
 	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
