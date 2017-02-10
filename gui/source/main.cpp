@@ -2102,6 +2102,11 @@ int main()
 						sf2d_swapbuffers();
 					}
 					if (settings.ui.theme == 1) {
+						/** This is better than a glitched screen */
+						sf2d_start_frame(GFX_TOP, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+						
 						menu_ctrlset = CTRL_SET_MENU;
 						r4menucursorPosition = 2;
 						titleboxXmovepos = 0;
@@ -2835,7 +2840,7 @@ int main()
 						// updatebotscreen = true;
 					} else if(hDown & KEY_DOWN){
 						if (cursorPosition > 7) {
-							filenameYmovepos -= 12;
+							filenameYmovepos -= 15;
 						}
 						cursorPosition++;
 						if (cursorPosition == filenum) {
@@ -2844,6 +2849,9 @@ int main()
 						}
 						// updatebotscreen = true;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
+						if (cursorPosition > 8) {
+							filenameYmovepos += 15;
+						}
 						if (cursorPosition == 0) {
 							cursorPosition = filenum;
 						}
