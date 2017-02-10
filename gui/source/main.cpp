@@ -2115,6 +2115,7 @@ int main()
 						if (cursorPosition < 0)
 							cursorPosition = 0;
 					} else {
+						cursorPosition = 0; // This is to reset cursor position after switching from R4 theme.
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				} else if (gbarunnervalue == 1) {
