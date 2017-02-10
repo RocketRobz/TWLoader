@@ -11,44 +11,44 @@
 
 // Japanese
 static const char *const lang_JP[STR_MAX] = {
-	": HOMEメニューに戻る",	// "Return to HOME Menu"
-	"スタート",			// "START" (used on cartridge indicator)
+	": HOMEメニューに戻る",			// "Return to HOME Menu"
+	"スタート",						// "START" (used on cartridge indicator)
 
 	// Settings
-	"START：更新TWLoader",	// "START: Update TWLoader"
-	"Theme",			// "Theme"
-	"言語",			// "Language"
-	"色",			// "Color"
-	"メニューの色",			// "Menu Color"
-	"表示するファイル名",		// "Show filename"
-	"ゲームのカウンター",			// "Game counter"
+	"START：更新TWLoader",		// "START: Update TWLoader"
+	"テーマ",						// "Theme"
+	"言語",						// "Language"
+	"色",						// "Color"
+	"メニューの色",					// "Menu Color"
+	"表示するファイル名",				// "Show filename"
+	"ゲームのカウンター",				// "Game counter"
 };
 
 // English
 static const char *const lang_EN[STR_MAX] = {
 	": Return to HOME Menu",	// "Return to HOME Menu"
-	"START",			// "START" (used on cartridge indicator)
+	"START",					// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: Update TWLoader",	// "START: Update TWLoader"
-	"Language",			// "Language"
-	"Theme",			// "Theme"
-	"Color",			// "Color"
-	"Menu color",			// "Menu Color"
-	"Show filename",		// "Show filename"
-	"Game counter",			// "Game counter"
+	"Language",					// "Language"
+	"Theme",					// "Theme"
+	"Color",					// "Color"
+	"Menu color",				// "Menu Color"
+	"Show filename",			// "Show filename"
+	"Game counter",				// "Game counter"
 };
 
 // French
 static const char *const lang_FR[STR_MAX] = {
 	": Retour au menu HOME",	// "Return to HOME Menu"
-	"OK",				// "START" (used on cartridge indicator)
+	"OK",						// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: Mettre à jour TWLoader",	// "START: Update TWLoader"
-	"Langue",				// "Language"
-	"Theme",			// "Theme"
-	"Couleur",				// "Color"
+	"Langue",					// "Language"
+	"Thème",					// "Theme"
+	"Couleur",					// "Color"
 	"Couleur du menu",			// "Menu Color"
 	"Afficher le nom du fichier",		// "Show filename"
 	"Compteur de jeux",			// "Game counter"
@@ -57,74 +57,74 @@ static const char *const lang_FR[STR_MAX] = {
 // German
 static const char *const lang_DE[STR_MAX] = {
 	": Zurück zum HOME-Menü",	// "Return to HOME Menu"
-	"START",			// "START" (used on cartridge indicator)
+	"START",					// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: TWLoader aktualisieren",	// "START: Update TWLoader"
-	"Sprache",				// "Language"
-	"Theme",			// "Theme"
-	"Farbe",				// "Color"
+	"Sprache",					// "Language"
+	"Thema",					// "Theme"
+	"Farbe",					// "Color"
 	"Menüfarbe",				// "Menu Color"
-	"Dateiname anzeigen",			// "Show filename"
+	"Dateiname anzeigen",		// "Show filename"
 	"Spielzähler",				// "Game counter"
 };
 
 // Italian
 static const char *const lang_IT[STR_MAX] = {
     ": Ritorna al menu HOME",    // "Return to HOME Menu"
-    "AVVIA",            // "START" (used on cartridge indicator)
+    "AVVIA",            		// "START" (used on cartridge indicator)
 
     // Settings
     "START: Aggiornamento TWLoader",    // "START: Update TWLoader"
-   "Lingua",                // "Language"
-	"Theme",			// "Theme"
-    "Colore",                // "Color"
-    "Colore menu",                // "Menu Color"
-    "Visualizza il nome del file",        // "Show filename"
-    "Contatore giochi",            // "Game counter"
+	"Motivo",               	// "Language"
+	"Theme",					// "Theme"
+    "Colore",                	// "Color"
+    "Colore menu",               // "Menu Color"
+    "Visualizza il nome del file",      // "Show filename"
+    "Contatore giochi",          // "Game counter"
 };
 
 // Spanish
 static const char *const lang_ES[STR_MAX] = {
 	": Volver al menú HOME",	// "Return to HOME Menu"
-	"INICIO",			// "START" (used on cartridge indicator)
+	"INICIO",					// "START" (used on cartridge indicator)
 
 	// Settings
 	"START: Actualizar TWLoader",		// "START: Update TWLoader"
-	"Idioma",				// "Language"
-	"Theme",			// "Theme"
-	"Color",				// "Color"
+	"Idioma",					// "Language"
+	"Tema",						// "Theme"
+	"Color",					// "Color"
 	"Color del menú",			// "Menu Color"
 	"Mostrar nombre del archivo",		// "Show filename"
-	"Contador de juegos",			// "Game counter"
+	"Contador de juegos",		// "Game counter"
 };
 
 // Dutch
 static const char *const lang_NL[STR_MAX] = {
 	": Keer terug naar HOME-menu",	// "Return to HOME Menu"
-	"BEGIN",			// "START" (used on cartridge indicator)
+	"BEGIN",						// "START" (used on cartridge indicator)
 
 	// Settings
-	"START: update TWLoader",	// "START: Update TWLoader"
-	"Taal",				// "Language"
-	"Theme",			// "Theme"
-	"Kleur",			// "Color"
-	"menukleur",			// "Menu Color"
-	"Toon bestandsnaam",		// "Show filename"
-	"Game teller",			// "Game counter"
+	"START: update TWLoader",		// "START: Update TWLoader"
+	"Taal",							// "Language"
+	"Thema",						// "Theme"
+	"Kleur",						// "Color"
+	"menukleur",					// "Menu Color"
+	"Toon bestandsnaam",			// "Show filename"
+	"Game teller",					// "Game counter"
 };
 
 // Portuguese
 static const char *const lang_PT[STR_MAX] = {
-	": Retornar ao Menu HOME",	// "Return to HOME Menu"
-	"COMEÇAR",			// "START" (used on cartridge indicator)
+	": Retornar ao Menu HOME",		// "Return to HOME Menu"
+	"COMEÇAR",						// "START" (used on cartridge indicator)
 
 	// Settings
-	"START: Atualizar o TWLoader",		// "START: Update TWLoader"
-	"Língua",				// "Language"
-	"Theme",			// "Theme"
-	"Cor",					// "Color"
-	"Cor do menu",				// "Menu Color"
+	"START: Atualizar o TWLoader",	// "START: Update TWLoader"
+	"Língua",						// "Language"
+	"Tema",							// "Theme"
+	"Cor",							// "Color"
+	"Cor do menu",					// "Menu Color"
 	"Mostrar nome do arquivo",		// "Show filename"
 	"Contador de jogos",			// "Game counter"
 };
