@@ -841,8 +841,6 @@ bool settingsMoveCursor(u32 hDown)
 			fadeout = true;
 			//bgm_settings->stop();
 			sfx = sfx_back;
-			if (settings.ui.theme == 1)
-				sf2d_set_3D(0);
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch_x <= 72 && touch_y >= 220) {
@@ -987,8 +985,6 @@ bool settingsMoveCursor(u32 hDown)
 			titleboxXmovetimer = 1;
 			fadeout = true;
 			sfx = sfx_back;
-			if (settings.ui.theme == 1)
-				sf2d_set_3D(0);
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch_x >= 248 && touch_y >= 220) {

@@ -1800,6 +1800,7 @@ int main()
 			}
 			
 			if (settings.ui.theme == 1) {
+				sf2d_set_3D(0);
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 				sf2d_draw_texture(topbgtex, 40, 0);
 				sf2d_end_frame();
