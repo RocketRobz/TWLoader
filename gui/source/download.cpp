@@ -41,7 +41,7 @@ extern int screenmode;
 // 0: ROM select
 // 1: Settings
 
-extern char settings_vertext[64];
+extern char settings_vertext[13];
 extern char settings_latestvertext[13];
 
 // Language
@@ -252,7 +252,7 @@ int checkUpdate(void) {
 			isUnknown = true;
 		}
 		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
-		if (logEnabled)	LogFMA("checkUpdate", "Reading ROMFS version:", settings_vertext);
+		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
 
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == 1) {
