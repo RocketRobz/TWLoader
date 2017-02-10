@@ -598,7 +598,7 @@ static void LoadBoxArt(void) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		sf2d_free_texture(boxarttex[idx % 6]);
-		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/boxart_null.png");
+		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
 		boxarttex[idx % 6] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
 	}
 }
@@ -1804,16 +1804,20 @@ int main()
 					if (!settings.romselect.toplayout) {
 						boxartXpos = 136;
 						if (!settings.twl.forwarder && pagenum == 0) {
-							sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+							if (cursorPosition < 2) {
+								sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+								sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+							}
 						}
 						for (boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
-							ChangeBoxArtNo();
-							// Draw box art
-							sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
-							// Draw box art's reflection
-							sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
-							boxartXpos += 144;
+							if (boxartnum < 9+pagenum*20) {
+								ChangeBoxArtNo();
+								// Draw box art
+								sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
+								// Draw box art's reflection
+								sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+								boxartXpos += 144;
+							}
 						}
 						if (applaunchprep) {
 							if (cursorPosition >= 0) {
@@ -1835,8 +1839,10 @@ int main()
 					if (!settings.romselect.toplayout) {
 						boxartXpos = 136;
 						if (!settings.twl.forwarder && pagenum == 0) {
-							sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-							sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+							if (cursorPosition < 2) {
+								sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+								sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+							}
 						} else {
 							int text_width = sftd_get_text_width(font, 12, noromtext1);
 							sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
@@ -2143,6 +2149,12 @@ int main()
 					boxartnum--;
 					LoadBoxArt();
 				}
+				if ( cursorPosition == 6+pagenum*20 ||
+				cursorPosition == 12+pagenum*20 ||
+				cursorPosition == 18+pagenum*20 ) {
+					boxartXmovepos = -144*7;
+					boxartXmovepos += 18*2;
+				}
 			} else {
 				if (!cursorPositionset) {
 					cursorPosition--;
@@ -2208,6 +2220,11 @@ int main()
 					LoadBoxArt();
 					boxartnum++;
 					LoadBoxArt();
+				}
+				if ( cursorPosition == 7+pagenum*20 ||
+				cursorPosition == 13+pagenum*20 ||
+				cursorPosition == 19+pagenum*20 ) {
+					boxartXmovepos = -144;
 				}
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos -= 8;
