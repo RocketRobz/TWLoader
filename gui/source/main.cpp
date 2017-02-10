@@ -2813,12 +2813,9 @@ int main()
 							case 2:
 								if (!is3DSX) {
 									gbarunnervalue = 1;
+									settings.ui.romfolder = "_nds";									
 									rom = "GBARunner2.nds";
-									if (settings.twl.forwarder) {
-										settings.twl.launchslot1 = true;
-									} else {
-										settings.twl.launchslot1 = false;
-									}
+									settings.twl.launchslot1 = false;
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
 								}
@@ -3153,6 +3150,7 @@ int main()
 								startmenu_cursorPosition = 2;
 								if (!is3DSX) {
 									gbarunnervalue = 1;
+									settings.ui.romfolder = "_nds";
 									rom = "GBARunner2.nds";
 									if (settings.twl.forwarder) {
 										settings.twl.launchslot1 = true;
@@ -3261,6 +3259,7 @@ int main()
 								case 2:
 									if (!is3DSX) {
 										gbarunnervalue = 1;
+										settings.ui.romfolder = "_nds";
 										rom = "GBARunner2.nds";
 										if (settings.twl.forwarder) {
 											settings.twl.launchslot1 = true;
