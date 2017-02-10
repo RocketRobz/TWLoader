@@ -635,7 +635,7 @@ static void LoadBootstrapConfig(void)
  */
 static void SaveBootstrapConfig(void)
 {
-	if (applaunchprep || fadeout) {
+	if (applaunchprep || fadeout || settings.ui.theme == 1) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.launchslot1) SetMPUSettings();
 		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
@@ -1020,7 +1020,7 @@ static void scanRomDirectories(void)
 // Cursor position.
 static int cursorPosition = 0;
 static int storedcursorPosition = 0;
-static int r4menucursorPosition = 0;
+static int r4menu_cursorPosition = 0;
 static int startmenu_cursorPosition = 0;
 static int gamesettings_cursorPosition = 0;
 
@@ -2109,7 +2109,6 @@ int main()
 						sf2d_swapbuffers();
 						
 						menu_ctrlset = CTRL_SET_MENU;
-						r4menucursorPosition = 2;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						if (cursorPosition < 0)
@@ -2428,22 +2427,22 @@ int main()
 				if (settings.ui.theme == 1) {
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						sf2d_draw_texture(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
-						if (r4menucursorPosition == 0) {
+						if (r4menu_cursorPosition == 0) {
 							sf2d_draw_rectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
 							static const char selectiontext[] = "Games";
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
-						} else 	if (r4menucursorPosition == 1) {
+						} else 	if (r4menu_cursorPosition == 1) {
 							sf2d_draw_rectangle(114, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 116, 79, 116, 79, 88, 87);
 							static const char selectiontext[] = "Launch Slot-1 card";
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
-						} else 	if (r4menucursorPosition == 2) {
+						} else 	if (r4menu_cursorPosition == 2) {
 							sf2d_draw_rectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
-							static const char selectiontext[] = "Settings";
+							static const char selectiontext[] = "Start GBARunner2";
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
@@ -2801,31 +2800,44 @@ int main()
 			if (settings.ui.theme == 1) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {
-						switch (r4menucursorPosition) {
+						switch (r4menu_cursorPosition) {
 							case 0:
 							default:
 								menu_ctrlset = CTRL_SET_GAMESEL;
 								break;
 							case 1:
 								settings.twl.launchslot1 = true;
+								if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 								applaunchon = true;
 								break;
 							case 2:
-								sf2d_set_3D(1);
-								screenmode = SCREEN_MODE_SETTINGS;
-								settingsResetSubScreenMode();
+								if (!is3DSX) {
+									gbarunnervalue = 1;
+									rom = "GBARunner2.nds";
+									if (settings.twl.forwarder) {
+										settings.twl.launchslot1 = true;
+									} else {
+										settings.twl.launchslot1 = false;
+									}
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
 								break;
 						}
 					} else if (hDown & KEY_RIGHT) {
-						r4menucursorPosition++;
-						if (r4menucursorPosition > 2) {
-							r4menucursorPosition = 2;
+						r4menu_cursorPosition++;
+						if (r4menu_cursorPosition > 2) {
+							r4menu_cursorPosition = 2;
 						}
 					} else if (hDown & KEY_LEFT) {
-						r4menucursorPosition--;
-						if (r4menucursorPosition < 0) {
-							r4menucursorPosition = 0;
+						r4menu_cursorPosition--;
+						if (r4menu_cursorPosition < 0) {
+							r4menu_cursorPosition = 0;
 						}
+					} else if (hDown & KEY_SELECT) {
+						sf2d_set_3D(1);
+						screenmode = SCREEN_MODE_SETTINGS;
+						settingsResetSubScreenMode();
 					}
 				} else {
 					if(cursorPosition < 0) {
@@ -2838,6 +2850,8 @@ int main()
 					if(hDown & KEY_A){
 						settings.twl.launchslot1 = false;
 						rom = files.at(cursorPosition).c_str();
+						sav = ReplaceAll(rom, ".nds", ".sav");
+						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 						// updatebotscreen = true;
 					} else if(hDown & KEY_DOWN){

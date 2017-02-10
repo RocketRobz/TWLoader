@@ -363,8 +363,7 @@ void settingsDrawTopScreen(void)
 					break;
 			}
 		}
-		if (settings.ui.theme == 0)
-			sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
 }

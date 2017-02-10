@@ -16,8 +16,8 @@ static const char *const lang_JP[STR_MAX] = {
 
 	// Settings
 	"START：更新TWLoader",		// "START: Update TWLoader"
-	"テーマ",						// "Theme"
 	"言語",						// "Language"
+	"テーマ",						// "Theme"
 	"色",						// "Color"
 	"メニューの色",					// "Menu Color"
 	"表示するファイル名",				// "Show filename"
