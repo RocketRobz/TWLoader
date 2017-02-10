@@ -1805,7 +1805,7 @@ int main()
 				sf2d_draw_texture(topbgtex, 40, 0);
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					filenameYpos = 15;
-					for(filenum = 0; filenum < files.size(); filenum++){
+					for(filenum = 0; filenum < (int)files.size(); filenum++){
 						if(cursorPosition == filenum) {
 							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
 						} else {
