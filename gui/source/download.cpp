@@ -41,7 +41,7 @@ extern int screenmode;
 // 0: ROM select
 // 1: Settings
 
-extern char settings_vertext[13];
+extern char settings_vertext[64];
 extern char settings_latestvertext[13];
 
 // Language

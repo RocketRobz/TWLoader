@@ -49,7 +49,7 @@ extern bool fadein;
 extern bool fadeout;
 
 extern sf2d_texture *settingslogotex;	// TWLoader logo.
-extern char settings_vertext[13];
+extern char settings_vertext[64];
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 

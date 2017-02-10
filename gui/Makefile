@@ -17,6 +17,16 @@ MAKEROM 	?= makerom
 BANNERTOOL 	?= bannertool
 
 #---------------------------------------------------------------------------------
+# Generate version number
+#---------------------------------------------------------------------------------
+
+VERSION_DIRTY := $(subst v,,$(shell git describe --tags --abbrev=0))
+VERSION_PARTS := $(subst ., ,$(VERSION_DIRTY))
+
+VERSION_MAJOR := $(word 1, $(VERSION_PARTS))
+VERSION_MINOR := $(word 2, $(VERSION_PARTS))
+VERSION_MICRO := $(word 3, $(VERSION_PARTS))
+#---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
 # SOURCES is a list of directories containing source code
@@ -52,7 +62,7 @@ RSF_FILE	:=	app/build-cia.rsf
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations \
+CFLAGS	:=	-g -Wall -O2 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
 		-ffunction-sections \
 		$(ARCH)
 
@@ -182,7 +192,7 @@ $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
 
 	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major 1 -minor 1
+	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
