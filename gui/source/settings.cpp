@@ -302,6 +302,7 @@ void settingsDrawTopScreen(void)
 
 		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
 		
+		snprintf(settings_vertext, 64, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 		std::string version = settings_vertext;		
 		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
 			sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
