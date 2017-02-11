@@ -21,6 +21,6 @@ char *GetDate(int Format);
  * This includes the blinking ':'.
  * @return std::string containing the time.
  */
-std::string RetTime(void);
+std::string RetTime(int donotblink);
 
 #endif // DATE_H

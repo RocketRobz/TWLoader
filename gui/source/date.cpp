@@ -47,7 +47,7 @@ char *GetDate(int Format)
  * This includes the blinking ':'.
  * @return std::string containing the time.
  */
-string RetTime(void)
+string RetTime(int donotblink)
 {
 	time_t Raw;
 	time(&Raw);
@@ -57,7 +57,10 @@ string RetTime(void)
 	// (120 is because two top frames are drawn every 1/60th
 	//  due to 3D.)
 	static int chartimer = 0;
-	chartimer++;
+	if (donotblink == 0)
+		chartimer++;
+	else
+		chartimer = 0;
 	if (chartimer >= 120*2)
 		chartimer = 0;
 

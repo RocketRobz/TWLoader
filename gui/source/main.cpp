@@ -598,6 +598,27 @@ static void LoadBNRIcon(const char *filename) {
 	}
 }
 
+/**
+ * Load a banner icon at the current cursorPosition.
+ * @param filename Banner filename, or NULL for notextbanner.
+ */
+static void LoadBNRIcon_R4Theme(const char *filename) {
+	sf2d_free_texture(bnricontex[0]);
+	bnricontex[0] = NULL;
+
+	if (!filename) {
+		filename = "romfs:/notextbanner";
+	}
+	FILE *f_bnr = fopen(filename, "rb");
+	if (!f_bnr) {
+		filename = "romfs:/notextbanner";
+		f_bnr = fopen(filename, "rb");
+	}
+
+	bnricontex[0] = grabIcon(f_bnr);
+	fclose(f_bnr);
+}
+
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
 	const int idx = boxartnum - (pagenum * 20);
@@ -1632,7 +1653,7 @@ int main()
 
 				bnricontexloaded = true;
 				bnriconnum = 0+pagenum*20;
-			}
+			}			
 			if (!boxarttexloaded) {
 				if (!settings.twl.forwarder) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -1682,7 +1703,7 @@ int main()
 								FILE *f_nds_file = fopen(path, "rb");
 								if (!f_nds_file) {
 									// Can't open the NDS file.
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 									continue;
 								}
 
@@ -1808,14 +1829,38 @@ int main()
 					filenameYpos = 15;
 					for(filenum = 0; filenum < (int)files.size(); filenum++){
 						if(cursorPosition == filenum) {
-							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
+							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
 						} else {
-							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
 						}
 						filenameYpos += 15;
 					}
 					sf2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
 					sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (SD Card)");
+					
+					// const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+					const size_t file_count = files.size();
+					
+					char romsel_counter1[16];
+					char romsel_counter2[16];
+					snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", cursorPosition+1);		
+					// if(matching_files.size() == 0){
+						snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+					// }else{
+					// 	snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+					// }
+					
+					if (settings.ui.counter) {
+						if (file_count < 100) {
+							sftd_draw_text(font, 40+276, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+							sftd_draw_text(font, 40+295, 0, RGBA8(0, 0, 0, 255), 12, "/");
+							sftd_draw_text(font, 40+300, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+						} else {
+							sftd_draw_text(font, 40+276, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
+							sftd_draw_text(font, 40+303, 0, RGBA8(0, 0, 0, 255), 12, "/");
+							sftd_draw_text(font, 40+308, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+						}
+					}
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
@@ -1897,7 +1942,7 @@ int main()
 					}
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime().c_str());
+						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(0).c_str());
 						if(settings.ui.language != -1){
 							switch(settings.ui.language){			
 								case 3: // German
@@ -1947,7 +1992,7 @@ int main()
 							}
 						}
 					} else {
-						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime().c_str());
+						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
 						if(settings.ui.language != -1){
 							switch(settings.ui.language){			
 								case 3: // German
@@ -2434,8 +2479,8 @@ int main()
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						} else 	if (r4menu_cursorPosition == 1) {
-							sf2d_draw_rectangle(114, 77, 92, 91, SET_ALPHA(color_data->color, 255));
-							sf2d_draw_texture_part(iconstex, 116, 79, 116, 79, 88, 87);
+							sf2d_draw_rectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+							sf2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
 							static const char selectiontext[] = "Launch Slot-1 card";
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
@@ -2446,8 +2491,91 @@ int main()
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
+						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(1).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+						if (!bannertextloaded) {
+							char path[256];
+							bnriconnum = cursorPosition;
+							const char *tempfile = files.at(bnriconnum).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+							if (access(path, F_OK) != -1) {
+								LoadBNRIcon_R4Theme(path);
+							} else {
+								LoadBNRIcon_R4Theme(NULL);
+							}
+						}
+						sf2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
+						sf2d_draw_texture(dboxtex_iconbox, 47, 31);
+						sf2d_draw_texture_part(bnricontex[0], 52, 36, bnriconframenum*32, 0, 32, 32);
+						
+						if (!bannertextloaded) {
+							char path[256];
+							/* if (settings.twl.forwarder) {
+								if(matching_files.size() == 0){
+									if (fcfiles.size() != 0) {
+										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									}
+								}else{
+									if (matching_files.size() != 0) {
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									}
+								}
+								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+								} else { */
+								// if(matching_files.size() == 0){
+									if (files.size() != 0) {
+										romsel_filename = files.at(cursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									}
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+								/* }else {
+									if (matching_files.size() != 0) {
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									} else {
+										romsel_filename = " ";
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									}
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+								}	*/		
+
+							if (access(path, F_OK) == -1) {
+								// Banner file is not available.
+								strcpy(path, "romfs:/notextbanner");
+							}
+							FILE *f_bnr = fopen(path, "rb");
+							if (f_bnr) {
+								romsel_gameline = grabText(f_bnr, language);
+								fclose(f_bnr);
+							} else {
+								// Unable to open the banner file.
+								romsel_gameline.clear();
+								romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+								romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+							}
+							bannertextloaded = true;
+						}
+						if (cursorPosition >= 0) {
+							int y = 32, dy = 12;
+							// Print the banner text, center-aligned.
+							const size_t banner_lines = std::min(3U, romsel_gameline.size());
+							for (size_t i = 0; i < banner_lines; i++, y += dy) {
+								const int text_width = sftd_get_wtext_width(font_b, 12, romsel_gameline[i].c_str());
+								sftd_draw_wtext(font_b, 84+(192-text_width)/2, y, RGBA8(0, 0, 0, 255), 12, romsel_gameline[i].c_str());
+							}
+						}
 					}
 				} else {
 					if (settings.ui.custombot == 1)
@@ -2837,6 +2965,12 @@ int main()
 						settingsResetSubScreenMode();
 					}
 				} else {
+					if (filenum > 15) {
+						if (cursorPosition > 7)
+							filenameYmovepos = -cursorPosition+7;
+						else
+							filenameYmovepos = -cursorPosition;
+					}
 					if(cursorPosition < 0) {
 						filenameYmovepos = 0;
 						titleboxXmovepos -= 64;
@@ -2852,24 +2986,24 @@ int main()
 						applaunchon = true;
 						// updatebotscreen = true;
 					} else if(hDown & KEY_DOWN){
-						if (cursorPosition > 7) {
-							filenameYmovepos -= 15;
-						}
 						cursorPosition++;
 						if (cursorPosition == filenum) {
 							filenameYmovepos = 0;
 							cursorPosition = 0;
 						}
-						// updatebotscreen = true;
+						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
-						if (cursorPosition > 8) {
-							filenameYmovepos += 15;
-						}
 						if (cursorPosition == 0) {
 							cursorPosition = filenum;
 						}
 						cursorPosition--;
-						// updatebotscreen = true;
+						bannertextloaded = false;
+					} else if ((hDown & KEY_LEFT) && (filenum > 10)) {
+						cursorPosition -= 10;
+						bannertextloaded = false;			
+					} else if ((hDown & KEY_RIGHT) && (filenum > 10)) {
+						cursorPosition += 10;
+						bannertextloaded = false;			
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
 					}
@@ -3673,18 +3807,22 @@ int main()
 
 	// Unregister the "returned from HOME Menu" handler.
 	aptUnhook(&rfhm_cookie);
+	if (logEnabled) LogFM("Main", "returned from HOME Menu handler unregistered");
 
 	if (saveOnExit) {
 		// Save settings.
 		SaveSettings();
 		SetPerGameSettings();
-		SaveBootstrapConfig();
+		if (settings.ui.theme == 0) SaveBootstrapConfig();
 	}
+	if (logEnabled) LogFM("Main.saveOnExit", "Settings are saved");
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
+	if (logEnabled) LogFM("Main.settingsUnloadTextures", "Settings textures unloaded");
 
-	if (colortexloaded) { sf2d_free_texture(topbgtex); }
+	if (colortexloaded) sf2d_free_texture(topbgtex);
+	if (logEnabled) LogFM("Main", "topbgtex freed");
 	sf2d_free_texture(toptex);
 	for (int i = 0; i < 6; i++) {
 		sf2d_free_texture(voltex[i]);
@@ -3692,35 +3830,45 @@ int main()
 
 	sf2d_free_texture(shoulderLtex);
 	sf2d_free_texture(shoulderRtex);
+	if (logEnabled) LogFM("Main", "Shoulder textures freed");
 
-	sf2d_free_texture(batterychrgtex);
-	for (int i = 0; i < 6; i++) {
-		sf2d_free_texture(batterytex[i]);
+	if (settings.ui.theme == 0) {
+		sf2d_free_texture(batterychrgtex);
+		for (int i = 0; i < 6; i++) {
+			sf2d_free_texture(batterytex[i]);
+		}
+		if (logEnabled) LogFM("Main", "DSi Menu battery textures freed");
 	}
-	if (colortexloaded) { sf2d_free_texture(bottomtex); }
+	if (settings.ui.theme == 1) sf2d_free_texture(iconstex);
+	if (colortexloaded) sf2d_free_texture(bottomtex);
 	sf2d_free_texture(iconnulltex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
 	sf2d_free_texture(settingsboxtex);
+	sf2d_free_texture(getfcgameboxtex);
 	sf2d_free_texture(cartnulltex);
 	sf2d_free_texture(cartntrtex);
 	sf2d_free_texture(carttwltex);
-	gamecardClearCache();
+	if (settings.ui.theme == 0) gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
-	if (colortexloaded) {
+	if (colortexloaded && settings.ui.theme == 0) {
 		sf2d_free_texture(dotcircletex);
 		sf2d_free_texture(startbordertex);
 	}
 
 	// Free the arrays.
-	for (int i = 0; i < 20; i++) {
-		sf2d_free_texture(bnricontex[i]);
-		free(boxartpath[i]);
+	if (bnricontexloaded) {
+		for (int i = 0; i < 20; i++) {
+			sf2d_free_texture(bnricontex[i]);
+			free(boxartpath[i]);
+		}
 	}
-	sf2d_free_texture(slot1boxarttex);
-	for (int i = 0; i < 6; i++) {
-		sf2d_free_texture(boxarttex[i]);
+	if (boxarttexloaded) {
+		sf2d_free_texture(slot1boxarttex);
+		for (int i = 0; i < 6; i++) {
+			sf2d_free_texture(boxarttex[i]);
+		}
 	}
 
 	// Remaining common textures.
@@ -3748,6 +3896,7 @@ int main()
 
 	sftd_free_font(font);
 	sftd_free_font(font_b);
+	if (logEnabled) LogFM("Main", "Fonts freed");
 	sftd_fini();
 	sf2d_fini();
 
@@ -3761,5 +3910,6 @@ int main()
 	amExit();
 	cfguExit();
 	aptExit();
+	if (logEnabled) LogFM("Main", "All services are closed and returned to HOME Menu");
 	return 0;
 }
