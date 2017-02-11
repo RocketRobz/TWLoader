@@ -425,9 +425,9 @@ void settingsDrawBottomScreen(void)
 
 		// Theme text.
 		static const char *const theme_text[] = {
-			"DSi Menu", "R4"
+			"DSi Menu", "R4", "Wood"
 		};
-		if (settings.ui.theme < 0 || settings.ui.theme > 1)
+		if (settings.ui.theme < 0 || settings.ui.theme > 2)
 			settings.ui.theme = 0;
 		const char *const themevaluetext = theme_text[settings.ui.theme];
 
@@ -868,13 +868,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 1:	// Theme
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.theme++;
-						if (settings.ui.theme > 1) {
+						if (settings.ui.theme > 2) {
 							settings.ui.theme = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.ui.theme--;
 						if (settings.ui.theme < 0) {
-							settings.ui.theme = 1;
+							settings.ui.theme = 2;
 						}
 					}
 					break;

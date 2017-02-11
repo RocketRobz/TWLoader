@@ -1521,7 +1521,7 @@ int main()
 	
 	if (settings.ui.theme == 1)
 		menu_ctrlset = CTRL_SET_MENU;
-	else
+	else if (settings.ui.theme == 0)
 		sf2d_set_3D(1);
 
 	// Register a handler for "returned from HOME Menu".
@@ -1584,7 +1584,9 @@ int main()
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
-				if (settings.ui.theme == 1)
+				if (settings.ui.theme == 2)
+					topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/upper_screen.png", SF2D_PLACE_RAM); // Top background
+				else if (settings.ui.theme == 1)
 					topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
 				else
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
@@ -1826,7 +1828,15 @@ int main()
 				loadSlot1BoxArt();
 			}
 			
-			if (settings.ui.theme == 1) {
+			if (settings.ui.theme == 2) {
+				sf2d_set_3D(0);
+				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
+				sf2d_draw_texture(topbgtex, 40, 0);	
+				sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 199), 22, RetTime(1).c_str());
+				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+				sf2d_end_frame();
+			} else if (settings.ui.theme == 1) {
 				sf2d_set_3D(0);
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 				sf2d_draw_texture(topbgtex, 40, 0);
@@ -2165,7 +2175,18 @@ int main()
 						sf2d_end_frame();
 						sf2d_swapbuffers();
 					}
-					if (settings.ui.theme == 1) {
+					if (settings.ui.theme == 2) {
+						/** This is better than a glitched screen */
+						sf2d_start_frame(GFX_TOP, GFX_LEFT);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+						
+						menu_ctrlset = CTRL_SET_GAMESEL;
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						if (cursorPosition < 0)
+							cursorPosition = 0;
+					} else if (settings.ui.theme == 1) {
 						/** This is better than a glitched screen */
 						sf2d_start_frame(GFX_TOP, GFX_LEFT);
 						sf2d_end_frame();
@@ -2391,7 +2412,9 @@ int main()
 					settingsUnloadTextures();
 					dotcircletex = sfil_load_PNG_file(color_data->dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 					startbordertex = sfil_load_PNG_file(color_data->startborderloc, SF2D_PLACE_RAM); // "START" border
-					if (settings.ui.theme == 1) {
+					if (settings.ui.theme == 2) {
+						bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+					} else if (settings.ui.theme == 1) {
 						iconstex = sfil_load_PNG_file("romfs:/graphics/r4/icons.png", SF2D_PLACE_RAM); // Bottom of menu
 						bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 					} else {
@@ -2401,7 +2424,23 @@ int main()
 				}
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				
-				if (settings.ui.theme == 1) {
+				if (settings.ui.theme == 2) {
+					sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+					if (menu_ctrlset == CTRL_SET_MENU) {
+					} else {
+						int Ypos = 26;
+						for (filenum = pagenum*20; filenum < pagemax; filenum++) {
+							bnriconnum = filenum;
+							ChangeBNRIconNo();
+							if (cursorPosition == filenum)
+								sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_texture_part(bnricontexnum, 8+filenameYmovepos*39, Ypos, bnriconframenum*32, 0, 32, 32);
+							Ypos += 39;
+						}
+						sf2d_draw_texture_part(bottomtex, 0, 0, 0, 0, 320, 24);
+						sf2d_draw_texture_part(bottomtex, 0, 217, 0, 217, 320, 23);
+					}
+				} else if (settings.ui.theme == 1) {
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						sf2d_draw_texture(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
 						if (r4menu_cursorPosition == 0) {
@@ -2862,7 +2901,58 @@ int main()
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
-			if (settings.ui.theme == 1) {
+			if (settings.ui.theme == 2) {
+				if (menu_ctrlset == CTRL_SET_MENU) {
+					if (hDown & KEY_SELECT) {
+						sf2d_set_3D(1);
+						screenmode = SCREEN_MODE_SETTINGS;
+						settingsResetSubScreenMode();
+					}
+				} else {
+					if(cursorPosition < 0) {
+						filenameYmovepos = 0;
+						titleboxXmovepos -= 64;
+						boxartXmovepos -= 18*8;
+						cursorPosition = 0;
+						// updatebotscreen = true;
+					}
+					if(hDown & KEY_A){
+						if (settings.twl.forwarder) {
+							settings.twl.launchslot1 = true;
+							// if(matching_files.size() == 0){
+								rom = fcfiles.at(cursorPosition).c_str();
+							// }else {
+						// 	rom = matching_files.at(cursorPosition).c_str();
+						// }
+						} else {
+							settings.twl.launchslot1 = false;
+							// if(matching_files.size() == 0){
+								rom = files.at(cursorPosition).c_str();
+							// }else {
+							// 	rom = matching_files.at(cursorPosition).c_str();
+							// }
+							sav = ReplaceAll(rom, ".nds", ".sav");
+						}
+						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+						applaunchon = true;
+						// updatebotscreen = true;
+					} else if(hDown & KEY_DOWN){
+						cursorPosition++;
+						if (cursorPosition > filenum) {
+							cursorPosition = filenum;
+						}
+						bannertextloaded = false;
+					} else if((hDown & KEY_UP) && (filenum > 1)){
+						if (cursorPosition < 0) {
+							cursorPosition = 0;
+						}
+						cursorPosition--;
+						bannertextloaded = false;
+					} else if (hDown & KEY_B) {
+						menu_ctrlset = CTRL_SET_MENU;
+					}
+				}
+			} else if (settings.ui.theme == 1) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {
 						switch (r4menu_cursorPosition) {
