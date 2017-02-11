@@ -1827,19 +1827,32 @@ int main()
 				sf2d_draw_texture(topbgtex, 40, 0);
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					filenameYpos = 15;
-					for(filenum = 0; filenum < (int)files.size(); filenum++){
-						if(cursorPosition == filenum) {
-							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
-						} else {
-							sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+					if (settings.twl.forwarder) {
+						for(filenum = 0; filenum < (int)fcfiles.size(); filenum++){
+							if(cursorPosition == filenum) {
+								sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, fcfiles.at(filenum).c_str());
+							} else {
+								sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
+							}
+							filenameYpos += 15;
 						}
-						filenameYpos += 15;
+					} else {
+						for(filenum = 0; filenum < (int)files.size(); filenum++){
+							if(cursorPosition == filenum) {
+								sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
+							} else {
+								sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+							}
+							filenameYpos += 15;
+						}
 					}
 					sf2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
-					sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (SD Card)");
+					if (settings.twl.forwarder)
+						sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (Flashcard)");
+					else
+						sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (SD Card)");
 					
-					// const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-					const size_t file_count = files.size();
+					const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
 					
 					char romsel_counter1[16];
 					char romsel_counter2[16];
@@ -2160,43 +2173,22 @@ int main()
 							cursorPosition = 0;
 					} else {
 						cursorPosition = 0; // This is to reset cursor position after switching from R4 theme.
+						char path[256];
+						if (settings.twl.forwarder) {
+							const char *tempfile = fcfiles.at(0).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
+						} else {
+							const char *tempfile = files.at(0).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+						}
+						if (access(path, F_OK) != -1) {
+							LoadBNRIcon_R4Theme(path);
+						} else {
+							LoadBNRIcon_R4Theme(NULL);
+						}
+
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
-				} else if (gbarunnervalue == 1) {
-					// run = false;
-					if (settings.twl.forwarder) {
-						switch (settings.twl.flashcard) {
-							case 0:
-							case 1:
-							case 3:
-							default: {
-								CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
-								fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
-								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-								fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
-								break;
-							}
-
-							case 2:
-							case 4:
-							case 5: {
-								CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
-								fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
-								fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
-								break;
-							}
-
-							case 6: {
-								CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
-								fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
-								fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
-								break;
-							}
-						}
-					}
-					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
-					applaunchon = true;
 				}
 			}
 		}
@@ -2378,71 +2370,6 @@ int main()
 					screenmodeswitch = false;
 					applaunchprep = false;
 				} else {
-					if (settings.twl.forwarder) {
-						CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+slashchar+rom);
-						std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
-						// TODO: Enum values for flash card type.
-						if (keepsdvalue) {
-							switch (settings.twl.flashcard) {
-								case 0:
-								case 1:
-								case 3:
-								default: {
-									CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
-									fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
-									fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
-									break;
-								}
-
-								case 2:
-								case 4:
-								case 5: {
-									CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
-									fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
-									fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
-									break;
-								}
-
-								case 6: {
-									CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
-									fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
-									fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
-									break;
-								}
-							}
-						} else {
-							CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+rom);
-							switch (settings.twl.flashcard) {
-								case 0:
-								case 1:
-								case 3:
-								default: {
-									CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
-									fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
-									fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-									fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-									fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
-									break;
-								}
-
-								case 2:
-								case 4:
-								case 5: {
-									CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
-									fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
-									fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
-									break;
-								}
-
-								case 6: {
-									CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
-									fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
-									fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
-									break;
-								}
-							}
-						}
-					}
 					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
 					applaunchon = true;
 				}
@@ -2497,8 +2424,13 @@ int main()
 						if (!bannertextloaded) {
 							char path[256];
 							bnriconnum = cursorPosition;
-							const char *tempfile = files.at(bnriconnum).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+							if (settings.twl.forwarder) {
+								const char *tempfile = fcfiles.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
+							} else {
+								const char *tempfile = files.at(bnriconnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+							}
 							if (access(path, F_OK) != -1) {
 								LoadBNRIcon_R4Theme(path);
 							} else {
@@ -2511,16 +2443,16 @@ int main()
 						
 						if (!bannertextloaded) {
 							char path[256];
-							/* if (settings.twl.forwarder) {
-								if(matching_files.size() == 0){
+							if (settings.twl.forwarder) {
+								// if(matching_files.size() == 0){
 									if (fcfiles.size() != 0) {
-										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+										romsel_filename = fcfiles.at(cursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-								}else{
+								/* }else{
 									if (matching_files.size() != 0) {
 										romsel_filename = matching_files.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
@@ -2528,9 +2460,9 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-								}
-								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
-								} else { */
+								} */
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+								} else {
 								// if(matching_files.size() == 0){
 									if (files.size() != 0) {
 										romsel_filename = files.at(cursorPosition).c_str();
@@ -2548,8 +2480,8 @@ int main()
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
-								}	*/		
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename); */
+								}
 
 							if (access(path, F_OK) == -1) {
 								// Banner file is not available.
@@ -2943,7 +2875,10 @@ int main()
 									gbarunnervalue = 1;
 									settings.ui.romfolder = "_nds";									
 									rom = "GBARunner2.nds";
-									settings.twl.launchslot1 = false;
+									if (settings.twl.forwarder)
+										settings.twl.launchslot1 = true;
+									else
+										settings.twl.launchslot1 = false;
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
 								}
@@ -2965,12 +2900,6 @@ int main()
 						settingsResetSubScreenMode();
 					}
 				} else {
-					if (filenum > 15) {
-						if (cursorPosition > 7)
-							filenameYmovepos = -cursorPosition+7;
-						else
-							filenameYmovepos = -cursorPosition;
-					}
 					if(cursorPosition < 0) {
 						filenameYmovepos = 0;
 						titleboxXmovepos -= 64;
@@ -2978,10 +2907,27 @@ int main()
 						cursorPosition = 0;
 						// updatebotscreen = true;
 					}
+					if(hDown & KEY_L) {
+						settings.twl.forwarder = !settings.twl.forwarder;
+						bannertextloaded = false;
+					}
 					if(hDown & KEY_A){
-						settings.twl.launchslot1 = false;
-						rom = files.at(cursorPosition).c_str();
-						sav = ReplaceAll(rom, ".nds", ".sav");
+						if (settings.twl.forwarder) {
+							settings.twl.launchslot1 = true;
+							// if(matching_files.size() == 0){
+								rom = fcfiles.at(cursorPosition).c_str();
+							// }else {
+						// 	rom = matching_files.at(cursorPosition).c_str();
+						// }
+						} else {
+							settings.twl.launchslot1 = false;
+							// if(matching_files.size() == 0){
+								rom = files.at(cursorPosition).c_str();
+							// }else {
+							// 	rom = matching_files.at(cursorPosition).c_str();
+							// }
+							sav = ReplaceAll(rom, ".nds", ".sav");
+						}
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 						// updatebotscreen = true;
@@ -3006,6 +2952,13 @@ int main()
 						bannertextloaded = false;			
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
+					}
+					if (filenum > 15) {
+						if (cursorPosition > filenum-8) {}
+						else if (cursorPosition > 7)
+							filenameYmovepos = -cursorPosition+7;
+						else
+							filenameYmovepos = 0;
 					}
 				}
 			} else {
@@ -3722,6 +3675,104 @@ int main()
 		}
 		
 		if (applaunchon) {
+			if (settings.twl.forwarder && gbarunnervalue == 0) {
+				CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+slashchar+rom);
+				std::string rominini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_rompath, "");
+				// TODO: Enum values for flash card type.
+				if (keepsdvalue) {
+					switch (settings.twl.flashcard) {
+						case 0:
+						case 1:
+						case 3:
+						default: {
+							CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
+							break;
+						}
+
+						case 2:
+						case 4:
+						case 5: {
+							CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
+							fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
+							break;
+						}
+
+						case 6: {
+							CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
+							fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
+							break;
+						}
+					}
+				} else {
+					CIniFile setfcrompathini(sdmc+settings.ui.fcromfolder+rom);
+					switch (settings.twl.flashcard) {
+						case 0:
+						case 1:
+						case 3:
+						default: {
+							CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rominini);
+							fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+							fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+							fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
+							break;
+						}
+
+						case 2:
+						case 4:
+						case 5: {
+							CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rominini);
+							fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
+							break;
+						}
+
+						case 6: {
+							CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rominini);
+							fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
+							break;
+						}
+					}
+				}
+			} else if (settings.twl.forwarder && gbarunnervalue == 1) {
+				if (settings.twl.forwarder) {
+					switch (settings.twl.flashcard) {
+						case 0:
+						case 1:
+						case 3:
+						default: {
+							CIniFile fcrompathini("sdmc:/_nds/YSMenu.ini");
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", slashchar+rom);
+							fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+							fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+							fcrompathini.SaveIniFile("sdmc:/_nds/YSMenu.ini");
+							break;
+						}
+
+						case 2:
+						case 4:
+						case 5: {
+							CIniFile fcrompathini("sdmc:/_nds/lastsave.ini");
+							fcrompathini.SetString("Save Info", "lastLoaded", woodfat+rom);
+							fcrompathini.SaveIniFile("sdmc:/_nds/lastsave.ini");
+							break;
+						}
+
+						case 6: {
+							CIniFile fcrompathini("sdmc:/_nds/dstwoautoboot.ini");
+							fcrompathini.SetString("Dir Info", "fullName", dstwofat+rom);
+							fcrompathini.SaveIniFile("sdmc:/_nds/dstwoautoboot.ini");
+							break;
+						}
+					}
+				}
+			}
+
 			// Save settings.
 			saveOnExit = false;
 			SaveSettings();
