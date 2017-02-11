@@ -106,7 +106,8 @@ static sf2d_texture *boxarttexnum = NULL;
 // Banners and boxart. (formerly bannerandboxart.h)
 // bnricontex[]: 0-19
 static sf2d_texture *bnricontex[20] = { };
-static char* boxartpath[20] = { };
+// boxartpath[]: 0-19; 20 is for blank boxart only
+static char* boxartpath[21] = { };
 static sf2d_texture *boxarttex[6] = { };
 
 int bnriconnum = 0;
@@ -569,6 +570,9 @@ static void StoreBoxArtPath(const char *path) {
 		// Selected boxart is on the current page.
 		free(boxartpath[idx]);
 		boxartpath[idx] = strdup(path);
+	} else {
+		free(boxartpath[20]);
+		boxartpath[20] = strdup("romfs:/graphics/blank_128x115.png");
 	}
 }
 
@@ -622,7 +626,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
 	const int idx = boxartnum - (pagenum * 20);
-	if (idx >= 0 && idx < 20) {
+	if (idx >= 0 && idx < 21) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		sf2d_free_texture(boxarttex[idx % 6]);
@@ -1162,7 +1166,7 @@ static void drawMenuDialogBox(void)
 			{ 23,  31, &settings.twl.forwarder, "Game location:", {"SD Card", "Flashcard"}},
 			{161,  31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
 			{ 23,  71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
-			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top Border: On"}},
+			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top border: On"}},
 			{ 23, 111, NULL, "Unset donor ROM", {NULL, NULL}},
 			{161, 111, NULL, "Search", {NULL, NULL}},
 		};
@@ -1576,6 +1580,7 @@ int main()
 			file_count = matching_files.size();
 		}
 		const int pagemax = std::min((20+pagenum*20), (int)file_count);
+		const int pagemax_ba = std::min((21+pagenum*20), (int)file_count);
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -1662,7 +1667,7 @@ int main()
 					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
-						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						for(boxartnum = pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
 							if (boxartnum < (int)files.size()) {
 								const char *tempfile = files.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
@@ -1696,7 +1701,7 @@ int main()
 							}
 						}
 					}else{
-						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						for(boxartnum = pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
 							if (boxartnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
@@ -2909,6 +2914,8 @@ int main()
 					}
 					if(hDown & KEY_L) {
 						settings.twl.forwarder = !settings.twl.forwarder;
+						filenameYmovepos = 0;
+						cursorPosition = 0;
 						bannertextloaded = false;
 					}
 					if(hDown & KEY_A){
