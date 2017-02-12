@@ -8,7 +8,7 @@
 static const char *const lang_FR[STR_MAX] = {
      
 /** GUI **/
-    ": Retourner to HOME Menu",                                    // "Return to HOME Menu"
+    ": Retourner vers HOME Menu",                                    // "Return to HOME Menu"
     "START",                                                    // "START" (used on cartridge indicator)
     "Pas de cartouche",                                             // "No cartridge"
     "Paramètres",                                                 // "Settings"
