@@ -21,8 +21,8 @@ static const char *const lang_IT[STR_MAX] = {
     "Colore del menu",                                         // "Menu Color"
     "Visualizza il nome dei file",                                 // "Show filename"
     "Contatore giochi",                                           // "Game counter"
-    "Sfonfo inferiore personalizzato",                       // "Custom bottom image"
-    "Aaggiorna automaticamente bootstrap",                               // "Auto-update bootstrap"
+    "Sfondo inferiore personalizzato",                       // "Custom bottom image"
+    "Aggiorna automaticamente bootstrap",                               // "Auto-update bootstrap"
     "Aggiorna automaticamente TWLoader",                           // "Auto-update to latest TWLoader"
 	
     /** Settings: NTR/TWL_mode **/
@@ -30,7 +30,7 @@ static const char *const lang_IT[STR_MAX] = {
     "LED arcobaleno",                                           // "Rainbow LED"
     "Velocità CPU ARM9",                                       // "ARM9 CPU Speed"
     "VRAM boost",                                               // "VRAM boost"
-    "Schermata di avvioi DS/DSi",                                       // "DS/DSi Boot Screen"
+    "Schermata di avvio DS/DSi",                                       // "DS/DSi Boot Screen"
     "Messaggio Salute e Sicurezza",                               // "Health and Safety message"
     "Resetta lo Slot-1",                                       // "Reset Slot-1"
     "Console output",                                           // "Console output"
@@ -93,8 +93,8 @@ static const char *const lang_IT[STR_MAX] = {
     "per avviare le ROM.",                                       // "run ROMs from it."
     "Mosta luci arcobaleno sul",                               // "See rainbow colors glowing in"
     "LED di notifica.",                                           // "the Notification LED."
-    "Impostastione affichè TWL elimini",                       // "Set to TWL to get rid of lags in some games."
-    "il lag su alcuni giochi.",                                 // (empty)
+    "Imposta su TWL per eliminare",                       // "Set to TWL to get rid of lags in some games."
+    "il lag in alcuni giochi.",                                 // (empty)
      
     "Abilita la scrittura della VRAM a 8 bit",                   // "Allows 8 bit VRAM writes"
     "ed espande il bus a 32 bit.",                               // "and expands the bus to 32 bit."
@@ -143,7 +143,7 @@ static const char *const lang_IT[STR_MAX] = {
     "Non esistono sotto-temi per questo tema.",                   // "No sub-themes exist for this theme."
 	
     /** Settings others minor strings **/
-    "A/B: Salva a torna a precedente",                           // "A/B: Save and Return"
+    "A/B: Salva e torna a precedente",                           // "A/B: Save and Return"
     "Left/Right: Seleziona",                                   // "Left/Right: Pick"
     "Impostazioni: GUI",                                            // "Settings: GUI"
     "Impostazioni: NTR/TWL-mode",                                   // "Settings: NTR/TWL-mode"
