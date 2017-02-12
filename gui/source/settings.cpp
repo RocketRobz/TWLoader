@@ -88,6 +88,7 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_FRONTEND = 0,	// Frontend settings
 	SUBSCREEN_MODE_NTR_TWL = 1,	// NTR/TWL-mode settings
 	SUBSCREEN_MODE_FLASH_CARD = 2,	// Flash card options
+	SUBSCREEN_MODE_SUB_THEME = 3,	// Sub-theme select
 };
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
@@ -118,6 +119,7 @@ Settings_t settings;
 static const char settings_xbuttontext[] = "X: Update bootstrap (Official Release)";
 static const char settings_ybuttontext[] = "Y: Update bootstrap (Unofficial build)";
 
+static const char settings_subthemetext[] = "Sub-theme select";
 static const char settings_custombottext[] = "Custom bottom image";
 static const char settings_autoupdatetext[] = "Auto-update bootstrap";
 static const char settings_autodltext[] = "Auto-update to latest TWLoader";
@@ -491,6 +493,7 @@ void settingsDrawBottomScreen(void)
 			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_THEME));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, themevaluetext);
 			sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "The theme to use in TWLoader.");
+			sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "Press A for sub-themes.");
 			Ypos += 12;
 		} else {
 			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_THEME));
@@ -737,6 +740,74 @@ void settingsDrawBottomScreen(void)
 		}
 		sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, settings_lrpicktext);
 		sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, settings_absavereturn);
+	} else if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
+		if (settings.ui.theme == 0) {
+			title = "Sub-theme select: DSi Menu";
+			sftd_draw_text(font, Xpos, 40, SET_ALPHA(color_data->color, 255), 12, "No sub-themes exist for this theme.");
+		} else if (settings.ui.theme == 1) {
+			title = "Sub-theme select: R4";
+			int Ypos = 40;
+			if (settings.ui.subtheme == 0) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme01");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme01");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 1) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme02");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme02");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 2) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme03");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme03");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 3) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme04");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme04");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 4) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme05");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme05");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 5) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme06");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme06");
+				Ypos += 12;
+			}
+		} else if (settings.ui.theme == 2) {
+			title = "Sub-theme select: Wood";
+			int Ypos = 40;
+			if (settings.ui.subtheme == 0) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "GBATemp");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "GBATemp");
+				Ypos += 12;
+			}
+			if (settings.ui.subtheme == 1) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "Acekard black");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "Acekard black");
+				Ypos += 12;
+			}
+		}
+		sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, settings_absavereturn);
 	}
 	sftd_draw_text(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
 }
@@ -763,7 +834,31 @@ bool settingsMoveCursor(u32 hDown)
 	// Sound effect to play.
 	sound *sfx = NULL;
 
-	if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
+	if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
+		if (hDown & KEY_UP) {
+			settings.ui.subtheme--;
+			sfx = sfx_select;
+		} else if (hDown & KEY_DOWN) {
+			settings.ui.subtheme++;
+			sfx = sfx_select;
+		} else if (hDown & (KEY_A | KEY_B)) {
+			subscreenmode = SUBSCREEN_MODE_FRONTEND;
+			sfx = sfx_select;
+		}
+		if (settings.ui.theme == 0) {
+			settings.ui.subtheme = 0;
+		} else if (settings.ui.theme == 1) {
+			if (settings.ui.subtheme < 0)
+				settings.ui.subtheme = 5;
+			else if (settings.ui.subtheme > 5)
+				settings.ui.subtheme = 0;
+		} else if (settings.ui.theme == 2) {
+			if (settings.ui.subtheme < 0)
+				settings.ui.subtheme = 1;
+			else if (settings.ui.subtheme > 1)
+				settings.ui.subtheme = 0;
+		}
+	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		if (hDown & KEY_LEFT && settings.twl.flashcard > 0) {
 			settings.twl.flashcard--; // Flashcard
 			sfx = sfx_select;
@@ -866,17 +961,20 @@ bool settingsMoveCursor(u32 hDown)
 					langInit();
 					break;
 				case 1:	// Theme
-					if (hDown & (KEY_A | KEY_RIGHT)) {
+					if (hDown & (KEY_RIGHT)) {
+						settings.ui.subtheme = 0;
 						settings.ui.theme++;
 						if (settings.ui.theme > 2) {
 							settings.ui.theme = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
+						settings.ui.subtheme = 0;
 						settings.ui.theme--;
 						if (settings.ui.theme < 0) {
 							settings.ui.theme = 2;
 						}
-					}
+					} else if (hDown & KEY_A)
+						subscreenmode = SUBSCREEN_MODE_SUB_THEME;
 					break;
 				case 2:	// Color
 					if (hDown & (KEY_A | KEY_RIGHT)) {
@@ -1202,6 +1300,7 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
 	settings.ui.theme = settingsini.GetInt("FRONTEND", "THEME", 0);
+	settings.ui.subtheme = settingsini.GetInt("FRONTEND", "SUB_THEME", 0);
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
@@ -1249,6 +1348,7 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
+	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
 	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
 	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);

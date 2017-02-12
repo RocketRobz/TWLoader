@@ -48,6 +48,7 @@ typedef struct _Settings_t {
     
 		int language;	// Language. (0-11; other for system)
 		int theme;
+		int subtheme;
 		int color;
 		int menucolor;
 		bool filename;

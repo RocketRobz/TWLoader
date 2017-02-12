@@ -1345,6 +1345,7 @@ int main()
 	dboxtex_button = sfil_load_PNG_file("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
 	dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
 
+	sf2d_texture *toplogotex = NULL;		// Top of R4 menu
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
 
@@ -1585,11 +1586,45 @@ int main()
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
-				if (settings.ui.theme == 2)
-					topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/upper_screen.png", SF2D_PLACE_RAM); // Top background
-				else if (settings.ui.theme == 1)
-					topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
-				else
+				if (settings.ui.theme == 2) {
+					switch (settings.ui.subtheme) {
+						case 0:
+						default:
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/upper_screen.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 1:
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/black/upper_screen.png", SF2D_PLACE_RAM); // Top background
+							break;
+					}
+				} else if (settings.ui.theme == 1) {
+					switch (settings.ui.subtheme) {
+						case 0:
+						default:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 1:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 2:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 3:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 4:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 5:
+							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/logo.png", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+					}
+				} else
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
 				settingsUnloadTextures();
 				colortexloaded = true;
@@ -1841,15 +1876,23 @@ int main()
 						sf2d_draw_texture(boxarttexnum, 40+14, 62);
 					}
 				}
-				sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(1).c_str());
+				switch (settings.ui.subtheme) {
+					case 0:
+					default:
+						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(1).c_str());
+						break;
+					case 1:
+						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 32, RetTime(1).c_str());
+						break;
+				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 				sf2d_end_frame();
 			} else if (settings.ui.theme == 1) {
 				sf2d_set_3D(0);
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
-				sf2d_draw_texture(topbgtex, 40, 0);
 				if (menu_ctrlset != CTRL_SET_MENU) {
+					sf2d_draw_texture(topbgtex, 40, 0);
 					filenameYpos = 15;
 					if (settings.twl.forwarder) {
 						for(filenum = 0; filenum < (int)fcfiles.size(); filenum++){
@@ -1898,6 +1941,8 @@ int main()
 							sftd_draw_text(font, 40+308, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 						}
 					}
+				} else {
+					sf2d_draw_texture(toplogotex, 40, 0);
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
@@ -2190,9 +2235,10 @@ int main()
 						sf2d_end_frame();
 						sf2d_swapbuffers();
 						
+						menu_ctrlset = CTRL_SET_MENU;
+						woodmenu_cursorPosition = 4;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
-						woodmenu_cursorPosition = 4;
 						char path[256];
 						if (cursorPosition < 0)
 							cursorPosition = 0;
@@ -2436,10 +2482,43 @@ int main()
 					dotcircletex = sfil_load_PNG_file(color_data->dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 					startbordertex = sfil_load_PNG_file(color_data->startborderloc, SF2D_PLACE_RAM); // "START" border
 					if (settings.ui.theme == 2) {
-						bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+						switch (settings.ui.subtheme) {
+							case 0:
+							default:
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+								break;
+							case 1:
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/black/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+								break;
+						}
 					} else if (settings.ui.theme == 1) {
-						iconstex = sfil_load_PNG_file("romfs:/graphics/r4/icons.png", SF2D_PLACE_RAM); // Bottom of menu
-						bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+						switch (settings.ui.subtheme) {
+							case 0:
+							default:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 1:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 2:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 3:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 4:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 5:
+								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+						}
 					} else {
 						bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
 					}
