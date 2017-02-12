@@ -1096,18 +1096,18 @@ static void drawMenuDialogBox(void)
 			sftd_draw_text(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
 			sftd_draw_text(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 		}
-
+		
 		const struct {
 			int x;
 			int y;
 			const s8 *value;
 			const wchar_t *title;
-			const char *value_desc[2];	// 0 == off, 1 == on
+			const wchar_t *value_desc[2];	// 0 == off, 1 == on
 		} buttons[] = {
-			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {"67 MHz (NTR)", "133 MHz (TWL)"}},
-			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {"Off", "On"}},
-			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {"Off", "On"}},
-			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {"", ""}},
+			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
+			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
+			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {L"Off", L"On"}},
+			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {L"", L""}},
 			{23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
 		};
 		
@@ -1129,10 +1129,10 @@ static void drawMenuDialogBox(void)
 						value_desc = TR(STR_START_DEFAULT);
 						break;
 					case 0:
-						value_desc = (const wchar_t*)buttons[i].value_desc[0];
+						value_desc = buttons[i].value_desc[0];
 						break;
 					case 1:
-						value_desc = (const wchar_t*)buttons[i].value_desc[1];
+						value_desc = buttons[i].value_desc[1];
 						break;
 				}
 			}
