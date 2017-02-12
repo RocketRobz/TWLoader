@@ -1058,7 +1058,7 @@ static void drawMenuDialogBox(void)
 	sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	sftd_draw_text(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, "B: Back");
+	sftd_draw_wtext(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, TR(STR_BACK));
 	if (menudboxmode == DBOX_MODE_SETTINGS) {
 		bnriconnum = cursorPosition;
 		ChangeBNRIconNo();
@@ -1097,18 +1097,18 @@ static void drawMenuDialogBox(void)
 			sftd_draw_text(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
 		}
 
-		static const struct {
+		const struct {
 			int x;
 			int y;
 			const s8 *value;
-			const char *title;
+			const wchar_t *title;
 			const char *value_desc[2];	// 0 == off, 1 == on
 		} buttons[] = {
-			{ 23,  89, &settings.pergame.cpuspeed, "ARM9 CPU Speed:", {"67 MHz (NTR)", "133 MHz (TWL)"}},
-			{161,  89, &settings.pergame.extvram, "VRAM boost:", {"Off", "On"}},
-			{ 23, 129, &settings.pergame.lockarm9scfgext, "Lock ARM9 SCFG_EXT:", {"Off", "On"}},
-			{161, 129, &settings.pergame.donor, "Set as donor ROM", {" ", " "}},
-			{23, 169, NULL, "Set LED color", {NULL, NULL}},
+			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {"67 MHz (NTR)", "133 MHz (TWL)"}},
+			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {"Off", "On"}},
+			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {"Off", "On"}},
+			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {"", ""}},
+			{23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1120,19 +1120,19 @@ static void drawMenuDialogBox(void)
 				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
 			}
 
-			const char *title = buttons[i].title;
-			const char *value_desc = "Default";
+			const wchar_t *title = buttons[i].title;
+			const wchar_t *value_desc = TR(STR_START_DEFAULT);
 			if(i != 4){
 				switch (*(buttons[i].value)) {
 					case -1:
 					default:
-						value_desc = "Default";
+						value_desc = TR(STR_START_DEFAULT);
 						break;
 					case 0:
-						value_desc = buttons[i].value_desc[0];
+						value_desc = (const wchar_t*)buttons[i].value_desc[0];
 						break;
 					case 1:
-						value_desc = buttons[i].value_desc[1];
+						value_desc = (const wchar_t*)buttons[i].value_desc[1];
 						break;
 				}
 			}
@@ -1143,33 +1143,33 @@ static void drawMenuDialogBox(void)
 
 			// Draw the title.
 			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
-			int w = sftd_get_text_width(font, 12, title);
+			int w = sftd_get_wtext_width(font, 12, title);
 			int x = ((132 - w) / 2) + buttons[i].x;
-			sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+			sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
 			y += 16;
 
 			// Draw the value.
 			if(i != 4){
-				w = sftd_get_text_width(font, 12, value_desc);
+				w = sftd_get_wtext_width(font, 12, value_desc);
 				x = ((132 - w) / 2) + buttons[i].x;
-				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
 			}
 		}
 	} else {
 		// UI options.
-		static const struct {
+		const struct {
 			int x;
 			int y;
 			const bool *value;
-			const char *title;
-			const char *value_desc[2];	// 0 == off, 1 == on
+			const wchar_t *title;
+			const wchar_t *value_desc[2];	// 0 == off, 1 == on
 		} buttons[] = {
-			{ 23,  31, &settings.twl.forwarder, "Game location:", {"SD Card", "Flashcard"}},
-			{161,  31, &settings.romselect.toplayout, NULL, {"Box Art: On", "Box Art: Off"}},
-			{ 23,  71, &is3DSX, "Start GBARunner2", {NULL, NULL}},
-			{161,  71, &settings.ui.topborder, NULL, {"Top border: Off", "Top border: On"}},
-			{ 23, 111, NULL, "Unset donor ROM", {NULL, NULL}},
-			{161, 111, NULL, "Search", {NULL, NULL}},
+			{ 23,  31, &settings.twl.forwarder, TR(STR_START_GAMELOCATION), {TR(STR_START_SD_CARD), TR(STR_START_FLASHCARD)}},
+			{161,  31, &settings.romselect.toplayout, NULL, {TR(STR_START_BOXART_ON), TR(STR_START_BOXART_OFF)}},
+			{ 23,  71, &is3DSX, TR(STR_START_START_GBARUNNER2), {NULL, NULL}},
+			{161,  71, &settings.ui.topborder, NULL, {TR(STR_START_TOP_BORDER_OFF), TR(STR_START_TOP_BORDER_ON)}},
+			{ 23, 111, NULL, TR(STR_START_UNSET_DONOR), {NULL, NULL}},
+			{161, 111, NULL, TR(STR_START_SEARCH), {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -1181,8 +1181,8 @@ static void drawMenuDialogBox(void)
 				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
 			}
 
-			const char *title = buttons[i].title;
-			const char *value_desc = (buttons[i].value ? buttons[i].value_desc[!!*(buttons[i].value)] : NULL);
+			const wchar_t *title = buttons[i].title;
+			const wchar_t *value_desc = (buttons[i].value ? buttons[i].value_desc[!!*(buttons[i].value)] : NULL);
 
 			// Determine width and height.
 			const int h = (title && value_desc ? 32 : 16);
@@ -1191,15 +1191,15 @@ static void drawMenuDialogBox(void)
 			// NOTE: Button texture size is 132x34.
 			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
 			if (title) {
-				const int w = sftd_get_text_width(font, 12, title);
+				const int w = sftd_get_wtext_width(font, 12, title);
 				const int x = ((132 - w) / 2) + buttons[i].x;
-				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
 				y += 16;
 			}
 			if (value_desc) {
-				const int w = sftd_get_text_width(font, 12, value_desc);
+				const int w = sftd_get_wtext_width(font, 12, value_desc);
 				const int x = ((132 - w) / 2) + buttons[i].x;
-				sftd_draw_text(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
 			}
 		}
 	}
@@ -1333,8 +1333,8 @@ int main()
 	checkBootstrapVersion();
 	
 	// Initialize translations.
-	langInit();
-
+	langInit();	
+	
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
@@ -2216,6 +2216,9 @@ int main()
 					// or the UI language was changed.
 					bannertextloaded = false;
 					
+					// Reload language
+					langInit();
+					
 					// Clear matching_files vector
 					if(matching_files.size() != 0) {
 						matching_files.clear(); // Clear filter
@@ -2553,7 +2556,7 @@ int main()
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4)
 							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Settings");
+						sftd_draw_wtextf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
 						filenameYpos = 36;
@@ -2721,9 +2724,9 @@ int main()
 						// if (dspfirmfound) { sfx_menuselect->play(); }
 						bool drawBannerText = true;
 						if (cursorPosition == -2) {
-							static const char curn2text[] = "Settings";
-							const int text_width = sftd_get_text_width(font_b, 18, curn2text);
-							sftd_draw_textf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
+							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
+							const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
+							sftd_draw_wtextf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
 							drawBannerText = false;
 						} else if (cursorPosition == -1) {
 							if (settings.twl.forwarder) {
@@ -2752,17 +2755,17 @@ int main()
 								}
 
 								if (romsel_gameline.empty()) {
-									const char *msg;
+									const wchar_t *msg;
 									if (gamecardIsInserted()) {
 										// Game card is inserted, but unrecognized.
 										// It may be a blocked flashcard.
-										msg = "Unknown Cartridge";
+										msg = TR(STR_UNKOWN);
 									} else {
 										// No game card is inserted.
-										msg = "No Cartridge";
+										msg = TR(STR_NO_CARTRIDGE);
 									}
-									const int text_width = sftd_get_text_width(font_b, 18, msg);
-									sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, msg);
+									const int text_width = sftd_get_wtext_width(font_b, 18, msg);
+									sftd_draw_wtext(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, msg);
 									drawBannerText = false;
 								}
 							}
@@ -3573,7 +3576,7 @@ int main()
 									snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
 								}
 								
-								std::string gameName = keyboardInput("Use the keyboard to find roms");
+								std::string gameName = keyboardInput(TR(STR_START_SEARCH_HINT));
 								if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 								
 								if(!settings.twl.forwarder){
@@ -3683,7 +3686,7 @@ int main()
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									}
 									
-									std::string gameName = keyboardInput("Use the keyboard to find roms");
+									std::string gameName = keyboardInput(TR(STR_START_SEARCH_HINT));
 									if (logEnabled)	LogFMA("Main.search","Text written", gameName.c_str());
 									
 									for (auto iter = files.cbegin(); iter != files.cend(); ++iter) {

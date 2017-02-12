@@ -5,16 +5,16 @@
 
 /**
  * This method show the software original keyboard from the 3ds OS. 
- * @param: const char* text to show a hint in keyboard
+ * @param: const wchar_t* text to show a hint in keyboard
  * @return: std::string with user input
  */
 
-std::string keyboardInput(const char* hint) {
+std::string keyboardInput(const wchar_t* hint) {
     SwkbdState keyboardState;
 	char input[64];
 	 
     swkbdInit(&keyboardState, SWKBD_TYPE_QWERTY, 2, sizeof(input));
-    swkbdSetHintText(&keyboardState, hint);
+    swkbdSetHintText(&keyboardState, (const char*)hint);
 	swkbdSetFeatures(&keyboardState, SWKBD_DEFAULT_QWERTY);
 
     swkbdInputText(&keyboardState, input, sizeof(input));

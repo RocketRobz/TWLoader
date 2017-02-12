@@ -5,7 +5,7 @@
 	Please, do not modify it if there is not reason to do it.
 	
 	Use:
-		#std::string keyboardInput(void)  return a C++ string with the input written by the user using touch screen or buttons.
+		#std::string keyboardInput(const wchar_t*)  return a C++ string with the input written by the user using touch screen or buttons.
 		#int keyboardInputInt(void)  return a int with the input written by the user using touch screen or buttons. If input is >255 return = 255 and if cancel, return 0
 
 */
@@ -21,7 +21,7 @@
  * @return: std::string with user input
  */
 
-std::string keyboardInput(const char* hint);
+std::string keyboardInput(const wchar_t* hint);
 
 /**
  * This method show the software original keyboard from the 3ds OS. 
