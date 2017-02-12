@@ -1,5 +1,6 @@
 @echo off
-mkdir "7zfile/flashcardroot/_nds
+mkdir "7zfile/flashcardroot/_nds"
+mkdir "7zfile/sdroot/3ds/TWLoader"
 mkdir "7zfile/sdroot/_nds/twloader/loadflashcard"
 mkdir "7zfile/sdroot/_nds/twloader/cia"
 cd ..
@@ -29,9 +30,14 @@ copy "NTR_Launcher.nds" "../7zfile/sdroot/_nds/twloader/NTR_Launcher.nds"
 copy "NTR_Launcher.nds" "../../TWLoader-update/NTR_Launcher.nds"
 cd ..
 cd gui
-make
+make cia
+make 3dsx
 copy "TWLoader.cia" "../7zfile/sdroot/_nds/twloader/cia/TWLoader.cia"
 copy "TWLoader.cia" "../../TWLoader-update/TWLoader.cia"
+copy "TWLoader.3dsx" "../7zfile/sdroot/3ds/TWLoader/TWLoader.3dsx"
+copy "TWLoader.3dsx" "../../TWLoader-update/TWLoader.3dsx"
+copy "TWLoader.smdh" "../7zfile/sdroot/3ds/TWLoader/TWLoader.smdh"
+copy "TWLoader.smdh" "../../TWLoader-update/TWLoader.smdh"
 cd ..
 cd flashcard-side
 make
