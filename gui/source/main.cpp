@@ -1294,6 +1294,10 @@ int main()
 	srvInit();
 	hidInit();
 	acInit();
+		
+	bool bannertextloaded = false;	
+	// Register a handler for "returned from HOME Menu".
+	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
 	
 	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
 	struct stat logBuf;
@@ -1493,7 +1497,6 @@ int main()
 
 	bool colortexloaded = false;
 	bool colortexloaded_bot = false;
-	bool bannertextloaded = false;
 	bool bnricontexloaded = false;
 	bool boxarttexloaded = false;
 
@@ -1526,9 +1529,6 @@ int main()
 	else if (settings.ui.theme == 0)
 		sf2d_set_3D(1);
 
-	// Register a handler for "returned from HOME Menu".
-	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
-	
 	// Loop as long as the status is not exit
 	bool saveOnExit = true;
 	while(run && aptMainLoop()) {
