@@ -10,7 +10,7 @@ static const char *const lang_DE[STR_MAX] = {
     ": Zurück zum HOME-Menü",									// "Return to HOME Menu"
 	"START",													// "START" (used on cartridge indicator)
 	"Keine Karte",												// "No cartridge"
-	"Unknown Cartridge", 										// "Unknown Cartridge"
+	"Unbekannte Karte",											// "Unknown Cartridge"
 	"Einstellungen",											// "Settings"
 	"B: Zurück",												// "B: Back"	
 	
@@ -98,14 +98,14 @@ static const char *const lang_DE[STR_MAX] = {
 	"automatisch herunterladen.",								// "TWLoader version at launch."
 	
 	/** Settings: NTR/TWL_mode descriptions **/
-	"Wähle die Flashkarte, von",								// "Pick a flashcard to use to"
-	"der du ROMs starten willst.",								// "run ROMs from it."
+	"Wähle die Flashkarte, die du zum",							// "Pick a flashcard to use to"
+	"ausführen von ROMs benutzen willst.",						// "run ROMs from it."
 	
 	"Aktiviere Regenbogen Farben für",							// "See rainbow colors glowing in"
 	"die Benachrichtigungs-LED.",								// "the Notification LED."
 	
-	"Stelle auf TWL, um Lags in manchen ",						// "Set to TWL to get rid of lags in some games."
-	"Spielen zu verhindern.",									// (empty)
+	"Stelle auf TWL, um Lags in manchen",						// "Set to TWL to get rid of lags in some games."
+	"Spielen zu vermeiden.",									// (empty)
 
 	"Erlaubt 8 bit VRAM Schreibevorgänge",						// "Allows 8 bit VRAM writes"
 	"und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
@@ -114,7 +114,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"vor dem Spielstart an.",									// "before launched game."
 	
 	"Zeigt die Gesundheits- und Sicherheits-",					// "Displays the Health and Safety"
-	"warnung auf dem unteren Bildschirm.",						// "message on the bottom screen."
+	"warnung auf dem unteren Bildschirm an.",					// "message on the bottom screen."
 	
 	"Aktivieren, wenn Slot-1 Karten auf",						// "Enable this if Slot-1 carts are stuck"
 	"einem weißen Bildschirm hängen bleiben.",					// "on white screens."
@@ -131,12 +131,12 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Start menu **/
 	// Options
 	"Spielort",													// "Game location"
-	"Box-Art: On",												// "Box Art: On"
-	"Box-Art: Off",												// "Box Art: OFF"
+	"Box-Art: An",												// "Box Art: On"
+	"Box-Art: Aus",												// "Box Art: OFF"
 	"GBARunner2 starten",										// "Start GBARunner2"
 	"Oberer Rand: On",											// "Top border: On"
 	"Oberer Rand: Off",											// "Top border: Off"	
-	"Unset donor rom",											// "Unset donor rom"	
+	"Entferne Spender ROM",										// "Unset donor rom"	
 	"Suche",													// "Search"
 	// Values
 	"SD Karte",													// "SD Card"
@@ -163,8 +163,8 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Settings others minor strings **/
 	"A/B: Speichern und Zurück",								// "A/B: Save and Return"
 	"Links/Rechts: Auswählen",									// "Left/Right: Pick"
-	"Settings: GUI",											// "Settings: GUI"
-	"Settings: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"
+	"Einstellungen: GUI",										// "Settings: GUI"
+	"Einstellungen: NTR/TWL-mode",								// "Settings: NTR/TWL-mode"
 
 };
 
