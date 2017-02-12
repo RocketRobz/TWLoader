@@ -10,7 +10,7 @@ static const char *const lang_IT[STR_MAX] = {
     "Ritorna al menu HOME",                                       // "Return to HOME Menu"
     "AVVIA",                                                   // "START" (used on cartridge indicator)
 	"Nessuna cartuccia",                                       // "No cartridge"
-	"Unknown Cartridge", 										// "Unknown Cartridge"
+	"Cartuccia non riconosciuta", 										// "Unknown Cartridge"
 	"Impostazioni",                                               // "Settings"
 	"B： Indietro",                                               // "B: Back"   
    
