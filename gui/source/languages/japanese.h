@@ -39,7 +39,7 @@ static const char *const lang_JP[STR_MAX] = {
 	
 	/** Settings: Top Screen **/
 	"X: Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
-	"X: Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
+	"Y: Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
     "START: Update TWLoader",    								// "START: Update TWLoader"
 	
 	/** Settings: GUI values **/
