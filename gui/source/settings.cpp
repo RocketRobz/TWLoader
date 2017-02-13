@@ -384,7 +384,7 @@ void settingsDrawBottomScreen(void)
 			"Italiano",	// Italian
 			"Español",	// Spanish
 			"ZHCN",		// Simplified Chinese (TODO)
-			"Korean",	// Korean (TODO) [Font is missing characters]
+			"Korean",	// Korean [Font is missing characters]
 			"Nederlands",	// Dutch
 			"Português",	// Portuguese
 			"Russian",	// Russian (TODO) [Font's characters are too wide]
