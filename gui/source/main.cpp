@@ -2244,8 +2244,6 @@ int main()
 						
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
-						titleboxXmovepos = 0;
-						boxartXmovepos = 0;
 						char path[256];
 						if (cursorPosition < 0)
 							cursorPosition = 0;
@@ -2275,6 +2273,8 @@ int main()
 							cursorPosition = 0;
 					} else {
 						cursorPosition = 0; // This is to reset cursor position after switching from R4 theme.
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
 						char path[256];
 						// Reload 1st icon
 						if (settings.twl.forwarder) {
