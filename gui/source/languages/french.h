@@ -40,7 +40,7 @@ static const char *const lang_FR[STR_MAX] = {
      
     /** Settings: Top Screen **/
     "X: Mise à jour de la bootstrap (Release officiel)",                   // "X: Update bootstrap (Official release)"
-    "X: Mise à jour de la bootstrap (Release non-officiel)",                 // "Y: Update bootstrap (Unofficial release)"
+    "Y: Mise à jour de la bootstrap (Release non-officiel)",                 // "Y: Update bootstrap (Unofficial release)"
     "START: Mettre à jour TWLoader",                                   // "START: Update TWLoader"
      
     /** Settings: GUI values **/
