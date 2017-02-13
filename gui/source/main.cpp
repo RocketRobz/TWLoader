@@ -1590,7 +1590,7 @@ int main()
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/upper_screen.png", SF2D_PLACE_RAM); // Top background
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/gbatemp/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 1:
 							topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/black/upper_screen.png", SF2D_PLACE_RAM); // Top background
@@ -1604,24 +1604,24 @@ int main()
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 1:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 2:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 3:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 4:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 5:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 6:
 							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/logo.jpg", SF2D_PLACE_RAM); // Top logo
@@ -2492,7 +2492,7 @@ int main()
 						switch (settings.ui.subtheme) {
 							case 0:
 							default:
-								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/gbatemp/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/gbatemp/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 							case 1:
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/black/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
@@ -2506,28 +2506,28 @@ int main()
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 1:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 2:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme03/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 3:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme04/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 4:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme05/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 5:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 6:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme07/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 						}
 					} else {
