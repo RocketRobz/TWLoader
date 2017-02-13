@@ -1600,8 +1600,8 @@ int main()
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 1:
 							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme02/logo.png", SF2D_PLACE_RAM); // Top logo
@@ -1622,6 +1622,10 @@ int main()
 						case 5:
 							toplogotex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/logo.png", SF2D_PLACE_RAM); // Top logo
 							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 6:
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 					}
 				} else
@@ -2498,7 +2502,7 @@ int main()
 						switch (settings.ui.subtheme) {
 							case 0:
 							default:
-								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme01/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 							case 1:
@@ -2519,6 +2523,10 @@ int main()
 								break;
 							case 5:
 								iconstex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/icons.png", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 6:
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 						}
