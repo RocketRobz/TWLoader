@@ -32,10 +32,10 @@ cd ..
 cd gui
 make clean
 make COMPILE_3DSX=0 cia
+copy "TWLoader.cia" "../../TWLoader-update/TWLoader.cia"
 make clean
 make COMPILE_3DSX=1 3dsx
 copy "TWLoader.cia" "../7zfile/sdroot/_nds/twloader/cia/TWLoader.cia"
-copy "TWLoader.cia" "../../TWLoader-update/TWLoader.cia"
 copy "TWLoader.3dsx" "../7zfile/sdroot/3ds/TWLoader/TWLoader.3dsx"
 copy "TWLoader.3dsx" "../../TWLoader-update/TWLoader.3dsx"
 copy "TWLoader.smdh" "../7zfile/sdroot/3ds/TWLoader/TWLoader.smdh"
