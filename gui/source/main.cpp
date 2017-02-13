@@ -2300,16 +2300,17 @@ int main()
 						if (cursorPosition < 0)
 							cursorPosition = 0;
 					} else {
-						cursorPosition = 0; // This is to reset cursor position after switching from R4 theme.
+						cursorPosition = 0+pagenum*20; // This is to reset cursor position after switching from R4 theme.
+						cursorPosition = storedcursorPosition; // This is to reset cursor position after switching from R4 theme.
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						char path[256];
 						// Reload 1st icon
 						if (settings.twl.forwarder) {
-							const char *tempfile = fcfiles.at(0).c_str();
+							const char *tempfile = fcfiles.at(0+pagenum*20).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
 						} else {
-							const char *tempfile = files.at(0).c_str();
+							const char *tempfile = files.at(0+pagenum*20).c_str();
 							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 						}
 						if (access(path, F_OK) != -1) {
@@ -3112,6 +3113,8 @@ int main()
 								menu_ctrlset = CTRL_SET_GAMESEL;
 								if (settings.twl.forwarder) {
 									settings.twl.forwarder = false;
+									cursorPosition = 0;
+									pagenum = 0;
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
 									bannertextloaded = false;
@@ -3121,6 +3124,8 @@ int main()
 								menu_ctrlset = CTRL_SET_GAMESEL;
 								if (!settings.twl.forwarder) {
 									settings.twl.forwarder = true;
+									cursorPosition = 0;
+									pagenum = 0;
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
 									bannertextloaded = false;
@@ -3171,17 +3176,33 @@ int main()
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 						// updatebotscreen = true;
+					} else if(hDown & KEY_L){
+						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
+							pagenum--;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+						}
+					} else if(hDown & KEY_R){
+						if (file_count > (size_t)pagemax) {
+							pagenum++;
+							bannertextloaded = false;
+							cursorPosition = 0+pagenum*20;
+							bnricontexloaded = false;
+							boxarttexloaded = false;
+						}
 					} else if(hDown & KEY_DOWN){
 						cursorPosition++;
-						if (cursorPosition > filenum-1) {
-							cursorPosition = 0;
+						if (cursorPosition > pagemax-1) {
+							cursorPosition = 0+pagenum*20;
 						}
 						wood_downpressed = true;
 						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
 						cursorPosition--;
-						if (cursorPosition < 0) {
-							cursorPosition = filenum-1;
+						if (cursorPosition < 0+pagenum*20) {
+							cursorPosition = pagemax-1;
 						}
 						wood_uppressed = true;
 						bannertextloaded = false;
@@ -3189,8 +3210,8 @@ int main()
 						menu_ctrlset = CTRL_SET_MENU;
 					}
 					if (filenum > 4) {
-						if (cursorPosition > 2)
-							filenameYmovepos = -cursorPosition+2;
+						if (cursorPosition > 2+pagenum*20)
+							filenameYmovepos = -cursorPosition+2+pagenum*20;
 						else
 							filenameYmovepos = 0;
 					}
