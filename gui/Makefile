@@ -17,6 +17,12 @@ MAKEROM 	?= makerom
 BANNERTOOL 	?= bannertool
 
 #---------------------------------------------------------------------------------
+# 3DSX
+#---------------------------------------------------------------------------------
+
+COMPILE_3DSX  = 0
+
+#---------------------------------------------------------------------------------
 # Generate version number
 #---------------------------------------------------------------------------------
 
@@ -66,7 +72,7 @@ RSF_FILE	:=	app/build-cia.rsf
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
+CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
 		-ffunction-sections \
 		$(ARCH)
 
@@ -77,7 +83,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lsfil -lsftd -lfreetype -lpng -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
+LIBS	:= -lsfil -lsftd -lfreetype -lpng -ljpeg -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -166,7 +172,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia $(TARGET).elf app/banner.bin app/icon.bin
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------
@@ -191,11 +197,7 @@ cia: $(OUTPUT).elf $(OUTPUT).cia
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
-	$(BANNERTOOL) makebanner -i "../app/banner.png" -a "../app/BannerAudio.wav" -o "../app/banner.bin"
-
-	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
-
+$(OUTPUT).cia	:	$(OUTPUT).elf
 	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 
 #---------------------------------------------------------------------------------
@@ -206,6 +208,12 @@ $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
 	@echo $(notdir $<)
 	@$(bin2o)
 	
+#---------------------------------------------------------------------------------
+%.jpeg.o:	%.jpeg
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@$(bin2o)
+
 #---------------------------------------------------------------------------------
 %.png.o	:	%.png
 #---------------------------------------------------------------------------------

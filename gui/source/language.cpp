@@ -16,6 +16,7 @@
 #include "languages/spanish.h"
 #include "languages/dutch.h"
 #include "languages/portuguese.h"
+#include "languages/korean.h"
 
 // All languages.
 static const char *const *lang_all[12] = {
@@ -26,7 +27,7 @@ static const char *const *lang_all[12] = {
 	lang_IT,	// Italian
 	lang_ES,	// Spanish
 	lang_EN,	// Simplified Chinese (TODO)
-	lang_EN,	// Korean (TODO)
+	lang_KO,	// Korean
 	lang_NL,	// Dutch
 	lang_PT,	// Portuguese
 	lang_EN,	// Russian (TODO)
