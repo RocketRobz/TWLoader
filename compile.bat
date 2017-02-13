@@ -30,8 +30,10 @@ copy "NTR_Launcher.nds" "../7zfile/sdroot/_nds/twloader/NTR_Launcher.nds"
 copy "NTR_Launcher.nds" "../../TWLoader-update/NTR_Launcher.nds"
 cd ..
 cd gui
-make cia
-make 3dsx
+make clean
+make COMPILE_3DSX=0 cia
+make clean
+make COMPILE_3DSX=1 3dsx
 copy "TWLoader.cia" "../7zfile/sdroot/_nds/twloader/cia/TWLoader.cia"
 copy "TWLoader.cia" "../../TWLoader-update/TWLoader.cia"
 copy "TWLoader.3dsx" "../7zfile/sdroot/3ds/TWLoader/TWLoader.3dsx"
