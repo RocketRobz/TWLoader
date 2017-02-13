@@ -77,7 +77,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lsfil -lsftd -lfreetype -lpng -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
+LIBS	:= -lsfil -lsftd -lfreetype -lpng -ljpeg -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -206,6 +206,12 @@ $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
 	@echo $(notdir $<)
 	@$(bin2o)
 	
+#---------------------------------------------------------------------------------
+%.jpeg.o:	%.jpeg
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@$(bin2o)
+
 #---------------------------------------------------------------------------------
 %.png.o	:	%.png
 #---------------------------------------------------------------------------------
