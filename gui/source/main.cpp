@@ -152,6 +152,9 @@ static bool titleboxXmoveright = false;
 static int titleboxYmovepos = 120;
 int titleboxXmovetimer = 1; // Set to 1 for fade-in effect to run
 
+static bool wood_uppressed = false;
+static bool wood_downpressed = false;
+
 
 static const char fcrompathini_flashcardrom[] = "FLASHCARD-ROM";
 static const char fcrompathini_rompath[] = "NDS_PATH";
@@ -632,6 +635,18 @@ static void LoadBoxArt(void) {
 		sf2d_free_texture(boxarttex[idx % 6]);
 		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
 		boxarttex[idx % 6] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
+	}
+}
+
+static void LoadBoxArt_WoodTheme(void) {
+	// Get the boxartnum relative to the current page.
+	const int idx = boxartnum - (pagenum * 20);
+	if (idx >= 0 && idx < 21) {
+		// Selected boxart is on the current page.
+		// NOTE: Only 6 slots for boxart.
+		sf2d_free_texture(boxarttex[0]);
+		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
+		boxarttex[0] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
 	}
 }
 
@@ -1874,10 +1889,23 @@ int main()
 				sf2d_draw_texture(topbgtex, 40, 0);
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					if (!settings.romselect.toplayout) {
-						boxartnum = cursorPosition;
+						if (!bannertextloaded) {
+							boxartnum = cursorPosition;
+							LoadBoxArt_WoodTheme();
+							bannertextloaded = true;
+						}
+						boxartnum = 0;
 						ChangeBoxArtNo();
 						// Draw box art
-						sf2d_draw_texture(boxarttexnum, 40+14, 62);
+						switch (settings.ui.subtheme) {
+							case 0:
+							default:
+								sf2d_draw_texture(boxarttexnum, 40+14, 62);
+								break;
+							case 1:
+								sf2d_draw_texture(boxarttexnum, 40+176, 113);
+								break;
+						}
 					}
 				}
 				switch (settings.ui.subtheme) {
@@ -1886,7 +1914,7 @@ int main()
 						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(1).c_str());
 						break;
 					case 1:
-						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 32, RetTime(1).c_str());
+						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(1).c_str());
 						break;
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -2289,6 +2317,9 @@ int main()
 						} else {
 							LoadBNRIcon_R4Theme(NULL);
 						}
+						// Reload 1st box art
+						boxartnum = 0;
+						LoadBoxArt_WoodTheme();
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				}
@@ -2572,8 +2603,11 @@ int main()
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
 							if (cursorPosition == filenum)
-								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sftd_draw_textf(font, 44, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
+							if (settings.twl.forwarder)
+								sftd_draw_textf(font, 44, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
+							else
+								sftd_draw_textf(font, 44, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
 							sf2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
 							Ypos += 39;
 							filenameYpos += 39;
@@ -3142,11 +3176,15 @@ int main()
 						if (cursorPosition > filenum-1) {
 							cursorPosition = 0;
 						}
+						wood_downpressed = true;
+						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
 						cursorPosition--;
 						if (cursorPosition < 0) {
 							cursorPosition = filenum-1;
 						}
+						wood_uppressed = true;
+						bannertextloaded = false;
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
 					}
@@ -3262,8 +3300,8 @@ int main()
 						menu_ctrlset = CTRL_SET_MENU;
 					}
 					if (filenum > 15) {
-						if (cursorPosition > filenum-8) {}
-						else if (cursorPosition > 7)
+						/* if (cursorPosition > filenum-8) {}
+						else */ if (cursorPosition > 7)
 							filenameYmovepos = -cursorPosition+7;
 						else
 							filenameYmovepos = 0;
