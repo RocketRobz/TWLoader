@@ -1,3 +1,3 @@
 @echo off
-make 3dsx
+make COMPILE_3DSX=1 3dsx
 pause

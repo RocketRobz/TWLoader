@@ -20,7 +20,7 @@ BANNERTOOL 	?= bannertool
 # 3DSX
 #---------------------------------------------------------------------------------
 
-COMPILE_3DSX  := 0
+COMPILE_3DSX  = 0
 
 #---------------------------------------------------------------------------------
 # Generate version number
@@ -172,16 +172,14 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia $(TARGET).elf app/banner.bin app/icon.bin
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------
-cia: COMPILE_3DSX=0
 cia: $(BUILD)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile cia
 
 #---------------------------------------------------------------------------------
-3dsx: COMPILE_3DSX=1
 3dsx: $(BUILD)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile 3dsx
 
@@ -199,11 +197,7 @@ cia: $(OUTPUT).elf $(OUTPUT).cia
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
-	$(BANNERTOOL) makebanner -i "../app/banner.png" -a "../app/BannerAudio.wav" -o "../app/banner.bin"
-
-	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(TARGET)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
-
+$(OUTPUT).cia	:	$(OUTPUT).elf
 	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 
 #---------------------------------------------------------------------------------
