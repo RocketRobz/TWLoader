@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
 
 	bool HealthandSafety_MSG = true;
 	bool UseNTRSplash = true;
+	bool TWLCLK = true;
 	bool TWLVRAM = false;
 	bool TriggerExit = false;
 	std::string	gamesettingsPath = "";
@@ -162,13 +163,13 @@ int main(int argc, char **argv) {
 		if(!access(gamesettingsPath.c_str(), F_OK)) {
 			CIniFile gamesettingsini( gamesettingsPath );
 			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
-				if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
+				if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
 			} else {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 1) {
-					UseNTRSplash = false;
-					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
-				} else {
+				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 0) {
+					TWLCLK = false;
 					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 0);
+				} else {
+					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
 				}
 			}
 			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
@@ -191,7 +192,7 @@ int main(int argc, char **argv) {
 			}
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		} else {
-			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { UseNTRSplash = false; }
+			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
 			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
 			if(twloaderini.GetInt("TWL-MODE","LOCK_ARM9_SCFG_EXT",0) == 1) {
 				bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 1);
@@ -201,9 +202,10 @@ int main(int argc, char **argv) {
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		}
 		
+		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 2) { UseNTRSplash = false; }
 		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 0) { HealthandSafety_MSG = false; }
 		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
-			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) >= 1) {
 				BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
 				if (logEnabled)	LogFM("TWL.Main.BootSplashInit", "Boot splash played");
 			}
@@ -211,7 +213,7 @@ int main(int argc, char **argv) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(!UseNTRSplash) {
+		if(TWLCLK) {
 			REG_SCFG_CLK |= 0x1;
 			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
@@ -306,6 +308,11 @@ int main(int argc, char **argv) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
 		}
 		
+		// Tell Arm7 to power off Slot-1.
+		fifoSendValue32(FIFO_USER_08, 1);
+
+		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
+
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
 			if (logEnabled)	LogFM("TWL.Main", "Now booting bootstrap");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {

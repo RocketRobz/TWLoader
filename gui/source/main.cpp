@@ -1642,6 +1642,10 @@ int main()
 							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/logo.jpg", SF2D_PLACE_RAM); // Top logo
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
 							break;
+						case 7:
+							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/logo.jpg", SF2D_PLACE_RAM); // Top logo
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							break;
 					}
 				} else
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
@@ -2560,6 +2564,10 @@ int main()
 							case 6:
 								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme07/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
+								break;
+							case 7:
+								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme08/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 						}
 					} else {

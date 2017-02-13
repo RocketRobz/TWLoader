@@ -725,6 +725,8 @@ void BootSplashDSi(bool HealthandSafety_MSG, int language) {
 			break;
 	}	
 
+	BootJingleDSi();
+
 	for (int i = 0; i < 2; i++) { swiWaitForVBlank(); }
 
 	swiDecompressLZSSVram ((void*)DSi05Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
@@ -782,9 +784,7 @@ void BootSplashDSi(bool HealthandSafety_MSG, int language) {
 	
 	swiDecompressLZSSVram ((void*)DSi06Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
 	vramcpy_ui (&BG_PALETTE[0], DSi06Pal, DSi06PalLen);
-	
-	BootJingleDSi();
-	
+		
 	for (int i = 0; i < 2; i++) { swiWaitForVBlank(); }
 
 	swiDecompressLZSSVram ((void*)DSi07Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);

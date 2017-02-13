@@ -248,16 +248,20 @@ void settingsDrawTopScreen(void)
 		sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
 		sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-			if (settings.twl.cpuspeed == 1) {
+			if (settings.twl.bootscreen == 2) {
 				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
-			} else {
+			} else if (settings.twl.bootscreen == 1) {
 				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+			} else {
+				sf2d_draw_rectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
 			}
 			if (settings.twl.healthsafety == 1) {
-				if (settings.twl.cpuspeed == 1) {
+				if (settings.twl.bootscreen == 2) {
 					sf2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
-				} else {
+				} else if (settings.twl.bootscreen == 1) {
 					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+				} else {
+					sf2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 				}
 			} else {
 				// Draw a white screen in place of the H&S screen.
@@ -588,7 +592,13 @@ void settingsDrawBottomScreen(void)
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
 		const char *extvramvaluetext = (settings.twl.extvram ? "On" : "Off");
-		const char *bootscreenvaluetext = (settings.twl.bootscreen ? "On" : "Off");
+		// Boot screen text.
+		static const char *const bootscreen_text[] = {
+			"None", "Nintendo DS", "Nintendo DSi"
+		};
+		if (settings.twl.bootscreen < 0 || settings.twl.bootscreen > 2)
+			settings.twl.bootscreen = 0;
+		const char *const bootscreenvaluetext = bootscreen_text[settings.twl.bootscreen];
 		const char *healthsafetyvaluetext = (settings.twl.healthsafety ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
 		const char *bootstrapfilevaluetext = (settings.twl.bootstrapfile ? "Release" : "Unofficial");
@@ -800,6 +810,13 @@ void settingsDrawBottomScreen(void)
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme07");
 				Ypos += 12;
 			}
+			if (settings.ui.subtheme == 7) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme08");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme08");
+				Ypos += 12;
+			}
 		} else if (settings.ui.theme == 2) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
@@ -860,8 +877,8 @@ bool settingsMoveCursor(u32 hDown)
 			settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 1) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 6;
-			else if (settings.ui.subtheme > 6)
+				settings.ui.subtheme = 7;
+			else if (settings.ui.subtheme > 7)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 2) {
 			if (settings.ui.subtheme < 0)
@@ -903,7 +920,17 @@ bool settingsMoveCursor(u32 hDown)
 					settings.twl.extvram = !settings.twl.extvram;
 					break;
 				case 4:	// Boot screen
-					settings.twl.bootscreen = !settings.twl.bootscreen;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.twl.bootscreen++;
+						if (settings.twl.bootscreen > 2) {
+							settings.twl.bootscreen = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.twl.bootscreen--;
+						if (settings.twl.bootscreen < 0) {
+							settings.twl.bootscreen = 2;
+						}
+					}
 					break;
 				case 5:	// H&S message
 					settings.twl.healthsafety = !settings.twl.healthsafety;

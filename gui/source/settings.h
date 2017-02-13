@@ -78,7 +78,7 @@ typedef struct _Settings_t {
 			6: SuperCard DSTWO
 		*/
 
-		bool bootscreen;
+		int bootscreen;	// 0 = None, 1 = Nintendo DS, 2 = Nintendo DSi
 		bool healthsafety;
 		bool launchslot1;
 		bool resetslot1;
