@@ -1,4 +1,4 @@
-#ifndef PORTUGUESE_H
+﻿#ifndef PORTUGUESE_H
 #define PORTUGUESE_H
 
 #include <3ds/types.h>
@@ -8,11 +8,11 @@ static const char *const lang_PT[STR_MAX] = {
 
 	/** GUI **/
 	": Voltar ao Menu HOME",									// "Return to HOME Menu"
-	"COMEÇAR",													// "START" (used on cartridge indicator)
+	"Abrir",													// "START" (used on cartridge indicator)
 	"Sem cartucho",												// "No cartridge"
 	"Cartucho desconhecido", 									// "Unknown Cartridge"
 	"Definições",												// "Settings"
-	"B： Voltar",												// "B: Back"
+	"B： Voltar",													// "B: Back"
 
 	/** Settings: GUI **/
 	"Língua",													// "Language"
@@ -22,8 +22,8 @@ static const char *const lang_PT[STR_MAX] = {
 	"Mostrar nome do ficheiro",									// "Show filename"
 	"Contador de jogos",										// "Game counter"
 	"Imagem da parte inferior personalizada",					// "Custom bottom image"
-	"Actualização automática de bootstrap",						// "Auto-update bootstrap"
-	"Actualização automática para o último TWLoader",			// "Auto-update to latest TWLoader"
+	"Actualização automática: Bootstrap",						// "Auto-update bootstrap"
+	"Actualização automática: Último TWLoader",					// "Auto-update to latest TWLoader"
 
 	/** Settings: NTR/TWL_mode **/
 	"Selectionar Flashcard(s)",									// "Flashcard(s) select"
@@ -82,20 +82,20 @@ static const char *const lang_PT[STR_MAX] = {
 	"A cor da borda do topo,",									// "The color of the top border,"
 	"e o fundo da parte inferior.",								// "and the bottom background."
 
-	"Mostrar o nome do ficheiro do jogo no topo",		// "Shows game filename at the top of the bubble."
-	"da bolha.",														 	// (empty)
+	"Mostrar o nome do ficheiro do jogo no",					// "Shows game filename at the top of the bubble."
+	"topo da bolha.",											// (empty)
 
-	"Um número de jogos selectionados e listados",				// "A number of selected game and listed games"
-	"aparece por baixo da bolha de texto.",					// "is shown below the text bubble."
+	"O número de jogos selectionados e listados",				// "A number of selected game and listed games"
+	"aparece por baixo da bolha de texto.",						// "is shown below the text bubble."
 
-	"Carrega uma imagem personalizada para",	// "Loads a custom bottom screen image"
-	" a parte inferior do menu do jogo.",											// "for the game menu."
+	"Carrega uma imagem personalizada para",					// "Loads a custom bottom screen image"
+	"a parte inferior do menu do jogo.",						// "for the game menu."
 
-	"Actualizar automáticamente o nds-bootstrap"		// "Auto-update nds-bootstrap at launch."
-	"durante o lançamento da aplicação.",								// (empty)
+	"Actualizar automáticamente o nds-bootstrap",				// "Auto-update nds-bootstrap at launch."
+	"durante o lançamento da aplicação.",						// (empty)
 
-	"Download automático da versão mais recente",	// "Auto-download the CIA of the latest"
-	"do TWLoader durante o lançamento.",			// "TWLoader version at launch."
+	"Download automático da versão mais recente",				// "Auto-download the CIA of the latest"
+	"do TWLoader durante o lançamento.",						// "TWLoader version at launch."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Escolha uma flashcard para iniciar",						// "Pick a flashcard to use to"
@@ -116,14 +116,14 @@ static const char *const lang_PT[STR_MAX] = {
 	"Mostrar a mensagem de saúde e segurança",					// "Displays the Health and Safety"
 	"no ecrã inferior.",										// "message on the bottom screen."
 
-	"Activar isto se os cartuchos no Slot-1 estão",	// "Enable this if Slot-1 carts are stuck"
-	"bloqueados em ecrãs brancos.",										// "on white screens."
+	"Activar isto se os cartuchos no Slot-1 estão",				// "Enable this if Slot-1 carts are stuck"
+	"bloqueados em ecrãs brancos.",								// "on white screens."
 
 	"Mostra algum texto antes do lançamento do jogo.",			// "Displays some text before launched game."
 	"",															// (empty)
 
-	"Bloquear o ARM9 SCFG_EXT, para evitar",								// "Locks the ARM9 SCFG_EXT,"
-	"conflitos com libnds recentes.",				// "avoiding conflict with recent libnds."
+	"Bloquear o ARM9 SCFG_EXT, para evitar",					// "Locks the ARM9 SCFG_EXT,"
+	"conflitos com libnds recentes.",							// "avoiding conflict with recent libnds."
 
 	"Mudar entre bootstrap oficial ou",							// "Change between release and"
 	"não-oficial.",												// "unofficial bootstrap file."
