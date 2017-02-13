@@ -17,6 +17,12 @@ MAKEROM 	?= makerom
 BANNERTOOL 	?= bannertool
 
 #---------------------------------------------------------------------------------
+# 3DSX
+#---------------------------------------------------------------------------------
+
+COMPILE_3DSX  := 0
+
+#---------------------------------------------------------------------------------
 # Generate version number
 #---------------------------------------------------------------------------------
 
@@ -66,7 +72,7 @@ RSF_FILE	:=	app/build-cia.rsf
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
+CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
 		-ffunction-sections \
 		$(ARCH)
 
@@ -170,10 +176,12 @@ clean:
 
 
 #---------------------------------------------------------------------------------
+cia: COMPILE_3DSX=0
 cia: $(BUILD)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile cia
 
 #---------------------------------------------------------------------------------
+3dsx: COMPILE_3DSX=1
 3dsx: $(BUILD)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile 3dsx
 
