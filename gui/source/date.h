@@ -26,9 +26,10 @@ size_t GetDate(int format, char *buf, size_t size);
 /**
  * Get the current time formatted for the top bar.
  * This includes the blinking ':'.
+ * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
-std::string RetTime(int donotblink);
+std::string RetTime(bool donotblink);
 
 /**
  * Draw the date using the specified color.

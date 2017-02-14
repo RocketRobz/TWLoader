@@ -1906,10 +1906,10 @@ int main()
 				switch (settings.ui.subtheme) {
 					case 0:
 					default:
-						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(1).c_str());
+						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
 						break;
 					case 1:
-						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(1).c_str());
+						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 						break;
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -2051,10 +2051,10 @@ int main()
 					}
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(0).c_str());
+						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(false).c_str());
 						DrawDate(RGBA8(0, 0, 0, 255));
 					} else {
-						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
+						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
 						DrawDate(RGBA8(255, 255, 255, 255));
 					}
 
@@ -2570,7 +2570,7 @@ int main()
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
-						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(1).c_str());
+						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 						if (!bannertextloaded) {

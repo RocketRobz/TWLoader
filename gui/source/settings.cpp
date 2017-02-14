@@ -277,7 +277,7 @@ void settingsDrawTopScreen(void)
 			}
 		}
 
-		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
+		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
 		
 		std::string version = settings_vertext;		
 		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {

@@ -70,10 +70,10 @@ bool checkWifiStatus(void) {
 	bool res = false;
 
 	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
-		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(1).c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
 		res = true;
 	} else {
-		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(1).c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(true).c_str());
 	}
 
 	return res;

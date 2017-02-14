@@ -53,9 +53,10 @@ size_t GetDate(int format, char *buf, size_t size)
 /**
  * Get the current time formatted for the top bar.
  * This includes the blinking ':'.
+ * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
-string RetTime(int donotblink)
+string RetTime(bool donotblink)
 {
 	time_t Raw;
 	time(&Raw);
@@ -65,12 +66,14 @@ string RetTime(int donotblink)
 	// (120 is because two top frames are drawn every 1/60th
 	//  due to 3D.)
 	static int chartimer = 0;
-	if (donotblink == 0)
+	if (!donotblink) {
 		chartimer++;
-	else
+		if (chartimer >= 120*2) {
+			chartimer = 0;
+		}
+	} else {
 		chartimer = 0;
-	if (chartimer >= 120*2)
-		chartimer = 0;
+	}
 
 	char Tmp[24];
 	if (chartimer >= 120) {
