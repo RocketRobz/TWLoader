@@ -1107,8 +1107,8 @@ static void drawMenuDialogBox(void)
 			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {L"Off", L"On"}},
-			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {L"", L""}},
-			{23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
+			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {NULL, NULL}},
+			{ 23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1122,7 +1122,7 @@ static void drawMenuDialogBox(void)
 
 			const wchar_t *title = buttons[i].title;
 			const wchar_t *value_desc = TR(STR_START_DEFAULT);
-			if(i != 4){
+			if (i < 3) {
 				switch (*(buttons[i].value)) {
 					case -1:
 					default:
@@ -1149,7 +1149,7 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			if(i != 4){
+			if (i < 3) {
 				w = sftd_get_wtext_width(font, 12, value_desc);
 				x = ((132 - w) / 2) + buttons[i].x;
 				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
