@@ -817,6 +817,13 @@ void settingsDrawBottomScreen(void)
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme08");
 				Ypos += 12;
 			}
+			if (settings.ui.subtheme == 8) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme09");
+				Ypos += 12;
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme09");
+				Ypos += 12;
+			}
 		} else if (settings.ui.theme == 2) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
@@ -877,8 +884,8 @@ bool settingsMoveCursor(u32 hDown)
 			settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 1) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 7;
-			else if (settings.ui.subtheme > 7)
+				settings.ui.subtheme = 8;
+			else if (settings.ui.subtheme > 8)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 2) {
 			if (settings.ui.subtheme < 0)
