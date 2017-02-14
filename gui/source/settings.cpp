@@ -27,9 +27,6 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern bool is3DSX;
 
-extern u8 language;
-extern u8 ntrtwlmode_language;
-
 extern touchPosition touch;
 u16 touch_x = 320/2;
 u16 touch_y = 240/2;
@@ -149,7 +146,7 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	switch(ntrtwlmode_language) {
+	switch (sys_language) {
 		case 0:
 		case 6:
 		case 7:
@@ -280,7 +277,7 @@ void settingsDrawTopScreen(void)
 			}
 		}
 
-		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
+		sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
 		
 		std::string version = settings_vertext;		
 		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
@@ -295,54 +292,7 @@ void settingsDrawTopScreen(void)
 		if (!settings.ui.name.empty()) {
 			sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		}
-		if(settings.ui.language != -1){
-			switch(settings.ui.language){			
-				case 3: // German
-				case 10: // Russian
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-					break;
-				case 2: // French
-				case 4: // Italian
-				case 5: // Spanish			
-				case 8: // Dutch
-				case 9: // Portuguese			
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-					break;
-				case 0: // Japanese
-				case 1: // English
-				case 6: // Simplified Chinese
-				case 7: // Korean			
-				case 11: // Traditional Chinese
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-					break;
-			}
-		}else{
-			u8 language;
-			CFGU_GetSystemLanguage(&language);
-			if (language < 0 || language >= 12) {
-				language = 1;
-			}
-			switch(language){			
-				case 3: // German
-				case 10: // Russian
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-					break;
-				case 2: // French
-				case 4: // Italian
-				case 5: // Spanish			
-				case 8: // Dutch
-				case 9: // Portuguese			
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-					break;
-				case 0: // Japanese
-				case 1: // English
-				case 6: // Simplified Chinese
-				case 7: // Korean			
-				case 11: // Traditional Chinese
-					sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-					break;
-			}
-		}
+		DrawDate(RGBA8(255, 255, 255, 255));
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}

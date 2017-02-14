@@ -35,7 +35,9 @@ extern bool run;	// Set to false to exit to the Home Menu.
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 extern bool logEnabled;
-extern bool checkTWLNANDSide();
+
+extern const u64 TWLNAND_TID;
+extern bool checkTWLNANDSide(void);
 
 extern int screenmode;
 // 0: ROM select
@@ -68,10 +70,10 @@ bool checkWifiStatus(void) {
 	bool res = false;
 
 	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
-		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(1).c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
 		res = true;
 	} else {
-		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(1).c_str());
+		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(true).c_str());
 	}
 
 	return res;
@@ -316,7 +318,7 @@ void DownloadTWLoaderCIAs(void) {
 		// Delete first if installed.
 		if(checkTWLNANDSide()){
 			amInit();
-			AM_DeleteTitle(MEDIATYPE_NAND, 0x0004800554574C44ULL);
+			AM_DeleteTitle(MEDIATYPE_NAND, TWLNAND_TID);
 			amExit();
 		}
 		if(stat("sdmc:/cia",&st) == 0){		

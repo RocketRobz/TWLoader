@@ -1,3 +1,6 @@
+// for strcasestr()
+#define _GNU_SOURCE 1
+
 #include "download.h"
 #include "settings.h"
 #include "textfns.h"
@@ -509,33 +512,15 @@ static int RainbowLED(void) {
  * Set a user led color for notification LED
  * @return 0 on success; non-zero on error.
  */
-
 static int PergameLed(void) {
-	static const RGBLedPattern pattern = {
-		32, // Need to be 32 in order to be it constant
-		
-		// Red color
-		{
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], 
-			(u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0], (u8)RGB[0]
-		},
-		
-		// Green color
-		{
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], 
-			(u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1], (u8)RGB[1]			
-		},
-		
-		// Blue color
-		{
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], 
-			(u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2], (u8)RGB[2]
-		},		
-	};
-	
+	RGBLedPattern pattern;
+	pattern.ani = 32;	// Need to be 32 in order to be it constant
+
+	// Set the color values to a single RGB value.
+	memset(&pattern.r, (u8)RGB[0], sizeof(pattern.r));
+	memset(&pattern.g, (u8)RGB[1], sizeof(pattern.g));
+	memset(&pattern.b, (u8)RGB[2], sizeof(pattern.b));
+
 	if (ptmsysmInit() < 0)
 		return -1;
 	ptmsysmSetInfoLedPattern(&pattern);
@@ -1122,8 +1107,8 @@ static void drawMenuDialogBox(void)
 			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
 			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {L"Off", L"On"}},
-			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {L"", L""}},
-			{23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
+			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {NULL, NULL}},
+			{ 23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1137,7 +1122,7 @@ static void drawMenuDialogBox(void)
 
 			const wchar_t *title = buttons[i].title;
 			const wchar_t *value_desc = TR(STR_START_DEFAULT);
-			if(i != 4){
+			if (i < 3) {
 				switch (*(buttons[i].value)) {
 					case -1:
 					default:
@@ -1164,10 +1149,25 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			if(i != 4){
+			if (i < 3) {
 				w = sftd_get_wtext_width(font, 12, value_desc);
 				x = ((132 - w) / 2) + buttons[i].x;
 				sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+			} else if (i == 4) {
+				// Show the RGB value.
+				char rgb_str[32];
+				snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
+					settings.pergame.red,
+					settings.pergame.green,
+					settings.pergame.blue);
+				w = sftd_get_text_width(font, 12, rgb_str);
+				x = ((132 - w) / 2) + buttons[i].x;
+
+				// Print the RGB value using its color.
+				const u32 color = RGBA8(settings.pergame.red,
+					settings.pergame.green,
+					settings.pergame.blue, 255);
+				sftd_draw_text(font, x, y, color, 12, rgb_str);
 			}
 		}
 	} else {
@@ -1220,61 +1220,20 @@ static void drawMenuDialogBox(void)
 	}
 }
 
-/**
-* compare two strings case insensitive.
-* @param iterator const char*
-* @param input const char*
-*/
-bool compareString(const char *iter, const char *input)
-{
-	// First transform input to lower case
-    std::string inputText = input;
-	std::transform(inputText.begin(), inputText.end(), inputText.begin(), ::tolower);
-	
-	// Transform iterator string to lower case
-	std::string fileName = iter;
-	std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::tolower);
-	
-	// Compare
-	if(strstr(fileName.c_str(), inputText.c_str())){
-		return true;
-	}
-	
-	return false;
-}
+// TWLNAND side Title ID.
+extern const u64 TWLNAND_TID;
+const u64 TWLNAND_TID = 0x0004800554574C44ULL;
 
 /**
-* check if TWLNand side is installed or not
+* Check if the TWLNAND-side title is installed or not
 * Title ID: 0x0004800554574C44ULL
 * MediaType: MEDIATYPE_NAND
 * @return: true if installed, false if not
 */
-
-bool checkTWLNANDSide(void){
-	bool res = false;
-	
-	u32 count = 0;
-	FS_MediaType mediaType = MEDIATYPE_NAND;
-	u64 id = 0x0004800554574C44ULL;
-	
-	if(R_SUCCEEDED(AM_GetTitleCount(mediaType, &count))){
-		u64* titleIds = (u64*)calloc(count, sizeof(u64));
-        if(titleIds != NULL) {
-			if(R_SUCCEEDED(AM_GetTitleList(&count, mediaType, count, titleIds))) {
-				// Now we have the list of cia's installed on NAND
-				for(u32 i = 0; i < count; i++) {
-					// Try to find TWLNand ID
-					if(titleIds[i] == id){
-						res = true;
-						break;
-					}
-				}
-			}
-		}
-		free(titleIds);
-	}
-	
-	return res;
+bool checkTWLNANDSide(void) {
+	u64 tid = TWLNAND_TID;
+	AM_TitleEntry entry;
+	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
 
 int main()
@@ -1545,15 +1504,47 @@ int main()
 		sf2d_set_3D(1);
 
 	// Loop as long as the status is not exit
-	bool saveOnExit = true;
+	const bool isTWLNANDInstalled = checkTWLNANDSide();
+	// Save by default if the TWLNAND-side title is installed.
+	// Otherwise, we don't want to save anything.
+	bool saveOnExit = isTWLNANDInstalled;
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
 		hidScanInput();
-		
+
 		const u32 hDown = hidKeysDown();
 		const u32 hHeld = hidKeysHeld();
-		
+
+		// Check if the TWLNAND-side title is installed.
+		if (!isTWLNANDInstalled) {
+			static const char twlnand_msg[] =
+				"The TWLNAND-side title has not been installed.\n"
+				"Please install the TWLNAND-side CIA:\n"
+				"\n"
+				"/_nds/twloader/cias/TWLoader - TWLNAND side.cia\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"                 Press the HOME button to exit.";
+			DialogBoxAppear(twlnand_msg, 0);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, twlnand_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			continue;
+		}
+
 		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
 		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
 		offset3D[0].boxart = CONFIG_3D_SLIDERSTATE * -5.0f;
@@ -1919,10 +1910,10 @@ int main()
 				switch (settings.ui.subtheme) {
 					case 0:
 					default:
-						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(1).c_str());
+						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
 						break;
 					case 1:
-						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(1).c_str());
+						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 						break;
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -2064,105 +2055,11 @@ int main()
 					}
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(0).c_str());
-						if(settings.ui.language != -1){
-							switch(settings.ui.language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(3));
-									break;
-							}
-						}else{
-							u8 language;
-							CFGU_GetSystemLanguage(&language);
-							if (language < 0 || language >= 12) {
-								language = 1;
-							}
-							switch(language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(0, 0, 0, 255), 12, GetDate(3));
-									break;
-							}
-						}
+						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(false).c_str());
+						DrawDate(RGBA8(0, 0, 0, 255));
 					} else {
-						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(0).c_str());
-						if(settings.ui.language != -1){
-							switch(settings.ui.language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-									break;
-							}
-						}else{
-							u8 language;
-							CFGU_GetSystemLanguage(&language);
-							if (language < 0 || language >= 12) {
-								language = 1;
-							}
-							switch(language){			
-								case 3: // German
-								case 10: // Russian
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(4));
-									break;
-								case 2: // French
-								case 4: // Italian
-								case 5: // Spanish			
-								case 8: // Dutch
-								case 9: // Portuguese			
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(2));
-									break;
-								case 0: // Japanese
-								case 1: // English
-								case 6: // Simplified Chinese
-								case 7: // Korean			
-								case 11: // Traditional Chinese
-									sftd_draw_text(font, 282, 3, RGBA8(255, 255, 255, 255), 12, GetDate(3));
-									break;
-							}
-						}
+						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
+						DrawDate(RGBA8(255, 255, 255, 255));
 					}
 
 					draw_volume_slider(voltex);
@@ -2681,7 +2578,7 @@ int main()
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
-						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(1).c_str());
+						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 						if (!bannertextloaded) {
@@ -3671,7 +3568,7 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
@@ -3685,16 +3582,15 @@ int main()
 											continue;
 										}
 										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
 									}
 								}							
-								
-								if (matching_files.size() != 0){
+
+								if (matching_files.size() != 0) {
 									/** Prepare some stuff to show correctly the filtered roms */
-									
 									pagenum = 0; // Go to page 0
 									cursorPosition = 0; // Move the cursor to 0
 									storedcursorPosition = cursorPosition; // Move the cursor to 0
@@ -3778,15 +3674,17 @@ int main()
 											// so it can't match.
 											continue;
 										}
-										// Use C string comparison for case-insensitive checks.
-										if (compareString(iter->c_str(), gameName.c_str())){
+
+										// Check if the game name contains the search term.
+										// (Case-insensitive search.)
+										if (strcasestr(iter->c_str(), gameName.c_str()) != NULL) {
 											// String matches.
 											matching_files.push_back(*iter);
 										}
 									}
-									if (matching_files.size() != 0){
+
+									if (matching_files.size() != 0) {
 										/** Prepare some stuff to show correctly the filtered roms */
-										
 										pagenum = 0; // Go to page 0
 										cursorPosition = 0; // Move the cursor to 0
 										storedcursorPosition = cursorPosition; // Move the cursor to 0
@@ -4161,18 +4059,9 @@ int main()
 			SaveSettings();
 			SetPerGameSettings();
 			SaveBootstrapConfig();
-			
-			// Check if TWLNAND side is installed (0x0004800554574C44ULL)
-			if(!checkTWLNANDSide()){
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Please, install TWLNand side and retry again");
-				sftd_draw_text(font, 12, 28, RGBA8(0, 0, 0, 255), 12, "Returning to Home...");
-				break;
-			}
-			
+
 			// Prepare for the app launch.
-			u64 tid = 0x0004800554574C44ULL; // TWLNAND side's title ID
+			u64 tid = TWLNAND_TID;
 			FS_MediaType mediaType = MEDIATYPE_NAND;
 			bool switchToTwl = true;	
 			

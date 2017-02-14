@@ -12,7 +12,7 @@ int createLog(void) {
 		}
 		LogCreated = true;
 		Log("************** Log file created at ");
-		Log(RetTime(1).c_str());
+		Log(RetTime(true).c_str());
 		Log(" **************");
 		Log("\n");
 		fclose(log);

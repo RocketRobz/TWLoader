@@ -6,6 +6,8 @@
 
 // Active language ID.
 extern u8 language;
+// System language ID.
+extern u8 sys_language;
 
 /**
  * Initialize translations.
