@@ -713,67 +713,76 @@ void settingsDrawBottomScreen(void)
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme01");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme01");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme02");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme02");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 2) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme03");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme03");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 3) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme04");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme04");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 4) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme05");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme05");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 5) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme06");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme06");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 6) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme07");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme07");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 7) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme08");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme08");
-				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 8) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme09");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme09");
-				Ypos += 12;
 			}
+			Ypos += 12;
+			if (settings.ui.subtheme == 9) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme10");
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme10");
+			}
+			Ypos += 12;
+			if (settings.ui.subtheme == 10) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme11");
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme11");
+			}
+			Ypos += 12;
+			if (settings.ui.subtheme == 11) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme12");
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme12");
+			}
+			Ypos += 12;
 		} else if (settings.ui.theme == 2) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
@@ -784,13 +793,13 @@ void settingsDrawBottomScreen(void)
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "GBATemp");
 				Ypos += 12;
 			}
+			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "Acekard black");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "Acekard black");
-				Ypos += 12;
 			}
+			Ypos += 12;
 		}
 		sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	}
@@ -834,8 +843,8 @@ bool settingsMoveCursor(u32 hDown)
 			settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 1) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 8;
-			else if (settings.ui.subtheme > 8)
+				settings.ui.subtheme = 11;
+			else if (settings.ui.subtheme > 11)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 2) {
 			if (settings.ui.subtheme < 0)
