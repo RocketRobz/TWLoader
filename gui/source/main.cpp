@@ -1898,7 +1898,7 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!settings.twl.forwarder) {
+			if (!settings.twl.forwarder || settings.ui.theme == 2) {
 				// Load the boxart for the Slot-1 cartridge if necessary.
 				loadSlot1BoxArt();
 			}
