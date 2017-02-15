@@ -2275,6 +2275,9 @@ int main()
 						LoadBoxArt_WoodTheme(0-pagenum*20);
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
+				} else if (gbarunnervalue == 1) {
+					if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+					applaunchon = true;
 				}
 			}
 		}
