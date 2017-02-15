@@ -1349,12 +1349,16 @@ int main()
 
 	sf2d_texture *iconstex = NULL;		// Bottom of menu (3 icons)
 	sf2d_texture *bottomtex = NULL;		// Bottom of menu
+	sf2d_texture *sdicontex = sfil_load_PNG_file("romfs:/graphics/wood/sd.png", SF2D_PLACE_RAM);
+	sf2d_texture *flashcardicontex = sfil_load_PNG_file("romfs:/graphics/wood/flashcard.png", SF2D_PLACE_RAM);
+	sf2d_texture *gbaicontex = sfil_load_PNG_file("romfs:/graphics/wood/gba.png", SF2D_PLACE_RAM);
+	sf2d_texture *smallsettingsicontex = sfil_load_PNG_file("romfs:/graphics/wood/settings.png", SF2D_PLACE_RAM);
 	sf2d_texture *iconnulltex = sfil_load_PNG_file("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
 	sf2d_texture *startbordertex = NULL;	// "START" border
-	sf2d_texture *settingsboxtex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
+	sf2d_texture *settingsicontex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
 	sf2d_texture *getfcgameboxtex = sfil_load_PNG_file("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
 	cartnulltex = sfil_load_PNG_file("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
@@ -1503,13 +1507,9 @@ int main()
 	int startbordermovepos = 0;
 	float startborderscalesize = 1.0f;
 	
-	if (settings.ui.theme == 2)
+	if (settings.ui.theme >= 1)
 		menu_ctrlset = CTRL_SET_MENU;
-	else if (settings.ui.theme == 1) {
-		menu_ctrlset = CTRL_SET_MENU;
-		sf2d_set_3D(1);
-	} else if (settings.ui.theme == 0)
-		sf2d_set_3D(1);
+	sf2d_set_3D(1);
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
@@ -1906,46 +1906,61 @@ int main()
 			}
 			
 			if (settings.ui.theme == 2) {
-				sf2d_set_3D(0);
-				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
-				sf2d_draw_texture(topbgtex, 40, 0);
-				if (menu_ctrlset != CTRL_SET_MENU) {
-					if (!settings.romselect.toplayout) {
-						if (!bannertextloaded) {
-							boxartnum = cursorPosition;
-							LoadBoxArt_WoodTheme();
-							bannertextloaded = true;
+				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
+					sf2d_draw_texture(topbgtex, 40, 0);
+					if (menu_ctrlset == CTRL_SET_MENU) {
+						if (!settings.romselect.toplayout && woodmenu_cursorPosition == 2) {
+							// Draw box art
+							switch (settings.ui.subtheme) {
+								case 0:
+								default:
+									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+14, 62);
+									break;
+								case 1:
+								case 2:
+									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
+									break;
+							}
 						}
-						boxartnum = 0;
-						ChangeBoxArtNo();
-						// Draw box art
-						switch (settings.ui.subtheme) {
-							case 0:
-							default:
-								sf2d_draw_texture(boxarttexnum, 40+14, 62);
-								break;
-							case 1:
-							case 2:
-								sf2d_draw_texture(boxarttexnum, 40+176, 113);
-								break;
+					} else {
+						if (!settings.romselect.toplayout) {
+							if (!bannertextloaded) {
+								boxartnum = cursorPosition;
+								LoadBoxArt_WoodTheme();
+								bannertextloaded = true;
+							}
+							boxartnum = 0;
+							ChangeBoxArtNo();
+							// Draw box art
+							switch (settings.ui.subtheme) {
+								case 0:
+								default:
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
+									break;
+								case 1:
+								case 2:
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
+									break;
+							}
 						}
 					}
+					switch (settings.ui.subtheme) {
+						case 0:
+						default:
+							sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
+							break;
+						case 1:
+							sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+							break;
+						case 2:
+							sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+							break;
+					}
+					sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+					sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+					sf2d_end_frame();
 				}
-				switch (settings.ui.subtheme) {
-					case 0:
-					default:
-						sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
-						break;
-					case 1:
-						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-						break;
-					case 2:
-						sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-						break;
-				}
-				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
-				sf2d_end_frame();
 			} else if (settings.ui.theme == 1) {
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 				if (menu_ctrlset != CTRL_SET_MENU) {
@@ -2551,31 +2566,72 @@ int main()
 				
 					sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 					if (menu_ctrlset == CTRL_SET_MENU) {
+						// Poll for Slot-1 changes.
+						bool forcePoll = false;
+						bool doSlot1Update = false;
+						if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+							// Card is inserted, but we don't know its type.
+							// Force an update.
+							forcePoll = true;
+						}
+						bool s1chg = gamecardPoll(forcePoll);
+						if (s1chg) {
+							// Update Slot-1 if:
+							// - forcePoll is false
+							// - forcePoll is true, and card is no longer unknown.
+							doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+						}
+						if (doSlot1Update) {
+							// Slot-1 card has changed.
+							if (cursorPosition == -1) {
+								// Reload the banner text.
+								bannertextloaded = false;
+							}
+						}
+						sf2d_texture *cardicontex = gamecardGetIcon();
+						if (!cardicontex)
+							cardicontex = iconnulltex;
+
 						int Ypos = 26;
 						filenameYpos = 36;
-						if (woodmenu_cursorPosition == 0)
+						if (woodmenu_cursorPosition == 0) {
 							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
+							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						} else
+							sf2d_draw_texture_part(sdicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 1)
+						if (woodmenu_cursorPosition == 1) {
 							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
+							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						} else
+							sf2d_draw_texture_part(flashcardicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 2)
+						if (woodmenu_cursorPosition == 2) {
 							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
+							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						} else
+							sf2d_draw_texture_part(cardicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 3)
+						if (woodmenu_cursorPosition == 3) {
 							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
+							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						} else
+							sf2d_draw_texture_part(gbaicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 4)
+						if (woodmenu_cursorPosition == 4) {
 							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-						sftd_draw_wtextf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
+							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						} else
+							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						sftd_draw_wtextf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
 						filenameYpos = 36;
@@ -2914,10 +2970,10 @@ int main()
 					if (pagenum == 0) {
 						if (settings.ui.iconsize) {
 							sf2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 108, 1.25, 1.25);
-							sf2d_draw_texture_scale(settingsboxtex, -40+setsboxXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
+							sf2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
 						} else {
 							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-							sf2d_draw_texture(settingsboxtex, setsboxXpos+titleboxXmovepos, 119);
+							sf2d_draw_texture(settingsicontex, setsboxXpos+titleboxXmovepos, 119);
 						}
 
 						if (!settings.twl.forwarder) {
@@ -3029,7 +3085,7 @@ int main()
 						else
 							sf2d_draw_texture_part_blend(bottomtex, 128, 116, 128, 116, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
 						if (cursorPosition == -2) {
-							sf2d_draw_texture(settingsboxtex, 128, titleboxYmovepos-1); // Draw settings box that moves up
+							sf2d_draw_texture(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
 						} else if (cursorPosition == -1) {
 							if (settings.twl.forwarder)
 								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
@@ -4212,7 +4268,6 @@ int main()
 		// Save settings.
 		SaveSettings();
 		SetPerGameSettings();
-		if (settings.ui.theme == 0) SaveBootstrapConfig();
 	}
 	if (logEnabled) LogFM("Main.saveOnExit", "Settings are saved");
 
@@ -4240,11 +4295,15 @@ int main()
 	}
 	if (settings.ui.theme == 1) sf2d_free_texture(iconstex);
 	if (colortexloaded) sf2d_free_texture(bottomtex);
+	sf2d_free_texture(sdicontex);
+	sf2d_free_texture(flashcardicontex);
+	sf2d_free_texture(gbaicontex);
+	sf2d_free_texture(smallsettingsicontex);
 	sf2d_free_texture(iconnulltex);
 	sf2d_free_texture(homeicontex);
 	sf2d_free_texture(bottomlogotex);
 	sf2d_free_texture(bubbletex);
-	sf2d_free_texture(settingsboxtex);
+	sf2d_free_texture(settingsicontex);
 	sf2d_free_texture(getfcgameboxtex);
 	sf2d_free_texture(cartnulltex);
 	sf2d_free_texture(cartntrtex);
