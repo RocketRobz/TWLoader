@@ -41,7 +41,7 @@ using std::wstring;
 #include "keyboard.h"
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
-bool is3DSX = true;
+bool is3DSX = COMPILE_3DSX;
 
 #include "logo_png.h"
 #include "logo_demo_png.h"
