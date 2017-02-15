@@ -2254,7 +2254,7 @@ int main()
 							cursorPosition = 0;
 					} else {
 						cursorPosition = 0+pagenum*20; // This is to reset cursor position after switching from R4 theme.
-						cursorPosition = storedcursorPosition; // This is to reset cursor position after switching from R4 theme.
+						storedcursorPosition = cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						char path[256];
