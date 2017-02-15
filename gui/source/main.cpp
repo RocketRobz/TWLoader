@@ -41,7 +41,7 @@ using std::wstring;
 #include "keyboard.h"
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
-bool is3DSX = COMPILE_3DSX;
+bool is3DSX = true;
 
 #include "logo_png.h"
 #include "logo_demo_png.h"
@@ -2604,42 +2604,42 @@ int main()
 						int Ypos = 26;
 						filenameYpos = 36;
 						if (woodmenu_cursorPosition == 0) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
-							sf2d_draw_texture_part(sdicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
-							sf2d_draw_texture_part(flashcardicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 2) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
-							sf2d_draw_texture_part(cardicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 3) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
-							sf2d_draw_texture_part(gbaicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
-							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
-							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						sftd_draw_wtextf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
@@ -3179,6 +3179,27 @@ int main()
 									bannertextloaded = false;
 								}
 								break;
+							case 2:
+								if (!is3DSX) {
+									settings.twl.launchslot1 = true;
+									settings.twl.forwarder = false;
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
+								break;
+							case 3:
+								if (!is3DSX) {
+									gbarunnervalue = 1;
+									settings.ui.romfolder = "_nds";									
+									rom = "GBARunner2.nds";
+									if (settings.twl.forwarder)
+										settings.twl.launchslot1 = true;
+									else
+										settings.twl.launchslot1 = false;
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
+								break;
 							case 4:
 								sf2d_set_3D(1);
 								screenmode = SCREEN_MODE_SETTINGS;
@@ -3208,25 +3229,27 @@ int main()
 						// updatebotscreen = true;
 					}
 					if(hDown & KEY_A){
-						if (settings.twl.forwarder) {
-							settings.twl.launchslot1 = true;
-							// if(matching_files.size() == 0){
-								rom = fcfiles.at(cursorPosition).c_str();
-							// }else {
-						// 	rom = matching_files.at(cursorPosition).c_str();
-						// }
-						} else {
-							settings.twl.launchslot1 = false;
-							// if(matching_files.size() == 0){
-								rom = files.at(cursorPosition).c_str();
-							// }else {
+						if (!is3DSX) {
+							if (settings.twl.forwarder) {
+								settings.twl.launchslot1 = true;
+								// if(matching_files.size() == 0){
+									rom = fcfiles.at(cursorPosition).c_str();
+								// }else {
 							// 	rom = matching_files.at(cursorPosition).c_str();
 							// }
-							sav = ReplaceAll(rom, ".nds", ".sav");
+							} else {
+								settings.twl.launchslot1 = false;
+								// if(matching_files.size() == 0){
+									rom = files.at(cursorPosition).c_str();
+								// }else {
+								// 	rom = matching_files.at(cursorPosition).c_str();
+								// }
+								sav = ReplaceAll(rom, ".nds", ".sav");
+							}
+							if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+							applaunchon = true;
 						}
-						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-						applaunchon = true;
-						// updatebotscreen = true;
+						wood_ndsiconscaletimer = 0;
 					} else if(hDown & KEY_L){
 						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
 							pagenum--;
@@ -3279,9 +3302,12 @@ int main()
 								menu_ctrlset = CTRL_SET_GAMESEL;
 								break;
 							case 1:
-								settings.twl.launchslot1 = true;
-								if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-								applaunchon = true;
+								if (!is3DSX) {
+									settings.twl.launchslot1 = true;
+									settings.twl.forwarder = false;
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
 								break;
 							case 2:
 								if (!is3DSX) {
@@ -3327,25 +3353,26 @@ int main()
 						bannertextloaded = false;
 					}
 					if(hDown & KEY_A){
-						if (settings.twl.forwarder) {
-							settings.twl.launchslot1 = true;
-							// if(matching_files.size() == 0){
-								rom = fcfiles.at(cursorPosition).c_str();
-							// }else {
-						// 	rom = matching_files.at(cursorPosition).c_str();
-						// }
-						} else {
-							settings.twl.launchslot1 = false;
-							// if(matching_files.size() == 0){
-								rom = files.at(cursorPosition).c_str();
-							// }else {
+						if (!is3DSX) {
+							if (settings.twl.forwarder) {
+								settings.twl.launchslot1 = true;
+								// if(matching_files.size() == 0){
+									rom = fcfiles.at(cursorPosition).c_str();
+								// }else {
 							// 	rom = matching_files.at(cursorPosition).c_str();
 							// }
-							sav = ReplaceAll(rom, ".nds", ".sav");
+							} else {
+								settings.twl.launchslot1 = false;
+								// if(matching_files.size() == 0){
+									rom = files.at(cursorPosition).c_str();
+								// }else {
+								// 	rom = matching_files.at(cursorPosition).c_str();
+								// }
+								sav = ReplaceAll(rom, ".nds", ".sav");
+							}
+							if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+							applaunchon = true;
 						}
-						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-						applaunchon = true;
-						// updatebotscreen = true;
 					} else if(hDown & KEY_DOWN){
 						cursorPosition++;
 						if (cursorPosition == filenum) {
