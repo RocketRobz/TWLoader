@@ -11,6 +11,7 @@ typedef enum {
 	FORMAT_DM	= 2,
 	FORMAT_MD	= 3,
 	FORMAT_M_D	= 4,
+	FORMAT_MY	= 5,	// Doesn't work
 } DateFormat;
 
 /**
@@ -40,5 +41,14 @@ std::string RetTime(bool donotblink);
  * @param size Text size.
  */
 void DrawDate(int Xpos, int Ypos, u32 color, int size);
+
+/**
+ * Draw the month and year using the specified color.
+ * @param Xpos X position.
+ * @param Ypos Y position.
+ * @param color Text color.
+ * @param size Text size.
+ */
+void DrawDate_MY(int Xpos, int Ypos, u32 color, int size);
 
 #endif // DATE_H

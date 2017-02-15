@@ -804,6 +804,12 @@ void settingsDrawBottomScreen(void)
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "akaio");
 			}
 			Ypos += 12;
+			if (settings.ui.subtheme == 3) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "DSTWO");
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "DSTWO");
+			}
+			Ypos += 12;
 		}
 		sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	}
@@ -852,8 +858,8 @@ bool settingsMoveCursor(u32 hDown)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 2) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 2;
-			else if (settings.ui.subtheme > 2)
+				settings.ui.subtheme = 3;
+			else if (settings.ui.subtheme > 3)
 				settings.ui.subtheme = 0;
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {

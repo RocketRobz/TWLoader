@@ -12,6 +12,7 @@ using std::string;
 
 // from main.cpp
 extern sftd_font *font;
+extern sftd_font *font_b;
 
 /**
  * Get the current date as a C string.
@@ -88,7 +89,10 @@ string RetTime(bool donotblink)
 /**
  * Draw the date using the specified color.
  * Date format depends on language setting.
+ * @param Xpos X position.
+ * @param Ypos Y position.
  * @param color Text color.
+ * @param size Text size.
  */
 void DrawDate(int Xpos, int Ypos, u32 color, int size)
 {
@@ -115,4 +119,20 @@ void DrawDate(int Xpos, int Ypos, u32 color, int size)
 	if (date_str[0] == 0)
 		return;
 	sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
+}
+
+/**
+ * Draw the month and year using the specified color.
+ * @param Xpos X position.
+ * @param Ypos Y position.
+ * @param color Text color.
+ * @param size Text size.
+ */
+void DrawDate_MY(int Xpos, int Ypos, u32 color, int size)
+{
+	char date_str[24];
+	GetDate(FORMAT_MY, date_str, sizeof(date_str));
+	if (date_str[0] == 0)
+		return;
+	sftd_draw_text(font_b, Xpos, Ypos, color, size, date_str);
 }

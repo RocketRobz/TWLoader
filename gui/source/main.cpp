@@ -623,16 +623,11 @@ static void LoadBoxArt(void) {
 	}
 }
 
-static void LoadBoxArt_WoodTheme(void) {
-	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (pagenum * 20);
-	if (idx >= 0 && idx < 21) {
-		// Selected boxart is on the current page.
-		// NOTE: Only 6 slots for boxart.
-		sf2d_free_texture(boxarttex[0]);
-		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
-		boxarttex[0] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
-	}
+static void LoadBoxArt_WoodTheme(const int idx) {
+	// Selected boxart is on the current page.
+	sf2d_free_texture(boxarttex[0]);
+	const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
+	boxarttex[0] = sfil_load_PNG_file(path, SF2D_PLACE_RAM); // Box art
 }
 
 /**
@@ -1612,6 +1607,9 @@ int main()
 						case 2:
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/Adv.Evo/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
+						case 3:
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							break;
 					}
 				} else if (settings.ui.theme == 1) {
 					switch (settings.ui.subtheme) {
@@ -1921,13 +1919,15 @@ int main()
 								case 2:
 									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
 									break;
+								case 3:
+									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+164, 38);
+									break;
 							}
 						}
 					} else {
 						if (!settings.romselect.toplayout) {
 							if (!bannertextloaded) {
-								boxartnum = cursorPosition;
-								LoadBoxArt_WoodTheme();
+								LoadBoxArt_WoodTheme(cursorPosition-pagenum*20);
 								bannertextloaded = true;
 							}
 							boxartnum = 0;
@@ -1942,6 +1942,9 @@ int main()
 								case 2:
 									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
 									break;
+								case 3:
+									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
+									break;
 							}
 						}
 					}
@@ -1949,12 +1952,16 @@ int main()
 						case 0:
 						default:
 							sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
+							// DrawDate_MY(40+200, 180, RGBA8(16, 0, 0, 223), 22);
 							break;
 						case 1:
 							sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 							break;
 						case 2:
 							sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+							break;
+						case 3:
+							sftd_draw_text(font_b, 40+176, 172, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 							break;
 					}
 					sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -2265,8 +2272,7 @@ int main()
 							LoadBNRIcon_R4Theme(NULL);
 						}
 						// Reload 1st box art
-						boxartnum = 0;
-						LoadBoxArt_WoodTheme();
+						LoadBoxArt_WoodTheme(0-pagenum*20);
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				}
@@ -2477,6 +2483,9 @@ int main()
 								break;
 							case 2:
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/Adv.Evo/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+								break;
+							case 3:
+								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 						}
 					} else if (settings.ui.theme == 1) {
