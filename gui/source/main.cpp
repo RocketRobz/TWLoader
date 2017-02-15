@@ -1494,13 +1494,21 @@ int main()
 	int boxartreflYmovepos = 264;
 	int ndsiconXpos;
 	int ndsiconYmovepos = 133;
+	int wood_ndsiconscaletimer = 0;
+	int wood_ndsiconscalelag = 0;
+	int wood_ndsiconscalemovepos = 0;
+	float wood_ndsiconscalesize = 0.00f;
+	bool wood_ndsiconscaledown = false;
 
 	int startbordermovepos = 0;
 	float startborderscalesize = 1.0f;
 	
-	if (settings.ui.theme == 1 || settings.ui.theme == 2)
+	if (settings.ui.theme == 2)
 		menu_ctrlset = CTRL_SET_MENU;
-	else if (settings.ui.theme == 0)
+	else if (settings.ui.theme == 1) {
+		menu_ctrlset = CTRL_SET_MENU;
+		sf2d_set_3D(1);
+	} else if (settings.ui.theme == 0)
 		sf2d_set_3D(1);
 
 	// Loop as long as the status is not exit
@@ -1600,6 +1608,9 @@ int main()
 							break;
 						case 1:
 							topbgtex = sfil_load_PNG_file("romfs:/graphics/wood/black/upper_screen.png", SF2D_PLACE_RAM); // Top background
+							break;
+						case 2:
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/Adv.Evo/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == 1) {
@@ -1914,6 +1925,7 @@ int main()
 								sf2d_draw_texture(boxarttexnum, 40+14, 62);
 								break;
 							case 1:
+							case 2:
 								sf2d_draw_texture(boxarttexnum, 40+176, 113);
 								break;
 						}
@@ -1927,12 +1939,14 @@ int main()
 					case 1:
 						sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 						break;
+					case 2:
+						sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+						break;
 				}
 				sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 				sf2d_end_frame();
 			} else if (settings.ui.theme == 1) {
-				sf2d_set_3D(0);
 				sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 				if (menu_ctrlset != CTRL_SET_MENU) {
 					sf2d_draw_texture(topbgtex, 40, 0);
@@ -2068,10 +2082,10 @@ int main()
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
 						sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(false).c_str());
-						DrawDate(RGBA8(0, 0, 0, 255));
+						DrawDate(282, 3, RGBA8(0, 0, 0, 255), 12);
 					} else {
 						sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
-						DrawDate(RGBA8(255, 255, 255, 255));
+						DrawDate(282, 3, RGBA8(255, 255, 255, 255), 12);
 					}
 
 					draw_volume_slider(voltex);
@@ -2446,6 +2460,9 @@ int main()
 							case 1:
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/black/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
 								break;
+							case 2:
+								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/Adv.Evo/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
+								break;
 						}
 					} else if (settings.ui.theme == 1) {
 						switch (settings.ui.subtheme) {
@@ -2507,32 +2524,57 @@ int main()
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				
 				if (settings.ui.theme == 2) {
+					if (wood_ndsiconscaletimer == 60) {
+						// Scale icon at 30fps
+						if (wood_ndsiconscalelag == 1) {
+							if (wood_ndsiconscaledown) {
+								wood_ndsiconscalemovepos -= 1;
+								wood_ndsiconscalesize -= 0.06f;
+								if (wood_ndsiconscalemovepos == 0)
+									wood_ndsiconscaledown = false;
+							} else {
+								wood_ndsiconscalemovepos += 1;
+								wood_ndsiconscalesize += 0.06f;
+								if (wood_ndsiconscalemovepos == 4)
+									wood_ndsiconscaledown = true;
+							}
+							wood_ndsiconscalelag = 0;
+						} else {
+							wood_ndsiconscalelag = 1;
+						}
+					} else {
+						wood_ndsiconscaletimer += 1;
+						wood_ndsiconscalemovepos = 0;
+						wood_ndsiconscalesize = 0.00f;
+						wood_ndsiconscaledown = false;
+					}
+				
 					sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						int Ypos = 26;
 						filenameYpos = 36;
 						if (woodmenu_cursorPosition == 0)
-							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
 						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1)
-							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
 						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 2)
-							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
 						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 3)
-							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
 						sftd_draw_textf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4)
-							sf2d_draw_rectangle(0, Ypos-2, 320, 40, SET_ALPHA(color_data->color, 127));						
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));						
 						sftd_draw_wtextf(font, 44, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
@@ -2543,14 +2585,17 @@ int main()
 							if (cursorPosition == filenum)
 								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
 							if (settings.twl.forwarder)
-								sftd_draw_textf(font, 44, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
+								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
 							else
-								sftd_draw_textf(font, 44, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
-							sf2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+							if (cursorPosition == filenum)
+								sf2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							else
+								sf2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
 							Ypos += 39;
 							filenameYpos += 39;
 						}
-						sf2d_draw_texture_part(bottomtex, 0, 0, 0, 0, 320, 24);
+						sf2d_draw_texture_part(bottomtex, 0, 0, 0, 0, 320, 22);
 						sf2d_draw_texture_part(bottomtex, 0, 217, 0, 217, 320, 23);
 						if (settings.twl.forwarder)
 							sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
@@ -2602,6 +2647,7 @@ int main()
 							const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
+						DrawDate(2, 220, RGBA8(255, 255, 255, 255), 14);
 						sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
@@ -3074,16 +3120,19 @@ int main()
 								settingsResetSubScreenMode();
 								break;
 						}
+						wood_ndsiconscaletimer = 0;
 					} else if(hDown & KEY_DOWN){
 						woodmenu_cursorPosition++;
 						if (woodmenu_cursorPosition > 4) {
 							woodmenu_cursorPosition = 4;
 						}
+						wood_ndsiconscaletimer = 0;
 					} else if(hDown & KEY_UP){
 						woodmenu_cursorPosition--;
 						if (woodmenu_cursorPosition < 0) {
 							woodmenu_cursorPosition = 0;
 						}
+						wood_ndsiconscaletimer = 0;
 					}
 				} else {
 					if(cursorPosition < 0) {
@@ -3135,6 +3184,7 @@ int main()
 							cursorPosition = 0+pagenum*20;
 						}
 						wood_downpressed = true;
+						wood_ndsiconscaletimer = 0;
 						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
 						cursorPosition--;
@@ -3142,9 +3192,11 @@ int main()
 							cursorPosition = pagemax-1;
 						}
 						wood_uppressed = true;
+						wood_ndsiconscaletimer = 0;
 						bannertextloaded = false;
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
+						wood_ndsiconscaletimer = 0;
 					}
 					if (filenum > 4) {
 						if (cursorPosition > 2+pagenum*20)
@@ -4125,11 +4177,11 @@ int main()
 					}
 					LoadPerGameSettings();
 				}
-				if((RGB[0] >= 0) && (RGB[1] >= 0) && (RGB[2] >= 0)){
+				if((RGB[0] > 0) && (RGB[1] > 0) && (RGB[2] > 0)){
 					// Use pergame led
 					PergameLed();
 				}else{
-					// If RGB in pergame is less than 0, use standard rainbowled patern
+					// If RGB in pergame is 0 or less, use standard rainbowled patern
 					if (settings.twl.rainbowled) {
 						RainbowLED();
 					}

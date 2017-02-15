@@ -90,7 +90,7 @@ string RetTime(bool donotblink)
  * Date format depends on language setting.
  * @param color Text color.
  */
-void DrawDate(u32 color)
+void DrawDate(int Xpos, int Ypos, u32 color, int size)
 {
 	// Date formats.
 	// - Index: Language ID.
@@ -114,5 +114,5 @@ void DrawDate(u32 color)
 	GetDate(date_fmt[language], date_str, sizeof(date_str));
 	if (date_str[0] == 0)
 		return;
-	sftd_draw_text(font, 282, 3, color, 12, date_str);
+	sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
 }

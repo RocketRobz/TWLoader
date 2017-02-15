@@ -292,7 +292,7 @@ void settingsDrawTopScreen(void)
 		if (!settings.ui.name.empty()) {
 			sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		}
-		DrawDate(RGBA8(255, 255, 255, 255));
+		DrawDate(282, 3, RGBA8(255, 255, 255, 255), 12);
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
@@ -788,16 +788,20 @@ void settingsDrawBottomScreen(void)
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "GBATemp");
-				Ypos += 12;
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "GBATemp");
-				Ypos += 12;
 			}
 			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
 				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "Acekard black");
 			} else {
 				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "Acekard black");
+			}
+			Ypos += 12;
+			if (settings.ui.subtheme == 2) {
+				sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "akaio");
+			} else {
+				sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "akaio");
 			}
 			Ypos += 12;
 		}
@@ -848,8 +852,8 @@ bool settingsMoveCursor(u32 hDown)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == 2) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 1;
-			else if (settings.ui.subtheme > 1)
+				settings.ui.subtheme = 2;
+			else if (settings.ui.subtheme > 2)
 				settings.ui.subtheme = 0;
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {

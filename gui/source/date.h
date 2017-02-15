@@ -34,8 +34,11 @@ std::string RetTime(bool donotblink);
 /**
  * Draw the date using the specified color.
  * Date format depends on language setting.
+ * @param Xpos X position.
+ * @param Ypos Y position.
  * @param color Text color.
+ * @param size Text size.
  */
-void DrawDate(u32 color);
+void DrawDate(int Xpos, int Ypos, u32 color, int size);
 
 #endif // DATE_H
