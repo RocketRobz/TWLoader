@@ -1898,7 +1898,7 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!settings.twl.forwarder || settings.ui.theme == 2) {
+			if (!settings.twl.forwarder && settings.ui.theme == 0) {
 				// Load the boxart for the Slot-1 cartridge if necessary.
 				loadSlot1BoxArt();
 			}
@@ -1909,6 +1909,8 @@ int main()
 					sf2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						if (!settings.romselect.toplayout && woodmenu_cursorPosition == 2) {
+							// Load the boxart for the Slot-1 cartridge if necessary.
+							loadSlot1BoxArt();
 							// Draw box art
 							switch (settings.ui.subtheme) {
 								case 0:
@@ -3351,8 +3353,10 @@ int main()
 					}
 					if(hDown & KEY_L) {
 						settings.twl.forwarder = !settings.twl.forwarder;
-						filenameYmovepos = 0;
 						cursorPosition = 0;
+						pagenum = 0;
+						boxarttexloaded = false; // Reload boxarts
+						bnricontexloaded = false; // Reload banner icons
 						bannertextloaded = false;
 					}
 					if(hDown & KEY_A){
@@ -3397,8 +3401,8 @@ int main()
 						bannertextloaded = false;			
 					} else if ((hDown & KEY_RIGHT) && (filenum > 10)) {
 						cursorPosition += 10;
-						if (cursorPosition > filenum) {
-							cursorPosition = filenum;
+						if (cursorPosition > filenum-1) {
+							cursorPosition = filenum-1;
 						}
 						bannertextloaded = false;			
 					} else if (hDown & KEY_B) {
