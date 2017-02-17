@@ -104,7 +104,7 @@ u32 menucolor;
 Offset3D offset3D[2] = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
 // Cursor position. (one per subscreen)
-static int cursor_pos[4] = {0, 0, 0, 0};
+static int cursor_pos[5] = {0, 0, 0, 0, 0};
 
 // Location of the bottom screen image.
 const char* bottomloc = NULL;
