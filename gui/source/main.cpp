@@ -201,6 +201,7 @@ std::string settings_releasebootstrapver;
 std::string settings_unofficialbootstrapver;
 
 static bool applaunchprep = false;
+static bool applaunchon = false;
 
 int fadealpha = 255;
 bool fadein = true;
@@ -655,10 +656,10 @@ static void LoadBootstrapConfig(void)
  */
 static void SaveBootstrapConfig(void)
 {
-	if (applaunchprep || fadeout || settings.ui.theme == 1 || settings.ui.theme == 2) {
+	if (applaunchon) {
 		// Set ROM path if ROM is selected
-		if (!settings.twl.launchslot1) SetMPUSettings();
-		if (!settings.twl.forwarder || !settings.twl.launchslot1) {
+		if (!settings.twl.launchslot1) {
+			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
@@ -724,10 +725,6 @@ static void LoadPerGameSettings(void)
 	if(RGB[0] > 255) RGB[0] = 255;
 	if(RGB[1] > 255) RGB[1] = 255;
 	if(RGB[2] > 255) RGB[2] = 255;
-
-	if((RGB[0] < 0) || (RGB[1] < 0) || (RGB[2] < 0)){
-		RGB[0] = 0; RGB[1] = 0; RGB[2] = 0;
-	}
 	
 	if (logEnabled)	LogFM("Main.LoadPerGameSettings", "Per-game settings loaded successfully");
 }
@@ -1476,7 +1473,6 @@ int main()
 	bool updatetopscreen = true;
 	bool screenmodeswitch = false;
 	bool applaunchicon = false;
-	bool applaunchon = false;
 	
 	float rad = 0.0f;
 	u16 touch_x = 320/2;
@@ -4287,14 +4283,14 @@ int main()
 					}
 					LoadPerGameSettings();
 				}
-				if((RGB[0] > 0) && (RGB[1] > 0) && (RGB[2] > 0)){
-					// Use pergame led
-					PergameLed();
-				}else{
-					// If RGB in pergame is 0 or less, use standard rainbowled patern
+				if((RGB[0] < 0) && (RGB[1] < 0) && (RGB[2] < 0)){
+					// If RGB in pergame is less than 0, use standard rainbowled patern
 					if (settings.twl.rainbowled) {
 						RainbowLED();
 					}
+				}else{
+					// Use pergame led
+					PergameLed();
 				}
 				screenoff();
 			}
@@ -4322,6 +4318,7 @@ int main()
 		// Save settings.
 		SaveSettings();
 		SetPerGameSettings();
+		SaveBootstrapConfig();
 	}
 	if (logEnabled) LogFM("Main.saveOnExit", "Settings are saved");
 
