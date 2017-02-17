@@ -831,24 +831,28 @@ void settingsDrawBottomScreen(void)
 	
 		if (cursor_pos[4] == 0){
 			// Selected SD
-			sftd_draw_wtext(font, 24, 40, SET_ALPHA(color_data->color, 255), 12, L"SD ROM location");
-			sftd_draw_textf(font, 210, 40, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			sftd_draw_text(font, 24, 40, SET_ALPHA(color_data->color, 255), 12, "SD ROM location:");			
+			sftd_draw_textf(font, 30, 52, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
 			
 			// Unselect Flashcard
-			sftd_draw_wtext(font, 24, 40, RGBA8(255, 255, 255, 255), 12, L"Flashcard INI location");
-			sftd_draw_textf(font, 210, 40, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			sftd_draw_text(font, 24, 66, RGBA8(255, 255, 255, 255), 12, "Flashcard INI location:");
+			sftd_draw_textf(font, 30, 78, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
 			
 		}else if (cursor_pos[4] == 1){
-			// Selected Flashcard
-			sftd_draw_wtext(font, 24, 40, SET_ALPHA(color_data->color, 255), 12, L"Flashcard INI location");
-			sftd_draw_textf(font, 210, 40, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			// Unselected SD
+			sftd_draw_text(font, 24, 40, RGBA8(255, 255, 255, 255), 12, "SD ROM location:");
+			sftd_draw_textf(font, 30, 52, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());		
 			
-			// Unselect Flashcard
-			sftd_draw_wtext(font, 24, 40, RGBA8(255, 255, 255, 255), 12, L"SD ROM location");
-			sftd_draw_textf(font, 210, 40, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());			
+			// Selected Flashcard
+			sftd_draw_text(font, 24, 66, SET_ALPHA(color_data->color, 255), 12, "Flashcard INI location:");
+			sftd_draw_textf(font, 30, 78, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			
 		}
 		
-		sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
+		sftd_draw_text(font, 24, 160, RGBA8(255, 255, 255, 255), 12, "TWLoader will auto-restart if location is changed");
+		
+		sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A: Change path");
+		sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "B: Return");	
 	}
 	sftd_draw_wtext(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
 }
