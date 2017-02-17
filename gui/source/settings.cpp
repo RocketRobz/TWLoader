@@ -17,6 +17,7 @@ using std::wstring;
 #include <sf2d.h>
 #include <sfil.h>
 #include <sftd.h>
+#include "keyboard.h"
 
 // Functions from main.cpp.
 void draw_volume_slider(sf2d_texture *texarray[]);
@@ -533,6 +534,18 @@ void settingsDrawBottomScreen(void)
 				Ypos += 12;
 			}
 		}
+		if (cursor_pos[0] == 9) {
+			// Selected			
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, L"Rom path");
+			sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, L"Press A to change rom location folder.");
+			sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, L"");
+			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			Ypos += 12;
+		} else {
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, L"Rom path");
+			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			Ypos += 12;
+		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
@@ -1044,12 +1057,35 @@ bool settingsMoveCursor(u32 hDown)
 				case 8:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
 					break;
+				case 9: // Rom path
+					if (hDown & KEY_A) {
+						std::string oldPath = settings.ui.romfolder;
+						std::wstring widestr = std::wstring(settings.ui.romfolder.begin(), settings.ui.romfolder.end());
+						const wchar_t* currentPath = widestr.c_str();
+						std::string newPath = keyboardInput(currentPath);
+						settings.ui.romfolder = newPath;
+						
+						if(oldPath != newPath){
+							// Buffers for APT_DoApplicationJump().
+							u8 param[0x300];
+							u8 hmac[0x20];
+							// Clear both buffers
+							memset(param, 0, sizeof(param));
+							memset(hmac, 0, sizeof(hmac));
+							
+							APT_PrepareToDoApplicationJump(0, 0x00040000047C4200LL, MEDIATYPE_SD);
+							// Tell APT to trigger the app launch and set the status of this app to exit
+							SaveSettings();
+							APT_DoApplicationJump(param, sizeof(param), hmac);
+						}
+					}
+					break;
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 8) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 9) {
 			cursor_pos[0]++;
 			if(is3DSX) {
-				if(cursor_pos[0] == 8)
+				if(cursor_pos[0] == 9)
 					cursor_pos[0]--;
 			}
 			sfx = sfx_select;

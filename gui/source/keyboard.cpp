@@ -12,11 +12,11 @@
 std::string keyboardInput(const wchar_t* hint) {
     SwkbdState keyboardState;
 	char input[64];
-	char buffer[32];
+	char buffer[64];
 	
 	//wchart_t* to char*
 	wcstombs (buffer, hint, sizeof(buffer) );
-	buffer[31]='\0';
+	buffer[63]='\0';
 	
     swkbdInit(&keyboardState, SWKBD_TYPE_QWERTY, 2, sizeof(input));
     swkbdSetHintText(&keyboardState, buffer);
