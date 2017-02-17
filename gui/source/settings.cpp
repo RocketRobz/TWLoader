@@ -17,6 +17,7 @@ using std::wstring;
 #include <sf2d.h>
 #include <sfil.h>
 #include <sftd.h>
+#include "keyboard.h"
 
 // Functions from main.cpp.
 void draw_volume_slider(sf2d_texture *texarray[]);
@@ -86,6 +87,7 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_NTR_TWL = 1,	// NTR/TWL-mode settings
 	SUBSCREEN_MODE_FLASH_CARD = 2,	// Flash card options
 	SUBSCREEN_MODE_SUB_THEME = 3,	// Sub-theme select
+	SUBSCREEN_MODE_CHANGE_ROM_PATH = 4, // Sub-menu with rom path location
 };
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
@@ -102,7 +104,7 @@ u32 menucolor;
 Offset3D offset3D[2] = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
 // Cursor position. (one per subscreen)
-static int cursor_pos[3] = {0, 0, 0};
+static int cursor_pos[5] = {0, 0, 0, 0, 0};
 
 // Location of the bottom screen image.
 const char* bottomloc = NULL;
@@ -533,6 +535,18 @@ void settingsDrawBottomScreen(void)
 				Ypos += 12;
 			}
 		}
+		if (cursor_pos[0] == 9) {
+			// Selected			
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, L"Rom path");
+			sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, L"Press A to change rom location folder.");
+			sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, L"");
+			sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			Ypos += 12;
+		} else {
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, L"Rom path");
+			sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			Ypos += 12;
+		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
@@ -812,6 +826,33 @@ void settingsDrawBottomScreen(void)
 			Ypos += 12;
 		}
 		sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
+	}else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
+		title = L"Rom path location";
+	
+		if (cursor_pos[4] == 0){
+			// Selected SD
+			sftd_draw_text(font, 24, 40, SET_ALPHA(color_data->color, 255), 12, "SD ROM location:");			
+			sftd_draw_textf(font, 30, 52, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			
+			// Unselect Flashcard
+			sftd_draw_text(font, 24, 66, RGBA8(255, 255, 255, 255), 12, "Flashcard INI location:");
+			sftd_draw_textf(font, 30, 78, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			
+		}else if (cursor_pos[4] == 1){
+			// Unselected SD
+			sftd_draw_text(font, 24, 40, RGBA8(255, 255, 255, 255), 12, "SD ROM location:");
+			sftd_draw_textf(font, 30, 52, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());		
+			
+			// Selected Flashcard
+			sftd_draw_text(font, 24, 66, SET_ALPHA(color_data->color, 255), 12, "Flashcard INI location:");
+			sftd_draw_textf(font, 30, 78, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			
+		}
+		
+		sftd_draw_text(font, 24, 160, RGBA8(255, 255, 255, 255), 12, "TWLoader will auto-restart if location is changed");
+		
+		sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A: Change path");
+		sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "B: Return");	
 	}
 	sftd_draw_wtext(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
 }
@@ -956,7 +997,7 @@ bool settingsMoveCursor(u32 hDown)
 				sfx = sfx_switch;
 			}
 		}
-	} else /*if (subscreenmode == SUBSCREEN_MODE_FRONTEND)*/ {
+	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
 			switch (cursor_pos[SUBSCREEN_MODE_FRONTEND]) {
 				case 0:	// Language
@@ -1044,12 +1085,17 @@ bool settingsMoveCursor(u32 hDown)
 				case 8:	// Enable or disable autodownload
 					settings.ui.autodl = !settings.ui.autodl;
 					break;
+				case 9: // Rom path
+					if (hDown & KEY_A) {
+						subscreenmode = SUBSCREEN_MODE_CHANGE_ROM_PATH;
+					}
+					break;
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 8) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 9) {
 			cursor_pos[0]++;
 			if(is3DSX) {
-				if(cursor_pos[0] == 8)
+				if(cursor_pos[0] == 9)
 					cursor_pos[0]--;
 			}
 			sfx = sfx_select;
@@ -1101,6 +1147,45 @@ bool settingsMoveCursor(u32 hDown)
 			if (touch_x >= 248 && touch_y >= 220) {
 				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
 				sfx = sfx_switch;
+			}
+		}
+	}else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
+		if (hDown & KEY_UP) {
+			cursor_pos[4]--;
+			if (cursor_pos[4] < 0)
+				cursor_pos[4] = 0;			
+			sfx = sfx_select;
+		} else if (hDown & KEY_DOWN) {
+			cursor_pos[4]++;
+			if (cursor_pos[4] > 1)
+				cursor_pos[4] = 1;
+			sfx = sfx_select;
+		} else if (hDown & KEY_B) {		
+			subscreenmode = SUBSCREEN_MODE_FRONTEND;
+			sfx = sfx_select;
+		} else if (hDown & KEY_A) {
+			std::string oldPath = (cursor_pos[4] == 0) ? settings.ui.romfolder : settings.ui.fcromfolder;
+			std::wstring widestr = (cursor_pos[4] == 0) ? 
+													std::wstring(settings.ui.romfolder.begin(), settings.ui.romfolder.end()) : 
+													std::wstring(settings.ui.fcromfolder.begin(), settings.ui.fcromfolder.end());
+			
+			const wchar_t* currentPath = widestr.c_str();
+			std::string newPath = keyboardInput(currentPath);
+			
+			(cursor_pos[4] == 0) ? settings.ui.romfolder = newPath : settings.ui.fcromfolder = newPath;			
+
+			if(oldPath != newPath){						
+				// Buffers for APT_DoApplicationJump().
+				u8 param[0x300];
+				u8 hmac[0x20];
+				// Clear both buffers
+				memset(param, 0, sizeof(param));
+				memset(hmac, 0, sizeof(hmac));
+				
+				APT_PrepareToDoApplicationJump(0, 0x00040000047C4200LL, MEDIATYPE_SD);
+				// Tell APT to trigger the app launch and set the status of this app to exit
+				SaveSettings();
+				APT_DoApplicationJump(param, sizeof(param), hmac);
 			}
 		}
 	}
@@ -1360,6 +1445,8 @@ void LoadSettings(void) {
  */
 void SaveSettings(void) {
 	// UI settings.
+	settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
+	settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);

@@ -39,6 +39,8 @@ size_t GetDate(int format, char *buf, size_t size)
 			return strftime(buf, size, "%m/%d", Time); // Ex: 12/26
 		case FORMAT_M_D:
 			return strftime(buf, size, "%d.%m.", Time); // Ex: 26.12.
+		case FORMAT_MY:
+			return strftime(buf, size, "%m/%Y", Time);
 		default:
 			break;
 	}

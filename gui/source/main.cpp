@@ -1946,10 +1946,11 @@ int main()
 						case 0:
 						default:
 							sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
-							// DrawDate_MY(40+200, 180, RGBA8(16, 0, 0, 223), 22);
+							DrawDate_MY(22+200, 198, RGBA8(16, 0, 0, 223), 22);
 							break;
 						case 1:
 							sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+							DrawDate_MY(38+184, 78, RGBA8(255, 255, 255, 255), 22);
 							break;
 						case 2:
 							sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
