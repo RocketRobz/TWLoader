@@ -355,7 +355,7 @@ void settingsDrawBottomScreen(void)
 
 		// Theme text.
 		static const char *const theme_text[] = {
-			"DSi Menu", "R4", "Wood"
+			"DSi Menu", "R4", "akMenu/Wood"
 		};
 		if (settings.ui.theme < 0 || settings.ui.theme > 2)
 			settings.ui.theme = 0;

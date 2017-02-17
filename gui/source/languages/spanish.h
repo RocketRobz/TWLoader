@@ -136,7 +136,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Iniciar GBARunner2",										// "Start GBARunner2"
 	"Borde superior: On",										// "Top border: On"
 	"Borde superior: Off",										// "Top border: Off"
-	"Eliminar donante",											// "Unset donor rom"
+	"Eliminar donor",											// "Unset donor rom"
 	"Buscar",													// "Search"
 	// Values
 	"Tarjeta SD",												// "SD Card"
@@ -148,7 +148,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Velocidad CPU ARM9:",										// "ARM9 CPU Speed"
 	"Aumento VRAM:",											// "VRAM boost"
 	"Bloq. SCFG_EXT ARM9:",										// "Lock ARM9 SCFG_EXT"
-	"Elegir como donante",										// "Set as donor ROM"
+	"Elegir como donor",										// "Set as donor ROM"
 	"Elegir color del LED",										// "Set LED color"
 	// Values
 	"Por defecto",												// "Default"
@@ -156,7 +156,7 @@ static const char *const lang_ES[STR_MAX] = {
 	/** Sub-theme **/
 	"Sub tema seleccionado: Menu DSi",							// "Sub-theme select: DSi Menu"
 	"Sub tema seleccionado: R4",								// "Sub-theme select: R4"
-	"Sub tema seleccionado: Wood",								// "Sub-theme select: Wood"
+	"Sub tema seleccionado: akMenu/Wood",						// "Sub-theme select: Wood"
 	
 	"No hay sub temas para este tema.",							// "No sub-themes exist for this theme."
 	

@@ -1894,12 +1894,8 @@ int main()
 				boxarttexloaded = true;
 				boxartnum = 0+pagenum*20;
 			}
-			if (!settings.twl.forwarder && settings.ui.theme == 0) {
-				// Load the boxart for the Slot-1 cartridge if necessary.
-				loadSlot1BoxArt();
-			}
 			
-			if (settings.ui.theme == 2) {
+			if (settings.ui.theme == 2) {	// akMenu/Wood theme
 				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
 					sf2d_draw_texture(topbgtex, 40, 0);
@@ -1966,7 +1962,7 @@ int main()
 					sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					sf2d_end_frame();
 				}
-			} else if (settings.ui.theme == 1) {
+			} else if (settings.ui.theme == 1) {	// R4 theme
 				if (updatetopscreen) {
 					sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 					if (menu_ctrlset != CTRL_SET_MENU) {
@@ -2028,6 +2024,11 @@ int main()
 					updatetopscreen = false;
 				}
 			} else {	// DSi-Menu theme
+				if (!settings.twl.forwarder) {
+					// Load the boxart for the Slot-1 cartridge if necessary.
+					loadSlot1BoxArt();
+				}
+
 				if (!musicbool) {
 					if (dspfirmfound) { bgm_menu->play(); }
 					musicbool = true;

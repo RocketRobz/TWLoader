@@ -136,7 +136,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"Start GBARunner2",											// "Start GBARunner2"
 	"Top border: On",											// "Top border: On"
 	"Top border: Off",											// "Top border: Off"
-	"Unset donor rom",											// "Unset donor rom"	
+	"Unset donor ROM",											// "Unset donor rom"	
 	"Search",													// "Search"
 	// Values
 	"SD Card",													// "SD Card"
@@ -156,7 +156,7 @@ static const char *const lang_JP[STR_MAX] = {
 	/** Sub-theme **/
 	"Sub-theme select: DSi Menu",								// "Sub-theme select: DSi Menu"
 	"Sub-theme select: R4",										// "Sub-theme select: R4"
-	"Sub-theme select: Wood",									// "Sub-theme select: Wood"
+	"Sub-theme select: akMenu/Wood",									// "Sub-theme select: Wood"
 	
 	"No sub-themes exist for this theme.",						// "No sub-themes exist for this theme."
 	

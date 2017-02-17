@@ -156,7 +156,7 @@ static const char *const lang_EN[STR_MAX] = {
 	/** Sub-theme **/
 	"副主題選取: DSi 選單",								// "Sub-theme select: DSi Menu"
 	"副主題選取: R4",										// "Sub-theme select: R4"
-	"副主題選取: Wood",									// "Sub-theme select: Wood"
+	"副主題選取: akMenu/Wood",									// "Sub-theme select: Wood"
 	
 	"這個主題並無相應的副主題.",						// "No sub-themes exist for this theme."
 	

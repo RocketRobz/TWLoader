@@ -156,7 +156,7 @@ static const char *const lang_KO[STR_MAX] = {
 	/** Sub-theme **/
 	"하위 테마 선택: DSi 메뉴",								// "Sub-theme select: DSi Menu"
 	"하위 테마 선택: R4",										// "Sub-theme select: R4"
-	"하위 테마 선택: Wood",									// "Sub-theme select: Wood"
+	"하위 테마 선택: akMenu/Wood",							// "Sub-theme select: Wood"
 	
 	"하위 테마가 없습니다.",						// "No sub-themes exist for this theme."
 	
