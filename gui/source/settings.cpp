@@ -1396,6 +1396,7 @@ void LoadSettings(void) {
  */
 void SaveSettings(void) {
 	// UI settings.
+	settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
