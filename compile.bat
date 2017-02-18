@@ -14,8 +14,8 @@ copy "r4idsn.nds" "../../TWLoader/7zfile/sdroot/_nds/twloader/loadflashcard/r4id
 cd ..
 copy "unofficial-bootstrap.nds" "../TWLoader/7zfile/sdroot/_nds/unofficial-bootstrap.nds"
 copy "release-bootstrap.nds" "../TWLoader/7zfile/sdroot/_nds/release-bootstrap.nds"
-copy "release-bootstrap" "../TWLoader/7zfile/sdroot/_nds/release-bootstrap"
-copy "unofficial-bootstrap" "../TWLoader/7zfile/sdroot/_nds/unofficial-bootstrap"
+copy "release-bootstrap" "../TWLoader/7zfile/sdroot/_nds/twloader/release-bootstrap"
+copy "unofficial-bootstrap" "../TWLoader/7zfile/sdroot/_nds/twloader/unofficial-bootstrap"
 cd ..
 cd "TWLoader/twlnand-side"
 make
