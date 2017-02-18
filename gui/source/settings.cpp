@@ -28,10 +28,6 @@ void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
 // Variables from main.cpp.
 extern bool is3DSX;
 
-extern touchPosition touch;
-u16 touch_x = 320/2;
-u16 touch_y = 240/2;
-
 extern sf2d_texture *shoulderLtex;
 extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
@@ -864,9 +860,8 @@ void settingsDrawBottomScreen(void)
  */
 bool settingsMoveCursor(u32 hDown)
 {
+	touchPosition touch;
 	hidTouchRead(&touch);
-	touch_x = touch.px;
-	touch_y = touch.py;
 
 	Lshouldertext = "GUI";
 	Rshouldertext = "NTR/TWL";
@@ -992,7 +987,7 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_back;
 		}
 		if(hDown & KEY_TOUCH){
-			if (touch_x <= 72 && touch_y >= 220) {
+			if (touch.px <= 72 && touch.py >= 220) {
 				subscreenmode = SUBSCREEN_MODE_FRONTEND;
 				sfx = sfx_switch;
 			}
@@ -1144,7 +1139,7 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_back;
 		}
 		if(hDown & KEY_TOUCH){
-			if (touch_x >= 248 && touch_y >= 220) {
+			if (touch.px >= 248 && touch.py >= 220) {
 				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
 				sfx = sfx_switch;
 			}
