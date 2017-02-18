@@ -1,5 +1,6 @@
 // TWLoader: Settings screen.
 #include "settings.h"
+#include "main.h"
 #include "date.h"
 #include "sound.h"
 #include "download.h"
@@ -19,50 +20,9 @@ using std::wstring;
 #include <sftd.h>
 #include "keyboard.h"
 
-// Functions from main.cpp.
-void draw_volume_slider(sf2d_texture *texarray[]);
-
-extern sf2d_texture *batteryIcon;	// Current battery level icon.
-void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
-
-// Variables from main.cpp.
-extern bool is3DSX;
-
-extern sf2d_texture *shoulderLtex;
-extern sf2d_texture *shoulderRtex;
-extern const char* Lshouldertext;
-extern const char* Rshouldertext;
-extern int LshoulderYpos;
-extern int RshoulderYpos;
-
-extern sftd_font *font;
-extern sftd_font *font_b;
-
-extern int fadealpha;
-extern bool fadein;
-extern bool fadeout;
-
-extern sf2d_texture *settingslogotex;	// TWLoader logo.
-extern char settings_vertext[64];
-extern std::string settings_releasebootstrapver;
-extern std::string settings_unofficialbootstrapver;
-
-extern bool keepsdvalue;
-extern int gbarunnervalue;
-extern bool logEnabled;
-
-// Sound effects from main.cpp.
-extern sound *sfx_select;
-extern sound *sfx_switch;
-extern sound *sfx_wrong;
-extern sound *sfx_back;
-
-extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
-
 // Textures.
 
 /** Top screen **/
-extern bool dspfirmfound;
 static bool settings_tex_loaded = false;
 static sf2d_texture *whomeicontex = NULL;	// HOME icon.
 static sf2d_texture *setvoltex[6] = { };	// Volume levels.

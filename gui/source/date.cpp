@@ -1,4 +1,5 @@
 #include "date.h"
+#include "main.h"
 #include "language.h"
 
 #include <sftd.h>
@@ -9,10 +10,6 @@
 
 #include <string>
 using std::string;
-
-// from main.cpp
-extern sftd_font *font;
-extern sftd_font *font_b;
 
 /**
  * Get the current date as a C string.

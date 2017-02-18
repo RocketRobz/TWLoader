@@ -1,5 +1,6 @@
 // Game card functions.
 #include "gamecard.h"
+#include "language.h"
 #include "ndsheaderbanner.h"
 #include "textfns.h"
 
@@ -13,9 +14,6 @@
 using std::string;
 using std::vector;
 using std::wstring;
-
-// from main.cpp
-extern u8 language;
 
 // Current card information.
 static union {

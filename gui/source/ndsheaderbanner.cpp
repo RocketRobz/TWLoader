@@ -1,4 +1,5 @@
 #include "ndsheaderbanner.h"
+#include "main.h"
 #include "log.h"
 #include "textfns.h"
 
@@ -11,8 +12,6 @@
 using std::string;
 using std::vector;
 using std::wstring;
-
-extern bool logEnabled;
 
 /**
  * Convert a color from NDS BGR555 to RGB5A1.

@@ -1,5 +1,6 @@
 // for strcasestr()
 #define _GNU_SOURCE 1
+#include "main.h"
 
 #include "download.h"
 #include "settings.h"
@@ -73,10 +74,7 @@ static sf2d_texture *slot1boxarttex = NULL;
 
 std::string	bootstrapPath;
 
-enum ScreenMode {
-	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
-	SCREEN_MODE_SETTINGS = 1,	// Settings
-};
+// Current screen mode.
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 
 /* enum RomSelect_Mode {	// R4 Theme only
