@@ -514,8 +514,7 @@ static int downloadBoxArt_internal(const char *ba_TID)
  * @return non zero if error
  */
 
-int downloadBootstrapVersion(bool type
-)
+int downloadBootstrapVersion(bool type)
 {
 	int res = -1;
 	if (type){		
