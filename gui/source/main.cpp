@@ -1963,38 +1963,36 @@ int main()
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						sf2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
-						if (settings.twl.forwarder) {
-							for(filenum = 0; filenum < (int)fcfiles.size(); filenum++){
-								if(cursorPosition == filenum) {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, fcfiles.at(filenum).c_str());
-								} else {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
-								}
-								filenameYpos += 15;
+						const int file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						for (filenum = 0; filenum < file_count; filenum++) {
+							u32 color;
+							if (cursorPosition == filenum) {
+								color = SET_ALPHA(color_data->color, 255);
+							} else {
+								color = RGBA8(255, 255, 255, 255);
 							}
-						} else {
-							for(filenum = 0; filenum < (int)files.size(); filenum++){
-								if(cursorPosition == filenum) {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
-								} else {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
-								}
-								filenameYpos += 15;
-							}
+
+							// Get the current filename and convert it to wstring.
+							const char *filename = (settings.twl.forwarder
+									? fcfiles.at(filenum).c_str()
+									: files.at(filenum).c_str());
+							wstring wstr = utf8_to_wstring(filename);
+							sftd_draw_wtext(font, 42, filenameYpos+filenameYmovepos*15, color, 12, wstr.c_str());
+
+							filenameYpos += 15;
 						}
+
 						sf2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
-						if (settings.twl.forwarder)
-							sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (Flashcard)");
-						else
-							sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (SD Card)");
-						
-						const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						const char *title = (settings.twl.forwarder
+									? "Games (Flashcard)"
+									: "Games (SD Card)");
+						sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, title);
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
 						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", cursorPosition+1);		
 						// if(matching_files.size() == 0){
-							snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+							snprintf(romsel_counter2, sizeof(romsel_counter2), "%d", file_count);
 						// }else{
 						// 	snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
 						// }
@@ -2647,12 +2645,17 @@ int main()
 						for (filenum = pagenum*20; filenum < pagemax; filenum++) {
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
-							if (cursorPosition == filenum)
+							if (cursorPosition == filenum) {
 								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
-							if (settings.twl.forwarder)
-								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
-							else
-								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+							}
+
+							// Get the current filename and convert it to wstring.
+							const char *filename = (settings.twl.forwarder
+									? fcfiles.at(filenum).c_str()
+									: files.at(filenum).c_str());
+							wstring wstr = utf8_to_wstring(filename);
+							sftd_draw_wtext(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, wstr.c_str());
+
 							if (cursorPosition == filenum)
 								sf2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 							else
