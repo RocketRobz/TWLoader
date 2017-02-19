@@ -554,8 +554,7 @@ static int downloadBoxArt_internal(const char* ba_TID)
  * @return non zero if error
  */
 
-int downloadBootstrapVersion(bool type
-                            )
+int downloadBootstrapVersion(bool type)
 {
     int res = -1;
     if (type) {
@@ -574,7 +573,7 @@ int downloadBootstrapVersion(bool type
 void checkBootstrapVersion(void)
 {
 
-    int res = false;
+    bool res = false;
     long fileSize;
     char buf[26];
     if (logEnabled) {
@@ -650,7 +649,7 @@ void checkBootstrapVersion(void)
         }
     }
 
-    res = -1; // Just to be sure
+    res = false; // Just to be sure
 
     VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
     if (!VerFile) {
@@ -706,7 +705,7 @@ void checkBootstrapVersion(void)
             settings_unofficialbootstrapver = buf;
             fclose(VerFile);
             if (logEnabled) {
-                LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file #2:", settings_releasebootstrapver.c_str());
+                LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file #2:", settings_unofficialbootstrapver.c_str());
             }
         }
     }

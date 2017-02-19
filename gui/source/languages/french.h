@@ -105,7 +105,7 @@ static const char* const lang_FR[STR_MAX] = {
     "Afficher les couleurs de l'arc-en-ciel clignotante dans",                            // "See rainbow colors glowing in"
     "la LED de notification.",                                    // "the Notification LED."
 
-    "Set to TWL to get rid of lags in some games.",             // "Set to TWL to get rid of lags in some games."
+    "Définis à TWL pour se débarrasser de lags dans certains jeux.",             // "Set to TWL to get rid of lags in some games."
     "",                                                         // (empty)
 
     "Permet l'écriture VRAM 8 bit",                                 // "Allows 8 bit VRAM writes"
@@ -137,7 +137,7 @@ static const char* const lang_FR[STR_MAX] = {
     "Démarrer GBARunner2",                                         // "Start GBARunner2"
     "Bordure du haut: Activer",                                           // "Top border: On"
     "Bordure du haut: Désactiver",                                          // "Top border: Off"
-    "Unset donor ROM",                                          // "Unset donor rom"
+    "Désélectionner la donor ROM",                                          // "Unset donor rom"
     "Recherche",                                                   // "Search"
     // Values
     "Carte SD",                                                  // "SD Card"
@@ -149,10 +149,10 @@ static const char* const lang_FR[STR_MAX] = {
     "Vitesse du CPU ARM9",                                           // "ARM9 CPU Speed"
     "Boost VRAM",                                               // "VRAM boost"
     "Vérouiller SCFG_EXT ARM9",                                       // "Lock ARM9 SCFG_EXT"
-    "Définir comme ROM donor",                                         // "Set as donor ROM"
+    "Définir comme donor ROM",                                         // "Set as donor ROM"
     "Définir la couleur de la LED",                                            // "Set LED color"
     // Values
-    "Défaut",                                                  // "Default"
+    "Par défaut",                                                  // "Default"
 
     /** Sub-theme **/
     "Sélection du sous-thème: DSi Menu",                               // "Sub-theme select: DSi Menu"
