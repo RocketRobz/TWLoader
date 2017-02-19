@@ -1,4 +1,5 @@
 #include "date.h"
+#include "main.h"
 #include "language.h"
 
 #include <sftd.h>
@@ -10,10 +11,6 @@
 #include <string>
 using std::string;
 
-// from main.cpp
-extern sftd_font *font;
-extern sftd_font *font_b;
-
 /**
  * Get the current date as a C string.
  * @param format Date format.
@@ -22,7 +19,7 @@ extern sftd_font *font_b;
  * @return Number of bytes written, excluding the NULL terminator.
  * @return Current date. (Caller must free() this string.)
  */
-size_t GetDate(int format, char *buf, size_t size)
+size_t GetDate(DateFormat format, char *buf, size_t size)
 {
 	time_t Raw;
 	time(&Raw);
@@ -89,6 +86,23 @@ string RetTime(bool donotblink)
 }
 
 /**
+ * Draw the date using the specified format and color.
+ * @param Xpos X position.
+ * @param Ypos Y position.
+ * @param format Date format.
+ * @param color Text color.
+ * @param size Text size.
+ */
+void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size)
+{
+	char date_str[24];
+	GetDate(format, date_str, sizeof(date_str));
+	if (date_str[0] == 0)
+		return;
+	sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
+}
+
+/**
  * Draw the date using the specified color.
  * Date format depends on language setting.
  * @param Xpos X position.
@@ -116,25 +130,5 @@ void DrawDate(int Xpos, int Ypos, u32 color, int size)
 		FORMAT_MD,	// Traditional Chinese
 	};
 
-	char date_str[24];
-	GetDate(date_fmt[language], date_str, sizeof(date_str));
-	if (date_str[0] == 0)
-		return;
-	sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
-}
-
-/**
- * Draw the month and year using the specified color.
- * @param Xpos X position.
- * @param Ypos Y position.
- * @param color Text color.
- * @param size Text size.
- */
-void DrawDate_MY(int Xpos, int Ypos, u32 color, int size)
-{
-	char date_str[24];
-	GetDate(FORMAT_MY, date_str, sizeof(date_str));
-	if (date_str[0] == 0)
-		return;
-	sftd_draw_text(font_b, Xpos, Ypos, color, size, date_str);
+	DrawDateF(Xpos, Ypos, (DateFormat)date_fmt[language], color, size);
 }

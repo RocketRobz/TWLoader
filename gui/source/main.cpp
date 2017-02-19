@@ -1,5 +1,6 @@
 // for strcasestr()
 #define _GNU_SOURCE 1
+#include "main.h"
 
 #include "download.h"
 #include "settings.h"
@@ -19,6 +20,7 @@
 #include <3ds.h>
 #include <sf2d.h>
 #include <sfil.h>
+#include "img/twpng.h"
 #include <sftd.h>
 #include "ptmu_x.h"
 
@@ -46,11 +48,7 @@ bool is3DSX = COMPILE_3DSX;
 #include "logo_png.h"
 #include "logo_demo_png.h"
 
-
-touchPosition touch;
-u32 kUp;
-u32 kDown;
-u32 kHeld;
+static touchPosition touch;
 
 bool menuaction_nextpage = false;
 bool menuaction_prevpage = false;
@@ -77,10 +75,7 @@ static sf2d_texture *slot1boxarttex = NULL;
 
 std::string	bootstrapPath;
 
-enum ScreenMode {
-	SCREEN_MODE_ROM_SELECT = 0,	// ROM Select
-	SCREEN_MODE_SETTINGS = 1,	// Settings
-};
+// Current screen mode.
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 
 /* enum RomSelect_Mode {	// R4 Theme only
@@ -446,36 +441,43 @@ void SetMPUSettings() {
 	} else {
 		settings.twl.mpusize = 0;
 	}
-		
-	if (
-		strcmp(game_TID, "A7A") == 0 ||	// DS Download Station - Vol 1
-		strcmp(game_TID, "A7B") == 0 ||	// DS Download Station - Vol 2
-		strcmp(game_TID, "A7C") == 0 ||	// DS Download Station - Vol 3
-		strcmp(game_TID, "A7D") == 0 ||	// DS Download Station - Vol 4
-		strcmp(game_TID, "A7E") == 0 ||	// DS Download Station - Vol 5
-		strcmp(game_TID, "A7F") == 0 ||	// DS Download Station - Vol 6 (EUR)
-		strcmp(game_TID, "A7G") == 0 ||	// DS Download Station - Vol 6 (USA)
-		strcmp(game_TID, "A7H") == 0 ||	// DS Download Station - Vol 7
-		strcmp(game_TID, "A7I") == 0 ||	// DS Download Station - Vol 8
-		strcmp(game_TID, "A7J") == 0 ||	// DS Download Station - Vol 9
-		strcmp(game_TID, "A7K") == 0 ||	// DS Download Station - Vol 10
-		strcmp(game_TID, "A7L") == 0 ||	// DS Download Station - Vol 11
-		strcmp(game_TID, "A7M") == 0 ||	// DS Download Station - Vol 12
-		strcmp(game_TID, "A7N") == 0 ||	// DS Download Station - Vol 13
-		strcmp(game_TID, "A7O") == 0 ||	// DS Download Station - Vol 14
-		strcmp(game_TID, "A7P") == 0 ||	// DS Download Station - Vol 15
-		strcmp(game_TID, "A7Q") == 0 ||	// DS Download Station - Vol 16
-		strcmp(game_TID, "A7R") == 0 ||	// DS Download Station - Vol 17
-		strcmp(game_TID, "A7S") == 0 ||	// DS Download Station - Vol 18
-		strcmp(game_TID, "A7T") == 0 ||	// DS Download Station - Vol 19
-		strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
-		strcmp(game_TID, "YZX") == 0 ||	// Rockman ZX Advent/MegaMan ZX Advent
-		strcmp(game_TID, "B6Z") == 0 	// Rockman Zero Collection/MegaMan Zero Collection
-	) {
-		settings.twl.mpuregion = 1;
-		settings.twl.mpusize = 3145728;
-	}
 
+	// Check for games that need an MPU size of 3 MB.
+	static const char mpu_3MB_list[][4] = {
+		"A7A",	// DS Download Station - Vol 1
+		"A7B",	// DS Download Station - Vol 2
+		"A7C",	// DS Download Station - Vol 3
+		"A7D",	// DS Download Station - Vol 4
+		"A7E",	// DS Download Station - Vol 5
+		"A7F",	// DS Download Station - Vol 6 (EUR)
+		"A7G",	// DS Download Station - Vol 6 (USA)
+		"A7H",	// DS Download Station - Vol 7
+		"A7I",	// DS Download Station - Vol 8
+		"A7J",	// DS Download Station - Vol 9
+		"A7K",	// DS Download Station - Vol 10
+		"A7L",	// DS Download Station - Vol 11
+		"A7M",	// DS Download Station - Vol 12
+		"A7N",	// DS Download Station - Vol 13
+		"A7O",	// DS Download Station - Vol 14
+		"A7P",	// DS Download Station - Vol 15
+		"A7Q",	// DS Download Station - Vol 16
+		"A7R",	// DS Download Station - Vol 17
+		"A7S",	// DS Download Station - Vol 18
+		"A7T",	// DS Download Station - Vol 19
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(mpu_3MB_list)/sizeof(mpu_3MB_list[0]); i++) {
+		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
+			// Found a match.
+			settings.twl.mpuregion = 1;
+			settings.twl.mpusize = 3145728;
+			break;
+		}
+	}
 }
 
 /**
@@ -1475,8 +1477,6 @@ int main()
 	bool applaunchicon = false;
 	
 	float rad = 0.0f;
-	u16 touch_x = 320/2;
-	u16 touch_y = 240/2;
 	
 	int boxartXpos;
 	int boxartXmovepos = 0;
@@ -1946,15 +1946,15 @@ int main()
 						case 0:
 						default:
 							sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
-							DrawDate_MY(22+197, 198, RGBA8(16, 0, 0, 223), 22);
+							DrawDateF(22+197, 198, FORMAT_MY, RGBA8(16, 0, 0, 223), 22);
 							break;
 						case 1:
 							sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							DrawDate_MY(40+182, 78, RGBA8(255, 255, 255, 255), 22);
+							DrawDateF(40+182, 78, FORMAT_MY, RGBA8(255, 255, 255, 255), 22);
 							break;
 						case 2:
 							sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							DrawDate_MY(40+69, 204, RGBA8(255, 255, 255, 255), 19);
+							DrawDateF(40+69, 204, FORMAT_MY, RGBA8(255, 255, 255, 255), 19);
 							break;
 						case 3:
 							sftd_draw_text(font_b, 40+176, 172, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
@@ -1970,38 +1970,36 @@ int main()
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						sf2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
-						if (settings.twl.forwarder) {
-							for(filenum = 0; filenum < (int)fcfiles.size(); filenum++){
-								if(cursorPosition == filenum) {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, fcfiles.at(filenum).c_str());
-								} else {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
-								}
-								filenameYpos += 15;
+						const int file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						for (filenum = 0; filenum < file_count; filenum++) {
+							u32 color;
+							if (cursorPosition == filenum) {
+								color = SET_ALPHA(color_data->color, 255);
+							} else {
+								color = RGBA8(255, 255, 255, 255);
 							}
-						} else {
-							for(filenum = 0; filenum < (int)files.size(); filenum++){
-								if(cursorPosition == filenum) {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, SET_ALPHA(color_data->color, 255), 12, files.at(filenum).c_str());
-								} else {
-									sftd_draw_textf(font, 42, filenameYpos+filenameYmovepos*15, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
-								}
-								filenameYpos += 15;
-							}
+
+							// Get the current filename and convert it to wstring.
+							const char *filename = (settings.twl.forwarder
+									? fcfiles.at(filenum).c_str()
+									: files.at(filenum).c_str());
+							wstring wstr = utf8_to_wstring(filename);
+							sftd_draw_wtext(font, 42, filenameYpos+filenameYmovepos*15, color, 12, wstr.c_str());
+
+							filenameYpos += 15;
 						}
+
 						sf2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
-						if (settings.twl.forwarder)
-							sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (Flashcard)");
-						else
-							sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, "Games (SD Card)");
-						
-						const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						const char *title = (settings.twl.forwarder
+									? "Games (Flashcard)"
+									: "Games (SD Card)");
+						sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, title);
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
 						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", cursorPosition+1);		
 						// if(matching_files.size() == 0){
-							snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+							snprintf(romsel_counter2, sizeof(romsel_counter2), "%d", file_count);
 						// }else{
 						// 	snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
 						// }
@@ -2654,12 +2652,17 @@ int main()
 						for (filenum = pagenum*20; filenum < pagemax; filenum++) {
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
-							if (cursorPosition == filenum)
+							if (cursorPosition == filenum) {
 								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
-							if (settings.twl.forwarder)
-								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, fcfiles.at(filenum).c_str());
-							else
-								sftd_draw_textf(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, files.at(filenum).c_str());
+							}
+
+							// Get the current filename and convert it to wstring.
+							const char *filename = (settings.twl.forwarder
+									? fcfiles.at(filenum).c_str()
+									: files.at(filenum).c_str());
+							wstring wstr = utf8_to_wstring(filename);
+							sftd_draw_wtext(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, wstr.c_str());
+
 							if (cursorPosition == filenum)
 								sf2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 							else
@@ -3452,18 +3455,16 @@ int main()
 						settings.ui.iconsize = !settings.ui.iconsize;
 					}
 					hidTouchRead(&touch);
-					touch_x = touch.px;
-					touch_y = touch.py;
 					if(hDown & KEY_TOUCH){
-						if (touch_x >= 128 && touch_x <= 192 && touch_y >= 112 && touch_y <= 192) {
+						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
 							menuaction_launch = true;
-						} else if (touch_x < 128 && touch_y >= 118 && touch_y <= 180  && menudbox_Ypos == -240) {
+						} else if (touch.px < 128 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveright) {
 								titleboxXmoveleft = true;
 							}
 							// updatebotscreen = true;
-						} else if (touch_x > 192 && touch_y >= 118 && touch_y <= 180  && menudbox_Ypos == -240) {
+						} else if (touch.px > 192 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
 								if (cursorPosition == -1) {
@@ -3657,8 +3658,6 @@ int main()
 					
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					hidTouchRead(&touch);
-					touch_x = touch.px;
-					touch_y = touch.py;
 					
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT) {
@@ -3688,17 +3687,17 @@ int main()
 								startmenu_cursorPosition -= 2;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 31 && touch_y <= 65) { // Game location button
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= 31 && touch.py <= 65) { // Game location button
 								startmenu_cursorPosition = 0;
 								menudboxaction_switchloc = true;
-							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 31 && touch_y <= 65){ // Box art button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 31 && touch.py <= 65){ // Box art button
 								startmenu_cursorPosition = 1;
 								settings.romselect.toplayout = !settings.romselect.toplayout;
 								if (dspfirmfound) {
 									sfx_switch->stop();	// Prevent freezing
 									sfx_switch->play();
 								}
-							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 71 && touch_y <= 105){ // Start GBARunner2 button
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 71 && touch.py <= 105){ // Start GBARunner2 button
 								startmenu_cursorPosition = 2;
 								if (!is3DSX) {
 									gbarunnervalue = 1;
@@ -3723,17 +3722,17 @@ int main()
 										playwrongsounddone = true;
 									}
 								}
-							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 71 && touch_y <= 105){ // Top border button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 71 && touch.py <= 105){ // Top border button
 								startmenu_cursorPosition = 3;
 								settings.ui.topborder = !settings.ui.topborder;
-							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 111 && touch_y <= 145){ // Unset donor ROM button
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 111 && touch.py <= 145){ // Unset donor ROM button
 								startmenu_cursorPosition = 4;
 								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
 								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 111 && touch_y <= 145){ // Search button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 111 && touch.py <= 145){ // Search button
 								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
 								if(matching_files.size() != 0){
 									matching_files.clear();
@@ -3789,7 +3788,7 @@ int main()
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;			
-							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
@@ -3892,8 +3891,6 @@ int main()
 						}
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 						hidTouchRead(&touch);
-						touch_x = touch.px;
-						touch_y = touch.py;
 						
 						if (hDown & KEY_START) {
 							// Switch to the "Start" menu.
@@ -3942,7 +3939,7 @@ int main()
 								gamesettings_cursorPosition = 2;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch_x >= 23 && touch_x <= 155 && touch_y >= 89 && touch_y <= 123) { // ARM9 CPU Speed
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= 89 && touch.py <= 123) { // ARM9 CPU Speed
 								gamesettings_cursorPosition = 0;
 								settings.pergame.cpuspeed++;
 								if(settings.pergame.cpuspeed == 2)
@@ -3951,7 +3948,7 @@ int main()
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 89 && touch_y <= 123){ // VRAM boost
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 89 && touch.py <= 123){ // VRAM boost
 								gamesettings_cursorPosition = 1;
 								settings.pergame.extvram++;
 								if(settings.pergame.extvram == 2)
@@ -3960,7 +3957,7 @@ int main()
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 129 && touch_y <= 163){ // Lock ARM9 SCFG_EXT
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Lock ARM9 SCFG_EXT
 								gamesettings_cursorPosition = 2;
 								settings.pergame.lockarm9scfgext++;
 								if(settings.pergame.lockarm9scfgext == 2)
@@ -3969,7 +3966,7 @@ int main()
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch_x >= 161 && touch_x <= 293 && touch_y >= 129 && touch_y <= 163){ // Set as donor ROM
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 129 && touch.py <= 163){ // Set as donor ROM
 								gamesettings_cursorPosition = 3;
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
@@ -3989,7 +3986,7 @@ int main()
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch_x >= 23 && touch_x <= 155 && touch_y >= 169 && touch_y <= 203){ // Set LED Color
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 169 && touch.py <= 203){ // Set LED Color
 								gamesettings_cursorPosition = 4;								
 
 								RGB[0] = keyboardInputInt("Red color: max is 255");
@@ -4000,7 +3997,7 @@ int main()
 								settings.pergame.green = RGB[1];
 								settings.pergame.blue = RGB[2];
 								
-							}else if (touch_x >= 233 && touch_x <= 299 && touch_y >= (menudbox_Ypos + 191) && touch_y <= (menudbox_Ypos + 217)){ // Back button
+							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
 										rom = fcfiles.at(cursorPosition).c_str();

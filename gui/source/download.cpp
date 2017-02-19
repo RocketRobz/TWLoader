@@ -1,4 +1,6 @@
 #include "download.h"
+#include "main.h"
+#include "language.h"
 #include "date.h"
 #include "inifile.h"
 #include "log.h"
@@ -22,36 +24,6 @@ using std::vector;
 #include <3ds.h>
 #include <sf2d.h>
 #include <sftd.h>
-
-// Functions and variables defined in main.cpp.
-extern void DialogBoxAppear(const char *text, int mode);
-extern void DialogBoxDisappear(const char *text, int mode);
-extern sftd_font *font;
-extern sftd_font *font_b;
-extern sf2d_texture *dialogboxtex; // Dialog box
-extern sf2d_texture *settingstex; // Bottom of settings screen
-extern bool showdialogbox;
-extern bool run;	// Set to false to exit to the Home Menu.
-extern std::string settings_releasebootstrapver;
-extern std::string settings_unofficialbootstrapver;
-extern bool logEnabled;
-
-extern const u64 TWLNAND_TID;
-extern bool checkTWLNANDSide(void);
-
-extern int screenmode;
-// 0: ROM select
-// 1: Settings
-
-extern char settings_vertext[13];
-extern char settings_latestvertext[13];
-
-// Language
-extern u8 language;
-
-// Files
-extern vector<string> files;
-extern vector<string> fcfiles;
 
 const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/ver?raw=true";
 const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
@@ -214,7 +186,7 @@ int checkUpdate(void) {
 	static const char title[] = "Now checking TWLoader version...";
 	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -257,7 +229,7 @@ int checkUpdate(void) {
 		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
 
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1) {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -265,7 +237,7 @@ int checkUpdate(void) {
 			// Version is not different.
 			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are equals");
 		
-			if (screenmode == 1) {				
+			if (screenmode == SCREEN_MODE_SETTINGS) {				
 				showdialogbox = false;
 			}else{
 				sf2d_end_frame();
@@ -306,7 +278,7 @@ void DownloadTWLoaderCIAs(void) {
 	}
 	
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -328,7 +300,7 @@ void DownloadTWLoaderCIAs(void) {
 			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == 1) {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -352,7 +324,7 @@ void UpdateBootstrapUnofficial(void) {
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
 	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -364,7 +336,7 @@ void UpdateBootstrapUnofficial(void) {
 	downloadBootstrapVersion(false);
 	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
 }
@@ -376,7 +348,7 @@ void UpdateBootstrapRelease(void) {
 	static const char title[] = "Now updating bootstrap (Release)...";
 	DialogBoxAppear(title, 0);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
@@ -388,7 +360,7 @@ void UpdateBootstrapRelease(void) {
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
-	if (screenmode == 1) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
 }

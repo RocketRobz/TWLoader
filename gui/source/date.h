@@ -22,7 +22,7 @@ typedef enum {
  * @return Number of bytes written, excluding the NULL terminator.
  * @return Current date. (Caller must free() this string.)
  */
-size_t GetDate(int format, char *buf, size_t size);
+size_t GetDate(DateFormat format, char *buf, size_t size);
 
 /**
  * Get the current time formatted for the top bar.
@@ -33,22 +33,23 @@ size_t GetDate(int format, char *buf, size_t size);
 std::string RetTime(bool donotblink);
 
 /**
- * Draw the date using the specified color.
- * Date format depends on language setting.
+ * Draw the date using the specified format and color.
+ * @param Xpos X position.
+ * @param Ypos Y position.
+ * @param format Date format.
+ * @param color Text color.
+ * @param size Text size.
+ */
+void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size);
+
+/**
+ * Draw the month and year using the specified color.
+ * Format is selected based on the language setting.
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param color Text color.
  * @param size Text size.
  */
 void DrawDate(int Xpos, int Ypos, u32 color, int size);
-
-/**
- * Draw the month and year using the specified color.
- * @param Xpos X position.
- * @param Ypos Y position.
- * @param color Text color.
- * @param size Text size.
- */
-void DrawDate_MY(int Xpos, int Ypos, u32 color, int size);
 
 #endif // DATE_H
