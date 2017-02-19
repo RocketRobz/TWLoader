@@ -441,36 +441,43 @@ void SetMPUSettings() {
 	} else {
 		settings.twl.mpusize = 0;
 	}
-		
-	if (
-		strcmp(game_TID, "A7A") == 0 ||	// DS Download Station - Vol 1
-		strcmp(game_TID, "A7B") == 0 ||	// DS Download Station - Vol 2
-		strcmp(game_TID, "A7C") == 0 ||	// DS Download Station - Vol 3
-		strcmp(game_TID, "A7D") == 0 ||	// DS Download Station - Vol 4
-		strcmp(game_TID, "A7E") == 0 ||	// DS Download Station - Vol 5
-		strcmp(game_TID, "A7F") == 0 ||	// DS Download Station - Vol 6 (EUR)
-		strcmp(game_TID, "A7G") == 0 ||	// DS Download Station - Vol 6 (USA)
-		strcmp(game_TID, "A7H") == 0 ||	// DS Download Station - Vol 7
-		strcmp(game_TID, "A7I") == 0 ||	// DS Download Station - Vol 8
-		strcmp(game_TID, "A7J") == 0 ||	// DS Download Station - Vol 9
-		strcmp(game_TID, "A7K") == 0 ||	// DS Download Station - Vol 10
-		strcmp(game_TID, "A7L") == 0 ||	// DS Download Station - Vol 11
-		strcmp(game_TID, "A7M") == 0 ||	// DS Download Station - Vol 12
-		strcmp(game_TID, "A7N") == 0 ||	// DS Download Station - Vol 13
-		strcmp(game_TID, "A7O") == 0 ||	// DS Download Station - Vol 14
-		strcmp(game_TID, "A7P") == 0 ||	// DS Download Station - Vol 15
-		strcmp(game_TID, "A7Q") == 0 ||	// DS Download Station - Vol 16
-		strcmp(game_TID, "A7R") == 0 ||	// DS Download Station - Vol 17
-		strcmp(game_TID, "A7S") == 0 ||	// DS Download Station - Vol 18
-		strcmp(game_TID, "A7T") == 0 ||	// DS Download Station - Vol 19
-		strcmp(game_TID, "ARZ") == 0 ||	// Rockman ZX/MegaMan ZX
-		strcmp(game_TID, "YZX") == 0 ||	// Rockman ZX Advent/MegaMan ZX Advent
-		strcmp(game_TID, "B6Z") == 0 	// Rockman Zero Collection/MegaMan Zero Collection
-	) {
-		settings.twl.mpuregion = 1;
-		settings.twl.mpusize = 3145728;
-	}
 
+	// Check for games that need an MPU size of 3 MB.
+	static const char mpu_3MB_list[][4] = {
+		"A7A",	// DS Download Station - Vol 1
+		"A7B",	// DS Download Station - Vol 2
+		"A7C",	// DS Download Station - Vol 3
+		"A7D",	// DS Download Station - Vol 4
+		"A7E",	// DS Download Station - Vol 5
+		"A7F",	// DS Download Station - Vol 6 (EUR)
+		"A7G",	// DS Download Station - Vol 6 (USA)
+		"A7H",	// DS Download Station - Vol 7
+		"A7I",	// DS Download Station - Vol 8
+		"A7J",	// DS Download Station - Vol 9
+		"A7K",	// DS Download Station - Vol 10
+		"A7L",	// DS Download Station - Vol 11
+		"A7M",	// DS Download Station - Vol 12
+		"A7N",	// DS Download Station - Vol 13
+		"A7O",	// DS Download Station - Vol 14
+		"A7P",	// DS Download Station - Vol 15
+		"A7Q",	// DS Download Station - Vol 16
+		"A7R",	// DS Download Station - Vol 17
+		"A7S",	// DS Download Station - Vol 18
+		"A7T",	// DS Download Station - Vol 19
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(mpu_3MB_list)/sizeof(mpu_3MB_list[0]); i++) {
+		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
+			// Found a match.
+			settings.twl.mpuregion = 1;
+			settings.twl.mpusize = 3145728;
+			break;
+		}
+	}
 }
 
 /**
