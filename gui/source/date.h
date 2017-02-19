@@ -6,12 +6,12 @@
 #include <stddef.h>
 
 typedef enum {
-	FORMAT_YDM	= 0,
-	FORMAT_YMD	= 1,
-	FORMAT_DM	= 2,
-	FORMAT_MD	= 3,
-	FORMAT_M_D	= 4,
-	FORMAT_MY	= 5,
+    FORMAT_YDM  = 0,
+    FORMAT_YMD  = 1,
+    FORMAT_DM   = 2,
+    FORMAT_MD   = 3,
+    FORMAT_M_D  = 4,
+    FORMAT_MY   = 5,
 } DateFormat;
 
 /**
@@ -22,7 +22,7 @@ typedef enum {
  * @return Number of bytes written, excluding the NULL terminator.
  * @return Current date. (Caller must free() this string.)
  */
-size_t GetDate(DateFormat format, char *buf, size_t size);
+size_t GetDate(DateFormat format, char* buf, size_t size);
 
 /**
  * Get the current time formatted for the top bar.

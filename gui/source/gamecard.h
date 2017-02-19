@@ -20,11 +20,11 @@ bool gamecardPoll(bool force);
 void gamecardClearCache(void);
 
 enum GameCardType {
-	CARD_TYPE_UNKNOWN	= 0,	// Unknown type.
-	CARD_TYPE_NTR		= 1,	// DS
-	CARD_TYPE_TWL_ENH	= 2,	// DSi-enhanced
-	CARD_TYPE_TWL_ONLY	= 3,	// DSi only
-	CARD_TYPE_CTR		= 4,	// 3DS
+    CARD_TYPE_UNKNOWN   = 0,    // Unknown type.
+    CARD_TYPE_NTR       = 1,    // DS
+    CARD_TYPE_TWL_ENH   = 2,    // DSi-enhanced
+    CARD_TYPE_TWL_ONLY  = 3,    // DSi only
+    CARD_TYPE_CTR       = 4,    // 3DS
 };
 
 /**
@@ -43,7 +43,7 @@ GameCardType gamecardGetType(void);
  * Get the game card's game ID.
  * @return Game ID, or NULL if not a TWL card.
  */
-const char *gamecardGetGameID(void);
+const char* gamecardGetGameID(void);
 
 /**
  * Get the game card's game ID as a u32.
@@ -55,7 +55,7 @@ u32 gamecardGetGameID_u32(void);
  * Get the game card's product code.
  * @return Product code, or NULL if not a TWL card.
  */
-const char *gamecardGetProductCode(void);
+const char* gamecardGetProductCode(void);
 
 /**
  * Get the game card's Title ID.
@@ -74,7 +74,7 @@ u8 gamecardGetRevision(void);
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */
-sf2d_texture *gamecardGetIcon(void);
+sf2d_texture* gamecardGetIcon(void);
 
 /**
  * Get the game card's banner text.
