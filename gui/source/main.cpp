@@ -20,6 +20,7 @@
 #include <3ds.h>
 #include <sf2d.h>
 #include <sfil.h>
+#include "img/twpng.h"
 #include <sftd.h>
 #include "ptmu_x.h"
 
