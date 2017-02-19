@@ -533,7 +533,7 @@ int downloadBootstrapVersion(bool type
 
 void checkBootstrapVersion(void){
 	
-	int res = false;
+	bool res = false;
 	long fileSize;
 	char buf[26];
 	if (logEnabled) LogFM("download.checkBootstrapVersion()", "Checking bootstrap version");
@@ -591,7 +591,7 @@ void checkBootstrapVersion(void){
 		}
 	}
 	
-	res = -1; // Just to be sure	
+	res = false; // Just to be sure	
 	
 	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
 	if (!VerFile){
