@@ -211,7 +211,7 @@ std::string sav;		// Associated save file.
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
-static const std::string fat = "fat:/";
+static const std::string fat = "sd:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
