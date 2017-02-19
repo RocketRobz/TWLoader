@@ -20,30 +20,30 @@
 #include "languages/russian.h"
 
 // All languages.
-static const char *const *lang_all[12] = {
-	lang_JP,	// Japanese
-	lang_EN,	// English
-	lang_FR,	// French
-	lang_DE,	// German
-	lang_IT,	// Italian
-	lang_ES,	// Spanish
-	lang_EN,	// Simplified Chinese (TODO)
-	lang_KO,	// Korean
-	lang_NL,	// Dutch
-	lang_PT,	// Portuguese
-	lang_RU,	// Russian
-	lang_EN,	// Traditional Chinese (TODO)
+static const char* const* lang_all[12] = {
+    lang_JP,    // Japanese
+    lang_EN,    // English
+    lang_FR,    // French
+    lang_DE,    // German
+    lang_IT,    // Italian
+    lang_ES,    // Spanish
+    lang_EN,    // Simplified Chinese (TODO)
+    lang_KO,    // Korean
+    lang_NL,    // Dutch
+    lang_PT,    // Portuguese
+    lang_RU,    // Russian
+    lang_EN,    // Traditional Chinese (TODO)
 };
 
 /** Functions. **/
 
 // System language setting.
-u8 language = 1;	// UI language ID.
-u8 sys_language = 1;	// System language ID.
-static const char *const *lang_data = lang_all[1];
+u8 language = 1;    // UI language ID.
+u8 sys_language = 1;    // System language ID.
+static const char* const* lang_data = lang_all[1];
 
 // Translation cache.
-static wchar_t *lang_cache[STR_MAX] = { };
+static wchar_t* lang_cache[STR_MAX] = { };
 
 /**
  * Initialize translations.
@@ -51,25 +51,24 @@ static wchar_t *lang_cache[STR_MAX] = { };
  */
 void langInit(void)
 {
-	if (R_FAILED(CFGU_GetSystemLanguage(&sys_language)) ||
-	    (sys_language < 0 || sys_language >= 12))
-	{
-		// Invalid system language ID.
-		// Default to English.
-		sys_language = 1;
-	}
+    if (R_FAILED(CFGU_GetSystemLanguage(&sys_language)) ||
+            (sys_language < 0 || sys_language >= 12)) {
+        // Invalid system language ID.
+        // Default to English.
+        sys_language = 1;
+    }
 
-	language = settings.ui.language;
-	if (language < 0 || language >= 12) {
-		// Invalid language ID.
-		// Default to the system language setting.
-		language = sys_language;
-	}
+    language = settings.ui.language;
+    if (language < 0 || language >= 12) {
+        // Invalid language ID.
+        // Default to the system language setting.
+        language = sys_language;
+    }
 
-	// Clear the language cache.
-	langClear();
-	// Set the selected language.
-	lang_data = lang_all[language];
+    // Clear the language cache.
+    langClear();
+    // Set the selected language.
+    lang_data = lang_all[language];
 }
 
 /**
@@ -77,10 +76,10 @@ void langInit(void)
  */
 void langClear(void)
 {
-	for (int i = STR_MAX-1; i >= 0; i--) {
-		free(lang_cache[i]);
-		lang_cache[i] = NULL;
-	}
+    for (int i = STR_MAX - 1; i >= 0; i--) {
+        free(lang_cache[i]);
+        lang_cache[i] = NULL;
+    }
 }
 
 /**
@@ -91,19 +90,19 @@ void langClear(void)
  * @param strID String ID.
  * @return Translation, or error string if strID is invalid.
  */
-const wchar_t *TR(StrID strID)
+const wchar_t* TR(StrID strID)
 {
-	if (strID < 0 || strID >= STR_MAX) {
-		// Invalid string ID.
-		return L"STRID ERR";
-	}
+    if (strID < 0 || strID >= STR_MAX) {
+        // Invalid string ID.
+        return L"STRID ERR";
+    }
 
-	if (lang_cache[strID]) {
-		// String has already been converted to wchar_t*.
-		return lang_cache[strID];
-	}
+    if (lang_cache[strID]) {
+        // String has already been converted to wchar_t*.
+        return lang_cache[strID];
+    }
 
-	// Convert the string to wchar_t*.
-	lang_cache[strID] = utf8_to_wchar(lang_data[strID]);
-	return lang_cache[strID];
+    // Convert the string to wchar_t*.
+    lang_cache[strID] = utf8_to_wchar(lang_data[strID]);
+    return lang_cache[strID];
 }
