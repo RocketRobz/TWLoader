@@ -12,7 +12,7 @@ extern "C" {
  * @param omde Mode.
  * @return 0 on success; non-zero on error.
  */
-int rmkdir(const char *path, int mode);
+int rmkdir(const char* path, int mode);
 
 #ifdef __cplusplus
 }

@@ -11,7 +11,7 @@ Result ptmuxInit(void);
 
 void ptmuxExit(void);
 
-Result PTMUX_GetAdapterState(u8 *out);
+Result PTMUX_GetAdapterState(u8* out);
 
 #ifdef __cplusplus
 }

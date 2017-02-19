@@ -8,9 +8,9 @@
 bool checkWifiStatus(void);
 
 enum MediaType {
-	MEDIA_SD_FILE = 0,	// Plain old file on the SD card.
-	MEDIA_SD_CIA = 1,	// CIA installed to the SD card.
-	MEDIA_NAND_CIA = 2,	// CIA installed to NAND.
+    MEDIA_SD_FILE = 0,  // Plain old file on the SD card.
+    MEDIA_SD_CIA = 1,   // CIA installed to the SD card.
+    MEDIA_NAND_CIA = 2, // CIA installed to NAND.
 };
 
 /**
@@ -55,7 +55,7 @@ int downloadBootstrapVersion(bool type);
  */
 
 void checkBootstrapVersion(void);
- 
+
 /**
  * Download Slot-1 boxart.
  */

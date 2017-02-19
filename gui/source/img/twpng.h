@@ -15,7 +15,7 @@ extern "C" {
  * @param place where to allocate the texture
  * @return a pointer to the newly created texture/image
  */
-sf2d_texture *twl_load_PNG_file(const char *filename, sf2d_place place);
+sf2d_texture* twl_load_PNG_file(const char* filename, sf2d_place place);
 
 /**
  * @brief Loads a PNG image from a memory buffer
@@ -23,7 +23,7 @@ sf2d_texture *twl_load_PNG_file(const char *filename, sf2d_place place);
  * @param place where to allocate the texture
  * @return a pointer to the newly created texture/image
  */
-sf2d_texture *twl_load_PNG_buffer(const void *buffer, sf2d_place place);
+sf2d_texture* twl_load_PNG_buffer(const void* buffer, sf2d_place place);
 
 #define sfil_load_PNG_file(filename, place) twl_load_PNG_file(filename, place)
 #define sfil_load_PNG_buffer(filename, place) twl_load_PNG_buffer(filename, place)
