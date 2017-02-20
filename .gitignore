@@ -1,8 +1,9 @@
-*.cia
 *.3dsx
 *.bin
+*.cia
+*.dat
 *.elf
 *.smdh
-*.dat
-build
 7zfile
+build
+pingo.exe
