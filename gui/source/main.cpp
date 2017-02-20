@@ -211,7 +211,7 @@ std::string sav;		// Associated save file.
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
-static const std::string fat = "fat:/";
+static const std::string fat = "sd:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
@@ -1284,14 +1284,19 @@ int main()
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
+	if (logEnabled)	LogFM("Main.Directories", "Directories are made, or already made");
 	
 	// Font loading
 	sftd_init();
+	if (logEnabled)	LogFM("Main.sftd_init", "sftd inited");
 	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
+	if (logEnabled)	LogFMA("Main.Font loading", "Font file loaded correctly", "font = FOT-RodinBokutoh Pro M.otf");
 	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
+	if (logEnabled)	LogFMA("Main.Font loading", "Font file loaded correctly", "font_b = FOT-RodinBokutoh Pro DB.otf");
 	sftd_draw_text(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
+	if (logEnabled)	LogFMA("Main.Font loading", "Removed pixelation of text", "font");
 	sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
-	if (logEnabled)	LogFM("Main.Font loading", "Fonts load correctly");
+	if (logEnabled)	LogFMA("Main.Font loading", "Removed pixelation of text", "font_b");
 	
     snprintf(settings_vertext, 14, "Ver. %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
