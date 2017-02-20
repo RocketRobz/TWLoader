@@ -1258,15 +1258,15 @@ void LoadColor(void) {
 			(u32)RGBA8(255, 0, 127, 255)
 		},
 		{
-			"romfs:/graphics/topbg/16-red&blue.png",
-			"romfs:/graphics/dotcircle/16-red&blue.png",
-			"romfs:/graphics/start_border/16-red&blue.png",
+			"romfs:/graphics/topbg/16-red_and_blue.png",
+			"romfs:/graphics/dotcircle/16-red_and_blue.png",
+			"romfs:/graphics/start_border/16-red_and_blue.png",
 			(u32)RGBA8(255, 0, 255, 255)
 		},
 		{
-			"romfs:/graphics/topbg/17-green&yellow.png",
-			"romfs:/graphics/dotcircle/17-green&yellow.png",
-			"romfs:/graphics/start_border/17-green&yellow.png",
+			"romfs:/graphics/topbg/17-green_and_yellow.png",
+			"romfs:/graphics/dotcircle/17-green_and_yellow.png",
+			"romfs:/graphics/start_border/17-green_and_yellow.png",
 			(u32)RGBA8(215, 215, 0, 255)
 		},
 		{

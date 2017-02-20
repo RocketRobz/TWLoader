@@ -1609,7 +1609,7 @@ int main()
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/Adv.Evo/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 3:
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo_pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == 1) {
@@ -2495,7 +2495,7 @@ int main()
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/Adv.Evo/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 							case 3:
-								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo_pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 						}
 					} else if (settings.ui.theme == 1) {
