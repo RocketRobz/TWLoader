@@ -58,6 +58,8 @@ dldiOffset:
 	.word	_dldi_start - _start
 dsiSD:
 	.word	0
+dsiMode:
+	.word	0
 */
 
 #define STORED_FILE_CLUSTER_OFFSET 4 
@@ -66,6 +68,7 @@ dsiSD:
 #define ARG_START_OFFSET 16
 #define ARG_SIZE_OFFSET 20
 #define HAVE_DSISD_OFFSET 28
+#define DSIMODE_OFFSET 32
 
 
 typedef signed int addr_t;
@@ -148,7 +151,8 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 	return -1;
 }
 
-static const data_t dldiMagicString[] = "\xED\xA5\x8D\xBF Chishm";	// Normal DLDI file
+// Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
+// Bootloader string is different to avoid being patched
 static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
 
 #define DEVICE_TYPE_DLDI 0x49444C44
@@ -283,6 +287,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	// INIT_DISC = initDisc;
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
+	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	if(argv[0][0]=='s' && argv[0][1]=='d') {
 		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
@@ -401,23 +406,24 @@ dsiSD:
 bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
 	extern char *fake_heap_end;
-	struct __bootstub *bootcode = (struct __bootstub *)fake_heap_end;
+	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
+	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
 
-	memcpy(fake_heap_end,bootstub_bin,bootstub_bin_size);
-	memcpy(fake_heap_end+bootstub_bin_size,load_bin,load_bin_size);
+	memcpy(bootstub,bootstub_bin,bootstub_bin_size);
+	memcpy(bootloader,load_bin,load_bin_size);
 	bool ret = false;
 
+	bootloader[8] = isDSiMode();
 	if( havedsiSD) {
 		ret = true;
-		u32 *bootcode = (u32*)(fake_heap_end+bootstub_bin_size);
-		bootcode[3] = 0; // don't dldi patch
-		bootcode[7] = 1; // use internal dsi SD code
+		bootloader[3] = 0; // don't dldi patch
+		bootloader[7] = 1; // use internal dsi SD code
 	} else {
-		ret = dldiPatchLoader((data_t*)(fake_heap_end+bootstub_bin_size), load_bin_size,false);
+		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size,false);
 	}
-	bootcode->arm9reboot = (VoidFn)(((u32)bootcode->arm9reboot)+fake_heap_end); 
-	bootcode->arm7reboot = (VoidFn)(((u32)bootcode->arm7reboot)+fake_heap_end); 
-	bootcode->bootsize = load_bin_size;
+	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
+	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
+	bootstub->bootsize = load_bin_size;
 	
 	DC_FlushAll();
 

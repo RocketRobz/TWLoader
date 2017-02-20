@@ -257,21 +257,6 @@ int main(int argc, char **argv) {
 
 		fifoSendValue32(FIFO_USER_01, 1);
 		fifoWaitValue32(FIFO_USER_03);
-
-		// Only time SCFG should be locked is for compatiblity with NTR retail stuff.
-		// So NTR SCFG values (that preserve SD access) are always used when locking.
-		// Locking Arm9 SCFG kills SD access. So that will not occur here.
-		if(twloaderini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
-			fifoSendValue32(FIFO_USER_05, 1);
-			REG_SCFG_EXT = 0x83000000;
-		} else {
-			if(twloaderini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
-				fifoSendValue32(FIFO_USER_06, 1);
-				REG_SCFG_EXT = 0x8307F100;
-			} else {
-				REG_SCFG_EXT = 0x83000000;
-			}
-		}
 		
 		if(TWLVRAM) {
 			REG_SCFG_EXT |= 0x2000;
@@ -357,7 +342,7 @@ int main(int argc, char **argv) {
 		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-		filename = ReplaceAll( filename, "fat:/", "sd:/");
+		// filename = ReplaceAll( filename, "fat:/", "sd:/");
 		runFile(filename);
 		
 		// Subscreen as a console

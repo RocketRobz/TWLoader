@@ -10,8 +10,8 @@ endif
 include $(DEVKITARM)/ds_rules
 
 export HBMENU_MAJOR	:= 0
-export HBMENU_MINOR	:= 5
-export HBMENU_PATCH	:= 0
+export HBMENU_MINOR	:= 6
+export HBMENU_PATCH	:= 1
 
 
 VERSION	:=	$(HBMENU_MAJOR).$(HBMENU_MINOR).$(HBMENU_PATCH)
@@ -23,7 +23,7 @@ VERSION	:=	$(HBMENU_MAJOR).$(HBMENU_MINOR).$(HBMENU_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	TWLapp
+TARGET		:=	TWLapp-hb
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include
@@ -35,7 +35,8 @@ GRAPHICS	:=  gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 \
+		-ffunction-sections -fdata-sections \
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
@@ -115,9 +116,9 @@ endif
 
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub BootStrap clean
+.PHONY: bootloader bootstub clean
 
-all:	bootloader bootstub BootStrap $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 
 dist:	all
 	@rm	-fr	TWLapp-hb
@@ -154,7 +155,6 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
-	@$(MAKE) -C BootStrap clean
 	$(MAKE) -C arm9 clean
 	$(MAKE) -C arm7 clean
 
@@ -166,9 +166,6 @@ bootloader: data
 
 bootstub: data
 	@$(MAKE) -C bootstub
-
-BootStrap:
-	@$(MAKE) -C BootStrap
 
 #---------------------------------------------------------------------------------
 else
