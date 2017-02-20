@@ -1284,6 +1284,7 @@ int main()
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
+	if (logEnabled)	LogFM("Main.Directories", "Directories are made, or already made");
 	
 	// Font loading
 	sftd_init();
