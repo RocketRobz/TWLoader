@@ -17,7 +17,7 @@ include $(DEVKITARM)/ds_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	TWLapp-hb
+TARGET		:=	TWLapp
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include build
@@ -35,7 +35,7 @@ CFLAGS	:=	-g -Wall -O2\
 CFLAGS	+=	$(INCLUDE) -DARM7
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=../ds_arm7_ram.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 
 #---------------------------------------------------------------------------------
