@@ -161,15 +161,20 @@ static const char fcrompathini_bnriconaniseq[] = "BNR_ICONANISEQ";
 	
 
 // Bootstrap .ini file
-static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 static const char bootstrapini_ndspath[] = "NDS_PATH";
 static const char bootstrapini_savpath[] = "SAV_PATH";
+static const char bootstrapini_bootstrappath[] = "BOOTSTRAP_PATH";
+static const char bootstrapini_arm7donorpath[] = "ARM7_DONOR_PATH";
+static const char bootstrapini_ntrmodeswitch[] = "NTR_MODE_SWITCH";
+static const char bootstrapini_boostcpu[] = "BOOST_CPU";
+static const char bootstrapini_boostvram[] = "BOOST_VRAM";
+static const char bootstrapini_bootsplash[] = "BOOTSPLASH";
+static const char bootstrapini_debug[] = "DEBUG";
+static const char bootstrapini_resetslot1[] = "RESETSLOT1"
+static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 static const char bootstrapini_mpuregion[] = "PATCH_MPU_REGION";
 static const char bootstrapini_mpusize[] = "PATCH_MPU_SIZE";
-static const char bootstrapini_boostcpu[] = "BOOST_CPU";
-static const char bootstrapini_debug[] = "DEBUG";
-static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
-static const char bootstrapini_bootstrappath[] = "BOOTSTRAP_PATH";
+static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP"; //fixme: appears to be unused
 // End
 
 // Run
