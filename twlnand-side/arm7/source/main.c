@@ -124,9 +124,8 @@ int main() {
 	if(fifoCheckValue32(FIFO_USER_05)) {
 		// Switch to NTR Mode
 		REG_SCFG_ROM = 0x703;
-		REG_SCFG_EXT = 0x93A40000;
+		// REG_SCFG_EXT = 0x93A40000;	// This crashes the app for some reason
 	}
-
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);

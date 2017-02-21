@@ -36,8 +36,6 @@
 #include "inifile.h"
 #include "log.h"
 
-CIniFile twloaderini;
-
 using namespace std;
 
 bool logEnabled = false;
@@ -259,6 +257,12 @@ int main(int argc, char **argv) {
 		fifoSendValue32(FIFO_USER_01, 1);
 		fifoWaitValue32(FIFO_USER_03);
 
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
+			fifoSendValue32(FIFO_USER_05, 1);
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
+				printf("Switched to NTR mode\n");		
+		}
 		
 		if(TWLVRAM) {
 			REG_SCFG_EXT |= 0x2000;
@@ -268,16 +272,14 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
-			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
-			fifoSendValue32(FIFO_USER_05, 1);
-		}
-		
 		// Tell Arm7 to apply changes.
 		fifoSendValue32(FIFO_USER_07, 1);
 
+		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
+			doPause();
+
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
-		
+				
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 				printf("Now booting Slot-1 card\n");					
