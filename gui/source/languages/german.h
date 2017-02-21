@@ -31,7 +31,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
 	"VRAM Beschleunigung",										// "VRAM boost"
 	"DS/DSi Startbildschirm",									// "DS/DSi Boot Screen"
-	"Gesundheits- und Sicherheitsinformationen",				// "Health and Safety message"
+	"Gesundheits- und Sicherheitsinfos",						// "Health and Safety message"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
 	"Konsolenausgabe",											// "Console output"
 	"ARM9 SCFG_EXT feststellen",								// "Lock ARM9 SCFG_EXT"
@@ -40,7 +40,7 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Settings: Top Screen **/
 	"X: Bootstrap updaten (Offizielle Version)",				// "X: Update bootstrap (Official release)"
 	"Y: Bootstrap updaten (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
-    "START: TWLoader aktualisieren",							// "START: Update TWLoader"
+	"START: TWLoader aktualisieren",							// "START: Update TWLoader"
 	
 	/** Settings: GUI values **/
 	
@@ -104,10 +104,10 @@ static const char *const lang_DE[STR_MAX] = {
 	"Aktiviere Regenbogen Farben für",							// "See rainbow colors glowing in"
 	"die Benachrichtigungs-LED.",								// "the Notification LED."
 	
-	"Stelle auf TWL, um Lags in manchen",						// "Set to TWL to get rid of lags in some games."
-	"Spielen zu vermeiden.",									// (empty)
+	"Stelle auf TWL, um Lags in",								// "Set to TWL to get rid of lags in some games."
+	"manchen Spielen zu vermeiden.",							// (empty)
 
-	"Erlaubt 8 bit VRAM Schreibevorgänge",						// "Allows 8 bit VRAM writes"
+	"Erlaubt 8 bit VRAM Schreibvorgänge",						// "Allows 8 bit VRAM writes"
 	"und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
 	
 	"Zeigt die DS/DSi Boot-Animation",							// "Displays the DS/DSi boot animation"
@@ -134,29 +134,29 @@ static const char *const lang_DE[STR_MAX] = {
 	"Box-Art: An",												// "Box Art: On"
 	"Box-Art: Aus",												// "Box Art: OFF"
 	"GBARunner2 starten",										// "Start GBARunner2"
-	"Oberer Rand: On",											// "Top border: On"
-	"Oberer Rand: Off",											// "Top border: Off"	
+	"Oberer Rand: An",											// "Top border: On"
+	"Oberer Rand: Aus",											// "Top border: Off"	
 	"Entferne Donor ROM",										// "Unset donor rom"	
 	"Suche",													// "Search"
 	// Values
 	"SD Karte",													// "SD Card"
 	"Flashkarte",												// "Flashcard"
-	"Benutze die Tastatur, um ROMs zu finden",					// "Use the keyboard to find roms"
+	"Benutze die Tastatur um ROMs zu finden",					// "Use the keyboard to find roms"
 	
 	/** Select menu **/
 	// Options
-	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
+	"CPU Geschwindigkeit",										// "ARM9 CPU Speed" (Removed ARM9, because it did not fit inside the box)
 	"VRAM Beschleunigung",										// "VRAM boost"
-	"ARM9 SCFG_EXT feststellen",								// "Lock ARM9 SCFG_EXT"
-	"Setze als Donor ROM",									// "Set as donor ROM"
-	"Setze LED Farbe",											// "Set LED color"
+	"SCFG_EXT feststellen",										// "Lock ARM9 SCFG_EXT" (Removed ARM9, because it did not fit inside the box)
+	"Setze als Donor ROM",										// "Set as donor ROM"
+	"LED Farbe",												// "Set LED color"
 	// Values
 	"Standart",													// "Default"
 	
 	/** Sub-theme **/
 	"Unterdesignauswahl: DSi Menu",								// "Sub-theme select: DSi Menu"
 	"Unterdesignauswahl: R4",									// "Sub-theme select: R4"
-	"Unterdesignauswahl: akMenu/Wood",									// "Sub-theme select: Wood"
+	"Unterdesignauswahl: akMenu/Wood",							// "Sub-theme select: akMenu/Wood"
 	
 	"Für dieses Design existiert kein Unterdesign.",			// "No sub-themes exist for this theme."
 	
@@ -164,7 +164,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"A/B: Speichern und Zurück",								// "A/B: Save and Return"
 	"Links/Rechts: Auswählen",									// "Left/Right: Pick"
 	"Einstellungen: GUI",										// "Settings: GUI"
-	"Einstellungen: NTR/TWL-mode",								// "Settings: NTR/TWL-mode"
+	"Einstellungen: NTR/TWL-Modus",								// "Settings: NTR/TWL-mode"
 
 };
 
