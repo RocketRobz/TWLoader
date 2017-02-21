@@ -109,7 +109,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -258,19 +257,11 @@ int main(int argc, char **argv) {
 		fifoSendValue32(FIFO_USER_01, 1);
 		fifoWaitValue32(FIFO_USER_03);
 
-		// Only time SCFG should be locked is for compatiblity with NTR retail stuff.
-		// So NTR SCFG values (that preserve SD access) are always used when locking.
-		// Locking Arm9 SCFG kills SD access. So that will not occur here.
-		if(twloaderini.GetInt("TWL-MODE","LOCK_ARM7_SCFG_EXT",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
 			fifoSendValue32(FIFO_USER_05, 1);
-			REG_SCFG_EXT = 0x83000000;
-		} else {
-			if(twloaderini.GetInt("TWL-MODE","ENABLE_ALL_TWLSCFG",0) == 1) {
-				fifoSendValue32(FIFO_USER_06, 1);
-				REG_SCFG_EXT = 0x8307F100;
-			} else {
-				REG_SCFG_EXT = 0x83000000;
-			}
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
+				printf("Switched to NTR mode\n");		
 		}
 		
 		if(TWLVRAM) {
@@ -284,8 +275,11 @@ int main(int argc, char **argv) {
 		// Tell Arm7 to apply changes.
 		fifoSendValue32(FIFO_USER_07, 1);
 
+		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
+			doPause();
+
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
-		
+				
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 				printf("Now booting Slot-1 card\n");					
@@ -308,9 +302,6 @@ int main(int argc, char **argv) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
 		}
 		
-		// Tell Arm7 to power off Slot-1.
-		fifoSendValue32(FIFO_USER_08, 1);
-
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
@@ -357,7 +348,7 @@ int main(int argc, char **argv) {
 		
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-		filename = ReplaceAll( filename, "fat:/", "sd:/");
+		// filename = ReplaceAll( filename, "fat:/", "sd:/");
 		runFile(filename);
 		
 		// Subscreen as a console

@@ -10,8 +10,8 @@ endif
 include $(DEVKITARM)/ds_rules
 
 export HBMENU_MAJOR	:= 0
-export HBMENU_MINOR	:= 5
-export HBMENU_PATCH	:= 0
+export HBMENU_MINOR	:= 6
+export HBMENU_PATCH	:= 1
 
 
 VERSION	:=	$(HBMENU_MAJOR).$(HBMENU_MINOR).$(HBMENU_PATCH)
@@ -35,7 +35,8 @@ GRAPHICS	:=  gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 \
+		-ffunction-sections -fdata-sections \
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
@@ -115,9 +116,9 @@ endif
 
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub BootStrap clean
+.PHONY: bootloader bootstub clean
 
-all:	bootloader bootstub BootStrap $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 
 dist:	all
 	@rm	-fr	TWLapp-hb
@@ -127,7 +128,7 @@ dist:	all
 	@tar -cvjf hbmenu-$(VERSION).tar.bz2 TWLapp-hb testfiles README.md COPYING -X exclude.lst
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWLoader;TWL-MODE app;Robz8"
+	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWLoader;TWL-MODE app;Robz8" -g TWLD 01 "TWLOADER-TWL" -z 80040000 -u 00030005
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
@@ -154,7 +155,6 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
-	@$(MAKE) -C BootStrap clean
 	$(MAKE) -C arm9 clean
 	$(MAKE) -C arm7 clean
 
@@ -166,9 +166,6 @@ bootloader: data
 
 bootstub: data
 	@$(MAKE) -C bootstub
-
-BootStrap:
-	@$(MAKE) -C BootStrap
 
 #---------------------------------------------------------------------------------
 else

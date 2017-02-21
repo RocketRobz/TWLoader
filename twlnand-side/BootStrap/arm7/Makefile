@@ -34,7 +34,7 @@ CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -fno-rtti
 
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=../ds_arm7_ram.specs -g $(ARCH) -Wl,-Map,$(TARGET).map -Wl,--section-start,.init=0x2380000
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,-Map,$(TARGET).map -Wl,--section-start,.init=0x2380000
 
 LIBS	:=	-lnds7
 

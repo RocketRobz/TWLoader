@@ -29,6 +29,7 @@
 	.global argStart
 	.global argSize
 	.global dsiSD
+	.global dsiMode
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -51,6 +52,8 @@ argSize:
 dldiOffset:
 	.word	_dldi_start - _start
 dsiSD:
+	.word	0
+dsiMode:
 	.word	0
 
 startUp:
@@ -98,7 +101,7 @@ _blx_r3_stub:
 ClearMem:
 @---------------------------------------------------------------------------------
 	mov	r2, #3			@ Round down to nearest word boundary
-	add	r1, r1, r2		@ Shouldnt be needed
+	add	r1, r1, r2		@ Shouldn't be needed
 	bics	r1, r1, r2		@ Clear 2 LSB (and set Z)
 	bxeq	lr			@ Quit if copy size is 0
 
