@@ -81,6 +81,15 @@ void TWL_ResetSlot1() {
 	PowerOnSlot(); 
 }
 
+void SCFGFifoCheck (void)
+{
+    if(fifoCheckValue32(FIFO_USER_07)) {
+        if(fifoCheckValue32(FIFO_USER_04)) { REG_SCFG_CLK = 0x0181; }
+        if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_ROM = 0x703; }
+        fifoSendValue32(FIFO_USER_07, 0);
+    }
+}
+
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
@@ -119,13 +128,7 @@ int main() {
 	if(fifoCheckValue32(FIFO_USER_02)) { TWL_ResetSlot1(); }
 	fifoSendValue32(FIFO_USER_03, 1);
 	
-	fifoWaitValue32(FIFO_USER_07);
-	if(fifoCheckValue32(FIFO_USER_04)) { REG_SCFG_CLK = 0x0181; }
-	if(fifoCheckValue32(FIFO_USER_05)) {
-		// Switch to NTR Mode
-		REG_SCFG_ROM = 0x703;
-		// REG_SCFG_EXT = 0x93A50000;	// Crashes if DSTT isn't being used
-	}
+    SCFGFifoCheck();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
