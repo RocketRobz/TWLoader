@@ -697,7 +697,11 @@ static void SaveBootstrapConfig(void)
 			}
 		}
 	}
+	// bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, 0); fixme
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_ntrmodeswitch, 0);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_bootsplash, 0);
 
 	// TODO: Change the default to 0?
 	switch (settings.twl.console) {
@@ -712,7 +716,8 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 			break;
 	}
-
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_resetslot1, settings.twl.resetslot1);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, settings.twl.lockarm9scfgext);
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
