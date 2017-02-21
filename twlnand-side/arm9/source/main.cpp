@@ -36,6 +36,8 @@
 #include "inifile.h"
 #include "log.h"
 
+CIniFile twloaderini;
+
 using namespace std;
 
 bool logEnabled = false;
@@ -108,7 +110,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     }
     return str;
 }
-
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
@@ -257,6 +258,7 @@ int main(int argc, char **argv) {
 
 		fifoSendValue32(FIFO_USER_01, 1);
 		fifoWaitValue32(FIFO_USER_03);
+
 		
 		if(TWLVRAM) {
 			REG_SCFG_EXT |= 0x2000;
@@ -264,6 +266,11 @@ int main(int argc, char **argv) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_VRAM ON\n");		
 			}
+		}
+		
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
+			fifoSendValue32(FIFO_USER_05, 1);
 		}
 		
 		// Tell Arm7 to apply changes.
@@ -293,9 +300,6 @@ int main(int argc, char **argv) {
 			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
 		}
 		
-		// Tell Arm7 to power off Slot-1.
-		fifoSendValue32(FIFO_USER_08, 1);
-
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
