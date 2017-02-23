@@ -643,21 +643,7 @@ static void LoadBoxArt_WoodTheme(const int idx) {
  */
 static void LoadBootstrapConfig(void)
 {
-	
-bootstrapini.GetString("bootstrapini_ndsbootstrap", "NDS_PATH", "");
-bootstrapini.GetString("bootstrapini_ndsbootstrap", "SAV_PATH", "");
-bootstrapini.GetString("bootstrapini_ndsbootstrap", "BOOTSTRAP_PATH", "");
-bootstrapini.GetString("bootstrapini_ndsbootstrap", "ARM7_DONOR_PATH", "");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "NTR_MODE_SWITCH", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "BOOST_CPU", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "BOOST_VRAM", "1");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "BOOTSPLASH", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "DEBUG", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "RESETSLOT1", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "LOCK_ARM9_SCFG_EXT", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "PATCH_MPU_REGION", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "PATCH_MPU_SIZE", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "NDS-BOOTSTRAP", "");
+
 	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1)) {
 		case 1:
 			settings.twl.console = 2;
@@ -697,11 +683,8 @@ static void SaveBootstrapConfig(void)
 			}
 		}
 	}
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_ntrmodeswitch, 0);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_bootsplash, 0);
-
+	
 	// TODO: Change the default to 0?
 	switch (settings.twl.console) {
 		case 0:
@@ -715,8 +698,6 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, 1);
 			break;
 	}
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_resetslot1, settings.twl.resetslot1);
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, settings.twl.lockarm9scfgext);
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
