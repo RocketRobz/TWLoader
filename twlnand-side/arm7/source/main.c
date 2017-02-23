@@ -69,7 +69,7 @@ void PowerOnSlot() {
 
 void PowerOffSlot() {
 	while((REG_SCFG_MC & 0x0C) !=  0x0C); // wait until state<>3
-	if((REG_SCFG_MC & 0x0C) != 0x08) return 1; // exit if state<>2      
+	if((REG_SCFG_MC & 0x0C) != 0x08) return; // exit if state<>2      
 	
 	REG_SCFG_MC = 0x0C; // set state=3 
 	while((REG_SCFG_MC & 0x0C) != 0x00); // wait until state=0
