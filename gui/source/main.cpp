@@ -20,6 +20,7 @@
 #include <3ds.h>
 #include <sf2d.h>
 #include <sfil.h>
+#include "citrostuff.h"
 #include "img/twpng.h"
 #include <sftd.h>
 #include "ptmu_x.h"
@@ -1281,7 +1282,19 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
+	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
+	// Initialize the render target
+	C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+
+	printf("System font example\n");
+	Result res = fontEnsureMapped();
+
+	if (R_FAILED(res))
+		printf("fontEnsureMapped: %08lX\n", res);
+
+	sceneInit();
 	aptInit();
 	cfguInit();
 	amInit();
@@ -1981,15 +1994,16 @@ int main()
 						case 0:
 						default:
 							// sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
-							DrawDateF(22+197, 198, FORMAT_MY, RGBA8(16, 0, 0, 223), 22);
+							setTextColor(RGBA8(16, 0, 0, 223));
+							DrawDateF(22+197, 198, 22, 22, false, FORMAT_MY);
 							break;
 						case 1:
 							// sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							DrawDateF(40+182, 78, FORMAT_MY, RGBA8(255, 255, 255, 255), 22);
+							// DrawDateF(40+182, 78, FORMAT_MY, RGBA8(255, 255, 255, 255), 22);
 							break;
 						case 2:
 							// sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							DrawDateF(40+69, 204, FORMAT_MY, RGBA8(255, 255, 255, 255), 19);
+							// DrawDateF(40+69, 204, FORMAT_MY, RGBA8(255, 255, 255, 255), 19);
 							break;
 						case 3:
 							// sftd_draw_text(font_b, 40+176, 172, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
@@ -2028,6 +2042,7 @@ int main()
 						const char *title = (settings.twl.forwarder
 									? "Games (Flashcard)"
 									: "Games (SD Card)");
+						renderText(42.0f, 0.0f, 12.0f, 12.0f, false, title);
 						// sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, title);
 						
 						char romsel_counter1[16];
@@ -2143,15 +2158,19 @@ int main()
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
 						// sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(false).c_str());
-						DrawDate(282, 3, RGBA8(0, 0, 0, 255), 12);
+						setTextColor(RGBA8(0, 0, 0, 255));
 					} else {
 						// sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
-						DrawDate(282, 3, RGBA8(255, 255, 255, 255), 12);
+						setTextColor(RGBA8(255, 255, 255, 255));
 					}
+					renderText(318.0f, 1.0f, 0.58f, 0.58f, false, RetTime(false).c_str());
+					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
 
 					draw_volume_slider(voltex);
 					sf2d_draw_texture(batteryIcon, 371, 2);
 					if (!settings.ui.name.empty()) {
+						setTextColor(SET_ALPHA(color_data->color, 255));
+						renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
 						// sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 					}
 					// // sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
@@ -2170,7 +2189,7 @@ int main()
 							: RGBA8(127, 127, 127, 255);
 					// sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
 
-					sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+					if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 					sf2d_end_frame();
 				}
 			}
@@ -2588,7 +2607,7 @@ int main()
 					colortexloaded_bot = true;
 				}
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				
+								
 				if (settings.ui.theme == 2) {
 					if (wood_ndsiconscaletimer == 60) {
 						// Scale icon at 30fps
@@ -2650,14 +2669,18 @@ int main()
 							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						setTextColor(0xFFFFFFFF); // white
+						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
 						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						setTextColor(0xFFFFFFFF); // white
+						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
 						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2666,6 +2689,8 @@ int main()
 							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						setTextColor(0xFFFFFFFF); // white
+						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
 						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2674,6 +2699,8 @@ int main()
 							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						setTextColor(0xFFFFFFFF); // white
+						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
 						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2682,6 +2709,8 @@ int main()
 							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						setTextColor(0xFFFFFFFF); // white
+						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Settings");
 						// sftd_draw_wtextf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
@@ -2762,7 +2791,9 @@ int main()
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						}
-						DrawDate(2, 220, RGBA8(255, 255, 255, 255), 14);
+						setTextColor(RGBA8(255, 255, 255, 255));
+						DrawDate(2, 220, 0.85f, 0.85f, false);
+						renderText(276, 220, 0.85f, 0.85f, false, RetTime(true).c_str());
 						// sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
@@ -2869,6 +2900,8 @@ int main()
 							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
 							// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
 							const int text_width = 0;
+							setTextColor(0xFF000000); // black
+							renderText(64.0f, 38.0f, 0.70, 0.70f, false, "Settings");
 							// sftd_draw_wtextf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
 							drawBannerText = false;
 						} else if (cursorPosition == -1) {
@@ -3194,7 +3227,7 @@ int main()
 				settingsDrawBottomScreen();
 			}
 		if (settings.ui.theme == 0)
-			sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+			if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 
 		sf2d_end_frame();
 		// }
@@ -4451,6 +4484,8 @@ int main()
 		ndspExit();
 	}
 
+	sceneExit();
+	C3D_Fini();
 	sf2d_fini();
 
 	acExit();

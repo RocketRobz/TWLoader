@@ -2,7 +2,7 @@
 #include "main.h"
 #include "language.h"
 
-#include <sftd.h>
+#include "citrostuff.h"
 
 #include <ctime>
 #include <cstdio>
@@ -93,12 +93,13 @@ string RetTime(bool donotblink)
  * @param color Text color.
  * @param size Text size.
  */
-void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size)
+void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, DateFormat format)
 {
 	char date_str[24];
 	GetDate(format, date_str, sizeof(date_str));
 	if (date_str[0] == 0)
 		return;
+	renderText(x, y, scaleX, scaleY, false, date_str);
 	// sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
 }
 
@@ -110,7 +111,7 @@ void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size)
  * @param color Text color.
  * @param size Text size.
  */
-void DrawDate(int Xpos, int Ypos, u32 color, int size)
+void DrawDate(float x, float y, float scaleX, float scaleY, bool baseline)
 {
 	// Date formats.
 	// - Index: Language ID.
@@ -130,5 +131,5 @@ void DrawDate(int Xpos, int Ypos, u32 color, int size)
 		FORMAT_MD,	// Traditional Chinese
 	};
 
-	DrawDateF(Xpos, Ypos, (DateFormat)date_fmt[language], color, size);
+	DrawDateF(x, y, scaleX, scaleY, baseline, (DateFormat)date_fmt[language]);
 }

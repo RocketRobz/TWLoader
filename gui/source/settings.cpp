@@ -16,7 +16,7 @@ using std::wstring;
 
 #include <3ds.h>
 #include <sf2d.h>
-#include <sfil.h>
+#include "citrostuff.h"
 #include "img/twpng.h"
 #include <sftd.h>
 #include "keyboard.h"
@@ -237,6 +237,8 @@ void settingsDrawTopScreen(void)
 		}
 
 		// sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
+		setTextColor(RGBA8(255, 255, 255, 255));
+		renderText(318.0f, 1, 0.58f, 0.58f, false, RetTime(false).c_str());
 		
 		std::string version = settings_vertext;		
 		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
@@ -249,10 +251,13 @@ void settingsDrawTopScreen(void)
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
 		if (!settings.ui.name.empty()) {
+			setTextColor(SET_ALPHA(color_data->color, 255));
+			renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
 			// sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		}
-		DrawDate(282, 3, RGBA8(255, 255, 255, 255), 12);
-		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		setTextColor(RGBA8(255, 255, 255, 255));
+		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
+		if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
 }
