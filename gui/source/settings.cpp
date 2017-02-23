@@ -596,13 +596,13 @@ void settingsDrawBottomScreen(void)
 			Ypos += 12;
 		}
 		if (cursor_pos[1] == 5) {
-			sftd_draw_wtext(font, Xpos+16, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
+			sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
 			sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, healthsafetyvaluetext);
 			Ypos += 12;
 			sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_1));
 			sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
 		} else {
-			sftd_draw_wtext(font, Xpos+16, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
+			sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
 			sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, healthsafetyvaluetext);
 			Ypos += 12;
 		}
