@@ -2079,7 +2079,7 @@ int main()
 
 				update_battery_level(batterychrgtex, batterytex);
 				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
+					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
 					sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
@@ -3162,6 +3162,8 @@ int main()
 									// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
 									const int start_width = 0;
 									// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+									setTextColor(RGBA8(255, 255, 255, 255));
+									renderText(140.0f, 177.0f, 0.50, 0.50f, false, "START");
 								}
 							}
 						}
@@ -4388,6 +4390,8 @@ int main()
 		SaveBootstrapConfig();
 	}
 	if (logEnabled) LogFM("Main.saveOnExit", "Settings are saved");
+
+	sf2d_free_texture(rectangletex);
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
