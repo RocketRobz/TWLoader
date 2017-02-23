@@ -174,7 +174,7 @@ static const char bootstrapini_resetslot1[] = "RESETSLOT1";
 static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
 static const char bootstrapini_mpuregion[] = "PATCH_MPU_REGION";
 static const char bootstrapini_mpusize[] = "PATCH_MPU_SIZE";
-static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP"; //fixme: appears to be unused
+static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 // End
 
 // Run
@@ -663,7 +663,7 @@ bootstrapini.GetInt("bootstrapini_ndsbootstrap", "RESETSLOT1", "0");
 bootstrapini.GetInt("bootstrapini_ndsbootstrap", bootstrapini_lockarm9scfgext, "0");
 bootstrapini.GetInt("bootstrapini_ndsbootstrap", "PATCH_MPU_REGION", "0");
 bootstrapini.GetInt("bootstrapini_ndsbootstrap", "PATCH_MPU_SIZE", "0");
-bootstrapini.GetInt("bootstrapini_ndsbootstrap", "NDS-BOOTSTRAP", ""); //fixme: appears to be unused
+bootstrapini.GetInt("bootstrapini_ndsbootstrap", "NDS-BOOTSTRAP", "");
 	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1)) {
 		case 1:
 			settings.twl.console = 2;
@@ -703,7 +703,6 @@ static void SaveBootstrapConfig(void)
 			}
 		}
 	}
-	// bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, 0); fixme
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_ntrmodeswitch, 0);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
