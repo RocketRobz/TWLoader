@@ -47,8 +47,17 @@ install:
   - make && sudo make install
   - cd ..  
 script:
+  - echo "Starting compilation"
+  - cd twlnand-side
+  - echo "Compiling TWLoader NAND Side"
+  - make
+  - Py -2 patch_ndsheader_dsiware.py TWLapp-hb.nds --mode dsi --maker 01 --code TWLD --title "TWLOADER-TWL" --out TWLapp.nds
+  - make_cia --srl="TWLapp.nds"
+  - cd ..
+  - echo "Compiling TWLoader GUI"
   - cd gui
   - make
+  - echo "Compilation ended"
 addons:
   apt:
     sources:
