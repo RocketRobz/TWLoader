@@ -132,11 +132,11 @@ static const char *const lang_PT[STR_MAX] = {
 	// Options
 	"Localização do jogo",										// "Game location"
 	"Capa do jogo: On",											// "Box Art: On"
-	"Capa do jogo: Off",										// "Box Art: OFF"
+	"Capa do jogo: Off",											// "Box Art: OFF"
 	"Iniciar GBARunner2",										// "Start GBARunner2"
 	"Borda do topo: Off",										// "Top border: On"
 	"Borda do topo: On",										// "Top border: Off"
-	"Desactivar ROM donor",										// "Unset donor rom"
+	"Desactivar ROM donor",											// "Unset donor rom"
 	"Procurar",													// "Search"
 	// Values
 	"Carta SD",													// "SD Card"
@@ -148,7 +148,7 @@ static const char *const lang_PT[STR_MAX] = {
 	"Velocidade do CPU ARM9",									// "ARM9 CPU Speed"
 	"Boost VRAM",												// "VRAM boost"
 	"Bloquear ARM9 SCFG_EXT",									// "Lock ARM9 SCFG_EXT"
-	"Definir como ROM donor",									// "Set as donor ROM"
+	"Definir como ROM donor",											// "Set as donor ROM"
 	"Definir a cor do LED",										// "Set LED color"
 	// Values
 	"Valores padrão",											// "Default"
