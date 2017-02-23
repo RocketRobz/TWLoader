@@ -99,7 +99,7 @@ void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size)
 	GetDate(format, date_str, sizeof(date_str));
 	if (date_str[0] == 0)
 		return;
-	sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
+	// sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
 }
 
 /**
