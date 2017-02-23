@@ -7,7 +7,7 @@
 
 #include "citrostuff.h"
 
-static void sceneInit(void)
+void sceneInit(void)
 {
 	// Load the vertex shader, create a shader program and bind it
 	vshader_dvlb = DVLB_ParseFile((u32*)vshader_shbin, vshader_shbin_size);
@@ -33,12 +33,12 @@ static void sceneInit(void)
 	// Load the glyph texture sheets
 	int i;
 	TGLP_s* glyphInfo = fontGetGlyphInfo();
-	glyphSheets = malloc(sizeof(C3D_Tex)*glyphInfo->nSheets);
+	glyphSheets = (C3D_Tex*)malloc(sizeof(C3D_Tex)*glyphInfo->nSheets);
 	for (i = 0; i < glyphInfo->nSheets; i ++)
 	{
 		C3D_Tex* tex = &glyphSheets[i];
 		tex->data = fontGetGlyphSheetTex(i);
-		tex->fmt = glyphInfo->sheetFmt;
+		tex->fmt = (GPU_TEXCOLOR)glyphInfo->sheetFmt;
 		tex->size = glyphInfo->sheetSize;
 		tex->width = glyphInfo->sheetWidth;
 		tex->height = glyphInfo->sheetHeight;
@@ -50,7 +50,7 @@ static void sceneInit(void)
 	textVtxArray = (textVertex_s*)linearAlloc(sizeof(textVertex_s)*TEXT_VTX_ARRAY_COUNT);
 }
 
-static void setTextColor(u32 color)
+void setTextColor(u32 color)
 {
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvSrc(env, C3D_RGB, GPU_CONSTANT, 0, 0);
@@ -61,7 +61,7 @@ static void setTextColor(u32 color)
 	C3D_TexEnvColor(env, color);
 }
 
-static void addTextVertex(float vx, float vy, float tx, float ty)
+void addTextVertex(float vx, float vy, float tx, float ty)
 {
 	textVertex_s* vtx = &textVtxArray[textVtxArrayPos++];
 	vtx->position[0] = vx;
@@ -71,7 +71,7 @@ static void addTextVertex(float vx, float vy, float tx, float ty)
 	vtx->texcoord[1] = ty;
 }
 
-static void renderText(float x, float y, float scaleX, float scaleY, bool baseline, const char* text)
+void renderText(float x, float y, float scaleX, float scaleY, bool baseline, const char* text)
 {
 	ssize_t  units;
 	uint32_t code;
@@ -129,7 +129,7 @@ static void renderText(float x, float y, float scaleX, float scaleY, bool baseli
 	} while (code > 0);
 }
 
-/* static void sceneRender(float size)
+/* void sceneRender(float size)
 {
 	// Update the uniforms
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
@@ -159,7 +159,7 @@ static void renderText(float x, float y, float scaleX, float scaleY, bool baseli
 	renderText(8.0f, 220.0f, 0.5f, 0.5f, false, buf);
 } */
 
-static void sceneExit(void)
+void sceneExit(void)
 {
 	// Free the textures
 	free(glyphSheets);
