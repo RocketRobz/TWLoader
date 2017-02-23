@@ -78,7 +78,7 @@ CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fpermissive -std=gnu++11
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)

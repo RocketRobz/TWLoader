@@ -23,7 +23,7 @@ using std::vector;
 
 #include <3ds.h>
 #include <sf2d.h>
-#include <sftd.h>
+#include "citrostuff.h"
 
 const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/ver?raw=true";
 const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
@@ -190,7 +190,8 @@ int checkUpdate(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	setTextColor(RGBA8(0, 0, 0, 255));
+	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/twloader/ver");
@@ -260,8 +261,11 @@ int checkUpdate(void) {
  * Download the TWLoader CIAs.
  */
 void DownloadTWLoaderCIAs(void) {
-	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading TWLoader to latest version...");
-	// sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
+	setTextColor(RGBA8(0, 0, 0, 255));
+	static const char gui_msg[] =
+		"Now downloading latest TWLoader version...\n"
+		"(GUI)\n";
+	renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
 	
@@ -283,8 +287,10 @@ void DownloadTWLoaderCIAs(void) {
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
 	if (res == 0) {
-		// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
-		// sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
+		static const char twlnand_msg[] =
+			"Now downloading latest TWLoader version...\n"
+			"(TWLNAND side CIA)\n";
+		renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 		// Delete first if installed.
@@ -305,7 +311,7 @@ void DownloadTWLoaderCIAs(void) {
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (res == 0) {
-			// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
+			renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			run = false;
@@ -328,7 +334,8 @@ void UpdateBootstrapUnofficial(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	setTextColor(RGBA8(0, 0, 0, 255));
+	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
@@ -352,7 +359,8 @@ void UpdateBootstrapRelease(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	setTextColor(RGBA8(0, 0, 0, 255));
+	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
@@ -692,9 +700,10 @@ void downloadBoxArt(void)
 		u32 tid;
 		memcpy(&tid, ba_TID, sizeof(tid));
 		tid = __builtin_bswap32(tid);
-		if (tid == 0x4E54524A) {
+		if (tid == 0x4E54524A || tid == 0x23232323) {
 			// NTRJ: Generic game code used for
 			// prototypes and some DL Play games.
+			// ####: Code used for homebrew games/apps.
 			// No boxart is available.
 			continue;
 		}
@@ -820,15 +829,16 @@ void downloadBoxArt(void)
 		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		// sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		// sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
-		// sftd_draw_text(font, 39, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		// sftd_draw_text(font, 44, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
-		// sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
+		setTextColor(RGBA8(0, 0, 0, 255));
+		renderText(12, 16, 0.5f, 0.5f, false, title);
+		// renderText(12, 32, 0.5f, 0.5f, false, "%zu", boxartnum);
+		renderText(39, 32, 0.5f, 0.5f, false, "/");
+		renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
+		renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
+		renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
-		if (strcmp (ba_TID, "####") != 0)
-			downloadBoxArt_internal(ba_TID);
+		downloadBoxArt_internal(ba_TID);
 	}
 }

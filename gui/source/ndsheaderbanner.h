@@ -34,6 +34,7 @@
 
 #include <sf2d.h>
 #include <sfil.h>
+#include "citrostuff.h"
 #include <stdio.h>
 
 #include <string>
