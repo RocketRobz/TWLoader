@@ -2682,7 +2682,7 @@ int main()
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 255));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
