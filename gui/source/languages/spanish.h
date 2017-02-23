@@ -8,7 +8,7 @@ static const char *const lang_ES[STR_MAX] = {
 	
 	/** GUI **/
     ": Volver al menú HOME",									// "Return to HOME Menu"
-	"INICIO",													// "START" (used on cartridge indicator)tor)
+	"INICIAR",													// "START" (used on cartridge indicator)tor)
 	"Sin cartucho",												// "No cartridge"
 	"Cartucho desconocido", 									// "Unknown Cartridge"
 	"Ajustes",													// "Settings"
@@ -136,7 +136,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Iniciar GBARunner2",										// "Start GBARunner2"
 	"Borde superior: On",										// "Top border: On"
 	"Borde superior: Off",										// "Top border: Off"
-	"Eliminar donor",											// "Unset donor rom"
+	"Eliminar donante",											// "Unset donor rom"
 	"Buscar",													// "Search"
 	// Values
 	"Tarjeta SD",												// "SD Card"
@@ -148,7 +148,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Velocidad CPU ARM9:",										// "ARM9 CPU Speed"
 	"Aumento VRAM:",											// "VRAM boost"
 	"Bloq. SCFG_EXT ARM9:",										// "Lock ARM9 SCFG_EXT"
-	"Elegir como donor",										// "Set as donor ROM"
+	"Elegir como donante",										// "Set as donor ROM"
 	"Elegir color del LED",										// "Set LED color"
 	// Values
 	"Por defecto",												// "Default"
