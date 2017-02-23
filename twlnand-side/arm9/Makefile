@@ -284,121 +284,386 @@ Bot09.s			:	../$(IMAGES)/Bot09.bmp
 Bot10.s			:	../$(IMAGES)/Bot10.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top00.s			:	../$(IMAGES)/Top00.bmp
+white.s			:	../$(IMAGES)/white.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+	
+Top000.s			:	../$(IMAGES)/Top000.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top01.s			:	../$(IMAGES)/Top01.bmp
+Top001.s			:	../$(IMAGES)/Top001.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top02.s			:	../$(IMAGES)/Top02.bmp
+Top002.s			:	../$(IMAGES)/Top002.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top03.s			:	../$(IMAGES)/Top03.bmp
+Top003.s			:	../$(IMAGES)/Top003.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top04.s			:	../$(IMAGES)/Top04.bmp
+Top004.s			:	../$(IMAGES)/Top004.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top05.s			:	../$(IMAGES)/Top05.bmp
+Top005.s			:	../$(IMAGES)/Top005.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top06.s			:	../$(IMAGES)/Top06.bmp
+Top006.s			:	../$(IMAGES)/Top006.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top07.s			:	../$(IMAGES)/Top07.bmp
+Top007.s			:	../$(IMAGES)/Top007.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top08.s			:	../$(IMAGES)/Top08.bmp
+Top008.s			:	../$(IMAGES)/Top008.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top09.s			:	../$(IMAGES)/Top09.bmp
+Top009.s			:	../$(IMAGES)/Top009.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top10.s			:	../$(IMAGES)/Top10.bmp
+Top010.s			:	../$(IMAGES)/Top010.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top11.s			:	../$(IMAGES)/Top11.bmp
+Top011.s			:	../$(IMAGES)/Top011.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top12.s			:	../$(IMAGES)/Top12.bmp
+Top012.s			:	../$(IMAGES)/Top012.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top13.s			:	../$(IMAGES)/Top13.bmp
+Top013.s			:	../$(IMAGES)/Top013.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top14.s			:	../$(IMAGES)/Top14.bmp
+Top014.s			:	../$(IMAGES)/Top014.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top15.s			:	../$(IMAGES)/Top15.bmp
+Top015.s			:	../$(IMAGES)/Top015.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top16.s			:	../$(IMAGES)/Top16.bmp
+Top016.s			:	../$(IMAGES)/Top016.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top17.s			:	../$(IMAGES)/Top17.bmp
+Top017.s			:	../$(IMAGES)/Top017.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top18.s			:	../$(IMAGES)/Top18.bmp
+Top018.s			:	../$(IMAGES)/Top018.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top19.s			:	../$(IMAGES)/Top19.bmp
+Top019.s			:	../$(IMAGES)/Top019.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top20.s			:	../$(IMAGES)/Top20.bmp
+Top020.s			:	../$(IMAGES)/Top020.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top21.s			:	../$(IMAGES)/Top21.bmp
+Top021.s			:	../$(IMAGES)/Top021.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top22.s			:	../$(IMAGES)/Top22.bmp
+Top022.s			:	../$(IMAGES)/Top022.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top23.s			:	../$(IMAGES)/Top23.bmp
+Top023.s			:	../$(IMAGES)/Top023.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top24.s			:	../$(IMAGES)/Top24.bmp
+Top024.s			:	../$(IMAGES)/Top024.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top25.s			:	../$(IMAGES)/Top25.bmp
+Top025.s			:	../$(IMAGES)/Top025.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top26.s			:	../$(IMAGES)/Top26.bmp
+Top026.s			:	../$(IMAGES)/Top026.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top27.s			:	../$(IMAGES)/Top27.bmp
+Top027.s			:	../$(IMAGES)/Top027.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top28.s			:	../$(IMAGES)/Top28.bmp
+Top028.s			:	../$(IMAGES)/Top028.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top29.s			:	../$(IMAGES)/Top29.bmp
+Top029.s			:	../$(IMAGES)/Top029.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top30.s			:	../$(IMAGES)/Top30.bmp
+Top030.s			:	../$(IMAGES)/Top030.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top31.s			:	../$(IMAGES)/Top31.bmp
+Top031.s			:	../$(IMAGES)/Top031.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top32.s			:	../$(IMAGES)/Top32.bmp
+Top032.s			:	../$(IMAGES)/Top032.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top33.s			:	../$(IMAGES)/Top33.bmp
+Top033.s			:	../$(IMAGES)/Top033.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top34.s			:	../$(IMAGES)/Top34.bmp
+Top034.s			:	../$(IMAGES)/Top034.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top35.s			:	../$(IMAGES)/Top35.bmp
+Top035.s			:	../$(IMAGES)/Top035.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top36.s			:	../$(IMAGES)/Top36.bmp
+Top036.s			:	../$(IMAGES)/Top036.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-Top37.s			:	../$(IMAGES)/Top37.bmp
+Top037.s			:	../$(IMAGES)/Top037.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
-# DSi BootSplash. Used if TWL mode detected
+Top038.s			:	../$(IMAGES)/Top038.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top039.s			:	../$(IMAGES)/Top039.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top040.s			:	../$(IMAGES)/Top040.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top041.s			:	../$(IMAGES)/Top041.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top042.s			:	../$(IMAGES)/Top042.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top043.s			:	../$(IMAGES)/Top043.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top044.s			:	../$(IMAGES)/Top044.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top045.s			:	../$(IMAGES)/Top045.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top046.s			:	../$(IMAGES)/Top046.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top047.s			:	../$(IMAGES)/Top047.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top048.s			:	../$(IMAGES)/Top048.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top049.s			:	../$(IMAGES)/Top049.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top050.s			:	../$(IMAGES)/Top050.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top051.s			:	../$(IMAGES)/Top051.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top052.s			:	../$(IMAGES)/Top052.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top053.s			:	../$(IMAGES)/Top053.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top054.s			:	../$(IMAGES)/Top054.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top055.s			:	../$(IMAGES)/Top055.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top056.s			:	../$(IMAGES)/Top056.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top057.s			:	../$(IMAGES)/Top057.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top058.s			:	../$(IMAGES)/Top058.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top059.s			:	../$(IMAGES)/Top059.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top060.s			:	../$(IMAGES)/Top060.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top061.s			:	../$(IMAGES)/Top061.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top062.s			:	../$(IMAGES)/Top062.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top063.s			:	../$(IMAGES)/Top063.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top064.s			:	../$(IMAGES)/Top064.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top065.s			:	../$(IMAGES)/Top065.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top066.s			:	../$(IMAGES)/Top066.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top067.s			:	../$(IMAGES)/Top067.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top068.s			:	../$(IMAGES)/Top068.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top069.s			:	../$(IMAGES)/Top069.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top070.s			:	../$(IMAGES)/Top070.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top071.s			:	../$(IMAGES)/Top071.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top072.s			:	../$(IMAGES)/Top072.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top073.s			:	../$(IMAGES)/Top073.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top074.s			:	../$(IMAGES)/Top074.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top075.s			:	../$(IMAGES)/Top075.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top076.s			:	../$(IMAGES)/Top076.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top077.s			:	../$(IMAGES)/Top077.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top078.s			:	../$(IMAGES)/Top078.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top079.s			:	../$(IMAGES)/Top079.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top080.s			:	../$(IMAGES)/Top080.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top081.s			:	../$(IMAGES)/Top081.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top082.s			:	../$(IMAGES)/Top082.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top083.s			:	../$(IMAGES)/Top083.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top084.s			:	../$(IMAGES)/Top084.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top085.s			:	../$(IMAGES)/Top085.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top086.s			:	../$(IMAGES)/Top086.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top087.s			:	../$(IMAGES)/Top087.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top088.s			:	../$(IMAGES)/Top088.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top089.s			:	../$(IMAGES)/Top089.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top090.s			:	../$(IMAGES)/Top090.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top091.s			:	../$(IMAGES)/Top091.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top092.s			:	../$(IMAGES)/Top092.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top093.s			:	../$(IMAGES)/Top093.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top094.s			:	../$(IMAGES)/Top094.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top095.s			:	../$(IMAGES)/Top095.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top096.s			:	../$(IMAGES)/Top096.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top097.s			:	../$(IMAGES)/Top097.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top098.s			:	../$(IMAGES)/Top098.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top099.s			:	../$(IMAGES)/Top099.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top100.s			:	../$(IMAGES)/Top100.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top101.s			:	../$(IMAGES)/Top101.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top102.s			:	../$(IMAGES)/Top102.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top103.s			:	../$(IMAGES)/Top103.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top104.s			:	../$(IMAGES)/Top104.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top105.s			:	../$(IMAGES)/Top105.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top106.s			:	../$(IMAGES)/Top106.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top107.s			:	../$(IMAGES)/Top107.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top108.s			:	../$(IMAGES)/Top108.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top109.s			:	../$(IMAGES)/Top109.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top110.s			:	../$(IMAGES)/Top110.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top111.s			:	../$(IMAGES)/Top111.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top112.s			:	../$(IMAGES)/Top112.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top113.s			:	../$(IMAGES)/Top113.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top114.s			:	../$(IMAGES)/Top114.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top115.s			:	../$(IMAGES)/Top115.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top116.s			:	../$(IMAGES)/Top116.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top117.s			:	../$(IMAGES)/Top117.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top118.s			:	../$(IMAGES)/Top118.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top119.s			:	../$(IMAGES)/Top119.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top120.s			:	../$(IMAGES)/Top120.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top121.s			:	../$(IMAGES)/Top121.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top122.s			:	../$(IMAGES)/Top122.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top123.s			:	../$(IMAGES)/Top123.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+Top124.s			:	../$(IMAGES)/Top124.bmp
+	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
+
+
+# DSi BootSplash.
 DSi01.s			:	../$(IMAGES)/DSi01.bmp
 	grit	$< -gB8 -gzl -fts -gTff00ff -o $@ -q
 
