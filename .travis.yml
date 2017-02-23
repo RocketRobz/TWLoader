@@ -47,8 +47,15 @@ install:
   - make && sudo make install
   - cd ..  
 script:
+  - echo "Starting compilation"
+  - cd twlnand-side
+  - echo "Compiling TWLoader NAND Side"
+  - make
+  - cd ..
+  - echo "Compiling TWLoader GUI"
   - cd gui
   - make
+  - echo "Compilation ended"
 addons:
   apt:
     sources:
