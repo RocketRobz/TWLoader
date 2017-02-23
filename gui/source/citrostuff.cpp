@@ -129,7 +129,7 @@ static void renderText(float x, float y, float scaleX, float scaleY, bool baseli
 	} while (code > 0);
 }
 
-static void sceneRender(float size)
+/* static void sceneRender(float size)
 {
 	// Update the uniforms
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
@@ -157,7 +157,7 @@ static void sceneRender(float size)
 	sprintf(buf, "Current text size: %f (Use ?? to change)", size);
 	setTextColor(0xFF000000); // black
 	renderText(8.0f, 220.0f, 0.5f, 0.5f, false, buf);
-}
+} */
 
 static void sceneExit(void)
 {

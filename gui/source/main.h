@@ -6,7 +6,6 @@
 
 #include <3ds/types.h>
 #include <sf2d.h>
-#include <sftd.h>
 
 #include <string>
 #include <vector>
@@ -14,12 +13,9 @@
 extern bool is3DSX;	// Is the program running as 3DSX?
 extern bool run;	// Set to false to exit to the Home Menu.
 
-// Fonts
-extern sftd_font *font;
-extern sftd_font *font_b;
-
 // Dialog box
 extern sf2d_texture *dialogboxtex; // Dialog box
+extern void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color);
 extern void DialogBoxAppear(const char *text, int mode);
 extern void DialogBoxDisappear(const char *text, int mode);
 extern bool showdialogbox;

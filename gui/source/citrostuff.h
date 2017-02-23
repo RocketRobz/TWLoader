@@ -24,10 +24,11 @@ static int textVtxArrayPos;
 
 #define TEXT_VTX_ARRAY_COUNT (4*1024)
 
-static void sceneInit(void);
-static void setTextColor(u32 color);
-static void addTextVertex(float vx, float vy, float tx, float ty);
-static void renderText(float x, float y, float scaleX, float scaleY, bool baseline, const char* text);
+void sceneInit(void);
+void setTextColor(u32 color);
+void addTextVertex(float vx, float vy, float tx, float ty);
+void renderText(float x, float y, float scaleX, float scaleY, bool baseline, const char* text);
+void sceneExit(void);
 
 
 #endif /* CITROSTUFF_H */

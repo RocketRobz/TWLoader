@@ -209,7 +209,7 @@ void settingsDrawTopScreen(void)
 			} else if (settings.twl.bootscreen == 1) {
 				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 			} else {
-				sf2d_draw_rectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
+				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
 			}
 			if (settings.twl.healthsafety == 1) {
 				if (settings.twl.bootscreen == 2) {
@@ -217,11 +217,11 @@ void settingsDrawTopScreen(void)
 				} else if (settings.twl.bootscreen == 1) {
 					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else {
-					sf2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 				}
 			} else {
 				// Draw a white screen in place of the H&S screen.
-				sf2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+				drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 			}
 			if (settings.twl.bootscreen == 0) {
 				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
@@ -257,7 +257,7 @@ void settingsDrawTopScreen(void)
 		}
 		setTextColor(RGBA8(255, 255, 255, 255));
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
-		if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
 	}
 }

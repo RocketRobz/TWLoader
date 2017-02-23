@@ -61,8 +61,7 @@ CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 
 int equals;
 
-sftd_font *font;
-sftd_font *font_b;
+sf2d_texture *rectangletex;
 
 // Dialog box textures.
 sf2d_texture *dialogboxtex;	// Dialog box
@@ -286,6 +285,12 @@ static Result ptmsysmSetInfoLedPattern(const RGBLedPattern* pattern)
     Result ret = svcSendSyncRequest(ptmsysmHandle);
     if(ret < 0) return ret;
     return ipc[1];
+}
+
+// New draw rectangle function for use alongside citro.
+void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color)
+{
+	sf2d_draw_texture_scale_blend(rectangletex, x, y, scaleX, scaleY, color);
 }
 
 static string dialog_text;
@@ -1075,7 +1080,7 @@ static int gamesettings_cursorPosition = 0;
  */
 static void drawMenuDialogBox(void)
 {
-	sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
+	drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
 	// sftd_draw_wtext(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, TR(STR_BACK));
@@ -1345,7 +1350,7 @@ int main()
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 
 	LoadSettings();	
-	bootstrapPath = settings.twl.bootstrapfile ? "fat:/_nds/release-bootstrap.nds" : "fat:/_nds/unofficial-bootstrap.nds";
+	bootstrapPath = settings.twl.bootstrapfile ? "sd:/_nds/release-bootstrap.nds" : "sd:/_nds/unofficial-bootstrap.nds";
 	if (logEnabled) LogFMA("Main.bootstrapPath", "Using path:", bootstrapPath.c_str());
 	LoadBootstrapConfig();
 
@@ -1358,6 +1363,8 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
+
+	rectangletex = sfil_load_PNG_file("romfs:/graphics/rectangle.png", SF2D_PLACE_RAM); // Rectangle
 
 	// Dialog box textures.
 	dialogboxtex = sfil_load_PNG_file("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
@@ -2009,8 +2016,8 @@ int main()
 							// sftd_draw_text(font_b, 40+176, 172, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
 							break;
 					}
-					sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-					sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					sf2d_end_frame();
 				}
 			} else if (settings.ui.theme == 1) {	// R4 theme
@@ -2068,8 +2075,8 @@ int main()
 					} else {
 						sf2d_draw_texture(toplogotex, 40, 0);
 					}
-					sf2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-					sf2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					sf2d_end_frame();
 					updatetopscreen = false;
 				}
@@ -2189,7 +2196,7 @@ int main()
 							: RGBA8(127, 127, 127, 255);
 					// sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
 
-					if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 					sf2d_end_frame();
 				}
 			}
@@ -2665,7 +2672,7 @@ int main()
 						int Ypos = 26;
 						filenameYpos = 36;
 						if (woodmenu_cursorPosition == 0) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -2675,7 +2682,7 @@ int main()
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 255));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -2685,7 +2692,7 @@ int main()
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 2) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -2695,7 +2702,7 @@ int main()
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 3) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -2705,7 +2712,7 @@ int main()
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4) {
-							sf2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -2719,7 +2726,7 @@ int main()
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
 							if (cursorPosition == filenum) {
-								sf2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
+								drawRectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
 							}
 
 							// Get the current filename and convert it to wstring.
@@ -2770,21 +2777,21 @@ int main()
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						sf2d_draw_texture(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
 						if (r4menu_cursorPosition == 0) {
-							sf2d_draw_rectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+							drawRectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
 							static const char selectiontext[] = "Games";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						} else 	if (r4menu_cursorPosition == 1) {
-							sf2d_draw_rectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+							drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
 							static const char selectiontext[] = "Launch Slot-1 card";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 						} else 	if (r4menu_cursorPosition == 2) {
-							sf2d_draw_rectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+							drawRectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
 							static const char selectiontext[] = "Start GBARunner2";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
@@ -2813,7 +2820,7 @@ int main()
 								LoadBNRIcon_R4Theme(NULL);
 							}
 						}
-						sf2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
+						drawRectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 						sf2d_draw_texture(dboxtex_iconbox, 47, 31);
 						sf2d_draw_texture_part(bnricontex[0], 52, 36, bnriconframenum*32, 0, 32, 32);
 						
@@ -3227,7 +3234,7 @@ int main()
 				settingsDrawBottomScreen();
 			}
 		if (settings.ui.theme == 0)
-			if (fadealpha > 0) sf2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 
 		sf2d_end_frame();
 		// }
