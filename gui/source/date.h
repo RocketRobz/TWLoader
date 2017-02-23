@@ -40,7 +40,7 @@ std::string RetTime(bool donotblink);
  * @param color Text color.
  * @param size Text size.
  */
-void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size);
+void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, DateFormat format);
 
 /**
  * Draw the month and year using the specified color.
@@ -50,6 +50,6 @@ void DrawDateF(int Xpos, int Ypos, DateFormat format, u32 color, int size);
  * @param color Text color.
  * @param size Text size.
  */
-void DrawDate(int Xpos, int Ypos, u32 color, int size);
+void DrawDate(float x, float y, float scaleX, float scaleY, bool baseline);
 
 #endif // DATE_H

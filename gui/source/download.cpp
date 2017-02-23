@@ -190,7 +190,7 @@ int checkUpdate(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/twloader/ver");
@@ -260,8 +260,8 @@ int checkUpdate(void) {
  * Download the TWLoader CIAs.
  */
 void DownloadTWLoaderCIAs(void) {
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading TWLoader to latest version...");
-	sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
+	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading TWLoader to latest version...");
+	// sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(GUI)");
 	sf2d_end_frame();
 	sf2d_swapbuffers();	
 	
@@ -283,8 +283,8 @@ void DownloadTWLoaderCIAs(void) {
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
 	if (res == 0) {
-		sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
-		sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
+		// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now downloading latest TWLoader version...");
+		// sftd_draw_textf(font, 12, 30, RGBA8(0, 0, 0, 255), 12, "(TWLNAND side CIA)");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 		// Delete first if installed.
@@ -305,7 +305,7 @@ void DownloadTWLoaderCIAs(void) {
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (res == 0) {
-			sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
+			// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, "Now returning to HOME Menu...");
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			run = false;
@@ -328,7 +328,7 @@ void UpdateBootstrapUnofficial(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
@@ -352,7 +352,7 @@ void UpdateBootstrapRelease(void) {
 		sf2d_draw_texture(settingstex, 0, 0);
 	}
 	sf2d_draw_texture(dialogboxtex, 0, 0);
-	sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+	// sftd_draw_textf(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/bootstrap.nds");
@@ -820,11 +820,11 @@ void downloadBoxArt(void)
 		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
-		sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
-		sftd_draw_text(font, 39, 32, RGBA8(0, 0, 0, 255), 12, "/");
-		sftd_draw_text(font, 44, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
-		sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
+		// sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, title);
+		// sftd_draw_textf(font, 12, 32, RGBA8(0, 0, 0, 255), 12, "%zu", boxartnum);
+		// sftd_draw_text(font, 39, 32, RGBA8(0, 0, 0, 255), 12, "/");
+		// sftd_draw_text(font, 44, 32, RGBA8(0, 0, 0, 255), 12, s_boxart_total);
+		// sftd_draw_textf(font, 12, 64, RGBA8(0, 0, 0, 255), 12, "Downloading: %.4s", ba_TID);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
