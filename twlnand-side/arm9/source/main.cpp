@@ -96,7 +96,7 @@ void runFile(string filename) {
 		iprintf("Running %s with %d parameters\n", argarray[0], argarray.size());
 		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
 		iprintf("Start failed. Error %i\n", err);
-		doPause();
+		// doPause();
 	}
 }
 
