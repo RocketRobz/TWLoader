@@ -22,7 +22,6 @@
 #include <sfil.h>
 #include "citrostuff.h"
 #include "img/twpng.h"
-#include <sftd.h>
 #include "ptmu_x.h"
 
 //#include <citrus/app.hpp>
