@@ -2939,13 +2939,8 @@ int main()
 											romsel_filename_w = utf8_to_wstring(romsel_filename);
 										}
 									}else{
-										if (matching_files.size() != 0) {
-											romsel_filename = matching_files.at(storedcursorPosition).c_str();
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										} else {
-											romsel_filename = " ";
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										}
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
 								} else {
@@ -2959,13 +2954,8 @@ int main()
 										}
 										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 									}else {
-										if (matching_files.size() != 0) {
-											romsel_filename = matching_files.at(storedcursorPosition).c_str();
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										} else {
-											romsel_filename = " ";
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										}
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
 										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 									}									
 								}
