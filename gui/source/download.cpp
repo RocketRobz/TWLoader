@@ -570,7 +570,7 @@ void checkBootstrapVersion(void){
 		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file:", settings_releasebootstrapver.c_str());
 	}
 	
-	if (res == -1) settings_releasebootstrapver = "No version available";
+	if (res) settings_releasebootstrapver = "No version available";
 	
 	fclose(VerFile);
 	
@@ -620,7 +620,7 @@ void checkBootstrapVersion(void){
 		fclose(VerFile);
 		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file:", settings_unofficialbootstrapver.c_str());
 	}
-	if (res == -1) settings_unofficialbootstrapver = "No version available";
+	if (res) settings_unofficialbootstrapver = "No version available";
 
 	fclose(VerFile);
 	
