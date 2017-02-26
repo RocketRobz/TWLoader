@@ -137,6 +137,65 @@ void renderText(float x, float y, float scaleX, float scaleY, bool baseline, con
 	} while (code > 0);
 }
 
+// Only draws first character for now
+void renderText_w(float x, float y, float scaleX, float scaleY, bool baseline, const wchar_t* text)
+{
+	ssize_t  units;
+	uint32_t code;
+
+	// Configure buffers
+	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+	BufInfo_Init(bufInfo);
+	BufInfo_Add(bufInfo, textVtxArray, sizeof(textVertex_s), 2, 0x10);
+
+	const uint8_t* p = (const uint8_t*)text;
+	float firstX = x;
+	u32 flags = GLYPH_POS_CALC_VTXCOORD | (baseline ? GLYPH_POS_AT_BASELINE : 0);
+	int lastSheet = -1;
+	do
+	{
+		if (!*p) break;
+		units = decode_utf8(&code, p);
+		if (units == -1)
+			break;
+		p += units;
+		if (code == '\n')
+		{
+			x = firstX;
+			y += scaleY*fontGetInfo()->lineFeed;
+		}
+		else if (code > 0)
+		{
+			int glyphIdx = fontGlyphIndexFromCodePoint(code);
+			fontGlyphPos_s data;
+			fontCalcGlyphPos(&data, glyphIdx, flags, scaleX, scaleY);
+
+			// Bind the correct texture sheet
+			if (data.sheetIndex != lastSheet)
+			{
+				lastSheet = data.sheetIndex;
+				C3D_TexBind(0, &glyphSheets[lastSheet]);
+			}
+
+			int arrayIndex = textVtxArrayPos;
+			if ((arrayIndex+4) >= TEXT_VTX_ARRAY_COUNT)
+				break; // We can't render more characters
+
+			// Add the vertices to the array
+			addTextVertex(x+data.vtxcoord.left,  y+data.vtxcoord.bottom, data.texcoord.left,  data.texcoord.bottom);
+			addTextVertex(x+data.vtxcoord.right, y+data.vtxcoord.bottom, data.texcoord.right, data.texcoord.bottom);
+			addTextVertex(x+data.vtxcoord.left,  y+data.vtxcoord.top,    data.texcoord.left,  data.texcoord.top);
+			addTextVertex(x+data.vtxcoord.right, y+data.vtxcoord.top,    data.texcoord.right, data.texcoord.top);
+
+			// Draw the glyph
+			C3D_DrawArrays(GPU_TRIANGLE_STRIP, arrayIndex, 4);
+
+			x += data.xAdvance;
+
+		}
+	} while (code > 0);
+}
+
 /* void sceneRender(float size)
 {
 	// Update the uniforms

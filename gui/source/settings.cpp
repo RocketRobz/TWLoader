@@ -230,30 +230,39 @@ void settingsDrawTopScreen(void)
 		} else {
 			sf2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
 			if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-				// sftd_draw_wtext(font, offset3D[topfb].disabled+72, 166, RGBA8(0, 0, 255, 255), 14, TR(STR_SETTINGS_XBUTTON_RELEASE));
-				// sftd_draw_wtext(font, offset3D[topfb].disabled+72, 180, RGBA8(0, 255, 0, 255), 14, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
-				// if(!is3DSX) // sftd_draw_wtext(font, offset3D[topfb].disabled+72, 194, RGBA8(255, 255, 255, 255), 14, TR(STR_SETTINGS_SETTINGS_START_UPDATE_TWLOADER));
+				setTextColor(RGBA8(0, 0, 255, 255));
+				renderText_w(offset3D[topfb].disabled+72, 166, 0.60, 0.60, false, TR(STR_SETTINGS_XBUTTON_RELEASE));
+				setTextColor(RGBA8(0, 255, 0, 255));
+				renderText_w(offset3D[topfb].disabled+72, 180, 0.60, 0.60, false, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+				if(!is3DSX) {
+					setTextColor(RGBA8(255, 255, 255, 255));
+					renderText_w(offset3D[topfb].disabled+72, 194, 0.60, 0.60, false, TR(STR_SETTINGS_SETTINGS_START_UPDATE_TWLOADER));
+				}
 			}
 		}
 
-		// sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
 		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(318.0f, 1, 0.58f, 0.58f, false, RetTime(false).c_str());
 		
 		std::string version = settings_vertext;		
 		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
-			// sftd_draw_text(font, 334, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			renderText(324, 222, 0.60, 0.60f, false, settings_vertext);
 		}else{
-			// sftd_draw_text(font, 347, 222, RGBA8(255, 255, 255, 255), 14, settings_vertext);
+			renderText(336, 222, 0.60, 0.60f, false, settings_vertext);
 		}
-		// settings.twl.bootstrapfile ? // sftd_draw_text(font, 5, 222, RGBA8(0, 0, 255, 255), 14, settings_releasebootstrapver.c_str()) : // sftd_draw_text(font, 5, 222, RGBA8(0, 255, 0, 255), 14, settings_unofficialbootstrapver.c_str());
+		if (settings.twl.bootstrapfile) {
+			setTextColor(RGBA8(0, 0, 255, 255));
+			renderText(5, 222, 0.60, 0.60f, false, settings_releasebootstrapver.c_str());
+		} else {
+			setTextColor(RGBA8(0, 255, 0, 255));
+			renderText(5, 222, 0.60, 0.60f, false, settings_unofficialbootstrapver.c_str());
+		}
 
 		draw_volume_slider(setvoltex);
 		sf2d_draw_texture(batteryIcon, 371, 2);
 		if (!settings.ui.name.empty()) {
 			setTextColor(SET_ALPHA(color_data->color, 255));
 			renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
-			// sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 		}
 		setTextColor(RGBA8(255, 255, 255, 255));
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
@@ -291,8 +300,9 @@ void settingsDrawBottomScreen(void)
 	if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		// sftd_draw_text(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-		// sftd_draw_text(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+		setTextColor(RGBA8(0, 0, 0, 255));
+		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
+		renderText(252, RshoulderYpos+4, 0.45, 0.50, false, Rshouldertext);
 
 		// Language.
 		static const char *const language_text[] = {
@@ -398,123 +408,124 @@ void settingsDrawBottomScreen(void)
 		title = TR(STR_SETTINGS_GUI);
 		int Ypos = 40;
 		if (cursor_pos[0] == 0) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LANGUAGE));
-			// sftd_draw_wtext(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, languagevaluetext.c_str());
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LANGUAGE));
-			// sftd_draw_wtext(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, languagevaluetext.c_str());
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_LANGUAGE));
+		renderText_w(XposValue, Ypos, 0.55, 0.55, false, languagevaluetext.c_str());
+		Ypos += 12;
 		if (cursor_pos[0] == 1) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_THEME));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, themevaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_THEME_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_THEME_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_THEME_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_THEME_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_THEME));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, themevaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_THEME));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, themevaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 2) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COLOR));
-			// sftd_draw_wtext(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, colorvaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_COLOR_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_COLOR_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COLOR_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COLOR_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_COLOR));
-			// sftd_draw_wtext(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, colorvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_COLOR));
+		renderText_w(XposValue, Ypos, 0.55, 0.55, false, colorvaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 3) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
-			// sftd_draw_wtext(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, menucolorvaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_MENUCOLOR));
-			// sftd_draw_wtext(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, menucolorvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_MENUCOLOR));
+		renderText_w(XposValue, Ypos, 0.55, 0.55, false, menucolorvaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 4) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_FILENAME));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, filenamevaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_FILENAME_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_FILENAME_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FILENAME_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FILENAME_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_FILENAME));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, filenamevaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_FILENAME));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, filenamevaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 5) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_COUNTER));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, countervaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_COUNTER_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_COUNTER_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COUNTER_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COUNTER_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_COUNTER));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, countervaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_COUNTER));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, countervaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 6) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_CUSTOM_BOTTOM));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, custombotvaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_CUSTOM_BOTTOM));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, custombotvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_CUSTOM_BOTTOM));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, custombotvaluetext);
+		Ypos += 12;
 		if (cursor_pos[0] == 7) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autoupdatevaluetext);
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autoupdatevaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, autoupdatevaluetext);
+		Ypos += 12;
 		if(!is3DSX) {
 			if (cursor_pos[0] == 8) {
-				// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_AUTOUPDATE_TWLOADER));
-				// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, autodlvaluetext);
-				// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1));
-				// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2));
-				Ypos += 12;
+				setTextColor(RGBA8(255, 255, 255, 255));
+				renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1));
+				renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2));
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_AUTOUPDATE_TWLOADER));
-				// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, autodlvaluetext);
-				Ypos += 12;
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_AUTOUPDATE_TWLOADER));
+			renderText(XposValue, Ypos, 0.55, 0.55, false, autodlvaluetext);
+			Ypos += 12;
 		}
 		if (cursor_pos[0] == 9) {
 			// Selected			
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, L"Rom path");
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, L"Press A to change rom location folder.");
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, L"");
-			// sftd_draw_textf(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText(8, 184, 0.60, 0.60f, false, "Press  to change rom location folder.");
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, L"Rom path");
-			// sftd_draw_textf(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText(Xpos, Ypos, 0.55, 0.55, false, "Rom path");
+		renderText(XposValue, Ypos, 0.55, 0.55, false, "SD:/");
+		renderText(XposValue+32, Ypos, 0.50, 0.55, false, settings.ui.romfolder.c_str());
+		Ypos += 12;
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		// sftd_draw_text(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
-		// sftd_draw_text(font, 252, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
+		setTextColor(RGBA8(0, 0, 0, 255));
+		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
+		renderText(252, RshoulderYpos+4, 0.45, 0.50, false, Rshouldertext);
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");

@@ -2144,10 +2144,8 @@ int main()
 					}
 					if (settings.ui.topborder) {
 						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-						// sftd_draw_text(font, 328, 3, RGBA8(0, 0, 0, 255), 12, RetTime(false).c_str());
 						setTextColor(RGBA8(0, 0, 0, 255));
 					} else {
-						// sftd_draw_text(font, 328, 3, RGBA8(255, 255, 255, 255), 12, RetTime(false).c_str());
 						setTextColor(RGBA8(255, 255, 255, 255));
 					}
 					renderText(318.0f, 1.0f, 0.58f, 0.58f, false, RetTime(false).c_str());
@@ -2158,23 +2156,22 @@ int main()
 					if (!settings.ui.name.empty()) {
 						setTextColor(SET_ALPHA(color_data->color, 255));
 						renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
-						// sftd_draw_textf(font, 34, 3, SET_ALPHA(color_data->color, 255), 12, settings.ui.name.c_str());
 					}
 					// // sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-					// // sftd_draw_textf(font, 17, LshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Lshouldertext);
 					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-					// // sftd_draw_textf(font, 332, RshoulderYpos+5, RGBA8(0, 0, 0, 255), 11, Rshouldertext);
 					// Draw the "Prev" and "Next" text for X/Y.
 					u32 lr_color = (pagenum != 0 && file_count <= (size_t)-pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
-					// sftd_draw_text(font, 17, LshoulderYpos+5, lr_color, 11, "Prev. Page");
+					setTextColor(lr_color);
+					renderText(17, LshoulderYpos+4, 0.50, 0.50, false, "Prev. Page");
 
 					lr_color = (file_count > (size_t)20+pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
-					// sftd_draw_text(font, 332, RshoulderYpos+5, lr_color, 11, "Next Page");
+					setTextColor(lr_color);
+					renderText(332, RshoulderYpos+4, 0.50, 0.50, false, "Next Page");
 
 					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 					sf2d_end_frame();
@@ -2658,7 +2655,6 @@ int main()
 							sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(0xFFFFFFFF); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
-						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
@@ -2668,7 +2664,6 @@ int main()
 							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(0xFFFFFFFF); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
-						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 2) {
@@ -2678,7 +2673,6 @@ int main()
 							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(0xFFFFFFFF); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
-						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 3) {
@@ -2688,7 +2682,6 @@ int main()
 							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(0xFFFFFFFF); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
-						// sftd_draw_textf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4) {
@@ -2697,8 +2690,7 @@ int main()
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(0xFFFFFFFF); // white
-						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Settings");
-						// sftd_draw_wtextf(font, 46, filenameYpos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_TEXT));
+						renderText_w(46.0f, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));
 					} else {
 						int Ypos = 26;
 						filenameYpos = 36;
