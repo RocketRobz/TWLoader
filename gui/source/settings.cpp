@@ -559,114 +559,115 @@ void settingsDrawBottomScreen(void)
 
 		title = TR(STR_SETTINGS_NTR_TWL);
 		int Ypos = 40;
-		if (cursor_pos[1] == 0) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_FLASHCARD_SELECT));
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2));
+		if (cursor_pos[1] == 0) {			
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_FLASHCARD_SELECT));
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_FLASHCARD_SELECT));
+		Ypos += 12;
 		if (cursor_pos[1] == 1) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_RAINBOW_LED));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, rainbowledvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_RAINBOW_LED));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, rainbowledvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_RAINBOW_LED));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, rainbowledvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 2) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, cpuspeedvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, cpuspeedvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, cpuspeedvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 3) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_VRAM_BOOST));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, extvramvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_VRAM_BOOST));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, extvramvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_VRAM_BOOST));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, extvramvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 4) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_DS_DSi_BOOT_SCREEN));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, bootscreenvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_DS_DSi_BOOT_SCREEN));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, bootscreenvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_DS_DSi_BOOT_SCREEN));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, bootscreenvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 5) {
-			// sftd_draw_wtext(font, Xpos+16, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, healthsafetyvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos+16, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, healthsafetyvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_DS_DSi_SAFETY_MESSAGE));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, healthsafetyvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 6) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_RESET_SLOT_1));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, resetslot1valuetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_RESET_SLOT_1));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, resetslot1valuetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_RESET_SLOT_1));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, resetslot1valuetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 7) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_CONSOLE_OUTPUT));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, consolevaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_CONSOLE_OUTPUT));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, consolevaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_CONSOLE_OUTPUT));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, consolevaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 8) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_LOCK_ARM9_SCFG_EXT));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, lockarm9scfgextvaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_LOCK_ARM9_SCFG_EXT));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, lockarm9scfgextvaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_LOCK_ARM9_SCFG_EXT));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, lockarm9scfgextvaluetext);
+		Ypos += 12;
 		if (cursor_pos[1] == 9) {
-			// sftd_draw_wtext(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_BOOTSTRAP));
-			// sftd_draw_text(font, XposValue, Ypos, SET_ALPHA(color_data->color, 255), 12, bootstrapfilevaluetext);
-			Ypos += 12;
-			// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
-			// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
+			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
+			setTextColor(SET_ALPHA(color_data->color, 255));
 		} else {
-			// sftd_draw_wtext(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, TR(STR_SETTINGS_BOOTSTRAP));
-			// sftd_draw_text(font, XposValue, Ypos, RGBA8(255, 255, 255, 255), 12, bootstrapfilevaluetext);
-			Ypos += 12;
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
+		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_BOOTSTRAP));
+		renderText(XposValue, Ypos, 0.55, 0.55, false, bootstrapfilevaluetext);
+		Ypos += 12;		
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		// Flash card options.
 		static const char *const flash_card_options[][6] = {
