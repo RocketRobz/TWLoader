@@ -143,12 +143,20 @@ void renderText_w(float x, float y, float scaleX, float scaleY, bool baseline, c
 	ssize_t  units;
 	uint32_t code;
 
+	// First we convert wchar_t* to char*
+	char tmp[64];
+	
+	/** wchart_t* to char* **/
+	wcstombs (tmp, text, sizeof(tmp) );
+	tmp[63]='\0';
+	/** Since char* and uint8_t* are the same lengh, we can directly cast it to uint8_t* **/
+	
 	// Configure buffers
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
 	BufInfo_Add(bufInfo, textVtxArray, sizeof(textVertex_s), 2, 0x10);
 
-	const uint8_t* p = (const uint8_t*)text;
+	const uint8_t* p = (const uint8_t*)tmp;
 	float firstX = x;
 	u32 flags = GLYPH_POS_CALC_VTXCOORD | (baseline ? GLYPH_POS_AT_BASELINE : 0);
 	int lastSheet = -1;
