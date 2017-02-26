@@ -620,8 +620,6 @@ void checkBootstrapVersion(void){
 	}
 	if (res == -1) settings_unofficialbootstrapver = "No version available";
 
-	fclose(VerFile);
-	
 	if(res == 0){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening unofficial bootstrap ver file.");
 		// Try to open again
