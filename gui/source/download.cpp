@@ -572,8 +572,6 @@ void checkBootstrapVersion(void){
 	
 	if (res == -1) settings_releasebootstrapver = "No version available";
 	
-	fclose(VerFile);
-	
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
