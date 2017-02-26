@@ -19,7 +19,7 @@ int rmkdir(const char *path, int mode)
 	char *p = NULL;
 	size_t len;
 
-	strncpy(tmp, path, sizeof(tmp));
+    snprintf(tmp, sizeof(tmp),"%s",path);
 	len = strlen(tmp);
 	if (len >= sizeof(tmp)) {
 		return -1;
