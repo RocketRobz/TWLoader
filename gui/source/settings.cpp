@@ -18,7 +18,6 @@ using std::wstring;
 #include <sf2d.h>
 #include "citrostuff.h"
 #include "img/twpng.h"
-#include <sftd.h>
 #include "keyboard.h"
 
 // Textures.
