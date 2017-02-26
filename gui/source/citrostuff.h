@@ -14,13 +14,13 @@
 
 typedef struct { float position[3]; float texcoord[2]; } textVertex_s;
 
-static DVLB_s* vshader_dvlb;
-static shaderProgram_s program;
-static int uLoc_projection;
-static C3D_Mtx projection;
-static C3D_Tex* glyphSheets;
-static textVertex_s* textVtxArray;
-static int textVtxArrayPos;
+extern DVLB_s* vshader_dvlb;
+extern shaderProgram_s program;
+extern int uLoc_projection;
+extern C3D_Mtx projection;
+extern C3D_Tex* glyphSheets;
+extern textVertex_s* textVtxArray;
+extern int textVtxArrayPos;
 
 #define TEXT_VTX_ARRAY_COUNT (4*1024)
 

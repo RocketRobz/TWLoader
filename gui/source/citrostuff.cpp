@@ -7,6 +7,14 @@
 
 #include "citrostuff.h"
 
+DVLB_s* vshader_dvlb;
+shaderProgram_s program;
+int uLoc_projection;
+C3D_Mtx projection;
+C3D_Tex* glyphSheets;
+textVertex_s* textVtxArray;
+int textVtxArrayPos;
+
 void sceneInit(void)
 {
 	// Load the vertex shader, create a shader program and bind it

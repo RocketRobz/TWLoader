@@ -320,9 +320,12 @@ void DialogBoxAppear(const char *text, int mode) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i-240);
+		setTextColor(0xFF000000); // black
 		if (mode == 1) {
+			renderText(12, 72+i-240, 0.6f, 0.6f, false, dialog_text.c_str());
 			// sftd_draw_textf(font, 40, 72+i-240, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
 		} else
+			renderText(12, 16+i-240, 0.5f, 0.5f, false, dialog_text.c_str());
 			// sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -352,9 +355,12 @@ void DialogBoxDisappear(const char *text, int mode) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i);
+		setTextColor(0xFF000000); // black
 		if (mode == 1) {
+			renderText(12, 72+i, 0.6f, 0.6f, false, dialog_text.c_str());
 			// sftd_draw_textf(font, 40, 72+i, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
 		} else
+			renderText(12, 16+i, 0.5f, 0.5f, false, dialog_text.c_str());
 			// sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -1266,10 +1272,15 @@ int main()
 	sf2d_swapbuffers();
 
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+	if (logEnabled)	LogFM("Main.C3D_Init", "Citro3D inited");
 
 	// Initialize the render target
-	C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+	/* C3D_RenderTarget* target_topl = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetClear(target_topl, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+	C3D_RenderTarget* target_topr = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetClear(target_topr, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+	C3D_RenderTarget* target_bot = C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetClear(target_bot, C3D_CLEAR_ALL, CLEAR_COLOR, 0); */
 
 	printf("System font example\n");
 	Result res = fontEnsureMapped();
@@ -1312,19 +1323,7 @@ int main()
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 	if (logEnabled)	LogFM("Main.Directories", "Directories are made, or already made");
 	
-	// Font loading
-	/* sftd_init();
-	if (logEnabled)	LogFM("Main.sftd_init", "sftd inited");
-	font = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro M.otf");
-	if (logEnabled)	LogFMA("Main.Font loading", "Font file loaded correctly", "font = FOT-RodinBokutoh Pro M.otf");
-	font_b = sftd_load_font_file("romfs:/fonts/FOT-RodinBokutoh Pro DB.otf");
-	if (logEnabled)	LogFMA("Main.Font loading", "Font file loaded correctly", "font_b = FOT-RodinBokutoh Pro DB.otf");
-	// sftd_draw_text(font, 0, 0, RGBA8(0, 0, 0, 255), 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!
-	if (logEnabled)	LogFMA("Main.Font loading", "Removed pixelation of text", "font");
-	// sftd_draw_text(font_b, 0, 0, RGBA8(0, 0, 0, 255), 24, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&:-.'!?()\"end"); //Hack to avoid blurry text!	
-	if (logEnabled)	LogFMA("Main.Font loading", "Removed pixelation of text", "font_b"); */
-	
-    snprintf(settings_vertext, 14, "Ver. %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+	snprintf(settings_vertext, 14, "Ver. %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 
 	LoadSettings();	
@@ -1548,6 +1547,8 @@ int main()
 		const u32 hDown = hidKeysDown();
 		const u32 hHeld = hidKeysHeld();
 
+		textVtxArrayPos = 0; // Clear the text vertex array
+
 		// Check if the TWLNAND-side title is installed.
 		if (!isTWLNANDInstalled) {
 			static const char twlnand_msg[] =
@@ -1571,7 +1572,8 @@ int main()
 			DialogBoxAppear(twlnand_msg, 0);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
-			// sftd_draw_text(font, 12, 16, RGBA8(0, 0, 0, 255), 12, twlnand_msg);
+			setTextColor(RGBA8(0, 0, 0, 255));
+			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			continue;
@@ -2282,7 +2284,7 @@ int main()
 						if (access(path, F_OK) != -1) {
 							LoadBNRIcon_R4Theme(path);
 						} else {
-							LoadBNRIcon_R4Theme(NULL);
+							LoadBNRIcon_R4Theme("romfs:/notextbanner");
 						}
 					} else if (settings.ui.theme == 1) {
 						/** This is better than a glitched screen */
@@ -2312,7 +2314,7 @@ int main()
 						if (access(path, F_OK) != -1) {
 							LoadBNRIcon_R4Theme(path);
 						} else {
-							LoadBNRIcon_R4Theme(NULL);
+							LoadBNRIcon_R4Theme("romfs:/notextbanner");
 						}
 						// Reload 1st box art
 						LoadBoxArt_WoodTheme(0-pagenum*20);
@@ -2592,7 +2594,7 @@ int main()
 					colortexloaded_bot = true;
 				}
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-								
+				
 				if (settings.ui.theme == 2) {
 					if (wood_ndsiconscaletimer == 60) {
 						// Scale icon at 30fps
@@ -3220,8 +3222,7 @@ int main()
 		// }
 		
 		sf2d_swapbuffers();
-
-
+		
 		/* if (titleboxXmovetimer == 0) {
 			updatebotscreen = false;
 		} */
