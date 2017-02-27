@@ -128,9 +128,14 @@ else
 endif
 #---------------------------------------------------------------------------------
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-			$(PICAFILES:.v.pica=.shbin.o) $(SHLISTFILES:.shlist=.shbin.o) \
-			$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+export OFILES_SOURCES 	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+
+export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES)) \
+			$(PICAFILES:.v.pica=.shbin.o) $(SHLISTFILES:.shlist=.shbin.o)
+
+export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
+
+export HFILES	:=	$(PICAFILES:.v.pica=_shbin.h) $(SHLISTFILES:.shlist=_shbin.h) $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
@@ -195,52 +200,54 @@ all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
 cia: $(OUTPUT).elf $(OUTPUT).cia
 3dsx: $(OUTPUT).elf $(OUTPUT).3dsx
 
+$(OFILES_SOURCES) : $(HFILES)
+
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf
+$(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
 	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
 #---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
+%.bin.o	%_bin.h :	%.bin
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@$(bin2o)
+
+#---------------------------------------------------------------------------------
+%.jpeg.o %_jpeg.h :	%.jpeg
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@$(bin2o)
+
+#---------------------------------------------------------------------------------
+%.png.o	%_png.h :	%.png
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 	
 #---------------------------------------------------------------------------------
-%.jpeg.o:	%.jpeg
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-#---------------------------------------------------------------------------------
-%.png.o	:	%.png
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-#---------------------------------------------------------------------------------
 # rules for assembling GPU shaders
 #---------------------------------------------------------------------------------
 define shader-as
-	$(eval CURBIN := $(patsubst %.shbin.o,%.shbin,$(notdir $@)))
-	picasso -o $(CURBIN) $1
-	bin2s $(CURBIN) | $(AS) -o $@
+	$(eval CURBIN := $*.shbin)
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u32" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(CURBIN) | tr . _)`.h
+	picasso -o $(CURBIN) $1
+	bin2s $(CURBIN) | $(AS) -o $*.shbin.o
 endef
 
-%.shbin.o : %.v.pica %.g.pica
+%.shbin.o %_shbin.h : %.v.pica %.g.pica
 	@echo $(notdir $^)
 	@$(call shader-as,$^)
 
-%.shbin.o : %.v.pica
+%.shbin.o %_shbin.h : %.v.pica
 	@echo $(notdir $<)
 	@$(call shader-as,$<)
 
-%.shbin.o : %.shlist
+%.shbin.o %_shbin.h : %.shlist
 	@echo $(notdir $<)
 	@$(call shader-as,$(foreach file,$(shell cat $<),$(dir $<)/$(file)))
 
