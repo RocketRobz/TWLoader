@@ -231,7 +231,6 @@ static void gamecardCacheCTR(void)
 	// TODO: Make sure we don't have more than two lines here.
 	smdh->titles[lang].publisher[0x40-1] = 0;
 	card_text.push_back(utf16_to_wstring(smdh->titles[lang].publisher));
-	free(smdh);
 
 	// FIXME: Untile the large icon and load it.
 	// TODO: Add RGB565 and RGB555 loading.

@@ -572,8 +572,6 @@ void checkBootstrapVersion(void){
 	
 	if (res) settings_releasebootstrapver = "No version available";
 	
-	fclose(VerFile);
-	
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
@@ -622,8 +620,6 @@ void checkBootstrapVersion(void){
 	}
 	if (res) settings_unofficialbootstrapver = "No version available";
 
-	fclose(VerFile);
-	
 	if(res == 0){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening unofficial bootstrap ver file.");
 		// Try to open again
