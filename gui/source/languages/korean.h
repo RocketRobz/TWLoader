@@ -12,7 +12,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"카트리지가 없습니다.",												// "No cartridge"
 	"카트리지가 올바르지 않습니다.", 										// "Unknown Cartridge"
 	"설정",														// "Settings"
-	"B: 뒤로",													// "B: Back"	
+	": 뒤로",													// "B: Back"	
 
 	/** Settings: GUI **/
 	"언어",														// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_KO[STR_MAX] = {
 	"부트스트랩",													// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: 부트스트랩 업데이트 (공식 릴리즈)",									// "X: Update bootstrap (Official release)"
-	"Y: 부트스트랩 업데이트 (비공식 릴리즈)",								// "Y: Update bootstrap (Unofficial release)"
+	": 부트스트랩 업데이트 (공식 릴리즈)",									// "X: Update bootstrap (Official release)"
+	": 부트스트랩 업데이트 (비공식 릴리즈)",								// "Y: Update bootstrap (Unofficial release)"
 	"START: TWLoader 업데이트",    									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"UI에서 사용할 언어",												// "including game banner text."
 
 	"TWLoader 테마",												// "The theme to use in TWLoader."
-	"서브테마를 설정하려면 A 를 누르세요",									// "Press A for sub-themes."
+	"서브테마를 설정하려면  를 누르세요",									// "Press A for sub-themes."
 
 	"위쪽 바탕화면 색상",												// "The color of the top background,"
 	"시작 테두리 포함",												// "the START border, and the circling dots."
@@ -91,7 +91,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"게임 메뉴에",													// "Loads a custom bottom screen image"
 	"사용자 설정 스크린 이미지 띄우기.",									// "for the game menu."
 
-	"시작 시 nds-부트스트랩 업데이트",									// "Auto-update nds-bootstrap at launch."
+	"시작 시 nds-부트스트랩 업데이트",										// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
 
 	"시작 시",														// "Auto-download the CIA of the latest"
@@ -104,7 +104,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"알림 LED에",													// "See rainbow colors glowing in"
 	"무지개색 LED 적용",												// "the Notification LED."
 
-	"몇몇 게임에서 렉을 없애기 위해 TWL으로 설정",							// "Set to TWL to get rid of lags in some games."
+	"몇몇 게임에서 렉을 없애기 위해 TWL으로 설정",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
 	"8 bit VRAM 쓰기 허용",											// "Allows 8 bit VRAM writes"
@@ -116,7 +116,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"안전 및 주의사항 메세지를",											// "Displays the Health and Safety"
 	"하단 화면에 출력",												// "message on the bottom screen."
 
-	"Slot-1 carts가 화이트스크린에서 멈추면 ",							// "Enable this if Slot-1 carts are stuck"
+	"Slot-1 carts가 화이트스크린에서 멈추면 ",								// "Enable this if Slot-1 carts are stuck"
 	"이 옵션 설정",													// "on white screens."
 
 	"게임구동 전 텍스트 출력",											// "Displays some text before launched game."
@@ -161,7 +161,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"하위 테마가 없습니다.",											// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: 저장 후 되돌아가기",											// "A/B: Save and Return"
+	"/: 저장 후 되돌아가기",											// "A/B: Save and Return"
 	"</>: 선택",													// "Left/Right: Pick"
 	"GUI 설정",													// "Settings: GUI"
 	"NTR/TWL-mode 설정",											// "Settings: NTR/TWL-mode"

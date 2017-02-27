@@ -12,7 +12,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"沒有卡帶",													// "No cartridge"
 	"未知的卡帶", 													// "Unknown Cartridge"
 	"設置",														// "Settings"
-	"B: 返回",													// "B: Back"	
+	": 返回",													// "B: Back"	
 
 	/** Settings: GUI **/
 	"語言",														// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_EN[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: 更新 bootstrap (官方釋出版本)",								// "X: Update bootstrap (Official release)"
-	"Y: 更新 bootstrap (非官方釋出版本)",							// "Y: Update bootstrap (Unofficial release)"
+	": 更新 bootstrap (官方釋出版本)",								// "X: Update bootstrap (Official release)"
+	": 更新 bootstrap (非官方釋出版本)",							// "Y: Update bootstrap (Unofficial release)"
 	"START: 更新 TWLoader",    									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"包含遊戲橫幅上的文字.",											// "including game banner text."
 
 	"TWLoader所使用的主題.",										// "The theme to use in TWLoader."
-	"點擊 A 來使用副主題.",											// "Press A for sub-themes."
+	"點擊  來使用副主題.",											// "Press A for sub-themes."
 
 	"上面背景的顏色,",												// "The color of the top background,"
 	"START 的邊緣以及小圓點.",										// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"這個主題並無相應的副主題.",										// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: 儲存並返回",												// "A/B: Save and Return"
+	"/: 儲存並返回",												// "A/B: Save and Return"
 	"左/右: 選取",												// "Left/Right: Pick"
 	"設置: GUI",													// "Settings: GUI"
 	"設置: NTR/TWL-mode",										// "Settings: NTR/TWL-mode"

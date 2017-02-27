@@ -1,4 +1,4 @@
-#ifndef JAPANESE_H
+﻿#ifndef JAPANESE_H
 #define JAPANESE_H
 
 #include <3ds/types.h>
@@ -7,12 +7,12 @@
 static const char *const lang_JP[STR_MAX] = {
 
 	/** GUI **/
-	": Return to HOME Menu",									// "Return to HOME Menu"
-	"START",													// "START" (used on cartridge indicator)
+	": HOMEメニューに戻る",											// "Return to HOME Menu"
+	"スタート",														// "START" (used on cartridge indicator)
 	"No cartridge",												// "No cartridge"
 	"Unknown Cartridge",										// "Unknown Cartridge"
 	"Settings",													// "Settings"
-	"B: Back",													// "B: Back"	
+	": Back",													// "B: Back"	
 
 	/** Settings: GUI **/
 	"Language",													// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_JP[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
-	"Y: Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
+	": Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
+	": Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
 	"START: Update TWLoader",    								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"including game banner text.",								// "including game banner text."
 
 	"The theme to use in TWLoader.",							// "The theme to use in TWLoader."
-	"Press A for sub-themes.",									// "Press A for sub-themes."
+	"Press  for sub-themes.",									// "Press A for sub-themes."
 
 	"The color of the top background,",							// "The color of the top background,"
 	"the START border, and the circling dots.",					// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"No sub-themes exist for this theme.",						// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Save and Return",										// "A/B: Save and Return"
+	"/: Save and Return",										// "A/B: Save and Return"
 	"Left/Right: Pick",											// "Left/Right: Pick"
 	"Settings: GUI",											// "Settings: GUI"
 	"Settings: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"

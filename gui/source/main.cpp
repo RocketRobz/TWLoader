@@ -1068,7 +1068,7 @@ static void drawMenuDialogBox(void)
 	drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	// sftd_draw_wtext(font, 243, menudbox_Ypos+199, RGBA8(0, 0, 0, 255), 12, TR(STR_BACK));
+	renderText_w(240, menudbox_Ypos+199, 0.50, 0.50, false, TR(STR_BACK));
 	if (menudboxmode == DBOX_MODE_SETTINGS) {
 		bnriconnum = cursorPosition;
 		ChangeBNRIconNo();
@@ -1076,14 +1076,18 @@ static void drawMenuDialogBox(void)
 		sf2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (cursorPosition >= 0) {
+			setTextColor(RGBA8(0, 0, 0, 255));
 			int y = 16, dy = 19;
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
 				// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-				// sftd_draw_wtext(font_b, 48+(264-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+				// sftd_draw_wtext(font_b, 72+(240-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+				renderText_w(72, y+menudbox_Ypos, 0.60, 0.60, false, romsel_gameline[i].c_str());
 			}
-			// sftd_draw_wtext(font, 16, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
+			// sftd_draw_wtext(font, 64, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
+			setTextColor(RGBA8(127, 127, 127, 255));
+			renderText_w(16, 72+menudbox_Ypos, 0.50, 0.50, false, romsel_filename_w.c_str());
 		}
 		
 		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
@@ -1097,14 +1101,15 @@ static void drawMenuDialogBox(void)
 			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
 		}
 		
+		setTextColor(RGBA8(0, 0, 0, 255));
 		if (file_count < 100) {
-			// sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			// sftd_draw_text(font, 35, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-			// sftd_draw_text(font, 40, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+			renderText(16, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter1);
+			renderText(35, 204+menudbox_Ypos, 0.50, 0.50, false, "/");
+			renderText(40, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter2);
 		} else {
-			// sftd_draw_text(font, 16, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-			// sftd_draw_text(font, 43, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, "/");
-			// sftd_draw_text(font, 48, 204+menudbox_Ypos, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+			renderText(16, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter1);
+			renderText(43, 204+menudbox_Ypos, 0.50, 0.50, false, "/");
+			renderText(48, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter2);
 		}
 		
 		const struct {
@@ -1155,16 +1160,19 @@ static void drawMenuDialogBox(void)
 			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
 			// int w = sftd_get_wtext_width(font, 12, title);
 			int w = 0;
-			int x = ((132 - w) / 2) + buttons[i].x;
-			// sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+			// int x = ((132 - w) / 2) + buttons[i].x;
+			int x = ((2 - w) / 2) + buttons[i].x;
+			setTextColor(RGBA8(0, 0, 0, 255));
+			renderText_w(x, y, 0.50, 0.50, false, title);
 			y += 16;
 
 			// Draw the value.
 			if (i < 3) {
 				// w = sftd_get_wtext_width(font, 12, value_desc);
 				w = 0;
-				x = ((132 - w) / 2) + buttons[i].x;
-				// sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+				// x = ((132 - w) / 2) + buttons[i].x;
+				x = ((2 - w) / 2) + buttons[i].x;
+				renderText_w(x, y, 0.50, 0.50, false, value_desc);
 			} else if (i == 4) {
 				// Show the RGB value.
 				char rgb_str[32];
@@ -1174,13 +1182,15 @@ static void drawMenuDialogBox(void)
 					settings.pergame.blue);
 				// w = sftd_get_text_width(font, 12, rgb_str);
 				w = 0;
-				x = ((132 - w) / 2) + buttons[i].x;
+				// x = ((132 - w) / 2) + buttons[i].x;
+				x = ((2 - w) / 2) + buttons[i].x;
 
 				// Print the RGB value using its color.
 				const u32 color = RGBA8(settings.pergame.red,
 					settings.pergame.green,
 					settings.pergame.blue, 255);
-				// sftd_draw_text(font, x, y, color, 12, rgb_str);
+				setTextColor(color);
+				renderText(x, y, 0.50, 0.50, false, rgb_str);
 			}
 		}
 	} else {
@@ -1216,20 +1226,23 @@ static void drawMenuDialogBox(void)
 			const int h = (title && value_desc ? 32 : 16);
 
 			// Draw the text.
+			setTextColor(RGBA8(0, 0, 0, 255));
 			// NOTE: Button texture size is 132x34.
 			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
 			if (title) {
 				// const int w = sftd_get_wtext_width(font, 12, title);
 				const int w = 0;
-				const int x = ((132 - w) / 2) + buttons[i].x;
-				// sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, title);
+				// const int x = ((132 - w) / 2) + buttons[i].x;
+				const int x = ((2 - w) / 2) + buttons[i].x;
+				renderText_w(x, y, 0.50, 0.50, false, title);
 				y += 16;
 			}
 			if (value_desc) {
 				// const int w = sftd_get_wtext_width(font, 12, value_desc);
 				const int w = 0;
-				const int x = ((132 - w) / 2) + buttons[i].x;
-				// sftd_draw_wtext(font, x, y, RGBA8(0, 0, 0, 255), 12, value_desc);
+				// const int x = ((132 - w) / 2) + buttons[i].x;
+				const int x = ((2 - w) / 2) + buttons[i].x;
+				renderText_w(x, y, 0.50, 0.50, false, value_desc);
 			}
 		}
 	}
@@ -3074,11 +3087,11 @@ int main()
 					if(!is3DSX) {
 						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
 						// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-						const int home_width = 16;
+						const int home_width = 144+16;
 						const int home_x = (320-home_width)/2;
-						sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
+						sf2d_draw_texture(homeicontex, home_x, 219); // Draw HOME icon
 						setTextColor(RGBA8(0, 0, 0, 255));
-						renderText_w(home_x+20, 220, 0.55, 0.55, false, home_text);
+						renderText_w(home_x+20, 220, 0.50, 0.50, false, home_text);
 					}
 
 					if (pagenum == 0) {

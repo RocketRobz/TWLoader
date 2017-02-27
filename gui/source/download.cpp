@@ -338,8 +338,8 @@ void UpdateBootstrapUnofficial(void) {
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	remove("sdmc:/_nds/bootstrap.nds");
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap.nds");
 	downloadBootstrapVersion(false);
 	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
@@ -363,8 +363,8 @@ void UpdateBootstrapRelease(void) {
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	remove("sdmc:/_nds/bootstrap.nds");
 	remove("sdmc:/_nds/twloader/release-bootstrap");
+	remove("sdmc:/_nds/twloader/release-bootstrap.nds");
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
 	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);

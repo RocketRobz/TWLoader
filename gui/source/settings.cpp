@@ -430,7 +430,10 @@ void settingsDrawBottomScreen(void)
 			setTextColor(RGBA8(255, 255, 255, 255));
 		}
 		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_THEME));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, themevaluetext);
+		if (settings.ui.theme == 2)
+			renderText(XposValue, Ypos, 0.48, 0.55, false, themevaluetext);
+		else
+			renderText(XposValue, Ypos, 0.55, 0.55, false, themevaluetext);
 		Ypos += 12;
 		if (cursor_pos[0] == 2) {
 			setTextColor(RGBA8(255, 255, 255, 255));

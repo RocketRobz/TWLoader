@@ -12,7 +12,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Sin cartucho",												// "No cartridge"
 	"Cartucho desconocido", 									// "Unknown Cartridge"
 	"Ajustes",													// "Settings"
-	"B: Volver",												// "B: Back"	
+	": Volver",												// "B: Back"	
 
 	/** Settings: GUI **/
 	"Idioma",													// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_ES[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Actualizar bootstrap (Versión estable)",				// "X: Update bootstrap (Official release)"
-	"Y: Actualizar bootstrap (Versión inestable)",				// "Y: Update bootstrap (Unofficial release)"
+	": Actualizar bootstrap (Versión estable)",				// "X: Update bootstrap (Official release)"
+	": Actualizar bootstrap (Versión inestable)",				// "Y: Update bootstrap (Unofficial release)"
 	"START: Actualizar TWLoader",								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"(también afecta al banner de las roms)",					// "including game banner text."
 
 	"El tema para TWLoader.",									// "The theme to use in TWLoader."
-	"Pulsa A para elegir un sub tema.",							// "Press A for sub-themes."
+	"Pulsa  para elegir un sub tema.",							// "Press A for sub-themes."
 
 	"El color del fondo de la pantalla superior, el marco",		// "The color of the top background,"
 	"de selección de ROMs y el círculo de puntos.",				// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"No hay sub temas para este tema.",							// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Guardar y volver",									// "A/B: Save and Return"
+	"/: Guardar y volver",									// "A/B: Save and Return"
 	"Izquierda/Derecha: Seleccionar",							// "Left/Right: Pick"
 	"Ajustes: GUI",												// "Settings: GUI"
 	"Ajustes: Modo NTR/TWL",									// "Settings: NTR/TWL-mode"

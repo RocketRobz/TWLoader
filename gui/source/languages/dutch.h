@@ -1,4 +1,4 @@
-#ifndef DUTCH_H
+﻿#ifndef DUTCH_H
 #define DUTCH_H
 
 #include <3ds/types.h>
@@ -12,7 +12,7 @@ static const char *const lang_NL[STR_MAX] = {
 	"No cartridge",												// "No cartridge"
 	"Unknown Cartridge", 										// "Unknown Cartridge"
 	"Settings",													// "Settings"
-	"B: Back",													// "B: Back"	
+	": Back",													// "B: Back"	
 
 	/** Settings: GUI **/
 	"Language",													// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_NL[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
-	"Y: Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
+	": Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
+	": Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
 	"START: Update TWLoader",    								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_NL[STR_MAX] = {
 	"including game banner text.",								// "including game banner text."
 
 	"The theme to use in TWLoader.",							// "The theme to use in TWLoader."
-	"Press A for sub-themes.",									// "Press A for sub-themes."
+	"Press  for sub-themes.",									// "Press A for sub-themes."
 
 	"The color of the top background,",							// "The color of the top background,"
 	"the START border, and the circling dots.",					// "the START border, and the circling dots."
@@ -104,8 +104,8 @@ static const char *const lang_NL[STR_MAX] = {
 	"See rainbow colors glowing in",							// "See rainbow colors glowing in"
 	"the Notification LED.",									// "the Notification LED."
 
-	"Set to TWL to get rid of lags in some games.",				// "Set to TWL to get rid of lags in some games."
-	"",															// (empty)
+	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
+	"in some games.",											// "in some games."
 
 	"Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
 	"and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
@@ -161,7 +161,7 @@ static const char *const lang_NL[STR_MAX] = {
 	"No sub-themes exist for this theme.",						// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Save and Return",										// "A/B: Save and Return"
+	"/: Save and Return",										// "A/B: Save and Return"
 	"Left/Right: Pick",											// "Left/Right: Pick"
 	"Settings: GUI",											// "Settings: GUI"
 	"Settings: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"

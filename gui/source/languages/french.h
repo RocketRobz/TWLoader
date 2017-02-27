@@ -12,7 +12,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Pas de cartouche",                                         // "No cartridge"
 	"Paramètres",                                               // "Settings"
 	"Cartouche inconnue",                                       // "Unknown Cartridge"
-	"B: Retour",                                                // "B: Back"    
+	": Retour",                                                // "B: Back"    
 	 
 	/** Settings: GUI **/
 	"Langue",                                                 	// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Bootstrap",                                                // "Bootstrap"
 	 
 	/** Settings: Top Screen **/
-	"X: Mise à jour de la bootstrap (Release officiel)",        // "X: Update bootstrap (Official release)"
-	"Y: Mise à jour de la bootstrap (Release non-officiel)",    // "Y: Update bootstrap (Unofficial release)"
+	": Mise à jour de la bootstrap (Release officiel)",        // "X: Update bootstrap (Official release)"
+	": Mise à jour de la bootstrap (Release non-officiel)",    // "Y: Update bootstrap (Unofficial release)"
 	"START: Mettre à jour TWLoader",                            // "START: Update TWLoader"
 	 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"incluant le texte des bannières des jeux.",                // "including game banner text."
 	 
 	"Le thème à utiliser dans TWLoader.",                       // "The theme to use in TWLoader."
-	"Appuyez sur A pour les sous-thèmes.",                      // "Press A for sub-themes."
+	"Appuyez sur  pour les sous-thèmes.",                      // "Press A for sub-themes."
 	 
 	"La couleur de l'arrière plan du haut,",                    // "The color of the top background,"
 	"de la bordure START et du contour des points.",            // "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Aucune autre sous-thèmes pour ce thème.",                  // "No sub-themes exist for this theme."
 	 
 	/** Settings others minor strings **/
-	"A/B: Sauvegarder and Retourner",                           // "A/B: Save and Return"
+	"/: Sauvegarder and Retourner",                           // "A/B: Save and Return"
 	"Gauche/Droite: Choisir",                                   // "Left/Right: Pick"
 	"Paramètres: GUI",                                          // "Settings: GUI"
 	"Paramètres: NTR/TWL-mode",                                 // "Settings: NTR/TWL-mode"

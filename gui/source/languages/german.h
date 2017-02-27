@@ -12,7 +12,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Keine Karte",												// "No cartridge"
 	"Unbekannte Karte",											// "Unknown Cartridge"
 	"Einstellungen",											// "Settings"
-	"B: Zurück",												// "B: Back"	
+	": Zurück",												// "B: Back"	
 
 	/** Settings: GUI **/
 	"Sprache",													// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_DE[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Bootstrap updaten (Offizielle Version)",				// "X: Update bootstrap (Official release)"
-	"Y: Bootstrap updaten (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
+	": Bootstrap updaten (Offizielle Version)",				// "X: Update bootstrap (Official release)"
+	": Bootstrap updaten (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
 	"START: TWLoader aktualisieren",							// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"und der Spielenamen.",										// "including game banner text."
 
 	"Das benutzte Design für TWLoader.",						// "The theme to use in TWLoader."
-	"Drücke A für Unterdesigns.",								// "Press A for sub-themes."
+	"Drücke  für Unterdesigns.",								// "Press A for sub-themes."
 
 	"Die Farbe des oberen Hintergrunds,",						// "The color of the top background,"
 	"der START Umrandung und der kreisenden Punkte.",			// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Für dieses Design existiert kein Unterdesign.",			// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Speichern und Zurück",								// "A/B: Save and Return"
+	"/: Speichern und Zurück",								// "A/B: Save and Return"
 	"Links/Rechts: Auswählen",									// "Left/Right: Pick"
 	"Einstellungen: GUI",										// "Settings: GUI"
 	"Einstellungen: NTR/TWL-Modus",								// "Settings: NTR/TWL-mode"

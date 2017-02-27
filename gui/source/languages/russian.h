@@ -12,7 +12,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Отсутствует Картридж",										// "No cartridge"
 	"Неизвестный Картридж",										// "Unknown Cartridge"
 	"Настройки",												// "Settings"
-	"B: Назад",													// "B: Back"
+	": Назад",													// "B: Back"
 
 	/** Settings: GUI **/
 	"Язык",														// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_RU[STR_MAX] = {
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Обновить Bootstrap (Оффициальная версия)",				// "X: Update bootstrap (Official release)"
-	"Y: Обновить Bootstrap (Неоффициальная версия)",			// "Y: Update bootstrap (Unofficial release)"
+	": Обновить Bootstrap (Оффициальная версия)",				// "X: Update bootstrap (Official release)"
+	": Обновить Bootstrap (Неоффициальная версия)",			// "Y: Update bootstrap (Unofficial release)"
 	"START: Обновить TWLoader",									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"включая игровой баннер.",									// "including game banner text."
 
 	"Оформление для TWLoader.",									// "The theme to use in TWLoader."
-	"Нажмите A для под-тем оформления.",						// "Press A for sub-themes."
+	"Нажмите  для под-тем оформления.",						// "Press A for sub-themes."
 
 	"Цвет заливки сверху,",										// "The color of the top background,"
 	"границ START и круглых точек.",							// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Отсутствует доп-оформление для данной темы оформления.",	// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Сохранить и вернуться",								// "A/B: Save and Return"
+	"/: Сохранить и вернуться",								// "A/B: Save and Return"
 	"Влево/Вправо: Выбрать",									// "Left/Right: Pick"
 	"Настройки: GUI",											// "Settings: GUI"
 	"Настройки: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"

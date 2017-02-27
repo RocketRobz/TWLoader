@@ -12,7 +12,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Nessuna scheda",                                      	 	// "No cartridge"
 	"Scheda sconosciuta",                                   	// "Unknown Cartridge"
 	"Impostazioni",                                         	// "Settings"
-	"B：Chiudi",                                             		// "B: Back"  
+	"：Chiudi",                                             	// "B: Back"  
 
 	/** Settings: GUI **/
 	"Lingua",                                               	// "Language"
@@ -38,8 +38,8 @@ static const char *const lang_IT[STR_MAX] = {
 	"Bootstrap",                                               	// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	"X: Aggiorna il bootstrap (Versione ufficiale)",           	// "X: Update bootstrap (Official release)"
-	"Y: Aggiorna il bootstrap (Versione non ufficiale)",       	// "Y: Update bootstrap (Unofficial release)"
+	": Aggiorna il bootstrap (Versione ufficiale)",           	// "X: Update bootstrap (Official release)"
+	": Aggiorna il bootstrap (Versione non ufficiale)",       	// "Y: Update bootstrap (Unofficial release)"
 	"START: Aggiorna il TWLoader",                              // "START: Update TWLoader"
 
 	/** Settings: GUI values **/
@@ -74,7 +74,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"incluso il testo dei banner dei giochi.",                  // "including game banner text."
 
 	"Il tema usato con il TWLoader.",                           // "The theme to use in TWLoader."
-	"Premi A per i sotto-temi.",                               	// "Press A for sub-themes."
+	"Premi  per i sotto-temi.",                               	// "Press A for sub-themes."
 
 	"Il colore dello sfondo superiore, del bordo",              // "The color of the top background,"
 	"dello START, e dei punti di contorno.",           			// "the START border, and the circling dots."
@@ -161,7 +161,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Non esistono sotto-temi per questo tema.",                 // "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"A/B: Salva e torna a precedente",                          // "A/B: Save and Return"
+	"/: Salva e torna a precedente",                          // "A/B: Save and Return"
 	"Left/Right: Seleziona",                                   	// "Left/Right: Pick"
 	"Impostazioni: GUI",                                        // "Settings: GUI"
 	"Impostazioni: NTR/TWL-mode",                               // "Settings: NTR/TWL-mode"
