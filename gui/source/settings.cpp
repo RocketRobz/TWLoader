@@ -238,6 +238,9 @@ void settingsDrawTopScreen(void)
 					setTextColor(RGBA8(255, 255, 255, 255));
 					renderText_w(offset3D[topfb].disabled+72, 194, 0.60, 0.60, false, TR(STR_SETTINGS_SETTINGS_START_UPDATE_TWLOADER));
 				}
+			} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
+				setTextColor(RGBA8(255, 255, 255, 255));
+				renderText(offset3D[topfb].disabled+32, 192, 0.55, 0.55, false, "TWLoader will auto-restart if location is changed.");
 			}
 		}
 
@@ -282,14 +285,14 @@ void settingsDrawBottomScreen(void)
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_draw_texture(settingstex, 0, 0);
-	if(!is3DSX) {
+	/* if(!is3DSX) {
 		const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
 		// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 		const int home_width = 16;
 		const int home_x = (320-home_width)/2;
 		sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
 		// sftd_draw_wtext(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
-	}
+	} */
 
 	// X positions.
 	static const int Xpos = 24;
@@ -504,7 +507,7 @@ void settingsDrawBottomScreen(void)
 			} else {
 				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_AUTOUPDATE_TWLOADER));
+			renderText_w(Xpos, Ypos, 0.45, 0.55, false, TR(STR_SETTINGS_AUTOUPDATE_TWLOADER));
 			renderText(XposValue, Ypos, 0.55, 0.55, false, autodlvaluetext);
 			Ypos += 12;
 		}
@@ -589,7 +592,7 @@ void settingsDrawBottomScreen(void)
 			setTextColor(RGBA8(255, 255, 255, 255));
 		}
 		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, cpuspeedvaluetext);
+		renderText(XposValue, Ypos, 0.45, 0.55, false, cpuspeedvaluetext);
 		Ypos += 12;
 		if (cursor_pos[1] == 3) {
 			setTextColor(RGBA8(255, 255, 255, 255));
@@ -611,7 +614,7 @@ void settingsDrawBottomScreen(void)
 			setTextColor(RGBA8(255, 255, 255, 255));
 		}
 		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_DS_DSi_BOOT_SCREEN));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, bootscreenvaluetext);
+		renderText(XposValue, Ypos, 0.50, 0.55, false, bootscreenvaluetext);
 		Ypos += 12;
 		if (cursor_pos[1] == 5) {
 			setTextColor(RGBA8(255, 255, 255, 255));
@@ -688,148 +691,176 @@ void settingsDrawBottomScreen(void)
 		title = TR(STR_SETTINGS_FLASHCARD_SELECT);
 		int Ypos = 40;
 		for (int i = 0; i < 6; i++, Ypos += 12) {
-			// sftd_draw_text(font, Xpos, Ypos,
-				// SET_ALPHA(color_data->color, 255), 12, fctext[i]);
+			setTextColor(SET_ALPHA(color_data->color, 255));
+			renderText(Xpos, Ypos, 0.45, 0.45, false, fctext[i]);
 		}
-		// sftd_draw_wtext(font, 8, 184, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_LEFTRIGHT_PICK));
-		// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
+		setTextColor(RGBA8(255, 255, 255, 255));
+		renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_LEFTRIGHT_PICK));
+		renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	} else if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
 		if (settings.ui.theme == 0) {
 			title = TR(STR_SETTINGS_SUBTHEME_DSi);
-			// sftd_draw_wtext(font, Xpos, 40, SET_ALPHA(color_data->color, 255), 12, TR(STR_SETTINGS_NO_SUB_THEMES));
+			setTextColor(SET_ALPHA(color_data->color, 255));
+			renderText_w(Xpos, 40, 0.55, 0.55, false, TR(STR_SETTINGS_NO_SUB_THEMES));
 		} else if (settings.ui.theme == 1) {
 			title = TR(STR_SETTINGS_SUBTHEME_R4);
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme01");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme01");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme01");
 			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme02");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme02");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme02");
 			Ypos += 12;
 			if (settings.ui.subtheme == 2) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme03");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme03");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme03");
 			Ypos += 12;
 			if (settings.ui.subtheme == 3) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme04");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme04");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme04");
 			Ypos += 12;
 			if (settings.ui.subtheme == 4) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme05");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme05");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme05");
 			Ypos += 12;
 			if (settings.ui.subtheme == 5) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme06");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme06");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme06");
 			Ypos += 12;
 			if (settings.ui.subtheme == 6) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme07");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme07");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme07");
 			Ypos += 12;
 			if (settings.ui.subtheme == 7) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme08");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme08");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme08");
 			Ypos += 12;
 			if (settings.ui.subtheme == 8) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme09");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme09");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme09");
 			Ypos += 12;
 			if (settings.ui.subtheme == 9) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme10");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme10");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme10");
 			Ypos += 12;
 			if (settings.ui.subtheme == 10) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme11");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme11");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme11");
 			Ypos += 12;
 			if (settings.ui.subtheme == 11) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "theme12");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "theme12");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme12");
 			Ypos += 12;
 		} else if (settings.ui.theme == 2) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "GBATemp");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "GBATemp");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "GBATemp");
 			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "Acekard black");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "Acekard black");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "Acekard black");
 			Ypos += 12;
 			if (settings.ui.subtheme == 2) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "akaio");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "akaio");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "akaio");
 			Ypos += 12;
 			if (settings.ui.subtheme == 3) {
-				// sftd_draw_text(font, Xpos, Ypos, SET_ALPHA(color_data->color, 255), 12, "DSTWO");
+				setTextColor(SET_ALPHA(color_data->color, 255));
 			} else {
-				// sftd_draw_text(font, Xpos, Ypos, RGBA8(255, 255, 255, 255), 12, "DSTWO");
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+			renderText(Xpos, Ypos, 0.55, 0.55, false, "DSTWO");
 			Ypos += 12;
 		}
-		// sftd_draw_wtext(font, 8, 198, RGBA8(255, 255, 255, 255), 13, TR(STR_SETTINGS_AB_SAVE_RETURN));
+		setTextColor(RGBA8(255, 255, 255, 255));
+		renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	}else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
 		title = L"Rom path location";
 	
 		if (cursor_pos[4] == 0){
 			// Selected SD
-			// sftd_draw_text(font, 24, 40, SET_ALPHA(color_data->color, 255), 12, "SD ROM location:");			
-			// sftd_draw_textf(font, 30, 52, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());
+			setTextColor(SET_ALPHA(color_data->color, 255));
+			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
+			renderText(30, 52, 0.55, 0.55, false, "SD:/");
+			renderText(52, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
 			
-			// Unselect Flashcard
-			// sftd_draw_text(font, 24, 66, RGBA8(255, 255, 255, 255), 12, "Flashcard INI location:");
-			// sftd_draw_textf(font, 30, 78, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			// Unselected Flashcard
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
+			renderText(30, 78, 0.55, 0.55, false, "SD:/");
+			renderText(52, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
 			
 		}else if (cursor_pos[4] == 1){
 			// Unselected SD
-			// sftd_draw_text(font, 24, 40, RGBA8(255, 255, 255, 255), 12, "SD ROM location:");
-			// sftd_draw_textf(font, 30, 52, RGBA8(255, 255, 255, 255), 12, "SD:/%s", settings.ui.romfolder.c_str());		
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
+			renderText(30, 52, 0.55, 0.55, false, "SD:/");
+			renderText(52, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
 			
 			// Selected Flashcard
-			// sftd_draw_text(font, 24, 66, SET_ALPHA(color_data->color, 255), 12, "Flashcard INI location:");
-			// sftd_draw_textf(font, 30, 78, SET_ALPHA(color_data->color, 255), 12, "SD:/%s", settings.ui.fcromfolder.c_str());
+			setTextColor(SET_ALPHA(color_data->color, 255));
+			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
+			renderText(30, 78, 0.55, 0.55, false, "SD:/");
+			renderText(52, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
 			
 		}
 		
-		// sftd_draw_text(font, 24, 160, RGBA8(255, 255, 255, 255), 12, "TWLoader will auto-restart if location is changed");
+		setTextColor(RGBA8(255, 255, 255, 255));
 		
-		// sftd_draw_text(font, 8, 184, RGBA8(255, 255, 255, 255), 13, "A: Change path");
-		// sftd_draw_text(font, 8, 198, RGBA8(255, 255, 255, 255), 13, "B: Return");	
+		renderText(8, 184, 0.60, 0.60, false, ": Change path");
+		renderText(8, 198, 0.60, 0.60, false, ": Return");
 	}
-	// sftd_draw_wtext(font, 2, 2, RGBA8(255, 255, 255, 255), 16, title);
+	setTextColor(RGBA8(255, 255, 255, 255));
+	renderText_w(2, 2, 0.75, 0.75, false, title);
 }
 
 /**

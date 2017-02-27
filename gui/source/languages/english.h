@@ -104,8 +104,8 @@ static const char *const lang_EN[STR_MAX] = {
 	"See rainbow colors glowing in",							// "See rainbow colors glowing in"
 	"the Notification LED.",									// "the Notification LED."
 
-	"Set to TWL to get rid of lags in some games.",				// "Set to TWL to get rid of lags in some games."
-	"",															// (empty)
+	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
+	"in some games.",											// "in some games."
 
 	"Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
 	"and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."

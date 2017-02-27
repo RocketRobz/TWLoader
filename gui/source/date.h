@@ -12,6 +12,8 @@ typedef enum {
 	FORMAT_MD	= 3,
 	FORMAT_M_D	= 4,
 	FORMAT_MY	= 5,
+	FORMAT_M	= 6,
+	FORMAT_Y	= 7,
 } DateFormat;
 
 /**

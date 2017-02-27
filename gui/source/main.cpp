@@ -310,6 +310,8 @@ void DialogBoxAppear(const char *text, int mode) {
 
 	int movespeed = 22;
 	for (int i = 0; i < 240; i += movespeed) {
+		textVtxArrayPos = 0; // Clear the text vertex array
+
 		if (movespeed <= 1) {
 			movespeed = 1;
 		} else {
@@ -323,10 +325,8 @@ void DialogBoxAppear(const char *text, int mode) {
 		setTextColor(0xFF000000); // black
 		if (mode == 1) {
 			renderText(12, 72+i-240, 0.6f, 0.6f, false, dialog_text.c_str());
-			// sftd_draw_textf(font, 40, 72+i-240, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
 		} else
 			renderText(12, 16+i-240, 0.5f, 0.5f, false, dialog_text.c_str());
-			// sftd_draw_textf(font, 12, 16+i-240, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -349,6 +349,8 @@ void DialogBoxDisappear(const char *text, int mode) {
 
 	int movespeed = 1;
 	for (int i = 0; i < 240; i += movespeed) {
+		textVtxArrayPos = 0; // Clear the text vertex array
+
 		movespeed += 1;
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -358,10 +360,8 @@ void DialogBoxDisappear(const char *text, int mode) {
 		setTextColor(0xFF000000); // black
 		if (mode == 1) {
 			renderText(12, 72+i, 0.6f, 0.6f, false, dialog_text.c_str());
-			// sftd_draw_textf(font, 40, 72+i, RGBA8(0, 0, 0, 255), 16, dialog_text.c_str());
 		} else
 			renderText(12, 16+i, 0.5f, 0.5f, false, dialog_text.c_str());
-			// sftd_draw_textf(font, 12, 16+i, RGBA8(0, 0, 0, 255), 12, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -1617,6 +1617,8 @@ int main()
 			storedcursorPosition = 0;
 
 		size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		size_t sdfile_count = (files.size());
+		size_t fcfile_count = (fcfiles.size());
 
 		if(matching_files.size() != 0) {
 			file_count = matching_files.size();
@@ -1639,7 +1641,7 @@ int main()
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/Adv.Evo/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 						case 3:
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo_pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == 1) {
@@ -1980,20 +1982,25 @@ int main()
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							// sftd_draw_text(font_b, 40+200, 148, RGBA8(16, 0, 0, 223), 22, RetTime(true).c_str());
 							setTextColor(RGBA8(16, 0, 0, 223));
-							DrawDateF(22+197, 198, 22, 22, false, FORMAT_MY);
+							renderText(40+200, 148, 0.82, 0.82, false, RetTime(true).c_str());
+							DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
 							break;
 						case 1:
-							// sftd_draw_text(font_b, 40+184, 8, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							// DrawDateF(40+182, 78, FORMAT_MY, RGBA8(255, 255, 255, 255), 22);
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(40+184, 8, 1.30, 1.30, false, RetTime(true).c_str());
+							DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
+							DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
 							break;
 						case 2:
-							// sftd_draw_text(font_b, 40+16, 76, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
-							// DrawDateF(40+69, 204, FORMAT_MY, RGBA8(255, 255, 255, 255), 19);
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(40+16, 78, 1.30, 1.30, false, RetTime(true).c_str());
+							DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
+							DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
 							break;
 						case 3:
-							// sftd_draw_text(font_b, 40+176, 172, RGBA8(255, 255, 255, 255), 33, RetTime(true).c_str());
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(40+176, 172, 1.30, 1.30, false, RetTime(true).c_str());
 							break;
 					}
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -2020,7 +2027,8 @@ int main()
 									? fcfiles.at(filenum).c_str()
 									: files.at(filenum).c_str());
 							wstring wstr = utf8_to_wstring(filename);
-							// sftd_draw_wtext(font, 42, filenameYpos+filenameYmovepos*15, color, 12, wstr.c_str());
+							setTextColor(color);
+							renderText_w(42, filenameYpos+filenameYmovepos*15, 0.50, 0.50, false, wstr.c_str());
 
 							filenameYpos += 15;
 						}
@@ -2029,8 +2037,8 @@ int main()
 						const char *title = (settings.twl.forwarder
 									? "Games (Flashcard)"
 									: "Games (SD Card)");
-						renderText(42.0f, 0.0f, 12.0f, 12.0f, false, title);
-						// sftd_draw_textf(font, 42, 0, RGBA8(0, 0, 0, 255), 12, title);
+						setTextColor(RGBA8(0, 0, 0, 255));
+						renderText(42, 0, 0.50, 0.50, false, title);
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
@@ -2043,13 +2051,13 @@ int main()
 						
 						if (settings.ui.counter) {
 							if (file_count < 100) {
-								// sftd_draw_text(font, 40+276, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								// sftd_draw_text(font, 40+295, 0, RGBA8(0, 0, 0, 255), 12, "/");
-								// sftd_draw_text(font, 40+300, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+								renderText(40+276, 0, 0.50, 0.50, false, romsel_counter1);
+								renderText(40+295, 0, 0.50, 0.50, false, "/");
+								renderText(40+300, 0, 0.50, 0.50, false, romsel_counter2);
 							} else {
-								// sftd_draw_text(font, 40+276, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-								// sftd_draw_text(font, 40+303, 0, RGBA8(0, 0, 0, 255), 12, "/");
-								// sftd_draw_text(font, 40+308, 0, RGBA8(0, 0, 0, 255), 12, romsel_counter2);
+								renderText(40+276, 0, 0.50, 0.50, false, romsel_counter1);
+								renderText(40+303, 0, 0.50, 0.50, false, "/");
+								renderText(40+308, 0, 0.50, 0.50, false, romsel_counter2);
 							}
 						}
 					} else {
@@ -2157,7 +2165,6 @@ int main()
 						setTextColor(SET_ALPHA(color_data->color, 255));
 						renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
 					}
-					// // sftd_draw_textf(font, 2, 2, RGBA8(0, 0, 0, 255), 12, temptext); // Debug text
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 					// Draw the "Prev" and "Next" text for X/Y.
@@ -2165,13 +2172,13 @@ int main()
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
-					renderText(17, LshoulderYpos+4, 0.50, 0.50, false, "Prev. Page");
+					renderText(17, LshoulderYpos+4, 0.30, 0.50, false, "Previous Page");
 
 					lr_color = (file_count > (size_t)20+pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
-					renderText(332, RshoulderYpos+4, 0.50, 0.50, false, "Next Page");
+					renderText(332, RshoulderYpos+4, 0.40, 0.50, false, "Next Page");
 
 					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 					sf2d_end_frame();
@@ -2530,7 +2537,7 @@ int main()
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/wood/Adv.Evo/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 							case 3:
-								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo_pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
+								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 						}
 					} else if (settings.ui.theme == 1) {
@@ -2650,19 +2657,33 @@ int main()
 						filenameYpos = 36;
 						if (woodmenu_cursorPosition == 0) {
 							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-						} else
-							sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(0xFFFFFFFF); // white
+							if (sdfile_count != 0)
+								sf2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							else
+								sf2d_draw_texture_part_scale_blend(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+						} else {
+							if (sdfile_count != 0)
+								sf2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+							else
+								sf2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+						}
+						setTextColor(RGBA8(255, 255, 255, 255)); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
 							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-						} else
-							sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(0xFFFFFFFF); // white
+							if (fcfile_count != 0)
+								sf2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							else
+								sf2d_draw_texture_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+						} else {
+							if (fcfile_count != 0)
+								sf2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+							else
+								sf2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+						}
+						setTextColor(RGBA8(255, 255, 255, 255)); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2671,7 +2692,7 @@ int main()
 							sf2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(0xFFFFFFFF); // white
+						setTextColor(RGBA8(255, 255, 255, 255)); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2680,7 +2701,7 @@ int main()
 							sf2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(0xFFFFFFFF); // white
+						setTextColor(RGBA8(255, 255, 255, 255)); // white
 						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
@@ -2689,8 +2710,10 @@ int main()
 							sf2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(0xFFFFFFFF); // white
+						setTextColor(RGBA8(255, 255, 255, 255)); // white
 						renderText_w(46.0f, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));
+						
+						renderText(2, 2, 0.50, 0.50, false, "Menu");
 					} else {
 						int Ypos = 26;
 						filenameYpos = 36;
@@ -2706,7 +2729,8 @@ int main()
 									? fcfiles.at(filenum).c_str()
 									: files.at(filenum).c_str());
 							wstring wstr = utf8_to_wstring(filename);
-							// sftd_draw_wtext(font, 46, filenameYpos+filenameYmovepos*39, RGBA8(255, 255, 255, 255), 12, wstr.c_str());
+							setTextColor(RGBA8(255, 255, 255, 255)); // white
+							renderText_w(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, false, wstr.c_str());
 
 							if (cursorPosition == filenum)
 								sf2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
@@ -2717,10 +2741,11 @@ int main()
 						}
 						sf2d_draw_texture_part(bottomtex, 0, 0, 0, 0, 320, 22);
 						sf2d_draw_texture_part(bottomtex, 0, 217, 0, 217, 320, 23);
-						// if (settings.twl.forwarder)
-							// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Games (Flashcard)");
-						// else
-							// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Games (SD Card)");
+						setTextColor(RGBA8(255, 255, 255, 255));
+						if (settings.twl.forwarder)
+							renderText(2, 2, 0.50, 0.50, false, "Games (Flashcard)");
+						else
+							renderText(2, 2, 0.50, 0.50, false, "Games (SD Card)");
 						
 						const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
 						
@@ -2735,13 +2760,13 @@ int main()
 						
 						if (settings.ui.counter) {
 							if (file_count < 100) {
-								// sftd_draw_text(font, 276, 2, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-								// sftd_draw_text(font, 295, 2, RGBA8(255, 255, 255, 255), 12, "/");
-								// sftd_draw_text(font, 300, 2, RGBA8(255, 255, 255, 255), 12, romsel_counter2);
+								renderText(276, 2, 0.50, 0.50, false, romsel_counter1);
+								renderText(295, 2, 0.50, 0.50, false, "/");
+								renderText(300, 2, 0.50, 0.50, false, romsel_counter2);
 							} else {
-								// sftd_draw_text(font, 276, 2, RGBA8(255, 255, 255, 255), 12, romsel_counter1);
-								// sftd_draw_text(font, 303, 2, RGBA8(255, 255, 255, 255), 12, "/");
-								// sftd_draw_text(font, 308, 2, RGBA8(255, 255, 255, 255), 12, romsel_counter2);
+								renderText(276, 2, 0.50, 0.50, false, romsel_counter1);
+								renderText(303, 2, 0.50, 0.50, false, "/");
+								renderText(308, 2, 0.50, 0.50, false, romsel_counter2);
 							}
 						}
 					}
@@ -2755,6 +2780,8 @@ int main()
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(128, 220, 0.60f, 0.60f, false, selectiontext);
 						} else 	if (r4menu_cursorPosition == 1) {
 							drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
@@ -2762,6 +2789,8 @@ int main()
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
 						} else 	if (r4menu_cursorPosition == 2) {
 							drawRectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 							sf2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
@@ -2769,11 +2798,12 @@ int main()
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
 							const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
+							setTextColor(RGBA8(255, 255, 255, 255));
+							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
 						}
 						setTextColor(RGBA8(255, 255, 255, 255));
-						DrawDate(2, 220, 0.85f, 0.85f, false);
-						renderText(276, 220, 0.85f, 0.85f, false, RetTime(true).c_str());
-						// sftd_draw_text(font, 276, 220, RGBA8(255, 255, 255, 255), 14, RetTime(true).c_str());
+						DrawDate(2, 220, 0.60f, 0.60f, false);
+						renderText(274, 220, 0.60f, 0.60f, false, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 						if (!bannertextloaded) {
@@ -2861,7 +2891,8 @@ int main()
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
 								// const int text_width = sftd_get_wtext_width(font_b, 12, romsel_gameline[i].c_str());
 								const int text_width = 0;
-								// sftd_draw_wtext(font_b, 84+(192-text_width)/2, y, RGBA8(0, 0, 0, 255), 12, romsel_gameline[i].c_str());
+								setTextColor(RGBA8(0, 0, 0, 255)); // black
+								renderText_w(84+(192-text_width)/2, y, 0.55, 0.55, false, romsel_gameline[i].c_str());
 							}
 						}
 					}
@@ -2879,16 +2910,16 @@ int main()
 							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
 							// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
 							const int text_width = 0;
-							setTextColor(0xFF000000); // black
-							renderText(64.0f, 38.0f, 0.70, 0.70f, false, "Settings");
-							// sftd_draw_wtextf(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, curn2text);
+							setTextColor(RGBA8(0, 0, 0, 255)); // black
+							renderText_w((320-text_width)/2, 38, 0.70, 0.70, false, curn2text);
 							drawBannerText = false;
 						} else if (cursorPosition == -1) {
 							if (settings.twl.forwarder) {
 								static const char add_games_text[] = "Add Games";
 								// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
 								const int text_width = 0;
-								// sftd_draw_text(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, add_games_text);
+								setTextColor(RGBA8(0, 0, 0, 255)); // black
+								renderText((320-text_width)/2, 38, 0.70, 0.70, false, add_games_text);
 								drawBannerText = false;
 							} else {
 								// Get the text from the Slot 1 cartridge.
@@ -2922,7 +2953,8 @@ int main()
 									}
 									// const int text_width = sftd_get_wtext_width(font_b, 18, msg);
 									const int text_width = 0;
-									// sftd_draw_wtext(font_b, (320-text_width)/2, 38, RGBA8(0, 0, 0, 255), 18, msg);
+									setTextColor(RGBA8(0, 0, 0, 255)); // black
+									renderText_w((320-text_width)/2, 38, 0.70, 0.70, false, msg);
 									drawBannerText = false;
 								}
 							}
@@ -2993,7 +3025,8 @@ int main()
 							int y, dy;
 							//top dialog = 100px tall
 							if (settings.ui.filename) {
-								// sftd_draw_wtext(font, 10, 8, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
+								setTextColor(RGBA8(127, 127, 127, 255));
+								renderText_w(10, 8, 0.50, 0.50, false, romsel_filename_w.c_str());
 								y = (100-(19*romsel_gameline.size()))/2 + 4;
 								//y = 24; dy = 19;
 								dy = 19;
@@ -3009,6 +3042,8 @@ int main()
 								// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
 								const int text_width = 0;
 								// sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+								setTextColor(RGBA8(0, 0, 0, 255));
+								renderText_w(8, y, 0.75, 0.75, false, romsel_gameline[i].c_str());
 							}
 
 							if (cursorPosition >= 0 && settings.ui.counter) {
@@ -3021,13 +3056,13 @@ int main()
 									p_romsel_counter = romsel_counter2sd;
 								}
 								if (file_count < 100) {
-									// sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-									// sftd_draw_textf(font, 27, 96, RGBA8(0, 0, 0, 255), 12, "/");
-									// sftd_draw_textf(font, 32, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+									renderText(8, 96, 0.50, 0.50, false, romsel_counter1);
+									renderText(27, 96, 0.50, 0.50, false, "/");
+									renderText(32, 96, 0.50, 0.50, false, p_romsel_counter);
 								} else {
-									// sftd_draw_textf(font, 8, 96, RGBA8(0, 0, 0, 255), 12, romsel_counter1);
-									// sftd_draw_textf(font, 35, 96, RGBA8(0, 0, 0, 255), 12, "/");
-									// sftd_draw_textf(font, 40, 96, RGBA8(0, 0, 0, 255), 12, p_romsel_counter);
+									renderText(8, 96, 0.50, 0.50, false, romsel_counter1);
+									renderText(35, 96, 0.50, 0.50, false, "/");
+									renderText(40, 96, 0.50, 0.50, false, p_romsel_counter);
 								}
 							}
 						}
@@ -3041,7 +3076,8 @@ int main()
 						const int home_width = 16;
 						const int home_x = (320-home_width)/2;
 						sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
-						// sftd_draw_wtext(font, home_x+16, 221, RGBA8(0, 0, 0, 255), 13, home_text);
+						setTextColor(RGBA8(0, 0, 0, 255));
+						renderText_w(home_x+20, 220, 0.55, 0.55, false, home_text);
 					}
 
 					if (pagenum == 0) {
@@ -3149,6 +3185,8 @@ int main()
 									// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
 									const int start_width = 0;
 									// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
+									setTextColor(RGBA8(255, 255, 255, 255));
+									renderText_w(136, 184, 0.60, 0.60, false, start_text);
 								} else {
 									sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 									const wchar_t *start_text = TR(STR_START);
@@ -3156,7 +3194,7 @@ int main()
 									const int start_width = 0;
 									// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 									setTextColor(RGBA8(255, 255, 255, 255));
-									renderText(140.0f, 177.0f, 0.50, 0.50f, false, "START");
+									renderText_w(140, 177, 0.50, 0.50, false, start_text);
 								}
 							}
 						}
@@ -3194,6 +3232,7 @@ int main()
 						// Draw the menu dialog box.
 						drawMenuDialogBox();
 					}
+					if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 				}
 			} else if (screenmode == SCREEN_MODE_SETTINGS) {
 				if (colortexloaded_bot) {
@@ -3206,9 +3245,8 @@ int main()
 					colortexloaded_bot = false;
 				}
 				settingsDrawBottomScreen();
+				if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			}
-		if (settings.ui.theme == 0)
-			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 
 		sf2d_end_frame();
 		// }
@@ -3229,25 +3267,29 @@ int main()
 						switch (woodmenu_cursorPosition) {
 							case 0:
 							default:
-								menu_ctrlset = CTRL_SET_GAMESEL;
-								if (settings.twl.forwarder) {
-									settings.twl.forwarder = false;
-									cursorPosition = 0;
-									pagenum = 0;
-									boxarttexloaded = false; // Reload boxarts
-									bnricontexloaded = false; // Reload banner icons
-									bannertextloaded = false;
+								if (sdfile_count != 0) {
+									menu_ctrlset = CTRL_SET_GAMESEL;
+									if (settings.twl.forwarder) {
+										settings.twl.forwarder = false;
+										cursorPosition = 0;
+										pagenum = 0;
+										boxarttexloaded = false; // Reload boxarts
+										bnricontexloaded = false; // Reload banner icons
+										bannertextloaded = false;
+									}
 								}
 								break;
 							case 1:
-								menu_ctrlset = CTRL_SET_GAMESEL;
-								if (!settings.twl.forwarder) {
-									settings.twl.forwarder = true;
-									cursorPosition = 0;
-									pagenum = 0;
-									boxarttexloaded = false; // Reload boxarts
-									bnricontexloaded = false; // Reload banner icons
-									bannertextloaded = false;
+								if (fcfile_count != 0) {
+									menu_ctrlset = CTRL_SET_GAMESEL;
+									if (!settings.twl.forwarder) {
+										settings.twl.forwarder = true;
+										cursorPosition = 0;
+										pagenum = 0;
+										boxarttexloaded = false; // Reload boxarts
+										bnricontexloaded = false; // Reload banner icons
+										bannertextloaded = false;
+									}
 								}
 								break;
 							case 2:
@@ -3368,12 +3410,14 @@ int main()
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {
 						switch (r4menu_cursorPosition) {
-							case 0:
+							case 0: {
 							default:
-								menu_ctrlset = CTRL_SET_GAMESEL;
+								if (file_count == 0) settings.twl.forwarder = !settings.twl.forwarder;
+								size_t file_count2 = (settings.twl.forwarder ? fcfiles.size() : files.size());
+								if (file_count2 != 0) menu_ctrlset = CTRL_SET_GAMESEL;
 								updatetopscreen = true;
 								break;
-							case 1:
+							} case 1:
 								if (!is3DSX) {
 									settings.twl.launchslot1 = true;
 									settings.twl.forwarder = false;
