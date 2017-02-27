@@ -694,6 +694,7 @@ static void SaveBootstrapConfig(void)
 		}
 	}
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
 	
 	// TODO: Change the default to 0?
 	switch (settings.twl.console) {
