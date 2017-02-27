@@ -234,9 +234,9 @@ int checkUpdate(void) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (!isUnknown && !strcmp(settings_latestvertext, settings_vertext)) {
-			// Version is not different.
-			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are equals");
+		if (!isUnknown && (strcmp(settings_latestvertext, settings_vertext) <= 0)) {
+			// Version is lower or same.
+			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
 		
 			if (screenmode == SCREEN_MODE_SETTINGS) {				
 				showdialogbox = false;
@@ -248,7 +248,7 @@ int checkUpdate(void) {
 			if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");			
 			return -1;
 		}
-		if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "NO equals");
+		if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Is higher");
 		showdialogbox = false;
 		return 0;
 	}
