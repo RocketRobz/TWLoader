@@ -84,7 +84,7 @@ CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $(sort $*.map))
 
 LIBS	:= -lsfil -lpng -ljpeg -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
 
@@ -101,6 +101,7 @@ LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 #---------------------------------------------------------------------------------
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
+export LC_ALL	:= C
 
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 export TOPDIR	:=	$(CURDIR)
@@ -110,12 +111,12 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
-SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.c))))
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.cpp))))
+SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.s))))
+PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.v.pica))))
+SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.shlist))))
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(sort $(wildcard $(dir)/*.*))))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -147,7 +148,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 ifeq ($(strip $(ICON)),)
-	icons := $(wildcard *.png)
+	icons := $(sort $(wildcard *.png))
 	ifneq (,$(findstring $(TARGET).png,$(icons)))
 		export APP_ICON := $(TOPDIR)/$(TARGET).png
 	else
@@ -261,12 +262,12 @@ $(TARGET).bnr	:	$(TOPDIR)/$(BNR_IMAGE) $(TOPDIR)/$(BNR_AUDIO)
 # rules for assembling GPU shaders
 #---------------------------------------------------------------------------------
 define shader-as
-	$(eval CURBIN := $*.shbin)
+	$(eval CURBIN := $(sort $*.shbin))
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u32" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(CURBIN) | tr . _)`.h
 	picasso -o $(CURBIN) $1
-	bin2s $(CURBIN) | $(AS) -o $*.shbin.o
+	bin2s $(CURBIN) | $(AS) -o $(sort $*.shbin.o)
 endef
 
 %.shbin.o %_shbin.h : %.v.pica %.g.pica
