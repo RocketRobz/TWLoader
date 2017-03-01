@@ -59,22 +59,25 @@ BUILD		:=	build
 SOURCES		:=	source source/img
 DATA		:=	data
 INCLUDES	:=	include
+#NO_SMDH		:=	1
 ROMFS		:=	romfs
-APP_AUTHOR	:=	Robz8
+APP_TITLE	:= 	TWLoader
 APP_DESCRIPTION :=  CTR mode .nds frontend
+APP_AUTHOR	:=	Robz8
 ICON		:=	app/icon.png
-BNR_IMAGE	:=  app/banner.png
 BNR_AUDIO	:=	app/BannerAudio.wav
+BNR_IMAGE	:=  app/banner.png
+LOGO		:=	app/twlv2-padded.lz11
 RSF_FILE	:=	app/build-cia.rsf
-
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
-		-ffunction-sections \
-		$(ARCH)
+CFLAGS	:=	-g -Wall -O2 -mword-relocations \
+			-fomit-frame-pointer -ffunction-sections \
+			-DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) \
+			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
@@ -177,7 +180,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia.smdh $(TARGET).cia $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------
@@ -196,16 +199,43 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
-cia: $(OUTPUT).elf $(OUTPUT).cia
-3dsx: $(OUTPUT).elf $(OUTPUT).3dsx
+all: $(OUTPUT).cia $(OUTPUT).3dsx
+
+3dsx: $(OUTPUT).3dsx
+
+cia: $(OUTPUT).cia
+
+ifeq ($(strip $(NO_SMDH)),)
+$(OUTPUT).3dsx	:	$(OUTPUT).elf $(OUTPUT).smdh
+$(OUTPUT).smdh	:	$(TOPDIR)/Makefile
+else
+$(OUTPUT).3dsx	:	$(OUTPUT).elf
+endif
 
 $(OFILES_SOURCES) : $(HFILES)
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
-	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
+$(OUTPUT).smdh	:	$(APP_ICON)
+	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)"  -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@echo "built ... $(notdir $@)"
+
+$(OUTPUT).cia.smdh	:	$(APP_ICON)
+	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_TITLE)"  -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@echo "built ... $(notdir $@)"
+	
+$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).cia.smdh $(TARGET).bnr
+	@makerom	-f cia -target t -exefslogo -o $@ \
+				-elf $(OUTPUT).elf -rsf $(TOPDIR)/$(RSF_FILE) \
+				-logo "$(TOPDIR)/$(LOGO)" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) \
+				-minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)" \
+				-banner $(TARGET).bnr \
+				-icon $(OUTPUT).cia.smdh
+	@echo "built ... $(notdir $@)"
+
+$(TARGET).bnr	:	$(TOPDIR)/$(BNR_IMAGE) $(TOPDIR)/$(BNR_AUDIO)
+	@bannertool	makebanner -o $@ -ci $(TOPDIR)/$(BNR_IMAGE) -ca $(TOPDIR)/$(BNR_AUDIO)
+	@echo "built ... $@"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
@@ -226,7 +256,7 @@ $(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
-	
+
 #---------------------------------------------------------------------------------
 # rules for assembling GPU shaders
 #---------------------------------------------------------------------------------
