@@ -13,6 +13,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Paramètres",                                               // "Settings"
 	"Cartouche inconnue",                                       // "Unknown Cartridge"
 	": Retour",                                                // "B: Back"    
+	": Add Games",												// "Y: Add Games"
 	 
 	/** Settings: GUI **/
 	"Langue",                                                 	// "Language"

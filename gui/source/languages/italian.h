@@ -13,6 +13,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Scheda sconosciuta",                                   	// "Unknown Cartridge"
 	"Impostazioni",                                         	// "Settings"
 	"：Chiudi",                                             	// "B: Back"  
+	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Lingua",                                               	// "Language"

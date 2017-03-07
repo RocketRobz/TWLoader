@@ -13,6 +13,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Cartucho desconocido", 									// "Unknown Cartridge"
 	"Ajustes",													// "Settings"
 	": Volver",												// "B: Back"	
+	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Idioma",													// "Language"

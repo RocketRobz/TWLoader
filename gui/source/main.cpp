@@ -1970,6 +1970,24 @@ int main()
 							}
 						}
 					} else {
+						if (settings.twl.forwarder && !is3DSX) {
+							setTextColor(RGBA8(255, 255, 255, 255));
+							switch (settings.ui.subtheme) {
+								case 0:
+								default:
+									renderText_w(40+16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 1:
+									renderText_w(40+8, 64, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 2:
+									renderText_w(40+20, 142, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 3:
+									renderText_w(40+8, 126, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+							}
+						}
 						if (!settings.romselect.toplayout) {
 							if (!bannertextloaded) {
 								LoadBoxArt_WoodTheme(cursorPosition-pagenum*20);
@@ -2820,6 +2838,10 @@ int main()
 						renderText(274, 220, 0.60f, 0.60f, false, RetTime(true).c_str());
 					} else {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+						if (settings.twl.forwarder && !is3DSX) {
+							setTextColor(RGBA8(0, 0, 0, 255));
+							renderText_w(16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+						}
 						if (!bannertextloaded) {
 							char path[256];
 							bnriconnum = cursorPosition;
@@ -3367,6 +3389,12 @@ int main()
 							applaunchon = true;
 						}
 						wood_ndsiconscaletimer = 0;
+					} else if((hDown & KEY_Y) && settings.twl.forwarder && !is3DSX){
+						settings.twl.launchslot1 = true;
+						keepsdvalue = true;
+						rom = "_nds/twloader.nds";
+						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+						applaunchon = true;
 					} else if(hDown & KEY_L){
 						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
 							pagenum--;
@@ -3497,6 +3525,12 @@ int main()
 							if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 							applaunchon = true;
 						}
+					} else if((hDown & KEY_Y) && settings.twl.forwarder && !is3DSX){
+						settings.twl.launchslot1 = true;
+						keepsdvalue = true;
+						rom = "_nds/twloader.nds";
+						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+						applaunchon = true;
 					} else if(hDown & KEY_DOWN){
 						cursorPosition++;
 						if (cursorPosition == filenum) {

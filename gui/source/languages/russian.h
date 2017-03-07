@@ -13,6 +13,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Неизвестный Картридж",										// "Unknown Cartridge"
 	"Настройки",												// "Settings"
 	": Назад",													// "B: Back"
+	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Язык",														// "Language"

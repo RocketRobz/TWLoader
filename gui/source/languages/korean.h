@@ -13,6 +13,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"카트리지가 올바르지 않습니다.", 										// "Unknown Cartridge"
 	"설정",														// "Settings"
 	": 뒤로",													// "B: Back"	
+	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"언어",														// "Language"

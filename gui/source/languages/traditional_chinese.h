@@ -13,6 +13,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"未知的卡帶", 													// "Unknown Cartridge"
 	"設置",														// "Settings"
 	": 返回",													// "B: Back"	
+	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"語言",														// "Language"
