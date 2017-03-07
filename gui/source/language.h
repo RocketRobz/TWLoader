@@ -33,6 +33,7 @@ typedef enum _StrID {
 	STR_UNKOWN,													// "Unknown Cartridge"
 	STR_SETTINGS_TEXT,											// "Settings"
 	STR_BACK,													// "B: Back"
+	STR_YBUTTON_ADD_GAMES,										// "Y: Add Games"
 
 	/** Settings: GUI **/
 	STR_SETTINGS_LANGUAGE,										// "Language"
