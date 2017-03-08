@@ -64,7 +64,6 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 
 	fsInit();
 	httpcInit(0x1000);
-	u8 method = 0;
 	httpcContext context;
 	u32 statuscode = 0;
 	HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
