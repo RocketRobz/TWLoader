@@ -124,7 +124,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"",                                                         // (empty)
 	 
 	"Verrouille le SCFG_EXT de l'ARM9,",                         // "Locks the ARM9 SCFG_EXT,"
-	"évitant les conflits avec la récente libnds",      // "avoiding conflict with recent libnds."
+	"évitant les conflits avec la récente libnds.",      // "avoiding conflict with recent libnds."
 	 
 	"Changer entre les fichiers de bootstrap ",              // "Change between release and"
 	"(release et non-officiel).",                               			// "unofficial bootstrap file."
