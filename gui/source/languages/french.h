@@ -13,7 +13,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Paramètres",                                               // "Settings"
 	"Cartouche inconnue",                                       // "Unknown Cartridge"
 	": Retour",                                                // "B: Back"    
-	": Add Games",												// "Y: Add Games"
+	": Ajouter jeux",												// "Y: Add Games"
 	 
 	/** Settings: GUI **/
 	"Langue",                                                 	// "Language"
@@ -62,8 +62,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Violet",                                                   // "Violet"
 	"Pourpre",                                                  // "Purple"
 	"Fuchsia",                                                  // "Fuchsia"
-	"Rouge&Bleu",                                               // "Red and blue"
-	"Jaune&Vert",                                             	// "Green and yellow"
+	"Rouge et bleu",                                               // "Red and blue"
+	"Jaune et vert",                                             	// "Green and yellow"
 	"Noël",                                                		// "Christmas"
 
 	// Menu Color
@@ -86,7 +86,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Afficher le nom du fichier du jeu dans ",  				// "Shows game filename at the top of the bubble."
 	"le bas de la bulle.",                                      // (empty)
 	 
-	"Un numéro de jeux sélectionné et listé",              	// "A number of selected game and listed games"
+	"Un numéro de jeu sélectionné et listé",              	// "A number of selected game and listed games"
 	"est affiché au dessous de la bulle de texte.",            // "is shown below the text bubble."
 	 
 	"Charge une image personnalisée sur l'écran du bas",        // "Loads a custom bottom screen image"
@@ -112,7 +112,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"et étendre le bus de 32 bit.",                           	// "and expands the bus to 32 bit."
 	 
 	"Afficher l'animation de démarrage de la DS/DSi",           // "Displays the DS/DSi boot animation"
-	"avant le jeu lancé.",                                    	// "before launched game."
+	"avant le lancement du jeu.",                                    	// "before launched game."
 	 
 	"Afficher le message de Santé et Sécurité",                 // "Displays the Health and Safety"
 	"sur l'écran du bas.",                            			// "message on the bottom screen."
@@ -124,14 +124,14 @@ static const char *const lang_FR[STR_MAX] = {
 	"",                                                         // (empty)
 	 
 	"Verrouille le SCFG_EXT de l'ARM9,",                         // "Locks the ARM9 SCFG_EXT,"
-	"évitant les conflits avec la libnds récente libnds.",      // "avoiding conflict with recent libnds."
+	"évitant les conflits avec la récente libnds",      // "avoiding conflict with recent libnds."
 	 
-	"Changer de fichier de bootstrap (release et",              // "Change between release and"
-	"non-officiel).",                               			// "unofficial bootstrap file."
+	"Changer entre les fichiers de bootstrap ",              // "Change between release and"
+	"(release et non-officiel).",                               			// "unofficial bootstrap file."
 	 
 	/** Start menu **/
 	// Options
-	"Localisation des jeux",                                    // "Game location"
+	"Emplacement des jeux",                                    // "Game location"
 	"Box Art: Activer",                                         // "Box Art: On"
 	"Box Art: Désactiver",                                      // "Box Art: OFF"
 	"Démarrer GBARunner2",                                      // "Start GBARunner2"
