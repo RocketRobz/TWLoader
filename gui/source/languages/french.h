@@ -35,7 +35,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Message de Santé et Sécurité",                             // "Health and Safety message"
 	"Reset Slot-1",                                          // "Reset Slot-1"
 	"Affichage Console",                                           		// "Console output"
-	"Verrrouiller SCFG_EXT ARM9",                                 // "Lock ARM9 SCFG_EXT"
+	"Verrouiller SCFG_EXT ARM9",                                 // "Lock ARM9 SCFG_EXT"
 	"Bootstrap",                                                // "Bootstrap"
 	 
 	/** Settings: Top Screen **/
