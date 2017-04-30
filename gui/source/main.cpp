@@ -101,8 +101,8 @@ static sf2d_texture *bnricontexlaunch = NULL;	// DO NOT FREE; points to bnricont
 static sf2d_texture *boxarttexnum = NULL;
 
 // Banners and boxart. (formerly bannerandboxart.h)
-// bnricontex[]: 0-19
-static sf2d_texture *bnricontex[20] = { };
+// bnricontex[]: 0-19; 20 is for R4 theme only
+static sf2d_texture *bnricontex[21] = { };
 // boxartpath[]: 0-19; 20 is for blank boxart only
 static char* boxartpath[21] = { };
 static sf2d_texture *boxarttex[6] = { };
@@ -614,8 +614,8 @@ static void LoadBNRIcon(const char *filename) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
-	sf2d_free_texture(bnricontex[0]);
-	bnricontex[0] = NULL;
+	sf2d_free_texture(bnricontex[20]);
+	bnricontex[20] = NULL;
 
 	if (!filename) {
 		filename = "romfs:/notextbanner";
@@ -626,7 +626,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		f_bnr = fopen(filename, "rb");
 	}
 
-	bnricontex[0] = grabIcon(f_bnr);
+	bnricontex[20] = grabIcon(f_bnr);
 	fclose(f_bnr);
 }
 
@@ -1951,6 +1951,24 @@ int main()
 					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
 					sf2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
+						if ((woodmenu_cursorPosition == 1) && !is3DSX) {
+							setTextColor(RGBA8(255, 255, 255, 255));
+							switch (settings.ui.subtheme) {
+								case 0:
+								default:
+									renderText_w(40+16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 1:
+									renderText_w(40+8, 64, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 2:
+									renderText_w(40+20, 142, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+								case 3:
+									renderText_w(40+8, 126, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									break;
+							}
+						}
 						if (!settings.romselect.toplayout && woodmenu_cursorPosition == 2) {
 							// Load the boxart for the Slot-1 cartridge if necessary.
 							loadSlot1BoxArt();
@@ -2306,22 +2324,8 @@ int main()
 						
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
-						char path[256];
 						if (cursorPosition < 0)
 							cursorPosition = 0;
-						// Reload 1st icon
-						if (settings.twl.forwarder) {
-							const char *tempfile = fcfiles.at(0).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
-						} else {
-							const char *tempfile = files.at(0).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-						}
-						if (access(path, F_OK) != -1) {
-							LoadBNRIcon_R4Theme(path);
-						} else {
-							LoadBNRIcon_R4Theme("romfs:/notextbanner");
-						}
 					} else if (settings.ui.theme == 1) {
 						/** This is better than a glitched screen */
 						sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -2338,20 +2342,6 @@ int main()
 						storedcursorPosition = cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
-						char path[256];
-						// Reload 1st icon
-						if (settings.twl.forwarder) {
-							const char *tempfile = fcfiles.at(0+pagenum*20).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
-						} else {
-							const char *tempfile = files.at(0+pagenum*20).c_str();
-							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-						}
-						if (access(path, F_OK) != -1) {
-							LoadBNRIcon_R4Theme(path);
-						} else {
-							LoadBNRIcon_R4Theme("romfs:/notextbanner");
-						}
 						// Reload 1st box art
 						LoadBoxArt_WoodTheme(0-pagenum*20);
 						menu_ctrlset = CTRL_SET_GAMESEL;
@@ -2860,7 +2850,7 @@ int main()
 						}
 						drawRectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 						sf2d_draw_texture(dboxtex_iconbox, 47, 31);
-						sf2d_draw_texture_part(bnricontex[0], 52, 36, bnriconframenum*32, 0, 32, 32);
+						sf2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
 						
 						if (!bannertextloaded) {
 							char path[256];
@@ -3346,6 +3336,13 @@ int main()
 								break;
 						}
 						wood_ndsiconscaletimer = 0;
+					} else if((hDown & KEY_Y) && (woodmenu_cursorPosition == 1) && !is3DSX){
+						settings.twl.forwarder = true;
+						settings.twl.launchslot1 = true;
+						keepsdvalue = true;
+						rom = "_nds/twloader.nds";
+						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+						applaunchon = true;
 					} else if(hDown & KEY_DOWN){
 						woodmenu_cursorPosition++;
 						if (woodmenu_cursorPosition > 4) {
