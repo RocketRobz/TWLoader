@@ -79,11 +79,13 @@ int TWL_ResetSlot1() {
 
 void SCFGFifoCheck (void)
 {
-    if(fifoCheckValue32(FIFO_USER_07)) {
+    // if(fifoCheckValue32(FIFO_USER_07)) {	// This breaks support for DSTT and it's clones
+		fifoWaitValue32(FIFO_USER_07);
         if(fifoCheckValue32(FIFO_USER_04)) { REG_SCFG_CLK = 0x0181; }
         if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_ROM = 0x703; }
-        fifoSendValue32(FIFO_USER_07, 0);
-    }
+		if(fifoCheckValue32(FIFO_USER_06)) { REG_SCFG_EXT = 0x93A50000; }
+        // fifoSendValue32(FIFO_USER_07, 0);
+    // }
 }
 
 //---------------------------------------------------------------------------------
