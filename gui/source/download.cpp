@@ -1,4 +1,4 @@
-#include "download.h"
+﻿#include "download.h"
 #include "main.h"
 #include "language.h"
 #include "date.h"
@@ -211,20 +211,20 @@ int checkUpdate(void) {
 			}	
 			
 			rewind(VerFile);
-			fread(buf,1,sizeof(settings_latestvertext),VerFile);
+			fread(buf,1,sizeof(settings_previousvertext),VerFile);
 			buf[sizeof(buf) - 1] = '\0';
-			strcpy(settings_latestvertext, buf);
+			strcpy(settings_previousvertext, buf);
 			fclose(VerFile);
 			/** End **/
 		} else {
 			// Unable to open the version file.
-			strcpy(settings_latestvertext, "Unknown");
+			strcpy(settings_previousvertext, "Unknown");
 			isUnknown = true;
 		}
-		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
+		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded previous version:", settings_previousvertext);
 		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
 
-		if (!isUnknown && (strcmp(settings_latestvertext, settings_vertext) <= 0)) {
+		if (!isUnknown && (strcmp(settings_previousvertext, settings_vertext) <= 0)) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -283,8 +283,8 @@ void DownloadTWLoaderCIAs(void) {
 			"\n"
 			"\n"
 			"\n"
-			"A: Yes\n"
-			"B: No";
+			": Yes\n"
+			": No";
 		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
 		sf2d_end_frame();
 		sf2d_swapbuffers();

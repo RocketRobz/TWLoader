@@ -193,7 +193,7 @@ int RGB[3]; // Pergame LED
 
 // Version numbers.
 
-char settings_latestvertext[13];
+char settings_previousvertext[13];
 char settings_vertext[13];
 
 std::string settings_releasebootstrapver;
