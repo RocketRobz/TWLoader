@@ -224,12 +224,13 @@ int checkUpdate(void) {
 		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded version:", settings_latestvertext);
 		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
 
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
-		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (!isUnknown && (strcmp(settings_latestvertext, settings_vertext) <= 0)) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+
 			// Version is lower or same.
 			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
 		
@@ -255,66 +256,122 @@ int checkUpdate(void) {
 /**
  * Download the TWLoader CIAs.
  */
-void DownloadTWLoaderCIAs(void) {
-	setTextColor(RGBA8(0, 0, 0, 255));
-	static const char gui_msg[] =
-		"Now downloading latest TWLoader version...\n"
-		"(GUI)\n";
-	renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-	sf2d_end_frame();
-	sf2d_swapbuffers();	
+void DownloadTWLoaderCIAs(void) {	
+
+	bool checkanswer = true;
+	bool yestoupdate = false;
 	
-	int res;
-	
-	// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
-	struct stat st;
-	if(stat("sdmc:/cia",&st) == 0){		
-		// Use root/cia folder instead
-		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
-	}else{
-		mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-		res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
-	}
-	
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(settingstex, 0, 0);
-	}
-	sf2d_draw_texture(dialogboxtex, 0, 0);
-	if (res == 0) {
-		static const char twlnand_msg[] =
-			"Now downloading latest TWLoader version...\n"
-			"(TWLNAND side CIA)\n";
-		renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
+	while(checkanswer) {
+		textVtxArrayPos = 0; // Clear the text vertex array
+
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			sf2d_draw_texture(settingstex, 0, 0);
+		}
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		setTextColor(RGBA8(0, 0, 0, 255));
+		static const char gui_msg[] =
+			"An update for TWLoader is available.\n"
+			"Do you want to update?\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"A: Yes\n"
+			"B: No";
+		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
-		// Delete first if installed.
-		if(checkTWLNANDSide()){
-			amInit();
-			AM_DeleteTitle(MEDIATYPE_NAND, TWLNAND_TID);
-			amExit();
+
+		hidScanInput();
+
+		const u32 hDown = hidKeysDown();
+		
+		if (hDown & KEY_A) {
+			yestoupdate = true;
+			checkanswer = false;	// Exit loop
+		} else if (hDown & KEY_B) {
+			checkanswer = false;	// Exit loop
 		}
+	}
+	
+	if(yestoupdate) {
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			sf2d_draw_texture(settingstex, 0, 0);
+		}
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		static const char gui_msg[] =
+			"Now downloading latest TWLoader version...\n"
+			"(GUI)\n"
+			"\n"
+			"Do not turn off the power.\n";
+		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+
+		int res;
+		
+		// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
+		struct stat st;
 		if(stat("sdmc:/cia",&st) == 0){		
 			// Use root/cia folder instead
-			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
-		}else{		
-			res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
+		}else{
+			mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 		}
+		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		if (res == 0) {
-			renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+			static const char twlnand_msg[] =
+				"Now downloading latest TWLoader version...\n"
+				"(TWLNAND side CIA)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			run = false;
+			// Delete first if installed.
+			if(checkTWLNANDSide()){
+				amInit();
+				AM_DeleteTitle(MEDIATYPE_NAND, TWLNAND_TID);
+				amExit();
+			}
+			if(stat("sdmc:/cia",&st) == 0){		
+				// Use root/cia folder instead
+				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+			}else{		
+				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+			}
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res == 0) {
+				renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+				sf2d_end_frame();
+				sf2d_swapbuffers();
+				run = false;
+			} else {
+				DialogBoxDisappear("Download failed.", 0);
+			}
 		} else {
-			DialogBoxDisappear("Download failed.", 0);
+			DialogBoxDisappear("Update failed.", 0);
 		}
 	} else {
-		DialogBoxDisappear("Update failed.", 0);
+		DialogBoxDisappear("Update cancelled.", 0);
 	}
 }
 
