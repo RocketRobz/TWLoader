@@ -190,12 +190,13 @@ int checkUpdate(void) {
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	remove("sdmc:/_nds/twloader/ver");
-	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/ver", MEDIA_SD_FILE);
+	remove("sdmc:/_nds/twloader/prev_ver");
+	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/prev_ver", MEDIA_SD_FILE);
 	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
 	if (res == 0) {
 
 		bool isUnknown = false;
-		FILE* VerFile = fopen("sdmc:/_nds/twloader/ver", "r");
+		FILE* VerFile = fopen("sdmc:/_nds/twloader/prev_ver", "r");
 		if (VerFile) {
 			/** This is the same method as checkBootstrapVersion() **/
 			long fileSize;
