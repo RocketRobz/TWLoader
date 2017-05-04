@@ -26,7 +26,7 @@ Before you submit a pull request from your forked repo, check that it meets thes
 
 If you want to collaborate with us, you will need to install DEVKITPRO and DEVKITARM. You will also need xerpi's sfillib,sf2dlib, ahezard libnds and citro3ds. You also need makerom,make_cia and bannertool on system location.
 
-### Style
+## Style
 
 All code must be clear and enought readable. Indentation is a must and code must follow C variable and name convention.
 
