@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Contributions are always welcome to TWLoader! If you have something new to share us, please, do it.
+Contributions are always welcome to TWLoader! If you have something new to share with us, please, do it.
 
 ## Issues Guidelines
 
@@ -10,7 +10,7 @@ Before you submit an issue, check that it meets these guidelines:
 - specify what console are you using and your entrypoint
 - specify the CFW version you're using
 - specify if you're using an emunand
-- if the issue it's about a bug, please provide a minimal failing example and environment
+- if the issue is about a bug, please provide a minimal failing example and environment
 
 
 ## Pull Request Guidelines
@@ -28,5 +28,5 @@ If you want to collaborate with us, you will need to install DEVKITPRO and DEVKI
 
 ## Style
 
-All code must be clear and enough readable. Indentation is a must and code must follow C variable and name convention.
+All code must be clear and readable. Indentation is a must and code must follow C variable and name convention.
 
