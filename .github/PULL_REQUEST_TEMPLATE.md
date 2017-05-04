@@ -12,7 +12,7 @@
 
 
 
-#### Where do you have tested it?
+#### Where have you tested it?
 
 
 
@@ -25,5 +25,4 @@
 _(Do not edit after this point)_
 - [ ]  This PR is fully documented.
 - [ ]  This PR has been tested before sending.
-- [ ]  This PR follow C style and convention.
-
+- [ ]  This PR follows C style and convention.
