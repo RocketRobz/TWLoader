@@ -2733,8 +2733,7 @@ int main()
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText_w(46.0f, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));
-						
+						renderText_w(8, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));						
 						renderText(2, 2, 0.50, 0.50, false, "Menu");
 					} else {
 						int Ypos = 26;
@@ -2935,9 +2934,9 @@ int main()
 						if (cursorPosition == -2) {
 							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
 							// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
-							const int text_width = 0;
+							//const int text_width = 0;
 							setTextColor(RGBA8(0, 0, 0, 255)); // black
-							renderText_w((320-text_width)/2, 38, 0.70, 0.70, false, curn2text);
+							renderText_w(8, 38, 0.70, 0.70, false, curn2text);
 							drawBannerText = false;
 						} else if (cursorPosition == -1) {
 							if (settings.twl.forwarder) {
@@ -2945,7 +2944,7 @@ int main()
 								// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
 								const int text_width = 0;
 								setTextColor(RGBA8(0, 0, 0, 255)); // black
-								renderText((320-text_width)/2, 38, 0.70, 0.70, false, add_games_text);
+								renderText(8, 38, 0.70, 0.70, false, add_games_text);
 								drawBannerText = false;
 							} else {
 								// Get the text from the Slot 1 cartridge.
@@ -2978,9 +2977,9 @@ int main()
 										msg = TR(STR_NO_CARTRIDGE);
 									}
 									// const int text_width = sftd_get_wtext_width(font_b, 18, msg);
-									const int text_width = 0;
+									//const int text_width = 0;
 									setTextColor(RGBA8(0, 0, 0, 255)); // black
-									renderText_w((320-text_width)/2, 38, 0.70, 0.70, false, msg);
+									renderText_w(8, 38, 0.70, 0.70, false, msg);
 									drawBannerText = false;
 								}
 							}
