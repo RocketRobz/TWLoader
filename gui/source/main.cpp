@@ -2185,7 +2185,7 @@ int main()
 								}
 							} else {
 								// int text_width = sftd_get_text_width(font, 12, noromtext1);
-								int text_width = 0;
+								//int text_width = 0;
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
 								// text_width = sftd_get_text_width(font, 12, noromtext2);
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
@@ -2193,7 +2193,7 @@ int main()
 						} else {
 							if (settings.twl.forwarder && pagenum == 0) {
 								// int text_width = sftd_get_text_width(font, 12, noromtext1);
-								int text_width = 0;
+								//int text_width = 0;
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
 								// text_width = sftd_get_text_width(font, 12, noromtext2);
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
@@ -2799,7 +2799,7 @@ int main()
 							sf2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
 							static const char selectiontext[] = "Games";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							const int text_width = 0;
+							//const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 							setTextColor(RGBA8(255, 255, 255, 255));
 							renderText(128, 220, 0.60f, 0.60f, false, selectiontext);
@@ -2808,7 +2808,7 @@ int main()
 							sf2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
 							static const char selectiontext[] = "Launch Slot-1 card";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							const int text_width = 0;
+							//const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 							setTextColor(RGBA8(255, 255, 255, 255));
 							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
@@ -2817,7 +2817,7 @@ int main()
 							sf2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
 							static const char selectiontext[] = "Start GBARunner2";
 							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							const int text_width = 0;
+							//const int text_width = 0;
 							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
 							setTextColor(RGBA8(255, 255, 255, 255));
 							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
@@ -2942,7 +2942,7 @@ int main()
 							if (settings.twl.forwarder) {
 								static const char add_games_text[] = "Add Games";
 								// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
-								const int text_width = 0;
+								//const int text_width = 0;
 								setTextColor(RGBA8(0, 0, 0, 255)); // black
 								renderText(8, 38, 0.70, 0.70, false, add_games_text);
 								drawBannerText = false;
@@ -3055,7 +3055,7 @@ int main()
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
 								// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-								const int text_width = 0;
+								//const int text_width = 0;
 								// sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
 								setTextColor(RGBA8(0, 0, 0, 255));
 								renderText_w(8, y, 0.75, 0.75, false, romsel_gameline[i].c_str());
@@ -3198,7 +3198,7 @@ int main()
 									sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
 									const wchar_t *start_text = TR(STR_START);
 									// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
-									const int start_width = 0;
+									//const int start_width = 0;
 									// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
 									setTextColor(RGBA8(255, 255, 255, 255));
 									renderText_w(136, 184, 0.60, 0.60, false, start_text);
@@ -3206,7 +3206,7 @@ int main()
 									sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 									const wchar_t *start_text = TR(STR_START);
 									// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-									const int start_width = 0;
+									//const int start_width = 0;
 									// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 									setTextColor(RGBA8(255, 255, 255, 255));
 									renderText_w(140, 177, 0.50, 0.50, false, start_text);
