@@ -61,7 +61,7 @@ Tell us what happens instead
 
 ### Stack trace and console log
 
-If you are getting any crash of want to upload your log file, please,  write that information between the following quotation marks.
+If you are getting a crash or want to upload your log file, please, write that information between the following quotation marks.
 
 ```
 ```
