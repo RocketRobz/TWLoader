@@ -6,7 +6,38 @@
 ###### Issues that doesn't attach any log file or any reproducible method will be closed.
 ###### Issues without replies in 15 days will be closed too.
 -->
-### Version
+### Your 3DS
+
+Tell us which console do you have:
+
+- [ ]  Old 3DS
+- [ ]  Old 3DS XL
+- [ ]  2DS
+- [ ]  New 3DS
+- [ ]  New 3DS XL
+- [ ]  New 2DS XL
+
+### CFW and configuration
+
+Tell us which CFW do you have:
+
+- [ ]  A9LH + Sysnand
+- [ ]  A9LH + Emunand
+- [ ]  Luma3DS
+- [ ]  AuReiNAND
+- [ ]  Other CFW [specify]
+- [ ]  Older CFW
+- [ ]  Not using CFW / Using TWLoader in 3DSX format
+
+
+### Console version
+
+Tell us which version do you have:
+
+- [ ]  >= 11.4
+- [ ]  < 11.4
+
+### TWLoader version
 
 Tell us which versions you are using:
 
