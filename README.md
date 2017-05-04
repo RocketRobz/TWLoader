@@ -7,7 +7,7 @@ TWLoader is a CTR-mode frontend for nds-bootstrap that looks like the Nintendo D
 
 # Building
 
-Building this app by yourself require DEVKITARM with DEVKITPRO.You will also need xerpi's [sfillib](https://github.com/xerpi/sfillib),[sf2dlib](https://github.com/xerpi/sf2dlib), ahezard's [libnds](https://github.com/ahezard/libnds) and [citro3ds](https://github.com/fincs/citro3d). You also need makerom on your devkitpro environment.
+Building this app by yourself require DEVKITARM with DEVKITPRO.You will also need xerpi's [sfillib](https://github.com/xerpi/sfillib),[sf2dlib](https://github.com/xerpi/sf2dlib), [citro3ds](https://github.com/fincs/citro3d) and ahezard's [libnds](https://github.com/ahezard/libnds). You also need makerom on your devkitpro environment.
 
 For using compile.bat you must `git clone --recursive https://github.com/Robz8/TWLoader.git` this repository.
 
