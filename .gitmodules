@@ -1,0 +1,3 @@
+[submodule "TWLoader-update"]
+	path = TWLoader-update
+	url = https://github.com/Jolty95/TWLoader-update.git
