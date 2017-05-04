@@ -28,5 +28,5 @@ If you want to collaborate with us, you will need to install DEVKITPRO and DEVKI
 
 ## Style
 
-All code must be clear and enought readable. Indentation is a must and code must follow C variable and name convention.
+All code must be clear and enough readable. Indentation is a must and code must follow C variable and name convention.
 
