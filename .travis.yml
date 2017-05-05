@@ -12,9 +12,9 @@ install:
   - cd ctrulib-master/libctru
   - make && sudo make install
   - cd ../..
-  - wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/master -O /tmp/citro3d.zip
+  - wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/next -O /tmp/citro3d.zip
   - unzip /tmp/citro3d.zip
-  - cd citro3d-master
+  - cd citro3d-next
   - make && sudo make install
   - cd ..  
   - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
