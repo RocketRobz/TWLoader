@@ -15,7 +15,8 @@ For using compile.bat you must `git clone --recursive https://github.com/Robz8/T
 
 - ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap)
 - Apache Thunder: NTR-Launcher code, and the recreation of the DS/DSi boot screens.
-- billy-acuna: TWLoader logo.
+- billy-acuna: Old TWLoader logo.
+- Joom: New and current TWLoader logo.
 - MarcusD: Rainbow colors in Notification LED code.
 - shutterbug2000: File browsing code.
 - spinal_cord: DSi4DS assets.
