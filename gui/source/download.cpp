@@ -481,8 +481,7 @@ static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 			if (region == CFG_REGION_USA) {
 				// System is USA region.
 				// Get the USA boxart if it's available.
-				ba_region = "US";
-				ba_region_fallback = "EN";
+				ba_region = "EN";
 				break;
 			}
 			// fall-through
