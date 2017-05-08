@@ -3626,7 +3626,7 @@ int main()
 							} else {
 								rom = matching_files.at(cursorPosition).c_str();
 							}
-							LogFM("Delete mode enabled (flashcard)", rom);						
+							LogFM("Delete mode enabled (flashcard)", rom);
 							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom);
 							fcfiles.erase(fcfiles.begin() + cursorPosition);
 							snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
@@ -3643,9 +3643,15 @@ int main()
 							
 							memset(path, 0, sizeof(path));
 							snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
-							LogFM("Trying to delete boxart", path);							
+							LogFM("Trying to delete boxart", path);
 							remove(path); // Remove .png
 							LogFM("Delete mode", ".png file deleted");
+							
+							memset(path, 0, sizeof(path));
+							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, rom);
+							LogFM("Trying to delete banner data", path);
+							remove(path); // Remove the .bin
+							LogFM("Delete mode", ".bin file deleted");
 						} else {
 							if(matching_files.size() == 0){
 								rom = files.at(cursorPosition).c_str();
@@ -3672,6 +3678,12 @@ int main()
 							LogFM("Trying to delete boxart", path);
 							remove(path); // Remove .png
 							LogFM("Delete mode", ".png file deleted");
+							
+							memset(path, 0, sizeof(path));
+							snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, rom);
+							LogFM("Trying to delete banner data", path);
+							remove(path); // Remove the .bin
+							LogFM("Delete mode", ".bin file deleted");
 						}
 						pagenum = 0; // Go to page 0
 						cursorPosition = 0; // Move the cursor to 0
