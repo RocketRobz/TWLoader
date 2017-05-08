@@ -4238,20 +4238,7 @@ int main()
 											rom = fcfiles.at(cursorPosition).c_str();
 										}else{
 											rom = matching_files.at(cursorPosition).c_str();
-										}
-										char path[0xFF];
-										snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom);
-										remove(path);
-										// Now is deleted from SD but not from memory									
-										fcfiles.erase(fcfiles.begin() + cursorPosition); // Because we already know the rom position									
-										pagenum = 0; // Go to page 0
-										cursorPosition = 0; // Move the cursor to 0
-										storedcursorPosition = cursorPosition; // Move the cursor to 0
-										titleboxXmovepos = 0; // Move the cursor to 0
-										boxartXmovepos = 0; // Move the cursor to 0
-										snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter
-										boxarttexloaded = false; // Reload boxarts
-										bnricontexloaded = false; // Reload banner icons
+										}										
 									} else {
 										if(matching_files.size() == 0){
 											rom = files.at(cursorPosition).c_str();
