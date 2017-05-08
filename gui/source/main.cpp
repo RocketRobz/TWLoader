@@ -1889,11 +1889,21 @@ int main()
 									StoreBoxArtPath(path);
 								} else {
 									// example: ASME.png
-									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-									if (access(path, F_OK) != -1) {
+									// check first if boxart exist on fcboxartfolder by TID
+									memset(path, 0, sizeof(path));
+									snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+									if (access(path, F_OK ) != -1 ) {
 										StoreBoxArtPath(path);
 									} else {
-										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
+										// maybe on boxart (sd) folder?
+										memset(path, 0, sizeof(path));
+										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+										if (access(path, F_OK) != -1) {
+											StoreBoxArtPath(path);
+										} else {
+											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										}
 									}
 								}
 							} else {
@@ -1924,11 +1934,21 @@ int main()
 									StoreBoxArtPath(path);
 								} else {
 									// example: ASME.png
-									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-									if (access(path, F_OK) != -1) {
+									// check first if boxart exist on fcboxartfolder by TID
+									memset(path, 0, sizeof(path)); 
+									snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+									if (access(path, F_OK ) != -1 ) {
 										StoreBoxArtPath(path);
 									} else {
-										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
+										// maybe on boxart (sd) folder?
+										memset(path, 0, sizeof(path));
+										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+										if (access(path, F_OK) != -1) {
+											StoreBoxArtPath(path);
+										} else {
+											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										}
 									}
 								}
 							} else {
