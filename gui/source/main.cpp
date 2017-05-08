@@ -3674,7 +3674,7 @@ int main()
 							remove(path); // Remove .nds after reading TID.
 							
 							memset(path, 0, sizeof(path));
-							snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+							snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
 							if (logEnabled)	LogFM("Trying to delete boxart", path);
 							remove(path); // Remove .png
 							if (logEnabled)	LogFM("Delete mode", ".png file deleted");
