@@ -3618,24 +3618,66 @@ int main()
 					}
 					if(hDown & KEY_X) {
 						// Delete game mode
+						
+						char path[256];
 						if (settings.twl.forwarder) {
 							if(matching_files.size() == 0){
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
 								rom = matching_files.at(cursorPosition).c_str();
 							}
+							LogFM("Delete mode enabled (flashcard)", rom);						
+							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom);
+							fcfiles.erase(fcfiles.begin() + cursorPosition);
+							snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
+							
+							LogFMA("Delete mode", ".ini file deleted", path);
+							CIniFile setfcrompathini(path);
+							std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+
+							char ba_TID[5];
+							strcpy(ba_TID, ba_TIDini.c_str());
+							ba_TID[4] = 0;
+							
+							remove(path); // Remove .ini after reading TID.
+							
+							memset(path, 0, sizeof(path));
+							snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+							LogFM("Trying to delete boxart", path);							
+							remove(path); // Remove .png
+							LogFM("Delete mode", ".png file deleted");
+						} else {
+							if(matching_files.size() == 0){
+								rom = files.at(cursorPosition).c_str();
+							} else {
+								rom = matching_files.at(cursorPosition).c_str();
+							}
+							LogFM("Delete mode enabled (SD)", rom);
+							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
+							files.erase(files.begin() + cursorPosition);
+							snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+							
+							LogFM("Delete mode", ".nds file deleted");
+							FILE *f_nds_file = fopen(path, "rb");
+							
+							char ba_TID[5];
+							grabTID(f_nds_file, ba_TID);
+							ba_TID[4] = 0;
+							fclose(f_nds_file);
+							
+							remove(path); // Remove .nds after reading TID.
+							
+							memset(path, 0, sizeof(path));
+							snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+							LogFM("Trying to delete boxart", path);
+							remove(path); // Remove .png
+							LogFM("Delete mode", ".png file deleted");
 						}
-						char path[0xFF];
-						snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom);
-						remove(path);
-						// Now is deleted from SD but not from memory									
-						fcfiles.erase(fcfiles.begin() + cursorPosition); // Because we already know the rom position									
 						pagenum = 0; // Go to page 0
 						cursorPosition = 0; // Move the cursor to 0
 						storedcursorPosition = cursorPosition; // Move the cursor to 0
 						titleboxXmovepos = 0; // Move the cursor to 0
 						boxartXmovepos = 0; // Move the cursor to 0
-						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
 						bannertextloaded = false; // Reload banner text after deletion
