@@ -224,6 +224,7 @@ static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
 static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
 static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
 static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
+static const char slot1boxartfolder[] = "sdmc:/_nds/twloader/boxart/slot1";
 // End
 	
 bool keepsdvalue = false;
@@ -1004,7 +1005,7 @@ static void loadSlot1BoxArt(void)
 		char path[256];
 		// example: ASME.png
 		if (logEnabled)	LogFMA("Main", "Loading Slot-1 box art", gameID);
-		snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, gameID);
+		snprintf(path, sizeof(path), "%s/%.4s.png", slot1boxartfolder, gameID);
 		if (access(path, F_OK) != -1) {
 			new_tex = sfil_load_PNG_file(path, SF2D_PLACE_RAM);
 		} else {
@@ -1331,6 +1332,8 @@ int main()
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/boxart", 0777);
+	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
+	mkdir("sdmc:/_nds/twloader/boxart/slot1", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
