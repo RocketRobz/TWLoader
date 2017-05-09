@@ -54,6 +54,7 @@ bool menuaction_nextpage = false;
 bool menuaction_prevpage = false;
 bool menuaction_launch = false;
 bool menudboxaction_switchloc = false;
+bool buttondeletegame = false;
 
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
@@ -3608,6 +3609,8 @@ int main()
 						menuaction_nextpage = true;
 					} else if(hDown & KEY_L) {
 						menuaction_prevpage = true;
+					} else if(hDown & KEY_X) {
+						buttondeletegame = true;
 					}
 					if(hDown & KEY_Y) {
 						if (dspfirmfound) {
@@ -3616,8 +3619,9 @@ int main()
 						}
 						settings.ui.iconsize = !settings.ui.iconsize;
 					}
-					if(hDown & KEY_X) {
+					if(buttondeletegame) {
 						// Delete game mode
+						buttondeletegame = false; // Prevent deleting by accident
 						
 						char path[256];
 						if (settings.twl.forwarder) {
