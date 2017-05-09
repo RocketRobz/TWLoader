@@ -813,13 +813,16 @@ void downloadBoxArt(void)
 			memcpy(ba_TID, &tid, 4);
 			ba_TID[4] = 0;
 			
+			char str[256] = "";
+			snprintf(str, sizeof(str), "%zu", boxartnum);
+			
 			// Show the dialog.
 			DialogBoxAppear(title, 0);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			setTextColor(RGBA8(0, 0, 0, 255));
 			renderText(12, 16, 0.5f, 0.5f, false, title);
-			// renderText(12, 32, 0.5f, 0.5f, false, "%zu", boxartnum);
+			renderText(12, 32, 0.5f, 0.5f, false, str);
 			renderText(39, 32, 0.5f, 0.5f, false, "/");
 			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
 			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
@@ -901,13 +904,16 @@ void downloadBoxArt(void)
 			memcpy(ba_TID, &tid, 4);
 			ba_TID[4] = 0;
 			
+			char str[256] = "";
+			snprintf(str, sizeof(str), "%zu", boxartnum);
+			
 			// Show the dialog.
 			DialogBoxAppear(title, 0);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			setTextColor(RGBA8(0, 0, 0, 255));
 			renderText(12, 16, 0.5f, 0.5f, false, title);
-			// renderText(12, 32, 0.5f, 0.5f, false, "%zu", boxartnum);
+			renderText(12, 32, 0.5f, 0.5f, false, str);
 			renderText(39, 32, 0.5f, 0.5f, false, "/");
 			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
 			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
@@ -965,13 +971,16 @@ void downloadBoxArt(void)
 		memcpy(ba_TID, &tid, 4);
 		ba_TID[4] = 0;
 		
+		char str[256] = "";
+		snprintf(str, sizeof(str), "%zu", boxartnum);
+		
 		// Show the dialog.
 		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		setTextColor(RGBA8(0, 0, 0, 255));
 		renderText(12, 16, 0.5f, 0.5f, false, title);
-		// renderText(12, 32, 0.5f, 0.5f, false, "%zu", boxartnum);
+		renderText(12, 32, 0.5f, 0.5f, false, str);
 		renderText(39, 32, 0.5f, 0.5f, false, "/");
 		renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
 		renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
