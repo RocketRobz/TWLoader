@@ -829,9 +829,10 @@ void downloadBoxArt(void)
 			renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-
+			
 			downloadBoxArt_internal(ba_TID, ROM_SD);
 		}
+		DialogBoxDisappear(NULL, 0);
 		boxart_dl_tids.clear();
 	}
 	// Check if we're missing any boxart for ROMs on the flashcard.
@@ -923,6 +924,7 @@ void downloadBoxArt(void)
 
 			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
 		}
+		DialogBoxDisappear(NULL, 0);
 		boxart_dl_tids.clear();
 	}
 	
