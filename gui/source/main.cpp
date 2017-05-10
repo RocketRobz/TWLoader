@@ -191,6 +191,8 @@ const char* noromtext2;
 
 int RGB[3]; // Pergame LED
 
+bool usepergamesettings = true;
+
 // Version numbers.
 
 char settings_previousvertext[13];
@@ -3340,6 +3342,7 @@ int main()
 						settings.twl.launchslot1 = true;
 						keepsdvalue = true;
 						rom = "_nds/twloader.nds";
+						usepergamesettings = false;
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_DOWN){
@@ -3389,6 +3392,7 @@ int main()
 						settings.twl.launchslot1 = true;
 						keepsdvalue = true;
 						rom = "_nds/twloader.nds";
+						usepergamesettings = false;
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_L){
@@ -3525,6 +3529,7 @@ int main()
 						settings.twl.launchslot1 = true;
 						keepsdvalue = true;
 						rom = "_nds/twloader.nds";
+						usepergamesettings = false;
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_DOWN){
@@ -4433,21 +4438,23 @@ int main()
 				// Activate the rainbow LED and shut off the screen.
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
-				if (cursorPosition >= 0 && gbarunnervalue == 0) {
-					if (settings.twl.forwarder) {
-						if(matching_files.size() == 0){
-							rom = fcfiles.at(cursorPosition).c_str();
-						}else{
-							rom = matching_files.at(cursorPosition).c_str();
-						}
-					} else {
-						if(matching_files.size() == 0){
-							rom = files.at(cursorPosition).c_str();
+				if (usepergamesettings) {
+					if (cursorPosition >= 0 && gbarunnervalue == 0) {
+						if (settings.twl.forwarder) {
+							if(matching_files.size() == 0){
+								rom = fcfiles.at(cursorPosition).c_str();
+							}else{
+								rom = matching_files.at(cursorPosition).c_str();
+							}
 						} else {
-							rom = matching_files.at(cursorPosition).c_str();
+							if(matching_files.size() == 0){
+								rom = files.at(cursorPosition).c_str();
+							} else {
+								rom = matching_files.at(cursorPosition).c_str();
+							}
 						}
+						LoadPerGameSettings();
 					}
-					LoadPerGameSettings();
 				}
 				if((RGB[0] < 0) && (RGB[1] < 0) && (RGB[2] < 0)){
 					// If RGB in pergame is less than 0, use standard rainbowled patern
@@ -4458,7 +4465,6 @@ int main()
 					// Use pergame led
 					PergameLed();
 				}
-				screenoff();
 			}
 
 			// Buffers for APT_DoApplicationJump().
