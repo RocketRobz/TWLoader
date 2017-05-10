@@ -3708,7 +3708,7 @@ int main()
 									remove(path); // Remove the .bin
 									if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
 									
-									delete_queue.erase(it);
+									delete_queue.erase(iter);
 									if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
 								}
 							}
@@ -3750,7 +3750,7 @@ int main()
 									remove(path); // Remove the .bin
 									if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
 									
-									delete_queue.erase(it);
+									delete_queue.erase(iter);
 									if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
 								}
 							}							
