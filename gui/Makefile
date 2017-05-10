@@ -58,14 +58,16 @@ BUILD		:=	build
 SOURCES		:=	source source/img
 DATA		:=	data
 INCLUDES	:=	include
+#NO_SMDH		:=	1
 ROMFS		:=	romfs
-APP_AUTHOR	:=	Robz8
+APP_TITLE	:= 	TWLoader
 APP_DESCRIPTION :=  CTR mode .nds frontend
+APP_AUTHOR	:=	Robz8
 ICON		:=	app/icon.png
-BNR_IMAGE	:=  app/banner.png
 BNR_AUDIO	:=	app/BannerAudio.wav
+BNR_IMAGE	:=  app/banner.png
+LOGO		:=	app/twlv2-padded.lz11
 RSF_FILE	:=	app/build-cia.rsf
-
 #---------------------------------------------------------------------------------
 # More external tools
 #---------------------------------------------------------------------------------
@@ -74,20 +76,30 @@ CITRA 	?= C:\emulators\citra\citra.exe $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
+DEBUG ?= 0
+ ifeq ($(DEBUG), 1)
+	CFLAGS	:=	-g
+	ASFLAGS	:=	-g
+	LDFLAGS	:= 	-g
+endif
+
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
-		-ffunction-sections \
-		$(ARCH)
+CFLAGS	+=	-Wall -O2 -mword-relocations \
+			-fomit-frame-pointer -ffunction-sections \
+			-DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) \
+			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+ASFLAGS	+=	$(ARCH)
+LDFLAGS	+=	-specs=3dsx.specs $(ARCH) -Wl,-Map,$(notdir $(sort $*.map))
 
 LIBS	:= -lsfil -lpng -ljpeg -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
+
+
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -102,7 +114,6 @@ LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 #---------------------------------------------------------------------------------
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
-
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 export TOPDIR	:=	$(CURDIR)
 
@@ -111,12 +122,12 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
-SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.c))))
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.cpp))))
+SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.s))))
+PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.v.pica))))
+SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(sort $(wildcard $(dir)/*.shlist))))
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(sort $(wildcard $(dir)/*.*))))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -148,7 +159,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 ifeq ($(strip $(ICON)),)
-	icons := $(wildcard *.png)
+	icons := $(sort $(wildcard *.png))
 	ifneq (,$(findstring $(TARGET).png,$(icons)))
 		export APP_ICON := $(TOPDIR)/$(TARGET).png
 	else
@@ -181,7 +192,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).smdh $(TARGET).cia.smdh $(TARGET).cia $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------
@@ -206,16 +217,43 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
-cia: $(OUTPUT).elf $(OUTPUT).cia
-3dsx: $(OUTPUT).elf $(OUTPUT).3dsx
+all: $(OUTPUT).cia $(OUTPUT).3dsx
+
+3dsx: $(OUTPUT).3dsx
+
+cia: $(OUTPUT).cia
+
+ifeq ($(strip $(NO_SMDH)),)
+$(OUTPUT).3dsx	:	$(OUTPUT).elf $(OUTPUT).smdh
+$(OUTPUT).smdh	:	$(TOPDIR)/Makefile
+else
+$(OUTPUT).3dsx	:	$(OUTPUT).elf
+endif
 
 $(OFILES_SOURCES) : $(HFILES)
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
-	$(MAKEROM) -f cia -target t -exefslogo -o "../TWLoader.cia" -elf "../TWLoader.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/twlv2-padded.lz11" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
+$(OUTPUT).smdh	:	$(APP_ICON)
+	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)"  -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@echo "built ... $(notdir $@)"
+
+$(OUTPUT).cia.smdh	:	$(APP_ICON)
+	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_TITLE)"  -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@echo "built ... $(notdir $@)"
+	
+$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).cia.smdh $(TARGET).bnr
+	@makerom	-f cia -target t -exefslogo -o $@ \
+				-elf $(OUTPUT).elf -rsf $(TOPDIR)/$(RSF_FILE) \
+				-logo "$(TOPDIR)/$(LOGO)" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) \
+				-minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)" \
+				-banner $(TARGET).bnr \
+				-icon $(OUTPUT).cia.smdh
+	@echo "built ... $(notdir $@)"
+
+$(TARGET).bnr	:	$(TOPDIR)/$(BNR_IMAGE) $(TOPDIR)/$(BNR_AUDIO)
+	@bannertool	makebanner -o $@ -ci $(TOPDIR)/$(BNR_IMAGE) -ca $(TOPDIR)/$(BNR_AUDIO)
+	@echo "built ... $@"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
@@ -236,17 +274,17 @@ $(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
-	
+
 #---------------------------------------------------------------------------------
 # rules for assembling GPU shaders
 #---------------------------------------------------------------------------------
 define shader-as
-	$(eval CURBIN := $*.shbin)
+	$(eval CURBIN := $(sort $*.shbin))
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u8" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(CURBIN) | tr . _)`.h
 	echo "extern const u32" `(echo $(CURBIN) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(CURBIN) | tr . _)`.h
 	picasso -o $(CURBIN) $1
-	bin2s $(CURBIN) | $(AS) -o $*.shbin.o
+	bin2s $(CURBIN) | $(AS) -o $(sort $*.shbin.o)
 endef
 
 %.shbin.o %_shbin.h : %.v.pica %.g.pica
