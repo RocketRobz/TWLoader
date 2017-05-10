@@ -3616,12 +3616,14 @@ int main()
 				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
 					if(hDown & KEY_R) {
 						menuaction_nextpage = true;
-					} else if(hDown & KEY_L) {
-						menuaction_prevpage = true;
+					} else if(hidKeysUp() & KEY_L) {
+						if ((hHeld & KEY_X) | (hDown & KEY_X) | (hidKeysUp() & KEY_X)) {
+							addgametodeletequeue = true;							
+						} else {
+							menuaction_prevpage = true;
+						}
 					} else if(hDown & KEY_X) {
 						buttondeletegame = true;
-					} else if((hDown & KEY_L) && (hDown & KEY_X)) {
-						addgametodeletequeue = true;
 					}
 					if(hDown & KEY_Y) {
 						if (dspfirmfound) {
