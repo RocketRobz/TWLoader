@@ -55,6 +55,7 @@ bool menuaction_prevpage = false;
 bool menuaction_launch = false;
 bool menudboxaction_switchloc = false;
 bool buttondeletegame = false;
+bool addgametodeletequeue = false;
 
 CIniFile bootstrapini( "sdmc:/_nds/nds-bootstrap.ini" );
 #include "ndsheaderbanner.h"
@@ -931,6 +932,9 @@ vector<string> fcfiles;
 
 // Vector with found roms
 vector<string> matching_files;
+
+// Vector to select rom for deletion
+vector<string> delete_queue;
 
 // APT hook for "returned from HOME menu".
 static aptHookCookie rfhm_cookie;
@@ -2327,6 +2331,11 @@ int main()
 					// Reload language
 					langInit();
 					
+					// Clear delete queue
+					if (delete_queue.size() != 0) {
+						delete_queue.clear();
+					}
+					
 					// Clear matching_files vector
 					if(matching_files.size() != 0) {
 						matching_files.clear(); // Clear filter
@@ -3611,6 +3620,8 @@ int main()
 						menuaction_prevpage = true;
 					} else if(hDown & KEY_X) {
 						buttondeletegame = true;
+					} else if((hDown & KEY_L) && (hDown & KEY_X)) {
+						addgametodeletequeue = true;
 					}
 					if(hDown & KEY_Y) {
 						if (dspfirmfound) {
@@ -3619,76 +3630,138 @@ int main()
 						}
 						settings.ui.iconsize = !settings.ui.iconsize;
 					}
-					if(buttondeletegame) {
-						// Delete game mode
-						buttondeletegame = false; // Prevent deleting by accident
+					if(addgametodeletequeue) {
+						// Add game to delete queue.
+						addgametodeletequeue = false; // Prevent adding the same game twice.
 						
-						char path[256];
 						if (settings.twl.forwarder) {
 							if(matching_files.size() == 0){
 								rom = fcfiles.at(cursorPosition).c_str();
 							} else {
 								rom = matching_files.at(cursorPosition).c_str();
 							}
-							if (logEnabled)	LogFM("Delete mode enabled (flashcard)", rom);
-							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom);
-							fcfiles.erase(fcfiles.begin() + cursorPosition);
-							snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
-							
-							if (logEnabled)	LogFMA("Delete mode", ".ini file deleted", path);
-							CIniFile setfcrompathini(path);
-							std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
-
-							char ba_TID[5];
-							strcpy(ba_TID, ba_TIDini.c_str());
-							ba_TID[4] = 0;
-							
-							remove(path); // Remove .ini after reading TID.
-							
-							memset(path, 0, sizeof(path));
-							snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
-							if (logEnabled)	LogFM("Trying to delete boxart", path);
-							remove(path); // Remove .png
-							if (logEnabled)	LogFM("Delete mode", ".png file deleted");
-							
-							memset(path, 0, sizeof(path));
-							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, rom);
-							if (logEnabled)	LogFM("Trying to delete banner data", path);
-							remove(path); // Remove the .bin
-							if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
 						} else {
 							if(matching_files.size() == 0){
 								rom = files.at(cursorPosition).c_str();
 							} else {
 								rom = matching_files.at(cursorPosition).c_str();
 							}
-							if (logEnabled)	LogFM("Delete mode enabled (SD)", rom);
-							snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
-							files.erase(files.begin() + cursorPosition);
-							snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
-							
-							if (logEnabled)	LogFMA("Delete mode", ".nds file deleted", path);
-							FILE *f_nds_file = fopen(path, "rb");
-							
-							char ba_TID[5];
-							grabTID(f_nds_file, ba_TID);
-							ba_TID[4] = 0;
-							fclose(f_nds_file);
-							
-							remove(path); // Remove .nds after reading TID.
-							
-							memset(path, 0, sizeof(path));
-							snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-							if (logEnabled)	LogFM("Trying to delete boxart", path);
-							remove(path); // Remove .png
-							if (logEnabled)	LogFM("Delete mode", ".png file deleted");
-							
-							memset(path, 0, sizeof(path));
-							snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, rom);
-							if (logEnabled)	LogFM("Trying to delete banner data", path);
-							remove(path); // Remove the .bin
-							if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
 						}
+						
+						// If it was marked, unmark it.
+						auto it = std::find(delete_queue.begin(), delete_queue.end(), rom);
+						if(it != delete_queue.end()) {
+							delete_queue.erase(it);
+							// TODO unmark texture.	
+							if (logEnabled)	LogFMA("Multi delete mode enabled", "Rom remove from queue", rom);							
+						} else {
+							// Not found, so we can add it to list.
+							delete_queue.push_back(rom);
+							// TODO mark texture.
+							if (logEnabled)	LogFMA("Multi delete mode enabled", "Rom added to queue", rom);
+						}					
+						std::sort(delete_queue.begin(), delete_queue.end());
+					}
+					
+					if(buttondeletegame) {
+						// Delete game mode.
+						buttondeletegame = false; // Prevent deleting by accident.
+						vector<string> delete_queue_copy = delete_queue; // Copy the vector 'cause we cannot delete while iterating it.
+						
+						char path[256];
+						std::string rom_iter;
+						if (settings.twl.forwarder) {
+							for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
+								
+								if(matching_files.size() == 0){
+									rom_iter = fcfiles.at(cursorPosition);
+								} else {
+									rom_iter = matching_files.at(cursorPosition);
+								}
+								
+								if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
+									// ROM found.
+									if (logEnabled)	LogFM("Delete mode enabled (flashcard)", rom_iter.c_str());
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), rom_iter.c_str());
+									fcfiles.erase(fcfiles.begin() + cursorPosition);
+									snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
+									
+									if (logEnabled)	LogFMA("Delete mode", ".ini file deleted", path);
+									CIniFile setfcrompathini(path);
+									std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+
+									char ba_TID[5];
+									strcpy(ba_TID, ba_TIDini.c_str());
+									ba_TID[4] = 0;
+									
+									remove(path); // Remove .ini after reading TID.
+									
+									memset(path, 0, sizeof(path));
+									snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+									if (logEnabled)	LogFM("Trying to delete boxart", path);
+									remove(path); // Remove .png
+									if (logEnabled)	LogFM("Delete mode", ".png file deleted");
+									
+									memset(path, 0, sizeof(path));
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, rom_iter.c_str());
+									if (logEnabled)	LogFM("Trying to delete banner data", path);
+									remove(path); // Remove the .bin
+									if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
+									
+									delete_queue.erase(it);
+									if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
+								}
+							}
+						} else {				
+							for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
+								
+								if(matching_files.size() == 0){
+									rom_iter = files.at(cursorPosition);
+								} else {
+									rom_iter = matching_files.at(cursorPosition);
+								}
+								
+								if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
+									// ROM found.
+									if (logEnabled)	LogFM("Delete mode enabled (SD)", rom_iter.c_str());
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_iter.c_str());
+									files.erase(files.begin() + cursorPosition);
+									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+									
+									if (logEnabled)	LogFMA("Delete mode", ".nds file deleted", path);
+									FILE *f_nds_file = fopen(path, "rb");
+									
+									char ba_TID[5];
+									grabTID(f_nds_file, ba_TID);
+									ba_TID[4] = 0;
+									fclose(f_nds_file);
+									
+									remove(path); // Remove .nds after reading TID.
+									
+									memset(path, 0, sizeof(path));
+									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+									if (logEnabled)	LogFM("Trying to delete boxart", path);
+									remove(path); // Remove .png
+									if (logEnabled)	LogFM("Delete mode", ".png file deleted");
+									
+									memset(path, 0, sizeof(path));
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, rom_iter.c_str());
+									if (logEnabled)	LogFM("Trying to delete banner data", path);
+									remove(path); // Remove the .bin
+									if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
+									
+									delete_queue.erase(it);
+									if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
+								}
+							}							
+						}
+						
+						if(delete_queue.size() != 0) {
+							if (logEnabled)	LogFM("Delete mode", "Error detected. Cannot clear vector");
+						} else {
+							delete_queue.clear();
+						}
+						
 						pagenum = 0; // Go to page 0
 						cursorPosition = 0; // Move the cursor to 0
 						storedcursorPosition = cursorPosition; // Move the cursor to 0
@@ -4346,7 +4419,8 @@ int main()
 							sfx_switch->stop();	// Prevent freezing
 							sfx_switch->play();
 						}
-						matching_files.clear();
+						if (matching_files.size() != 0) matching_files.clear();
+						if (delete_queue.size() != 0) delete_queue.clear();
 						pagenum = 0;
 						bannertextloaded = false;
 						cursorPosition = 0;
