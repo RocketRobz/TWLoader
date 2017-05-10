@@ -2066,23 +2066,25 @@ int main()
 						sf2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
 						const int file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-						for (filenum = 0; filenum < file_count; filenum++) {
-							u32 color;
-							if (cursorPosition == filenum) {
-								color = SET_ALPHA(color_data->color, 255);
-							} else {
-								color = RGBA8(255, 255, 255, 255);
+						for (filenum = filenameYmovepos; filenum < file_count; filenum++) {
+							if (filenum < 15+filenameYmovepos) {
+								u32 color;
+								if (cursorPosition == filenum) {
+									color = SET_ALPHA(color_data->color, 255);
+								} else {
+									color = RGBA8(255, 255, 255, 255);
+								}
+
+								// Get the current filename and convert it to wstring.
+								const char *filename = (settings.twl.forwarder
+										? fcfiles.at(filenum).c_str()
+										: files.at(filenum).c_str());
+								wstring wstr = utf8_to_wstring(filename);
+								setTextColor(color);
+								renderText_w(42, filenameYpos, 0.50, 0.50, false, wstr.c_str());
+
+								filenameYpos += 15;
 							}
-
-							// Get the current filename and convert it to wstring.
-							const char *filename = (settings.twl.forwarder
-									? fcfiles.at(filenum).c_str()
-									: files.at(filenum).c_str());
-							wstring wstr = utf8_to_wstring(filename);
-							setTextColor(color);
-							renderText_w(42, filenameYpos+filenameYmovepos*15, 0.50, 0.50, false, wstr.c_str());
-
-							filenameYpos += 15;
 						}
 
 						sf2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
@@ -3566,9 +3568,10 @@ int main()
 						updatetopscreen = true;
 					}
 					if (filenum > 15) {
-						/* if (cursorPosition > filenum-8) {}
-						else */ if (cursorPosition > 7)
-							filenameYmovepos = -cursorPosition+7;
+						if (cursorPosition > filenum-8)
+							filenameYmovepos = filenum-15;
+						else if (cursorPosition > 7)
+							filenameYmovepos = cursorPosition-7;
 						else
 							filenameYmovepos = 0;
 					}
