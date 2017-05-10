@@ -2692,7 +2692,7 @@ int main()
 								sf2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
 						}
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
+						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 1) {
@@ -2708,7 +2708,7 @@ int main()
 								sf2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
 						}
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
+						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 2) {
@@ -2717,7 +2717,7 @@ int main()
 						} else
 							sf2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
+						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 3) {
@@ -2726,7 +2726,7 @@ int main()
 						} else
 							sf2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46.0f, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
+						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
 						Ypos += 39;
 						filenameYpos += 39;
 						if (woodmenu_cursorPosition == 4) {
@@ -2735,7 +2735,7 @@ int main()
 						} else
 							sf2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText_w(8, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));						
+						renderText_w(46, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));						
 						renderText(2, 2, 0.50, 0.50, false, "Menu");
 					} else {
 						int Ypos = 26;
