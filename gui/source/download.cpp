@@ -247,18 +247,17 @@ int checkUpdate(void) {
 					if(subVal->type == json_string) {
 
 						if(strncmp(name, "latest_major", nameLen) == 0) {
-						// Found latest major										
-						strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
+							// Found latest major										
+							strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
 						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
-						// Read latest minor
-						strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
+							// Read latest minor
+							strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
 						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
-						// Read latest micro
-						strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
+							// Read latest micro
+							strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
 						} else if(strncmp(name, "gui_url", nameLen) == 0) {
-						// Found update url!									
-						strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
-if (logEnabled) LogFMA("checkUpdate", "url", gui_url);
+							// Found update url!									
+							strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
 						}
 					}
 				}
