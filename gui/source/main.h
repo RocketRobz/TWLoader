@@ -44,7 +44,6 @@ extern sf2d_texture *settingslogotex;	// TWLoader logo.
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 extern char settings_vertext[13];
-extern char settings_previousvertext[13];
 
 extern const u64 TWLNAND_TID;	// TWLNAND title ID.
 extern bool checkTWLNANDSide(void);

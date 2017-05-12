@@ -24,8 +24,9 @@ using std::vector;
 #include <3ds.h>
 #include <sf2d.h>
 #include "citrostuff.h"
+#include "json/json.h"
 
-const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/prev_ver?raw=true";
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
 const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
 const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
@@ -172,6 +173,15 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 	return 0;
 }
 
+Result http_read_internal(httpcContext* context, u32* bytesRead, void* buffer, u32 size) {
+    if(context == NULL || buffer == NULL) {
+        return -1;
+    }
+
+    Result res = httpcDownloadData(context, (u8*) buffer, size, bytesRead);
+    return res != (int) HTTPC_RESULTCODE_DOWNLOADPENDING ? res : 0;
+}
+
 /**
  * Check for a TWLoader update.
  * @return 0 if an update is available; non-zero if up to date or an error occurred.
@@ -189,68 +199,113 @@ int checkUpdate(void) {
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	remove("sdmc:/_nds/twloader/ver");
-	remove("sdmc:/_nds/twloader/prev_ver");
-	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/prev_ver", MEDIA_SD_FILE);
-	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
-	if (res == 0) {
+	
+	u32 responseCode = 0;
+	httpcContext context;	
+	
+	// TODO MANAGE EXCEPTIONS!!!!
+	httpcInit(0);
+	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
+    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
+	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
+	httpcBeginRequest(&context);
+	httpcGetResponseStatusCode(&context, &responseCode);	
+    if (responseCode != 200) {
+        // This is an error trying to reach the file, so insert error here.
+    }
+	
+	u32 size = 0;
+	httpcGetDownloadSizeState(&context, NULL, &size);	
+	char* jsonText = (char*) calloc(sizeof(char), size);
+	if (logEnabled) LogFM("checkUpdate", "Downloading JSON info.");
+	if(jsonText != NULL) {
+		u32 bytesRead = 0;
+		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
+		json_value* json = json_parse(jsonText, size);
+		if (logEnabled) LogFM("checkUpdate", "JSON read.");
 
-		bool isUnknown = false;
-		FILE* VerFile = fopen("sdmc:/_nds/twloader/prev_ver", "r");
-		if (VerFile) {
-			/** This is the same method as checkBootstrapVersion() **/
-			long fileSize;
-			
-			fseek(VerFile , 0 , SEEK_END);
-			fileSize = ftell(VerFile);
-			
-			char buf[fileSize + 1];
+		if(json != NULL) {
+			if(json->type == json_object) { // {} are objects, [] are arrays				
+				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
+				
+				// Create 3 char to store version
+				char read_major[3];
+				char read_minor[3];
+				char read_micro[3];
 
-			// Clean buf array
-			for (size_t i=0; i< sizeof(buf); i++){
-				buf[i] = '\0';
-			}	
-			
-			rewind(VerFile);
-			fread(buf,1,sizeof(settings_previousvertext),VerFile);
-			buf[sizeof(buf) - 1] = '\0';
-			strcpy(settings_previousvertext, buf);
-			fclose(VerFile);
-			/** End **/
-		} else {
-			// Unable to open the version file.
-			strcpy(settings_previousvertext, "Unknown");
-			isUnknown = true;
-		}
-		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded previous version:", settings_previousvertext);
-		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
+				char gui_url[512];
 
-		if (!isUnknown && (strcmp(settings_previousvertext, settings_vertext) <= 0)) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
+				// Search in GUI object
+				json_value* val = json->u.object.values[0].value;
+				for(u32 i = 0; i < json->u.object.length; i++) {				
+					
+					// Create two variables that will store the values and it size
+					char* name = val->u.object.values[i].name;
+					u32 nameLen = val->u.object.values[i].name_length;
+					json_value* subVal = val->u.object.values[i].value;
+					if(subVal->type == json_string) {
+
+						if(strncmp(name, "latest_major", nameLen) == 0) {
+							// Found latest major										
+							strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
+						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
+							// Read latest minor
+							strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
+						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
+							// Read latest micro
+							strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
+						} else if(strncmp(name, "gui_url", nameLen) == 0) {
+							// Found update url!									
+							strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
+						}
+					}
+				}
+
+				// Store latest and current version
+				char latestVersion[16];
+				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_major, read_minor, read_micro);
+
+				char currentVersion[16];
+				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
+
+				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
+
+				// Check if current version is the latest
+				if(strcmp(currentVersion, latestVersion) != 0) {
+					// Update available!
+					if (logEnabled)	LogFM("checkUpdate", "Update available");
+					free(jsonText);
+					httpcCloseContext(&context);
+					return 0;
+				} else {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					if (screenmode == SCREEN_MODE_SETTINGS) {
+						sf2d_draw_texture(settingstex, 0, 0);
+					}
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+
+					// Version is lower or same.
+					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
+
+					if (screenmode == SCREEN_MODE_SETTINGS) {				
+						showdialogbox = false;
+					} else {
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+					}
+
+					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
+					free(jsonText);
+					httpcCloseContext(&context);						
+					return -1;
+				}
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-
-			// Version is lower or same.
-			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
-		
-			if (screenmode == SCREEN_MODE_SETTINGS) {				
-				showdialogbox = false;
-			}else{
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-			}
-			
-			if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");			
-			return -1;
 		}
-		if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Is higher");
-		showdialogbox = false;
-		return 0;
 	}
-	if (logEnabled)	LogFM("checkUpdate", "Problem downloading ver file!");
-	showdialogbox = false;
+	free(jsonText);
+	httpcCloseContext(&context);
 	return -1;
 }
 
@@ -541,9 +596,10 @@ static const char *getGameTDBRegion(u8 tid_region, const char **pFallback)
 /**
  * Download a single boxart from GameTDB.
  * @param ba_TID Game ID. (4 characters, NULL-terminated)
+ * @param location.
  * @return 0 on success; non-zero on error.
  */
-static int downloadBoxArt_internal(const char *ba_TID)
+static int downloadBoxArt_internal(const char *ba_TID, RomLocation location)
 {
 	char path[256];
 	char http_url[256];
@@ -556,7 +612,19 @@ static int downloadBoxArt_internal(const char *ba_TID)
 
 	// NOTE: downloadFile() doesn't use devoptab,
 	// so don't prefix the filename with sdmc:/.
-	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+	
+	switch(location){
+		case ROM_SD:
+			snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+			break;
+		case ROM_FLASHCARD:
+			snprintf(path, sizeof(path), "/_nds/twloader/boxart/flashcard/%.4s.png", ba_TID);
+			break;
+		case ROM_SLOT_1:
+		default:
+			snprintf(path, sizeof(path), "/_nds/twloader/boxart/slot1/%.4s.png", ba_TID);
+			break;
+	}
 	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
 		 ba_region, ba_TID);
 	int res = downloadFile(http_url, path, MEDIA_SD_FILE);
@@ -704,14 +772,14 @@ void downloadSlot1BoxArt(const char* TID)
 	ba_TID[4] = 0;
 
 	char path[256];
-	snprintf(path, sizeof(path), "/_nds/twloader/boxart/%.4s.png", ba_TID);
+	snprintf(path, sizeof(path), "/_nds/twloader/boxart/slot1/%.4s.png", ba_TID);
 	if (!access(path, F_OK)) {
 		// File already exists.
 		return;
 	}
 
 	if (logEnabled)	LogFM("Main.downloadSlot1BoxArt", "Downloading box art (Slot-1 card)");
-	downloadBoxArt_internal(ba_TID);
+	downloadBoxArt_internal(ba_TID, ROM_SLOT_1);
 }
 
 /**
@@ -779,6 +847,49 @@ void downloadBoxArt(void)
 		boxart_dl_tids.push_back(tid);
 	}
 	
+	if (logEnabled)	LogFM("DownloadBoxArt.Read_BoxArt", "SD boxart read correctly.");
+	if (boxart_dl_tids.empty()) {
+		// No boxart to download.
+		if (logEnabled)	LogFM("Download.downloadBoxArt", "No boxart to download. (SD side)");
+	}else {		
+		// Sort the TIDs for convenience purposes.
+		std::sort(boxart_dl_tids.begin(), boxart_dl_tids.end());
+
+		// Download the boxart.
+		char s_boxart_total[12];
+		snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
+		if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart (SD side)");
+		for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
+			static const char title[] = "Downloading missing boxart (SD side)...";
+
+			// Convert the TID back to char.
+			char ba_TID[5];
+			u32 tid = __builtin_bswap32(boxart_dl_tids[boxartnum]);
+			memcpy(ba_TID, &tid, 4);
+			ba_TID[4] = 0;
+			
+			char str[256] = "";
+			snprintf(str, sizeof(str), "%zu", boxartnum);
+			
+			// Show the dialog.
+			DialogBoxAppear(title, 0);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			setTextColor(RGBA8(0, 0, 0, 255));
+			renderText(12, 16, 0.5f, 0.5f, false, title);
+			renderText(12, 32, 0.5f, 0.5f, false, str);
+			renderText(39, 32, 0.5f, 0.5f, false, "/");
+			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
+			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
+			renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			
+			downloadBoxArt_internal(ba_TID, ROM_SD);
+		}
+		DialogBoxDisappear(NULL, 0);
+		boxart_dl_tids.clear();
+	}
 	// Check if we're missing any boxart for ROMs on the flashcard.
 	for (size_t boxartnum = 0; boxartnum < fcfiles.size(); boxartnum++) {
 		// Get the title ID from the INI file.
@@ -811,13 +922,13 @@ void downloadBoxArt(void)
 		boxart_all_tids.insert(tid);
 
 		// Does this boxart file already exist?
-		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", ba_TID.c_str());
+		snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/flashcard/%.4s.png", ba_TID.c_str());
 		if (!access(path, F_OK)) {
 			// Boxart file exists.
 			continue;
 		}else{
 			// Maybe boxart exist with fullname instead of TID
-			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%s.png", tempfile);
+			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/flashcard/%s.png", tempfile);
 			if(!access(path, F_OK)){
 				// Boxart with fullname exist
 				continue;
@@ -828,6 +939,50 @@ void downloadBoxArt(void)
 		boxart_dl_tids.push_back(tid);
 	}
 
+	if (logEnabled)	LogFM("DownloadBoxArt.Read_BoxArt", "Flashcard boxart read correctly.");
+	if (boxart_dl_tids.empty()) {
+		// No boxart to download.
+		if (logEnabled)	LogFM("Download.downloadBoxArt", "No boxart to download. (Flashcard side)");
+	}else {		
+		// Sort the TIDs for convenience purposes.
+		std::sort(boxart_dl_tids.begin(), boxart_dl_tids.end());
+
+		// Download the boxart.
+		char s_boxart_total[12];
+		snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
+		if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart (Flashcard side)");
+		for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
+			static const char title[] = "Downloading missing boxart (Flashcard side)...";
+
+			// Convert the TID back to char.
+			char ba_TID[5];
+			u32 tid = __builtin_bswap32(boxart_dl_tids[boxartnum]);
+			memcpy(ba_TID, &tid, 4);
+			ba_TID[4] = 0;
+			
+			char str[256] = "";
+			snprintf(str, sizeof(str), "%zu", boxartnum);
+			
+			// Show the dialog.
+			DialogBoxAppear(title, 0);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			setTextColor(RGBA8(0, 0, 0, 255));
+			renderText(12, 16, 0.5f, 0.5f, false, title);
+			renderText(12, 32, 0.5f, 0.5f, false, str);
+			renderText(39, 32, 0.5f, 0.5f, false, "/");
+			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
+			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
+			renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+
+			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
+		}
+		DialogBoxDisappear(NULL, 0);
+		boxart_dl_tids.clear();
+	}
+	
 	// Check if we're missing boxart for the Slot-1 cartridge.
 	gamecardPoll(true);
 	const char *const card_gameID = gamecardGetGameID();
@@ -842,7 +997,7 @@ void downloadBoxArt(void)
 			boxart_all_tids.insert(tid);
 
 			// Does this boxart file already exist?
-			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/%.4s.png", card_gameID);
+			snprintf(path, sizeof(path), "sdmc:/_nds/twloader/boxart/slot1/%.4s.png", card_gameID);
 			if (access(path, F_OK) != 0) {
 				// Boxart file does not exist. Download it.
 				boxart_dl_tids.push_back(tid);
@@ -850,10 +1005,10 @@ void downloadBoxArt(void)
 		}
 	}
 	
-	if (logEnabled)	LogFM("DownloadBoxArt.Read_BoxArt", "Boxart read correctly.");
+	if (logEnabled)	LogFM("DownloadBoxArt.Read_BoxArt", "Slot-1 boxart read correctly.");
 	if (boxart_dl_tids.empty()) {
 		// No boxart to download.
-		if (logEnabled)	LogFM("Download.downloadBoxArt", "No boxart to download.");
+		if (logEnabled)	LogFM("Download.downloadBoxArt", "No boxart to download. (Slot-1 Side)");
 		return;
 	}
 
@@ -863,9 +1018,9 @@ void downloadBoxArt(void)
 	// Download the boxart.
 	char s_boxart_total[12];
 	snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
-	if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart");
+	if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart (Slot-1 Side)");
 	for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
-		static const char title[] = "Downloading missing boxart...";
+		static const char title[] = "Downloading missing boxart (Slot-1 side)...";
 
 		// Convert the TID back to char.
 		char ba_TID[5];
@@ -873,13 +1028,16 @@ void downloadBoxArt(void)
 		memcpy(ba_TID, &tid, 4);
 		ba_TID[4] = 0;
 		
+		char str[256] = "";
+		snprintf(str, sizeof(str), "%zu", boxartnum);
+		
 		// Show the dialog.
 		DialogBoxAppear(title, 0);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		setTextColor(RGBA8(0, 0, 0, 255));
 		renderText(12, 16, 0.5f, 0.5f, false, title);
-		// renderText(12, 32, 0.5f, 0.5f, false, "%zu", boxartnum);
+		renderText(12, 32, 0.5f, 0.5f, false, str);
 		renderText(39, 32, 0.5f, 0.5f, false, "/");
 		renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
 		renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
@@ -887,6 +1045,6 @@ void downloadBoxArt(void)
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 
-		downloadBoxArt_internal(ba_TID);
+		downloadBoxArt_internal(ba_TID, ROM_SLOT_1);
 	}
 }

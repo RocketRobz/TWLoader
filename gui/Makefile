@@ -55,7 +55,7 @@ VERSION_MICRO := 1
 #---------------------------------------------------------------------------------
 TARGET		:=	TWLoader
 BUILD		:=	build
-SOURCES		:=	source source/img
+SOURCES		:=	source source/img source/json
 DATA		:=	data
 INCLUDES	:=	include
 ROMFS		:=	romfs
@@ -76,7 +76,7 @@ CITRA 	?= C:\emulators\citra\citra.exe $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
+CFLAGS	:=	-g -Wall -Wstrict-aliasing -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
 		-ffunction-sections \
 		$(ARCH)
 

@@ -13,6 +13,12 @@ enum MediaType {
 	MEDIA_NAND_CIA = 2,	// CIA installed to NAND.
 };
 
+enum RomLocation {
+	ROM_SD = 0,			// Location for SD files
+	ROM_FLASHCARD = 1,	// Location for flashcard files
+	ROM_SLOT_1 = 2,		// Location for SLOT-1 files
+};
+
 /**
  * Download a file.
  * @param url URL of the file.
