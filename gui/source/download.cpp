@@ -214,7 +214,6 @@ int checkUpdate(void) {
     if (responseCode != 200) {
         // This is an error trying to reach the file, so insert error here.
     }
-	httpcCloseContext(&context);	
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
