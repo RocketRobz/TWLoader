@@ -228,38 +228,37 @@ int checkUpdate(void) {
 		if(json != NULL) {
 			if(json->type == json_object) { // {} are objects, [] are arrays				
 				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
-
+				
 				// Create 3 char to store version
 				char read_major[3];
 				char read_minor[3];
 				char read_micro[3];
 
-				// Create a pointer to store the gui update URL
-				char* url = NULL;
+				char gui_url[512];
 
-				// Read the json object to find GUI object
-				json_value* val = json->u.object.values[1].value;
-
-				// Read from json object[1] == GUI
+				// Search in GUI object
+				json_value* val = json->u.object.values[0].value;
 				for(u32 i = 0; i < json->u.object.length; i++) {				
-
+					
 					// Create two variables that will store the values and it size
-					char* name = json->u.object.values[i].name;
-					u32 nameLen = json->u.object.values[i].name_length;
+					char* name = val->u.object.values[i].name;
+					u32 nameLen = val->u.object.values[i].name_length;
+					json_value* subVal = val->u.object.values[i].value;
+					if(subVal->type == json_string) {
 
-					if(val->type == json_string) {
 						if(strncmp(name, "latest_major", nameLen) == 0) {
 						// Found latest major										
-						strncpy(read_major, val->u.string.ptr, sizeof(read_major));
+						strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
 						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
 						// Read latest minor
-						strncpy(read_minor, val->u.string.ptr, sizeof(read_minor));
+						strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
 						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
 						// Read latest micro
-						strncpy(read_micro, val->u.string.ptr, sizeof(read_micro));
-						} else if(strncmp(name, "update_url", nameLen) == 0) {
+						strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
+						} else if(strncmp(name, "gui_url", nameLen) == 0) {
 						// Found update url!									
-						url = val->u.string.ptr;
+						strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
+if (logEnabled) LogFMA("checkUpdate", "url", gui_url);
 						}
 					}
 				}
@@ -275,35 +274,33 @@ int checkUpdate(void) {
 				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
 
 				// Check if current version is the latest
-				if(strncmp(currentVersion, latestVersion, sizeof(currentVersion)) != 0) {								
-					if(url != NULL) {
-						// Update available!
-						if (logEnabled)	LogFM("checkUpdate", "Update available");
-						free(jsonText);
-						httpcCloseContext(&context);
-						return 0;
-					} else {
-						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-						if (screenmode == SCREEN_MODE_SETTINGS) {
-							sf2d_draw_texture(settingstex, 0, 0);
-						}
-						sf2d_draw_texture(dialogboxtex, 0, 0);
-
-						// Version is lower or same.
-						if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
-
-						if (screenmode == SCREEN_MODE_SETTINGS) {				
-							showdialogbox = false;
-						} else {
-							sf2d_end_frame();
-							sf2d_swapbuffers();
-						}
-
-						if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
-						free(jsonText);
-						httpcCloseContext(&context);						
-						return -1;
+				if(strcmp(currentVersion, latestVersion) != 0) {
+					// Update available!
+					if (logEnabled)	LogFM("checkUpdate", "Update available");
+					free(jsonText);
+					httpcCloseContext(&context);
+					return 0;
+				} else {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					if (screenmode == SCREEN_MODE_SETTINGS) {
+						sf2d_draw_texture(settingstex, 0, 0);
 					}
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+
+					// Version is lower or same.
+					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
+
+					if (screenmode == SCREEN_MODE_SETTINGS) {				
+						showdialogbox = false;
+					} else {
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+					}
+
+					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
+					free(jsonText);
+					httpcCloseContext(&context);						
+					return -1;
 				}
 			}
 		}
