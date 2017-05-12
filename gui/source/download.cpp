@@ -24,8 +24,9 @@ using std::vector;
 #include <3ds.h>
 #include <sf2d.h>
 #include "citrostuff.h"
+#include "json/json.h"
 
-const char* DOWNLOAD_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/prev_ver?raw=true";
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
 const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
 const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
@@ -172,6 +173,15 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 	return 0;
 }
 
+Result http_read_internal(httpcContext* context, u32* bytesRead, void* buffer, u32 size) {
+    if(context == NULL || buffer == NULL) {
+        return -1;
+    }
+
+    Result res = httpcDownloadData(context, (u8*) buffer, size, bytesRead);
+    return res != (int) HTTPC_RESULTCODE_DOWNLOADPENDING ? res : 0;
+}
+
 /**
  * Check for a TWLoader update.
  * @return 0 if an update is available; non-zero if up to date or an error occurred.
@@ -189,68 +199,118 @@ int checkUpdate(void) {
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	remove("sdmc:/_nds/twloader/ver");
-	remove("sdmc:/_nds/twloader/prev_ver");
-	int res = downloadFile(DOWNLOAD_VER_URL, "/_nds/twloader/prev_ver", MEDIA_SD_FILE);
-	if (logEnabled)	LogFM("checkUpdate", "downloadFile() end");
-	if (res == 0) {
+	
+	u32 responseCode = 0;
+	httpcContext context;	
+	
+	// TODO MANAGE EXCEPTIONS!!!!
+	httpcInit(0);
+	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
+    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
+	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
+	httpcBeginRequest(&context);
+	httpcGetResponseStatusCode(&context, &responseCode);	
+    if (responseCode != 200) {
+        // This is an error trying to reach the file, so insert error here.
+    }
+	httpcCloseContext(&context);	
+	
+	u32 size = 0;
+	httpcGetDownloadSizeState(&context, NULL, &size);	
+	char* jsonText = (char*) calloc(sizeof(char), size);
+	if (logEnabled) LogFM("checkUpdate", "Downloading JSON info.");
+	if(jsonText != NULL) {
+		u32 bytesRead = 0;
+		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
+		json_value* json = json_parse(jsonText, size);
+		if (logEnabled) LogFM("checkUpdate", "JSON read.");
 
-		bool isUnknown = false;
-		FILE* VerFile = fopen("sdmc:/_nds/twloader/prev_ver", "r");
-		if (VerFile) {
-			/** This is the same method as checkBootstrapVersion() **/
-			long fileSize;
-			
-			fseek(VerFile , 0 , SEEK_END);
-			fileSize = ftell(VerFile);
-			
-			char buf[fileSize + 1];
+		if(json != NULL) {
+			if(json->type == json_object) { // {} are objects, [] are arrays				
+				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
 
-			// Clean buf array
-			for (size_t i=0; i< sizeof(buf); i++){
-				buf[i] = '\0';
-			}	
-			
-			rewind(VerFile);
-			fread(buf,1,sizeof(settings_previousvertext),VerFile);
-			buf[sizeof(buf) - 1] = '\0';
-			strcpy(settings_previousvertext, buf);
-			fclose(VerFile);
-			/** End **/
-		} else {
-			// Unable to open the version file.
-			strcpy(settings_previousvertext, "Unknown");
-			isUnknown = true;
-		}
-		if (logEnabled)	LogFMA("checkUpdate", "Reading downloaded previous version:", settings_previousvertext);
-		if (logEnabled)	LogFMA("checkUpdate", "Reading GUI version:", settings_vertext);
+				// Create 3 char to store version
+				char read_major[3];
+				char read_minor[3];
+				char read_micro[3];
 
-		if (!isUnknown && (strcmp(settings_previousvertext, settings_vertext) <= 0)) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
+				// Create a pointer to store the gui update URL
+				char* url = NULL;
+
+				// Read the json object to find GUI object
+				json_value* val = json->u.object.values[1].value;
+
+				// Read from json object[1] == GUI
+				for(u32 i = 0; i < json->u.object.length; i++) {				
+
+					// Create two variables that will store the values and it size
+					char* name = json->u.object.values[i].name;
+					u32 nameLen = json->u.object.values[i].name_length;
+
+					if(val->type == json_string) {
+						if(strncmp(name, "latest_major", nameLen) == 0) {
+						// Found latest major										
+						strncpy(read_major, val->u.string.ptr, sizeof(read_major));
+						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
+						// Read latest minor
+						strncpy(read_minor, val->u.string.ptr, sizeof(read_minor));
+						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
+						// Read latest micro
+						strncpy(read_micro, val->u.string.ptr, sizeof(read_micro));
+						} else if(strncmp(name, "update_url", nameLen) == 0) {
+						// Found update url!									
+						url = val->u.string.ptr;
+						}
+					}
+				}
+
+				// Store latest and current version
+				char latestVersion[16];
+				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_major, read_minor, read_micro);
+
+				char currentVersion[16];
+				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
+
+				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
+
+				// Check if current version is the latest
+				if(strncmp(currentVersion, latestVersion, sizeof(currentVersion)) != 0) {								
+					if(url != NULL) {
+						// Update available!
+						if (logEnabled)	LogFM("checkUpdate", "Update available");
+						free(jsonText);
+						httpcCloseContext(&context);
+						return 0;
+					} else {
+						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+						if (screenmode == SCREEN_MODE_SETTINGS) {
+							sf2d_draw_texture(settingstex, 0, 0);
+						}
+						sf2d_draw_texture(dialogboxtex, 0, 0);
+
+						// Version is lower or same.
+						if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
+
+						if (screenmode == SCREEN_MODE_SETTINGS) {				
+							showdialogbox = false;
+						} else {
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+
+						if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
+						free(jsonText);
+						httpcCloseContext(&context);						
+						return -1;
+					}
+				}
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-
-			// Version is lower or same.
-			if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
-		
-			if (screenmode == SCREEN_MODE_SETTINGS) {				
-				showdialogbox = false;
-			}else{
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-			}
-			
-			if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");			
-			return -1;
 		}
-		if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Is higher");
-		showdialogbox = false;
-		return 0;
 	}
-	if (logEnabled)	LogFM("checkUpdate", "Problem downloading ver file!");
-	showdialogbox = false;
+	free(jsonText);
+	httpcCloseContext(&context);
 	return -1;
 }
 
