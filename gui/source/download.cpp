@@ -718,7 +718,7 @@ void checkBootstrapVersion(void){
 	
 	res = false; // Just to be sure	
 	
-	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
+	FILE* VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
 	if (!VerFile){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "unofficial-bootstrap ver file not found.");
 		if(checkWifiStatus()){
