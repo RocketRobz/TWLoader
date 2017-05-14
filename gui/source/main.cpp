@@ -4659,8 +4659,8 @@ int main()
 						LoadPerGameSettings();
 					}
 				}
-				if((RGB[0] < 0) && (RGB[1] < 0) && (RGB[2] < 0)){
-					// If RGB in pergame is less than 0, use standard rainbowled patern
+				if((RGB[0] <= 0) && (RGB[1] <= 0) && (RGB[2] <= 0)){
+					// If RGB in pergame is 0 or less, use standard rainbowled patern
 					if (settings.twl.rainbowled) {
 						RainbowLED();
 					}
