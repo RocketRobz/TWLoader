@@ -85,7 +85,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 			if(R_SUCCEEDED(httpcBeginRequest(&context))){
 				u32 contentsize=0;
 				if(R_FAILED(httpcGetResponseStatusCode(&context, &statuscode))){
-					if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get response status code");
+					if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get response status code.");
 					httpcCloseContext(&context);
 					httpcExit();
 					fsExit();
@@ -100,7 +100,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
 
 					if(R_FAILED(httpcGetDownloadSizeState(&context, NULL, &contentsize))){
-						if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get download size");
+						if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to get download size.");
 						httpcCloseContext(&context);
 						httpcExit();
 						fsExit();
@@ -112,7 +112,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 					do {
 						if(R_FAILED(ret = httpcDownloadData(&context, buf, contentsize, &readSize))){
 							// In case there is an error
-							if (logEnabled) LogFM("downloadFile.error", "An error has ocurred while downloading data");
+							if (logEnabled) LogFM("downloadFile.error", "An error has ocurred while downloading data.");
 							free(buf);
 							httpcCloseContext(&context);
 							httpcExit();
@@ -148,10 +148,20 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 					}
 
 					free(buf);
+				}  else if ( ((statuscode >= 400) && (statuscode <= 451)) || ((statuscode >= 500) && (statuscode <= 512)) ) {
+					// 4XX client error.
+					// 5XX server error.
+					httpcCloseContext(&context);
+					char errorcode_s[4];
+					snprintf(errorcode_s, sizeof(errorcode_s), "%lu", statuscode);
+					if (logEnabled) LogFMA("downloadFile.error", "Error accessing resource.", errorcode_s);
+					httpcExit();
+					fsExit();
+					return -1;
 				}
 			}else{
 				// There was an error begining the request
-				if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to request server");
+				if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to request server.");
 				httpcCloseContext(&context);
 				httpcExit();
 				fsExit();
@@ -159,7 +169,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 			}
 		}else{
 			// There was a problem opening HTTP context
-			if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to open HTTP context");
+			if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to open HTTP context.");
 			httpcCloseContext(&context);
 			httpcExit();
 			fsExit();
@@ -628,8 +638,9 @@ static int downloadBoxArt_internal(const char *ba_TID, RomLocation location)
 	snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
 		 ba_region, ba_TID);
 	int res = downloadFile(http_url, path, MEDIA_SD_FILE);
-	if (res != 0 && ba_region_fallback != NULL) {
+	if ((res != 0) && (ba_region_fallback != NULL)) {
 		// Try the fallback region.
+		if (logEnabled)	LogFM("downloadBoxArt_internal", "Now using fallback region.");
 		snprintf(http_url, sizeof(http_url), "http://art.gametdb.com/ds/coverS/%s/%.4s.png",
 			 ba_region_fallback, ba_TID);
 		res = downloadFile(http_url, path, MEDIA_SD_FILE);
