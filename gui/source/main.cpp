@@ -2447,9 +2447,29 @@ int main()
 						if (cursorPosition < 0)
 							cursorPosition = 0;
 					} else {
-						cursorPosition = 0+pagenum*20; // This is to reset cursor position after switching from R4 theme.
-						storedcursorPosition = cursorPosition; // This is to reset cursor position after switching from R4 theme.
+						pagenum = 0; // Go to page 0
 						titleboxXmovepos = 0;
+						cursorPosition = 0 + pagenum * 20; // This is to reset cursor position after switching from R4 theme.
+						if (settings.twl.forwarder) {
+							if (fcfiles.size() <= 0) {
+								startbordermovepos = 0;
+								startborderscalesize = 1.0;
+								// No ROMs were found.
+								cursorPosition = -1;
+								titleboxXmovepos = +64;
+								noromsfound = true;
+							}
+						} else {
+							if (files.size() <= 0) {
+								startbordermovepos = 0;
+								startborderscalesize = 1.0;
+								// No ROMs were found.
+								cursorPosition = -1;
+								titleboxXmovepos = +64;
+								noromsfound = true;
+							}
+						}							
+						storedcursorPosition = cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						boxartXmovepos = 0;
 						// Reload 1st box art
 						LoadBoxArt_WoodTheme(0-pagenum*20);
