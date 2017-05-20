@@ -204,6 +204,8 @@ std::string settings_unofficialbootstrapver;
 static bool applaunchprep = false;
 static bool applaunchon = false;
 
+bool showbubble = false;
+
 int fadealpha = 255;
 bool fadein = true;
 bool fadeout = false;
@@ -1487,6 +1489,7 @@ int main()
 	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
 	cartctrtex = sfil_load_PNG_file("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // CTR cartridge
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
+	sf2d_texture *boxemptytex = sfil_load_PNG_file("romfs:/graphics/box_empty.png", SF2D_PLACE_RAM); // (DSiWare) empty box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
 
@@ -1720,7 +1723,8 @@ int main()
 			file_count = matching_files.size();
 		}
 		const int pagemax = std::min((20+pagenum*20), (int)file_count);
-		const int pagemax_ba = std::min((21+pagenum*20), (int)file_count);
+		// const int pagemax_ba = std::min((21+pagenum*20), (int)file_count);
+		int pagemax_ba = 21+pagenum*20;
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -1903,7 +1907,7 @@ int main()
 									}
 								}
 							} else {
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 							}
 						}
 					}else{
@@ -1937,7 +1941,7 @@ int main()
 									}
 								}
 							} else {
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 							}
 						}
 					}
@@ -1989,7 +1993,7 @@ int main()
 									}
 								}
 							} else {
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 							}
 						}
 					}else{
@@ -2034,7 +2038,7 @@ int main()
 									}
 								}
 							} else {
-								StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 							}
 						}
 					}
@@ -2378,15 +2382,18 @@ int main()
 		} */
 		
 		if (fadein) {
+			showbubble = false;
 			fadealpha -= 31;
 			if (fadealpha < 0) {
 				fadealpha = 0;
 				fadein = false;
 				titleboxXmovetimer = 0;
+				showbubble = true;
 			}
 		}
 		
 		if (fadeout) {
+			showbubble = false;
 			fadealpha += 31;
 			if (fadealpha > 255) {
 				fadealpha = 255;
@@ -2499,10 +2506,25 @@ int main()
 				titleboxXmoveleft = false;
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
-				bannertextloaded = false;			
+				bannertextloaded = false;
+				if (cursorPosition >= 0) {
+					if (cursorPosition >= file_count)
+						showbubble = false;
+					else {
+						showbubble = true;
+						if (dspfirmfound) {
+							sfx_stop->stop();
+							sfx_stop->play();
+						}
+					}
+				} else {
+					showbubble = true;
+					if (dspfirmfound) {
+						sfx_stop->stop();
+						sfx_stop->play();
+					}
+				}
 				storedcursorPosition = cursorPosition;
-				if (dspfirmfound) { sfx_stop->stop(); }
-				if (dspfirmfound) { sfx_stop->play(); }
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
@@ -2510,10 +2532,12 @@ int main()
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
 			} else if (titleboxXmovetimer == 2) {
+				if (dspfirmfound) {
+					sfx_select->stop();
+					sfx_select->play();
+				}
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
-				if (dspfirmfound) { sfx_select->stop(); }
-				if (dspfirmfound) { sfx_select->play(); }
 				// Load the previous box art
 				if ( cursorPosition == 3+pagenum*20 ||
 				cursorPosition == 6+pagenum*20 ||
@@ -2583,9 +2607,24 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				bannertextloaded = false;
+				if (cursorPosition >= 0) {
+					if (cursorPosition >= file_count)
+						showbubble = false;
+					else {
+						showbubble = true;
+						if (dspfirmfound) {
+							sfx_stop->stop();
+							sfx_stop->play();
+						}
+					}
+				} else {
+					showbubble = true;
+					if (dspfirmfound) {
+						sfx_stop->stop();
+						sfx_stop->play();
+					}
+				}
 				storedcursorPosition = cursorPosition;
-				if (dspfirmfound) { sfx_stop->stop(); }
-				if (dspfirmfound) { sfx_stop->play(); }
 				// Load the next box art
 				if ( cursorPosition == 4+pagenum*20 ||
 				cursorPosition == 7+pagenum*20 ||
@@ -2612,10 +2651,12 @@ int main()
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
 			} else if (titleboxXmovetimer == 2) {
+				if (dspfirmfound) {
+					sfx_select->stop();
+					sfx_select->play();
+				}
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
-				if (dspfirmfound) { sfx_select->stop(); }
-				if (dspfirmfound) { sfx_select->play(); }
 			} else {
 				if (!cursorPositionset) {
 					cursorPosition++;
@@ -3056,7 +3097,7 @@ int main()
 					else
 						sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
 
-					if (fadealpha == 0) {
+					if (showbubble) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// if (dspfirmfound) { sfx_menuselect->play(); }
 						bool drawBannerText = true;
@@ -3287,23 +3328,35 @@ int main()
 						ndsiconXpos = 144;
 					}
 					//filenameYpos = 0;
-					for (filenum = pagenum*20; filenum < pagemax; filenum++) {
-						if (settings.ui.iconsize) {
-							sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
-							titleboxXpos += 80;
+					for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
+						if (filenum < pagemax) {
+							if (settings.ui.iconsize) {
+								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
+								titleboxXpos += 80;
 
-							bnriconnum = filenum;
-							ChangeBNRIconNo();
-							sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-							ndsiconXpos += 80;
+								bnriconnum = filenum;
+								ChangeBNRIconNo();
+								sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+								ndsiconXpos += 80;
+							} else {
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
+								titleboxXpos += 64;
+
+								bnriconnum = filenum;
+								ChangeBNRIconNo();
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
+								ndsiconXpos += 64;
+							}
 						} else {
-							sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-							titleboxXpos += 64;
-
-							bnriconnum = filenum;
-							ChangeBNRIconNo();
-							sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-							ndsiconXpos += 64;
+							if (settings.ui.iconsize) {
+								sf2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
+								titleboxXpos += 80;
+								ndsiconXpos += 80;
+							} else {
+								sf2d_draw_texture(boxemptytex, titleboxXpos+titleboxXmovepos, 120);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+							}
 						}
 					}
 
@@ -3322,23 +3375,25 @@ int main()
 							// Don't print "START" and the cursor border.
 						} else {
 							if (!is3DSX || cursorPosition == -2) {
-								// Print "START" and the cursor border.
-								if (settings.ui.iconsize) {
-									sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
-									const wchar_t *start_text = TR(STR_START);
-									// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
-									//const int start_width = 0;
-									// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
-									setTextColor(RGBA8(255, 255, 255, 255));
-									renderText_w(136, 184, 0.60, 0.60, false, start_text);
-								} else {
-									sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-									const wchar_t *start_text = TR(STR_START);
-									// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-									//const int start_width = 0;
-									// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
-									setTextColor(RGBA8(255, 255, 255, 255));
-									renderText_w(140, 177, 0.50, 0.50, false, start_text);
+								if (showbubble) {
+									// Print "START" and the cursor border.
+									if (settings.ui.iconsize) {
+										sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
+										const wchar_t *start_text = TR(STR_START);
+										// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
+										//const int start_width = 0;
+										// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
+										setTextColor(RGBA8(255, 255, 255, 255));
+										renderText_w(136, 184, 0.60, 0.60, false, start_text);
+									} else {
+										sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
+										const wchar_t *start_text = TR(STR_START);
+										// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+										//const int start_width = 0;
+										// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+										setTextColor(RGBA8(255, 255, 255, 255));
+										renderText_w(140, 177, 0.50, 0.50, false, start_text);
+									}
 								}
 							}
 						}
@@ -3850,7 +3905,7 @@ int main()
 					hidTouchRead(&touch);
 					if(hDown & KEY_TOUCH){
 						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
-							menuaction_launch = true;
+							if (showbubble) menuaction_launch = true;
 						} else if (touch.px < 128 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveright) {
@@ -3878,7 +3933,7 @@ int main()
 							}
 							// updatebotscreen = true;
 						}
-					} else if(hDown & KEY_A){
+					} else if(hDown & KEY_A && showbubble){
 						menuaction_launch = true;
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
 						//titleboxXmovepos -= 64;
@@ -3985,6 +4040,7 @@ int main()
 							// updatebotscreen = true;
 						}
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
+						showbubble = false;
 						if (!is3DSX || cursorPosition == -2) {
 							bool playlaunchsound = true;
 							if (titleboxXmovetimer == 0) {
@@ -4758,6 +4814,7 @@ int main()
 	sf2d_free_texture(carttwltex);
 	if (settings.ui.theme == 0) gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
+	sf2d_free_texture(boxemptytex);
 	if (colortexloaded && settings.ui.theme == 0) {
 		sf2d_free_texture(dotcircletex);
 		sf2d_free_texture(startbordertex);
