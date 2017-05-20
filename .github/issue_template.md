@@ -5,6 +5,7 @@
 ###### Keep in mind that TWLoader is only a frontend for nds-bootstrap. DO NOT OPEN AN ISSUE FOR NOT LOADING GAMES THAT ARE NOT SUPPORTED BY NDS-BOOTSTRAP YET!
 ###### Issues that don't attach any log file or any reproducible method will be closed.
 ###### Issues without replies in 15 days will be closed too.
+###### If you want to create a request, please, delete all text after this message.
 -->
 ### Your 3DS
 
@@ -21,7 +22,8 @@ Tell us which console do you have:
 
 Tell us which CFW do you have:
 
-- [ ]  A9LH + Sysnand
+- [ ]  Boot9Strap (SigHax)
+- [ ]  A9LH (Only Sysnand)
 - [ ]  A9LH + Emunand
 - [ ]  Luma3DS
 - [ ]  AuReiNAND
@@ -65,4 +67,3 @@ If you are getting a crash or want to upload your log file, please, write that i
 
 ```
 ```
-
