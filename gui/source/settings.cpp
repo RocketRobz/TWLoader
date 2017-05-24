@@ -913,11 +913,11 @@ bool settingsMoveCursor(u32 hDown)
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		if (hDown & KEY_LEFT && settings.twl.flashcard > 0) {
 			settings.twl.flashcard--; // Flashcard
-			if (settings.twl.flashcard == 2) settings.twl.flashcard = 1;
+			// if (settings.twl.flashcard == 2) settings.twl.flashcard = 1;
 			sfx = sfx_select;
 		} else if (hDown & KEY_RIGHT && settings.twl.flashcard < 6) {
 			settings.twl.flashcard++; // Flashcard
-			if (settings.twl.flashcard == 2) settings.twl.flashcard = 3;
+			// if (settings.twl.flashcard == 2) settings.twl.flashcard = 3;
 			sfx = sfx_select;
 		} else if (hDown & (KEY_A | KEY_B)) {
 			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
