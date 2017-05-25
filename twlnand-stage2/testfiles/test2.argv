@@ -1,0 +1,22 @@
+# This is a comment
+# lines consisting only of whitespace will also be ignored
+# commands can be placed on multiple lines
+# first the name of the nds file to run
+# this can include a path relative to the .argv file
+# absolute paths are not currently supported
+
+argvTest.nds
+
+# a single argument
+argument1
+
+# multiple arguments separated by spaces
+argument2 argument3
+
+# multiple arguments separated by tabs
+argument4	argument5
+
+# or even separated by both tabs and spaces
+argument6 argument7	argument8
+
+

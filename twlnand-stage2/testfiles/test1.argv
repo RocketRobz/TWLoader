@@ -1,0 +1,6 @@
+# This is a comment
+# This is a straightforward command line, name of nds file followed by parameters
+# this can include a path relative to the .argv file
+# absolute paths are not currently supported
+
+argvTest.nds bunch of parameters go here

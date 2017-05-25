@@ -23,12 +23,11 @@ VERSION	:=	$(HBMENU_MAJOR).$(HBMENU_MINOR).$(HBMENU_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	TWLapp-hb
+TARGET		:=	Stage1
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include
 DATA		:=	data
-GRAPHICS	:=  gfx
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -76,7 +75,6 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	load.bin bootstub.bin
 
@@ -121,14 +119,14 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 
 dist:	all
-	@rm	-fr	TWLapp-hb
-	@mkdir TWLapp-hb
-	@cp TWLapp-hb.nds TWLapp-hb/BOOT.NDS
-	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds TWLapp-hb
-	@tar -cvjf hbmenu-$(VERSION).tar.bz2 TWLapp-hb testfiles README.md COPYING -X exclude.lst
+	@rm	-fr	Stage1
+	@mkdir Stage1
+	@cp Stage1.nds Stage1/BOOT.NDS
+	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds Stage1
+	@tar -cvjf hbmenu-$(VERSION).tar.bz2 Stage1 testfiles README.md COPYING -X exclude.lst
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWLoader;TWL-MODE app;Robz8" -g TWLD 01 "TWLOADER-TWL" -z 80040000 -u 00030005
+	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWLoader;TWLNAND side;Robz8" -g TWLD 01 "TWLOADER-TWL" -z 80040000 -u 00030005
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf

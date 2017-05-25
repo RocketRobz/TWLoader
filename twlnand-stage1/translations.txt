@@ -1,0 +1,3 @@
+﻿Please insert a cartidge to continue.
+
+Chinese: 请装一张游戏卡之后继续。
