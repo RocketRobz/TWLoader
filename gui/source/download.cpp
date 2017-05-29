@@ -34,6 +34,9 @@ const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoade
 const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
 
+bool updateGUI = false;
+bool updateNAND = false;
+
 /**
  * Check Wi-Fi status.
  * @return True if Wi-Fi is connected; false if not.
@@ -239,12 +242,16 @@ int checkUpdate(void) {
 			if(json->type == json_object) { // {} are objects, [] are arrays				
 				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
 				
-				// Create 3 char to store version
-				char read_major[3];
-				char read_minor[3];
-				char read_micro[3];
+				char read_gui_major[3];
+				char read_gui_minor[3];
+				char read_gui_micro[3];
 
+				char read_nand_major[3];
+				char read_nand_minor[3];
+				char read_nand_micro[3];
+				
 				char gui_url[512];
+				char nand_url[512];
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
@@ -258,34 +265,71 @@ int checkUpdate(void) {
 
 						if(strncmp(name, "latest_major", nameLen) == 0) {
 							// Found latest major										
-							strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
+							strncpy(read_gui_major, subVal->u.string.ptr, sizeof(read_gui_major));
 						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
 							// Read latest minor
-							strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
+							strncpy(read_gui_minor, subVal->u.string.ptr, sizeof(read_gui_minor));
 						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
 							// Read latest micro
-							strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
+							strncpy(read_gui_micro, subVal->u.string.ptr, sizeof(read_gui_micro));
 						} else if(strncmp(name, "gui_url", nameLen) == 0) {
 							// Found update url!									
 							strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
 						}
 					}
 				}
+				
+				// Search in NAND object.
+				val = json->u.object.values[1].value;
+				for(u32 i = 0; i < json->u.object.length; i++) {				
+					
+					// Create two variables that will store the values and it size
+					char* name = val->u.object.values[i].name;
+					u32 nameLen = val->u.object.values[i].name_length;
+					json_value* subVal = val->u.object.values[i].value;
+					if(subVal->type == json_string) {
 
-				// Store latest and current version
+						// This are the values were NAND side was prev. updated. If this version is less than now version, we don't need to update it.
+						if(strncmp(name, "not_major", nameLen) == 0) {
+							// Found not major										
+							strncpy(read_nand_major, subVal->u.string.ptr, sizeof(read_nand_major));
+						} else if(strncmp(name, "not_minor", nameLen) == 0) {
+							// Read not minor
+							strncpy(read_nand_minor, subVal->u.string.ptr, sizeof(read_nand_minor));
+						} else if(strncmp(name, "not_micro", nameLen) == 0) {
+							// Read not micro
+							strncpy(read_nand_micro, subVal->u.string.ptr, sizeof(read_nand_micro));
+						} else if(strncmp(name, "nand_url", nameLen) == 0) {
+							// Found update url!									
+							strncpy(nand_url, subVal->u.string.ptr, sizeof(nand_url));
+						}
+					}
+				}
+
+				// Store latest, current and previus version of GUI and NAND.
 				char latestVersion[16];
-				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_major, read_minor, read_micro);
+				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
 
 				char currentVersion[16];
 				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
 
+				char previusNANDVersion[16];
+				snprintf(previusNANDVersion, sizeof(previusNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
+				
 				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
-
-				// Check if current version is the latest
+				if (logEnabled)	LogFMA("checkUpdate", "Reading nand version:", previusNANDVersion);
+				
+				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
 					// Update available!
-					if (logEnabled)	LogFM("checkUpdate", "Update available");
+					if (logEnabled)	LogFM("checkUpdate", "GUI update available.");			
+					updateGUI = true;
+					
+					if(strcmp(currentVersion, previusNANDVersion) >= 0) {
+						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
+						updateNAND = true;
+					}
 					free(jsonText);
 					httpcCloseContext(&context);
 					return 0;
@@ -367,7 +411,7 @@ void DownloadTWLoaderCIAs(void) {
 		}
 	}
 	
-	if(yestoupdate) {
+	if(yestoupdate && updateGUI) {
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
@@ -399,7 +443,7 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_draw_texture(settingstex, 0, 0);
 		}
 		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (res == 0) {
+		if (res == 0 && updateNAND) {
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA)\n"
@@ -433,7 +477,16 @@ void DownloadTWLoaderCIAs(void) {
 			} else {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else {
+		} else if(!updateNAND) {
+			if (res == 0) {
+				renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+				sf2d_end_frame();
+				sf2d_swapbuffers();
+				run = false;
+			} else {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		} else if(res != 0) {
 			DialogBoxDisappear("Update failed.", 0);
 		}
 	} else {
