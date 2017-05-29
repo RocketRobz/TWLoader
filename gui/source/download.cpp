@@ -36,6 +36,10 @@ const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/T
 
 bool updateGUI = false;
 bool updateNAND = false;
+bool updateACE_RPG = false;
+bool updateGBARUNNER_2 = false;
+bool updateLOADCARD_DSTT = false;
+bool updateR4 = false;
 
 /**
  * Check Wi-Fi status.
@@ -195,6 +199,35 @@ Result http_read_internal(httpcContext* context, u32* bytesRead, void* buffer, u
     return res != (int) HTTPC_RESULTCODE_DOWNLOADPENDING ? res : 0;
 }
 
+struct ReadJson {
+    std::string strvalue1;
+    std::string strvalue2;
+    std::string strvalue3;
+    std::string strvalue4;
+};
+
+ReadJson internal_json_reader(json_value* json, json_value* val, std::string str1, std::string str2, std::string str3, std::string str4){
+	ReadJson rj;
+	for(u32 i = 0; i < json->u.object.length; i++) {
+		// Create two variables that will store the values and it size
+		char* name = val->u.object.values[i].name;
+		u32 nameLen = val->u.object.values[i].name_length;
+		json_value* subVal = val->u.object.values[i].value;
+		if(subVal->type == json_string) {
+			if(strncmp(name, str1.c_str(), nameLen) == 0) {
+				rj.strvalue1 = subVal->u.string.ptr;
+			} else if(strncmp(name, str2.c_str(), nameLen) == 0) {
+				rj.strvalue2 = subVal->u.string.ptr;
+			} else if(strncmp(name, str3.c_str(), nameLen) == 0) {
+				rj.strvalue3 = subVal->u.string.ptr;
+			} else if(strncmp(name, str4.c_str(), nameLen) == 0) {
+				rj.strvalue4 = subVal->u.string.ptr;
+			}
+		}
+	}
+	return rj;
+}
+
 /**
  * Check for a TWLoader update.
  * @return 0 if an update is available; non-zero if up to date or an error occurred.
@@ -255,84 +288,43 @@ int checkUpdate(void) {
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
-				for(u32 i = 0; i < json->u.object.length; i++) {				
-					
-					// Create two variables that will store the values and it size
-					char* name = val->u.object.values[i].name;
-					u32 nameLen = val->u.object.values[i].name_length;
-					json_value* subVal = val->u.object.values[i].value;
-					if(subVal->type == json_string) {
+				ReadJson result = internal_json_reader(json, val, "latest_major", "latest_minor", "latest_micro", "gui_url");
+				strncpy(read_gui_major, result.strvalue1.c_str(), sizeof(read_gui_major));
+				strncpy(read_gui_minor, result.strvalue2.c_str(), sizeof(read_gui_minor));
+				strncpy(read_gui_micro, result.strvalue3.c_str(), sizeof(read_gui_micro));
+				strncpy(gui_url, result.strvalue4.c_str(), sizeof(gui_url));
 
-						if(strncmp(name, "latest_major", nameLen) == 0) {
-							// Found latest major										
-							strncpy(read_gui_major, subVal->u.string.ptr, sizeof(read_gui_major));
-						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
-							// Read latest minor
-							strncpy(read_gui_minor, subVal->u.string.ptr, sizeof(read_gui_minor));
-						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
-							// Read latest micro
-							strncpy(read_gui_micro, subVal->u.string.ptr, sizeof(read_gui_micro));
-						} else if(strncmp(name, "gui_url", nameLen) == 0) {
-							// Found update url!									
-							strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
-						}
-					}
-				}
-				
 				// Search in NAND object.
 				val = json->u.object.values[1].value;
-				for(u32 i = 0; i < json->u.object.length; i++) {				
-					
-					// Create two variables that will store the values and it size
-					char* name = val->u.object.values[i].name;
-					u32 nameLen = val->u.object.values[i].name_length;
-					json_value* subVal = val->u.object.values[i].value;
-					if(subVal->type == json_string) {
+				result = internal_json_reader(json, val, "not_major", "not_minor", "not_micro", "nand_url");
+				strncpy(read_nand_major, result.strvalue1.c_str(), sizeof(read_nand_major));
+				strncpy(read_nand_minor, result.strvalue2.c_str(), sizeof(read_nand_minor));
+				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
+				strncpy(nand_url, result.strvalue4.c_str(), sizeof(nand_url));				
 
-						// This are the values were NAND side was prev. updated. If this version is less than now version, we don't need to update it.
-						if(strncmp(name, "not_major", nameLen) == 0) {
-							// Found not major										
-							strncpy(read_nand_major, subVal->u.string.ptr, sizeof(read_nand_major));
-						} else if(strncmp(name, "not_minor", nameLen) == 0) {
-							// Read not minor
-							strncpy(read_nand_minor, subVal->u.string.ptr, sizeof(read_nand_minor));
-						} else if(strncmp(name, "not_micro", nameLen) == 0) {
-							// Read not micro
-							strncpy(read_nand_micro, subVal->u.string.ptr, sizeof(read_nand_micro));
-						} else if(strncmp(name, "nand_url", nameLen) == 0) {
-							// Found update url!									
-							strncpy(nand_url, subVal->u.string.ptr, sizeof(nand_url));
-						}
-					}
-				}
-
-				// Store latest, current and previus version of GUI and NAND.
+				// Store latest and current version of GUI and NAND.
 				char latestVersion[16];
 				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
 
 				char currentVersion[16];
 				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
 
-				char previusNANDVersion[16];
-				snprintf(previusNANDVersion, sizeof(previusNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
+				char latestNANDVersion[16];
+				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
 				
 				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
-				if (logEnabled)	LogFMA("checkUpdate", "Reading nand version:", previusNANDVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading nand version:", latestNANDVersion);
 				
 				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
 					// Update available!
 					if (logEnabled)	LogFM("checkUpdate", "GUI update available.");			
 					updateGUI = true;
-					
-					if(strcmp(currentVersion, previusNANDVersion) >= 0) {
+					if(strcmp(latestNANDVersion, currentVersion) != 0) {
 						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
 						updateNAND = true;
 					}
-					free(jsonText);
-					httpcCloseContext(&context);
-					return 0;
 				} else {
 					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -358,6 +350,13 @@ int checkUpdate(void) {
 			}
 		}
 	}
+	
+	if (updateGUI) {		
+		free(jsonText);
+		httpcCloseContext(&context);
+		return 0;
+	}
+	
 	free(jsonText);
 	httpcCloseContext(&context);
 	return -1;
