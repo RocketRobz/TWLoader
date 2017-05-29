@@ -27,8 +27,6 @@ using std::vector;
 #include "json/json.h"
 
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
-const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
-const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
 const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
 const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap.nds?raw=true";
 const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap?raw=true";
@@ -40,6 +38,13 @@ bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
 bool updateLOADCARD_DSTT = false;
 bool updateR4 = false;
+
+std::string gui_url;
+std::string nand_url;
+std::string ace_rpg_url;
+std::string gbarunner2_url;
+std::string loadcard_dstt_url;
+std::string r4_url;
 
 /**
  * Check Wi-Fi status.
@@ -283,8 +288,6 @@ int checkUpdate(void) {
 				char read_nand_minor[3];
 				char read_nand_micro[3];
 				
-				char gui_url[512];
-				char nand_url[512];
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
@@ -292,7 +295,7 @@ int checkUpdate(void) {
 				strncpy(read_gui_major, result.strvalue1.c_str(), sizeof(read_gui_major));
 				strncpy(read_gui_minor, result.strvalue2.c_str(), sizeof(read_gui_minor));
 				strncpy(read_gui_micro, result.strvalue3.c_str(), sizeof(read_gui_micro));
-				strncpy(gui_url, result.strvalue4.c_str(), sizeof(gui_url));
+				gui_url = result.strvalue4.c_str();
 
 				// Search in NAND object.
 				val = json->u.object.values[1].value;
@@ -300,7 +303,7 @@ int checkUpdate(void) {
 				strncpy(read_nand_major, result.strvalue1.c_str(), sizeof(read_nand_major));
 				strncpy(read_nand_minor, result.strvalue2.c_str(), sizeof(read_nand_minor));
 				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
-				strncpy(nand_url, result.strvalue4.c_str(), sizeof(nand_url));				
+				nand_url = result.strvalue4.c_str();				
 
 				// Store latest and current version of GUI and NAND.
 				char latestVersion[16];
@@ -346,6 +349,47 @@ int checkUpdate(void) {
 					free(jsonText);
 					httpcCloseContext(&context);						
 					return -1;
+				}
+								
+				// Search in prebuilds object
+				val = json->u.object.values[2].value;
+				json_value* val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url");
+				ace_rpg_url = result.strvalue4.c_str();
+
+				char ace_rpg_version[16];
+				snprintf(ace_rpg_version, sizeof(ace_rpg_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(currentVersion, ace_rpg_version) != 0) {
+					updateACE_RPG = true;
+				}
+				
+				val2 = val->u.object.values[1].value;
+				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url");
+				gbarunner2_url = result.strvalue4.c_str();
+
+				char GBARunner2_version[16];
+				snprintf(GBARunner2_version, sizeof(GBARunner2_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(currentVersion, GBARunner2_version) != 0) {
+					updateGBARUNNER_2 = true;
+				}
+				
+				val2 = val->u.object.values[2].value;
+				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url");
+				loadcard_dstt_url = result.strvalue4.c_str();
+				char loadcard_dstt_version[16];
+				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(currentVersion, loadcard_dstt_version) != 0) {
+					updateLOADCARD_DSTT = true;
+				}
+				
+				val2 = val->u.object.values[3].value;
+				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url");
+				r4_url = result.strvalue4.c_str();
+
+				char r4_version[16];
+				snprintf(r4_version, sizeof(r4_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(currentVersion, r4_version) != 0) {
+					updateR4 = true;
 				}
 			}
 		}
@@ -431,10 +475,10 @@ void DownloadTWLoaderCIAs(void) {
 		struct stat st;
 		if(stat("sdmc:/cia",&st) == 0){		
 			// Use root/cia folder instead
-			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
+			res = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
 		}else{
 			mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+			res = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
 		}
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -459,9 +503,9 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			if(stat("sdmc:/cia",&st) == 0){		
 				// Use root/cia folder instead
-				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				res = downloadFile(nand_url.c_str(),"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}else{		
-				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				res = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -487,9 +531,81 @@ void DownloadTWLoaderCIAs(void) {
 			}
 		} else if(res != 0) {
 			DialogBoxDisappear("Update failed.", 0);
+		} else if (updateACE_RPG) {
+			static const char msg[] =
+				"Now downloading latest Ace_RPG version...\n"
+				"(ace_rpg.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		} else if (updateGBARUNNER_2) {
+			static const char msg[] =
+				"Now downloading latest GBARunner2 version...\n"
+				"(GBARunner2.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		} else if (updateLOADCARD_DSTT) {
+			static const char msg[] =
+				"Now downloading latest loadcard_dstt version...\n"
+				"(loadcard_dstt.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		} else if (updateR4) {
+			static const char msg[] =
+				"Now downloading latest R4 version...\n"
+				"(r4.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		} else {
+			DialogBoxDisappear("Update cancelled.", 0);
 		}
-	} else {
-		DialogBoxDisappear("Update cancelled.", 0);
 	}
 }
 
