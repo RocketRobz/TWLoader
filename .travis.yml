@@ -48,8 +48,12 @@ install:
   - cd ..  
 script:
   - echo "Starting compilation"
-  - cd twlnand-side
-  - echo "Compiling TWLoader NAND Side"
+  - cd twlnand-stage1
+  - echo "Compiling TWLoader NAND Side Stage 1"
+  - make
+  - cd ..
+  - cd twlnand-stage2
+  - echo "Compiling TWLoader NAND Side Stage 2"
   - make
   - cd ..
   - echo "Compiling TWLoader GUI"
