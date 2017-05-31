@@ -26,8 +26,7 @@ using std::vector;
 #include "citrostuff.h"
 #include "json/json.h"
 
-const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
-
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
 bool updateGUI = false;
 bool updateNAND = false;
 bool updateACE_RPG = false;
