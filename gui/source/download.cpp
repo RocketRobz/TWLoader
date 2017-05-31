@@ -29,6 +29,7 @@ using std::vector;
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
 bool updateGUI = false;
 bool updateNAND = false;
+bool updateNAND_STG2 = false;
 bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
 bool updateLOADCARD_DSTT = false;
@@ -36,6 +37,7 @@ bool updateR4 = false;
 
 std::string gui_url;
 std::string nand_url;
+std::string nand_stg2_url;
 std::string ace_rpg_url;
 std::string gbarunner2_url;
 std::string loadcard_dstt_url;
@@ -287,6 +289,10 @@ int checkUpdate(void) {
 				char read_nand_minor[3];
 				char read_nand_micro[3];
 				
+				char read_nandstg2_major[3];
+				char read_nandstg2_minor[3];
+				char read_nandstg2_micro[3];
+				
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
@@ -304,6 +310,14 @@ int checkUpdate(void) {
 				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
 				nand_url = result.strvalue4.c_str();				
 
+				// Search in NAND STG2 object.
+				val = json->u.object.values[2].value;
+				result = internal_json_reader(json, val, "not_major", "not_minor", "not_micro", "nand_stg2_url");
+				strncpy(read_nandstg2_major, result.strvalue1.c_str(), sizeof(read_nandstg2_major));
+				strncpy(read_nandstg2_minor, result.strvalue2.c_str(), sizeof(read_nandstg2_minor));
+				strncpy(read_nandstg2_micro, result.strvalue3.c_str(), sizeof(read_nandstg2_micro));
+				nand_stg2_url = result.strvalue4.c_str();				
+
 				// Store latest and current version of GUI and NAND.
 				char latestVersion[16];
 				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
@@ -313,10 +327,14 @@ int checkUpdate(void) {
 
 				char latestNANDVersion[16];
 				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
+
+				char latestNANDSTG2Version[16];
+				snprintf(latestNANDSTG2Version, sizeof(latestNANDSTG2Version), "%s.%s.%s", read_nandstg2_major, read_nandstg2_minor, read_nandstg2_micro);
 				
 				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading GUI json version:", latestVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND json version:", latestNANDVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND STG2 json version:", latestNANDSTG2Version);
 				
 				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
@@ -326,6 +344,10 @@ int checkUpdate(void) {
 					if(strcmp(latestNANDVersion, currentVersion) > 0) {
 						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
 						updateNAND = true;
+					}
+					if(strcmp(latestNANDSTG2Version, currentVersion) > 0) {
+						if (logEnabled)	LogFM("checkUpdate", "NAND SD stage update available.");
+						updateNAND_STG2 = true;
 					}
 				} else {
 					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -351,7 +373,7 @@ int checkUpdate(void) {
 				}
 								
 				// Search in prebuilds object
-				val = json->u.object.values[2].value;
+				val = json->u.object.values[3].value;
 				json_value* val2 = val->u.object.values[0].value;
 				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url");
 				ace_rpg_url = result.strvalue4.c_str();
@@ -460,6 +482,7 @@ void DownloadTWLoaderCIAs(void) {
 	if(yestoupdate) {
 		int resGUI = -1;
 		int resNAND = -1;
+		int resNAND_STG2 = -1;
 		struct stat st;
 		if (updateGUI) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -518,8 +541,25 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
+		if (updateNAND_STG2) {
+			static const char twlnandstg2_msg[] =
+				"Now downloading latest TWLoader version...\n"
+				"(SD stage of TWLNAND side)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, twlnandstg2_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+
+			resNAND_STG2 = downloadFile(nand_stg2_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);			
+		}
 		// If gui or nand failed, stop before downloading prebuilds.
-		if(resGUI != 0 || (updateNAND && resNAND != 0)) {
+		if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) ) {
 			DialogBoxDisappear("Update failed.", 0);
 		}
 		if(resGUI == 0 && updateACE_RPG) {
@@ -852,7 +892,7 @@ int downloadBootstrapVersion(bool type)
 		if(json != NULL) {
 			if(json->type == json_object) {				
 				
-				json_value* val = json->u.object.values[3].value;
+				json_value* val = json->u.object.values[4].value;
 
 				for(u32 i = 0; i < json->u.object.length; i++) {
 					char* name = val->u.object.values[i].name;
