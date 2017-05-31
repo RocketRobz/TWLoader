@@ -27,10 +27,6 @@ using std::vector;
 #include "json/json.h"
 
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap?raw=true";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
 
 bool updateGUI = false;
 bool updateNAND = false;
@@ -45,6 +41,10 @@ std::string ace_rpg_url;
 std::string gbarunner2_url;
 std::string loadcard_dstt_url;
 std::string r4_url;
+std::string release_BS_ver;
+std::string unofficial_BS_ver;
+std::string release_BS_url;
+std::string unofficial_BS_url;
 
 /**
  * Check Wi-Fi status.
@@ -629,7 +629,7 @@ void UpdateBootstrapUnofficial(void) {
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap.nds");
 	downloadBootstrapVersion(false);
 	checkBootstrapVersion();
-	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -654,7 +654,7 @@ void UpdateBootstrapRelease(void) {
 	remove("sdmc:/_nds/twloader/release-bootstrap.nds");
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
-	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -824,11 +824,72 @@ static int downloadBoxArt_internal(const char *ba_TID, RomLocation location)
 
 int downloadBootstrapVersion(bool type)
 {
-	int res = -1;
-	if (type){		
-		res = downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
+	u32 responseCode = 0;
+	httpcContext context;	
+	int res = -1;	
+	
+	// TODO MANAGE EXCEPTIONS!!!!
+	httpcInit(0);
+	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
+    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
+	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
+	httpcBeginRequest(&context);
+	httpcGetResponseStatusCode(&context, &responseCode);	
+    if (responseCode != 200) {
+        // This is an error trying to reach the file, so insert error here.
+		return res;
+    }
+	
+	u32 size = 0;
+	httpcGetDownloadSizeState(&context, NULL, &size);	
+	char* jsonText = (char*) calloc(sizeof(char), size);
+	if (logEnabled) LogFM("Bootstrap", "Downloading JSON info.");
+	if(jsonText != NULL) {
+		u32 bytesRead = 0;
+		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
+		json_value* json = json_parse(jsonText, size);
+
+		if(json != NULL) {
+			if(json->type == json_object) {				
+				
+				json_value* val = json->u.object.values[3].value;
+
+				for(u32 i = 0; i < json->u.object.length; i++) {
+					char* name = val->u.object.values[i].name;
+					u32 nameLen = val->u.object.values[i].name_length;
+					json_value* subVal = val->u.object.values[i].value;
+					if(subVal->type == json_string) {
+						if(strncmp(name, "release_ver", nameLen) == 0) {
+							release_BS_ver = subVal->u.string.ptr;
+						} else if(strncmp(name, "unofficial_ver", nameLen) == 0) {
+							unofficial_BS_ver = subVal->u.string.ptr;
+						} else if(strncmp(name, "release_url", nameLen) == 0) {
+							release_BS_url = subVal->u.string.ptr;
+						} else if(strncmp(name, "unofficial_url", nameLen) == 0) {
+							unofficial_BS_url = subVal->u.string.ptr;
+						}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	free(jsonText);
+	httpcCloseContext(&context);		
+		
+	if (type){
+		FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
+		if(!ver) {
+			return res;
+		}
+		fputs(release_BS_ver.c_str(), ver);
+		fclose(ver);
 	}else{
-		res = downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
+		FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
+		fputs(unofficial_BS_ver.c_str(), ver);
+		fclose(ver);
 	}
 	
 	return res;
@@ -842,7 +903,7 @@ void checkBootstrapVersion(void){
 	
 	bool res = false;
 	long fileSize;
-	char buf[26];
+	char buf[128];
 	if (logEnabled) LogFM("download.checkBootstrapVersion()", "Checking bootstrap version");
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
