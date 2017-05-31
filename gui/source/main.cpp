@@ -2508,7 +2508,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;
 				if (cursorPosition >= 0) {
-					if (cursorPosition >= file_count)
+					if (cursorPosition >= (int)file_count)
 						showbubble = false;
 					else {
 						showbubble = true;
@@ -2608,7 +2608,7 @@ int main()
 				// Delay a frame
 				bannertextloaded = false;
 				if (cursorPosition >= 0) {
-					if (cursorPosition >= file_count)
+					if (cursorPosition >= (int)file_count)
 						showbubble = false;
 					else {
 						showbubble = true;
