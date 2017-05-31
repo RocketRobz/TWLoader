@@ -26,13 +26,24 @@ using std::vector;
 #include "citrostuff.h"
 #include "json/json.h"
 
-const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
-const char* DOWNLOAD_TWLOADER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader.cia?raw=true";
-const char* DOWNLOAD_TWLNANDSIDE_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/TWLoader%20-%20TWLNAND%20side.cia?raw=true";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap.nds?raw=true";
-const char* DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/release-bootstrap?raw=true";
-const char* DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL = "https://github.com/Jolty95/TWLoader-update/blob/master/unofficial-bootstrap?raw=true";
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
+bool updateGUI = false;
+bool updateNAND = false;
+bool updateACE_RPG = false;
+bool updateGBARUNNER_2 = false;
+bool updateLOADCARD_DSTT = false;
+bool updateR4 = false;
+
+std::string gui_url;
+std::string nand_url;
+std::string ace_rpg_url;
+std::string gbarunner2_url;
+std::string loadcard_dstt_url;
+std::string r4_url;
+std::string release_BS_ver;
+std::string unofficial_BS_ver;
+std::string release_BS_url;
+std::string unofficial_BS_url;
 
 /**
  * Check Wi-Fi status.
@@ -169,7 +180,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 			}
 		}else{
 			// There was a problem opening HTTP context
-			if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to open HTTP context.");
+			if (logEnabled) LogFMA("downloadFile.error", "An error has ocurred trying to open HTTP context.", url);
 			httpcCloseContext(&context);
 			httpcExit();
 			fsExit();
@@ -190,6 +201,35 @@ Result http_read_internal(httpcContext* context, u32* bytesRead, void* buffer, u
 
     Result res = httpcDownloadData(context, (u8*) buffer, size, bytesRead);
     return res != (int) HTTPC_RESULTCODE_DOWNLOADPENDING ? res : 0;
+}
+
+struct ReadJson {
+    std::string strvalue1;
+    std::string strvalue2;
+    std::string strvalue3;
+    std::string strvalue4;
+};
+
+ReadJson internal_json_reader(json_value* json, json_value* val, std::string str1, std::string str2, std::string str3, std::string str4){
+	ReadJson rj;
+	for(u32 i = 0; i < json->u.object.length; i++) {
+		// Create two variables that will store the values and it size
+		char* name = val->u.object.values[i].name;
+		u32 nameLen = val->u.object.values[i].name_length;
+		json_value* subVal = val->u.object.values[i].value;
+		if(subVal->type == json_string) {
+			if(strncmp(name, str1.c_str(), nameLen) == 0) {
+				rj.strvalue1 = subVal->u.string.ptr;
+			} else if(strncmp(name, str2.c_str(), nameLen) == 0) {
+				rj.strvalue2 = subVal->u.string.ptr;
+			} else if(strncmp(name, str3.c_str(), nameLen) == 0) {
+				rj.strvalue3 = subVal->u.string.ptr;
+			} else if(strncmp(name, str4.c_str(), nameLen) == 0) {
+				rj.strvalue4 = subVal->u.string.ptr;
+			}
+		}
+	}
+	return rj;
 }
 
 /**
@@ -239,56 +279,54 @@ int checkUpdate(void) {
 			if(json->type == json_object) { // {} are objects, [] are arrays				
 				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
 				
-				// Create 3 char to store version
-				char read_major[3];
-				char read_minor[3];
-				char read_micro[3];
+				char read_gui_major[3];
+				char read_gui_minor[3];
+				char read_gui_micro[3];
 
-				char gui_url[512];
+				char read_nand_major[3];
+				char read_nand_minor[3];
+				char read_nand_micro[3];
+				
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
-				for(u32 i = 0; i < json->u.object.length; i++) {				
-					
-					// Create two variables that will store the values and it size
-					char* name = val->u.object.values[i].name;
-					u32 nameLen = val->u.object.values[i].name_length;
-					json_value* subVal = val->u.object.values[i].value;
-					if(subVal->type == json_string) {
+				ReadJson result = internal_json_reader(json, val, "latest_major", "latest_minor", "latest_micro", "gui_url");
+				strncpy(read_gui_major, result.strvalue1.c_str(), sizeof(read_gui_major));
+				strncpy(read_gui_minor, result.strvalue2.c_str(), sizeof(read_gui_minor));
+				strncpy(read_gui_micro, result.strvalue3.c_str(), sizeof(read_gui_micro));
+				gui_url = result.strvalue4.c_str();
 
-						if(strncmp(name, "latest_major", nameLen) == 0) {
-							// Found latest major										
-							strncpy(read_major, subVal->u.string.ptr, sizeof(read_major));
-						} else if(strncmp(name, "latest_minor", nameLen) == 0) {
-							// Read latest minor
-							strncpy(read_minor, subVal->u.string.ptr, sizeof(read_minor));
-						} else if(strncmp(name, "latest_micro", nameLen) == 0) {
-							// Read latest micro
-							strncpy(read_micro, subVal->u.string.ptr, sizeof(read_micro));
-						} else if(strncmp(name, "gui_url", nameLen) == 0) {
-							// Found update url!									
-							strncpy(gui_url, subVal->u.string.ptr, sizeof(gui_url));
-						}
-					}
-				}
+				// Search in NAND object.
+				val = json->u.object.values[1].value;
+				result = internal_json_reader(json, val, "not_major", "not_minor", "not_micro", "nand_url");
+				strncpy(read_nand_major, result.strvalue1.c_str(), sizeof(read_nand_major));
+				strncpy(read_nand_minor, result.strvalue2.c_str(), sizeof(read_nand_minor));
+				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
+				nand_url = result.strvalue4.c_str();				
 
-				// Store latest and current version
+				// Store latest and current version of GUI and NAND.
 				char latestVersion[16];
-				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_major, read_minor, read_micro);
+				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
 
 				char currentVersion[16];
 				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
 
+				char latestNANDVersion[16];
+				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
+				
 				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
-				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
-
-				// Check if current version is the latest
+				if (logEnabled)	LogFMA("checkUpdate", "Reading GUI json version:", latestVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND json version:", latestNANDVersion);
+				
+				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
 					// Update available!
-					if (logEnabled)	LogFM("checkUpdate", "Update available");
-					free(jsonText);
-					httpcCloseContext(&context);
-					return 0;
+					if (logEnabled)	LogFM("checkUpdate", "GUI update available.");			
+					updateGUI = true;
+					if(strcmp(latestNANDVersion, currentVersion) > 0) {
+						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
+						updateNAND = true;
+					}
 				} else {
 					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -311,9 +349,61 @@ int checkUpdate(void) {
 					httpcCloseContext(&context);						
 					return -1;
 				}
+								
+				// Search in prebuilds object
+				val = json->u.object.values[2].value;
+				json_value* val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url");
+				ace_rpg_url = result.strvalue4.c_str();
+
+				char ace_rpg_version[16];
+				snprintf(ace_rpg_version, sizeof(ace_rpg_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(ace_rpg_version, currentVersion) > 0) {
+					updateACE_RPG = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for ACE_RPG");	
+				}
+				
+				val2 = val->u.object.values[1].value;
+				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url");
+				gbarunner2_url = result.strvalue4.c_str();
+
+				char GBARunner2_version[16];
+				snprintf(GBARunner2_version, sizeof(GBARunner2_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(GBARunner2_version, currentVersion) > 0) {
+					updateGBARUNNER_2 = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for GBARunner2");
+				}
+				
+				val2 = val->u.object.values[2].value;
+				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url");
+				loadcard_dstt_url = result.strvalue4.c_str();
+				char loadcard_dstt_version[16];
+				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(loadcard_dstt_version, currentVersion) > 0) {
+					updateLOADCARD_DSTT = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for Loadcard_DSTT");
+				}
+				
+				val2 = val->u.object.values[3].value;
+				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url");
+				r4_url = result.strvalue4.c_str();
+
+				char r4_version[16];
+				snprintf(r4_version, sizeof(r4_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				if(strcmp(r4_version, currentVersion) > 0) {
+					updateR4 = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for R4");
+				}
 			}
 		}
 	}
+	
+	if (updateGUI) {		
+		free(jsonText);
+		httpcCloseContext(&context);
+		return 0;
+	}
+	
 	free(jsonText);
 	httpcCloseContext(&context);
 	return -1;
@@ -368,38 +458,39 @@ void DownloadTWLoaderCIAs(void) {
 	}
 	
 	if(yestoupdate) {
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
-		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		static const char gui_msg[] =
-			"Now downloading latest TWLoader version...\n"
-			"(GUI)\n"
-			"\n"
-			"Do not turn off the power.\n";
-		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-
-		int res;
-		
-		// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
+		int resGUI = -1;
+		int resNAND = -1;
 		struct stat st;
-		if(stat("sdmc:/cia",&st) == 0){		
-			// Use root/cia folder instead
-			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/cia/TWLoader.cia", MEDIA_SD_CIA);
-		}else{
-			mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-			res = downloadFile(DOWNLOAD_TWLOADER_URL,"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
-		}
+		if (updateGUI) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			static const char gui_msg[] =
+				"Now downloading latest TWLoader version...\n"
+				"(GUI)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
 		
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
+			if(stat("sdmc:/cia",&st) == 0){		
+				// Use root/cia folder instead
+				resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
+			}else{
+				mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+				resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+			}
+			
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
 		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (res == 0) {
+		if (resGUI == 0 && updateNAND) {
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA)\n"
@@ -414,27 +505,104 @@ void DownloadTWLoaderCIAs(void) {
 				AM_DeleteTitle(MEDIATYPE_NAND, TWLNAND_TID);
 				amExit();
 			}
+
 			if(stat("sdmc:/cia",&st) == 0){		
 				// Use root/cia folder instead
-				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				resNAND = downloadFile(nand_url.c_str(),"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}else{		
-				res = downloadFile(DOWNLOAD_TWLNANDSIDE_URL,"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				resNAND = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
 			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);			
+		}
+		// If gui or nand failed, stop before downloading prebuilds.
+		if(resGUI != 0 || (updateNAND && resNAND != 0)) {
+			DialogBoxDisappear("Update failed.", 0);
+		}
+		if(resGUI == 0 && updateACE_RPG) {
+			static const char msg[] =
+				"Now downloading latest Ace_RPG version...\n"
+				"(ace_rpg.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);
-			if (res == 0) {
-				renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-				run = false;
-			} else {
+			if (res != 0) {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else {
-			DialogBoxDisappear("Update failed.", 0);
+		}
+		if (resGUI == 0 && updateGBARUNNER_2) {
+			static const char msg[] =
+				"Now downloading latest GBARunner2 version...\n"
+				"(GBARunner2.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		}
+		if (resGUI == 0 && updateLOADCARD_DSTT) {
+			static const char msg[] =
+				"Now downloading latest loadcard_dstt version...\n"
+				"(loadcard_dstt.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		}
+		if (resGUI == 0 && updateR4) {
+			static const char msg[] =
+				"Now downloading latest R4 version...\n"
+				"(r4.nds)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (res != 0) {
+				DialogBoxDisappear("Download failed.", 0);
+			}
+		}
+		if (resGUI == 0) {			
+			renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			run = false;
 		}
 	} else {
 		DialogBoxDisappear("Update cancelled.", 0);
@@ -460,7 +628,7 @@ void UpdateBootstrapUnofficial(void) {
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap.nds");
 	downloadBootstrapVersion(false);
 	checkBootstrapVersion();
-	downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_URL,"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -485,7 +653,7 @@ void UpdateBootstrapRelease(void) {
 	remove("sdmc:/_nds/twloader/release-bootstrap.nds");
 	downloadBootstrapVersion(true);
 	checkBootstrapVersion();
-	downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_URL,"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
+	downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear("Done!", 0);
 	}
@@ -655,11 +823,72 @@ static int downloadBoxArt_internal(const char *ba_TID, RomLocation location)
 
 int downloadBootstrapVersion(bool type)
 {
-	int res = -1;
-	if (type){		
-		res = downloadFile(DOWNLOAD_OFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/release-bootstrap", MEDIA_SD_FILE);
+	u32 responseCode = 0;
+	httpcContext context;	
+	int res = -1;	
+	
+	// TODO MANAGE EXCEPTIONS!!!!
+	httpcInit(0);
+	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
+    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
+	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
+	httpcBeginRequest(&context);
+	httpcGetResponseStatusCode(&context, &responseCode);	
+    if (responseCode != 200) {
+        // This is an error trying to reach the file, so insert error here.
+		return res;
+    }
+	
+	u32 size = 0;
+	httpcGetDownloadSizeState(&context, NULL, &size);	
+	char* jsonText = (char*) calloc(sizeof(char), size);
+	if (logEnabled) LogFM("Bootstrap", "Downloading JSON info.");
+	if(jsonText != NULL) {
+		u32 bytesRead = 0;
+		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
+		json_value* json = json_parse(jsonText, size);
+
+		if(json != NULL) {
+			if(json->type == json_object) {				
+				
+				json_value* val = json->u.object.values[3].value;
+
+				for(u32 i = 0; i < json->u.object.length; i++) {
+					char* name = val->u.object.values[i].name;
+					u32 nameLen = val->u.object.values[i].name_length;
+					json_value* subVal = val->u.object.values[i].value;
+					if(subVal->type == json_string) {
+						if(strncmp(name, "release_ver", nameLen) == 0) {
+							release_BS_ver = subVal->u.string.ptr;
+						} else if(strncmp(name, "unofficial_ver", nameLen) == 0) {
+							unofficial_BS_ver = subVal->u.string.ptr;
+						} else if(strncmp(name, "release_url", nameLen) == 0) {
+							release_BS_url = subVal->u.string.ptr;
+						} else if(strncmp(name, "unofficial_url", nameLen) == 0) {
+							unofficial_BS_url = subVal->u.string.ptr;
+						}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	free(jsonText);
+	httpcCloseContext(&context);		
+		
+	if (type){
+		FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
+		if(!ver) {
+			return res;
+		}
+		fputs(release_BS_ver.c_str(), ver);
+		fclose(ver);
 	}else{
-		res = downloadFile(DOWNLOAD_UNOFFICIALBOOTSTRAP_VER_URL,"/_nds/twloader/unofficial-bootstrap", MEDIA_SD_FILE);
+		FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
+		fputs(unofficial_BS_ver.c_str(), ver);
+		fclose(ver);
 	}
 	
 	return res;
@@ -673,7 +902,7 @@ void checkBootstrapVersion(void){
 	
 	bool res = false;
 	long fileSize;
-	char buf[26];
+	char buf[128];
 	if (logEnabled) LogFM("download.checkBootstrapVersion()", "Checking bootstrap version");
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
