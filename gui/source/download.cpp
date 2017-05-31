@@ -181,7 +181,7 @@ int downloadFile(const char* url, const char* file, MediaType mediaType) {
 			}
 		}else{
 			// There was a problem opening HTTP context
-			if (logEnabled) LogFM("downloadFile.error", "An error has ocurred trying to open HTTP context.");
+			if (logEnabled) LogFMA("downloadFile.error", "An error has ocurred trying to open HTTP context.", url);
 			httpcCloseContext(&context);
 			httpcExit();
 			fsExit();
@@ -316,15 +316,15 @@ int checkUpdate(void) {
 				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
 				
 				if (logEnabled)	LogFMA("checkUpdate", "Reading current version:", currentVersion);
-				if (logEnabled)	LogFMA("checkUpdate", "Reading json version:", latestVersion);
-				if (logEnabled)	LogFMA("checkUpdate", "Reading nand version:", latestNANDVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading GUI json version:", latestVersion);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND json version:", latestNANDVersion);
 				
 				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
 					// Update available!
 					if (logEnabled)	LogFM("checkUpdate", "GUI update available.");			
 					updateGUI = true;
-					if(strcmp(latestNANDVersion, currentVersion) != 0) {
+					if(strcmp(latestNANDVersion, currentVersion) > 0) {
 						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
 						updateNAND = true;
 					}
@@ -359,8 +359,9 @@ int checkUpdate(void) {
 
 				char ace_rpg_version[16];
 				snprintf(ace_rpg_version, sizeof(ace_rpg_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
-				if(strcmp(currentVersion, ace_rpg_version) != 0) {
+				if(strcmp(ace_rpg_version, currentVersion) > 0) {
 					updateACE_RPG = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for ACE_RPG");	
 				}
 				
 				val2 = val->u.object.values[1].value;
@@ -369,8 +370,9 @@ int checkUpdate(void) {
 
 				char GBARunner2_version[16];
 				snprintf(GBARunner2_version, sizeof(GBARunner2_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
-				if(strcmp(currentVersion, GBARunner2_version) != 0) {
+				if(strcmp(GBARunner2_version, currentVersion) > 0) {
 					updateGBARUNNER_2 = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for GBARunner2");
 				}
 				
 				val2 = val->u.object.values[2].value;
@@ -378,8 +380,9 @@ int checkUpdate(void) {
 				loadcard_dstt_url = result.strvalue4.c_str();
 				char loadcard_dstt_version[16];
 				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
-				if(strcmp(currentVersion, loadcard_dstt_version) != 0) {
+				if(strcmp(loadcard_dstt_version, currentVersion) > 0) {
 					updateLOADCARD_DSTT = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for Loadcard_DSTT");
 				}
 				
 				val2 = val->u.object.values[3].value;
@@ -388,8 +391,9 @@ int checkUpdate(void) {
 
 				char r4_version[16];
 				snprintf(r4_version, sizeof(r4_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
-				if(strcmp(currentVersion, r4_version) != 0) {
+				if(strcmp(r4_version, currentVersion) > 0) {
 					updateR4 = true;
+					if (logEnabled)	LogFM("checkUpdate", "Update available for R4");
 				}
 			}
 		}
@@ -454,39 +458,40 @@ void DownloadTWLoaderCIAs(void) {
 		}
 	}
 	
-	if(yestoupdate && updateGUI) {
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
-		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		static const char gui_msg[] =
-			"Now downloading latest TWLoader version...\n"
-			"(GUI)\n"
-			"\n"
-			"Do not turn off the power.\n";
-		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-
-		int res;
-		
-		// Check if sdmc:/cia folder exist (most A9LH users have that folder already)
+	if(yestoupdate) {
+		int resGUI = -1;
+		int resNAND = -1;
 		struct stat st;
-		if(stat("sdmc:/cia",&st) == 0){		
-			// Use root/cia folder instead
-			res = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
-		}else{
-			mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-			res = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
-		}
+		if (updateGUI) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			static const char gui_msg[] =
+				"Now downloading latest TWLoader version...\n"
+				"(GUI)\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
 		
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
+			if(stat("sdmc:/cia",&st) == 0){		
+				// Use root/cia folder instead
+				resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
+			}else{
+				mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+				resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+			}
+			
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);
 		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		if (res == 0 && updateNAND) {
+		if (resGUI == 0 && updateNAND) {
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA)\n"
@@ -501,37 +506,24 @@ void DownloadTWLoaderCIAs(void) {
 				AM_DeleteTitle(MEDIATYPE_NAND, TWLNAND_TID);
 				amExit();
 			}
+
 			if(stat("sdmc:/cia",&st) == 0){		
 				// Use root/cia folder instead
-				res = downloadFile(nand_url.c_str(),"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				resNAND = downloadFile(nand_url.c_str(),"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}else{		
-				res = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+				resNAND = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			if (res == 0) {
-				renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-				run = false;
-			} else {
-				DialogBoxDisappear("Download failed.", 0);
-			}
-		} else if(!updateNAND) {
-			if (res == 0) {
-				renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
-				sf2d_end_frame();
-				sf2d_swapbuffers();
-				run = false;
-			} else {
-				DialogBoxDisappear("Download failed.", 0);
-			}
-		} else if(res != 0) {
+			sf2d_draw_texture(dialogboxtex, 0, 0);			
+		}
+		// If gui or nand failed, stop before downloading prebuilds.
+		if(resGUI != 0 || (updateNAND && resNAND != 0)) {
 			DialogBoxDisappear("Update failed.", 0);
-		} else if (updateACE_RPG) {
+		}
+		if(resGUI == 0 && updateACE_RPG) {
 			static const char msg[] =
 				"Now downloading latest Ace_RPG version...\n"
 				"(ace_rpg.nds)\n"
@@ -540,7 +532,7 @@ void DownloadTWLoaderCIAs(void) {
 			renderText(12, 16, 0.5f, 0.5f, false, msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
+			int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -549,7 +541,8 @@ void DownloadTWLoaderCIAs(void) {
 			if (res != 0) {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else if (updateGBARUNNER_2) {
+		}
+		if (resGUI == 0 && updateGBARUNNER_2) {
 			static const char msg[] =
 				"Now downloading latest GBARunner2 version...\n"
 				"(GBARunner2.nds)\n"
@@ -558,7 +551,7 @@ void DownloadTWLoaderCIAs(void) {
 			renderText(12, 16, 0.5f, 0.5f, false, msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
+			int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -567,7 +560,8 @@ void DownloadTWLoaderCIAs(void) {
 			if (res != 0) {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else if (updateLOADCARD_DSTT) {
+		}
+		if (resGUI == 0 && updateLOADCARD_DSTT) {
 			static const char msg[] =
 				"Now downloading latest loadcard_dstt version...\n"
 				"(loadcard_dstt.nds)\n"
@@ -576,7 +570,7 @@ void DownloadTWLoaderCIAs(void) {
 			renderText(12, 16, 0.5f, 0.5f, false, msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
+			int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -585,7 +579,8 @@ void DownloadTWLoaderCIAs(void) {
 			if (res != 0) {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else if (updateR4) {
+		}
+		if (resGUI == 0 && updateR4) {
 			static const char msg[] =
 				"Now downloading latest R4 version...\n"
 				"(r4.nds)\n"
@@ -594,7 +589,7 @@ void DownloadTWLoaderCIAs(void) {
 			renderText(12, 16, 0.5f, 0.5f, false, msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
-			res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
+			int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -603,9 +598,15 @@ void DownloadTWLoaderCIAs(void) {
 			if (res != 0) {
 				DialogBoxDisappear("Download failed.", 0);
 			}
-		} else {
-			DialogBoxDisappear("Update cancelled.", 0);
 		}
+		if (resGUI == 0) {			
+			renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			run = false;
+		}
+	} else {
+		DialogBoxDisappear("Update cancelled.", 0);
 	}
 }
 
