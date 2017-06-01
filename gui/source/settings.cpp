@@ -693,7 +693,7 @@ void settingsDrawBottomScreen(void)
 		title = TR(STR_SETTINGS_FLASHCARD_SELECT);
 		int Ypos = 40;
 		for (int i = 0; i < 6; i++, Ypos += 12) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
+			setTextColor(RGBA8(255, 255, 255, 255));
 			renderText(Xpos, Ypos, 0.45, 0.45, false, fctext[i]);
 		}
 		setTextColor(RGBA8(255, 255, 255, 255));
