@@ -112,7 +112,6 @@ static sf2d_texture *boxarttex[6] = { };
 int bnriconnum = 0;
 int bnriconframenum = 0;
 int boxartnum = 0;
-int pagenum = 0;
 const char* temptext;
 const char* musicpath = "romfs:/null.wav";
 
@@ -554,7 +553,7 @@ static int PergameLed(void) {
 
 static void ChangeBNRIconNo(void) {
 	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
+	const int idx = bnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected banner icon is on the current page.
 		bnricontexnum = bnricontex[idx];
@@ -563,7 +562,7 @@ static void ChangeBNRIconNo(void) {
 
 static void ChangeBoxArtNo(void) {
 	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (pagenum * 20);
+	const int idx = boxartnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
@@ -577,7 +576,7 @@ static void ChangeBoxArtNo(void) {
  */
 static void StoreBoxArtPath(const char *path) {
 	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (pagenum * 20);
+	const int idx = boxartnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected boxart is on the current page.
 		free(boxartpath[idx]);
@@ -594,7 +593,7 @@ static void StoreBoxArtPath(const char *path) {
  */
 static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (pagenum * 20);
+	const int idx = bnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		sf2d_free_texture(bnricontex[idx]);
@@ -637,7 +636,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (pagenum * 20);
+	const int idx = boxartnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 21) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
@@ -1061,7 +1060,6 @@ static void scanRomDirectories(void)
 }
 
 // Cursor position.
-static int cursorPosition = 0;
 static int storedcursorPosition = 0;
 static int r4menu_cursorPosition = 0;
 static int woodmenu_cursorPosition = 0;
@@ -1078,12 +1076,12 @@ static void drawMenuDialogBox(void)
 	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
 	renderText_w(240, menudbox_Ypos+199, 0.50, 0.50, false, TR(STR_BACK));
 	if (menudboxmode == DBOX_MODE_SETTINGS) {
-		bnriconnum = cursorPosition;
+		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
 		sf2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
-		if (cursorPosition >= 0) {
+		if (settings.ui.cursorPosition >= 0) {
 			setTextColor(RGBA8(0, 0, 0, 255));
 			int y = 16, dy = 19;
 			// Print the banner text, center-aligned.
@@ -1278,7 +1276,7 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 	if (location == ROM_FLASHCARD) {
 		if (logEnabled)	LogFM("Delete mode enabled (flashcard)", del_rom.c_str());
 		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), del_rom.c_str());
-		fcfiles.erase(fcfiles.begin() + cursorPosition);
+		fcfiles.erase(fcfiles.begin() + settings.ui.cursorPosition);
 		
 		CIniFile setfcrompathini(path);
 		std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
@@ -1313,7 +1311,7 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 	} else if (location == ROM_SD) {
 		if (logEnabled)	LogFM("Delete mode enabled (SD)", del_rom.c_str());
 		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), del_rom.c_str());
-		files.erase(files.begin() + cursorPosition);
+		files.erase(files.begin() + settings.ui.cursorPosition);
 		
 		FILE *f_nds_file = fopen(path, "rb");
 		
@@ -1633,6 +1631,8 @@ int main()
 		menu_ctrlset = CTRL_SET_MENU;
 	sf2d_set_3D(1);
 
+	storedcursorPosition = settings.ui.cursorPosition;
+
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
 	// Save by default if the TWLNAND-side title is installed.
@@ -1722,9 +1722,9 @@ int main()
 		if(matching_files.size() != 0) {
 			file_count = matching_files.size();
 		}
-		const int pagemax = std::min((20+pagenum*20), (int)file_count);
-		// const int pagemax_ba = std::min((21+pagenum*20), (int)file_count);
-		int pagemax_ba = 21+pagenum*20;
+		const int pagemax = std::min((20+settings.ui.pagenum*20), (int)file_count);
+		// const int pagemax_ba = std::min((21+settings.ui.pagenum*20), (int)file_count);
+		int pagemax_ba = 21+settings.ui.pagenum*20;
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -1802,6 +1802,9 @@ int main()
 				colortexloaded = true;
 			}
 			if (!bnricontexloaded) {
+				titleboxXmovepos = (-64)*settings.ui.cursorPosition;
+				titleboxXmovepos += (64)*settings.ui.pagenum*20;
+				
 				if (!settings.twl.forwarder) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
@@ -1809,7 +1812,7 @@ int main()
 					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
-						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
 							if (bnriconnum < (int)files.size()) {
 								const char *tempfile = files.at(bnriconnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
@@ -1819,7 +1822,7 @@ int main()
 							}
 						}
 					}else{
-						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
+						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
 							if (bnriconnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(bnriconnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
@@ -1836,7 +1839,7 @@ int main()
 					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
-						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {
 							if (bnriconnum < (int)fcfiles.size()) {
 								const char *tempfile = fcfiles.at(bnriconnum).c_str();
 								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
@@ -1850,7 +1853,7 @@ int main()
 							}
 						}
 					}else{
-						for (bnriconnum = pagenum*20; bnriconnum < pagemax; bnriconnum++) {
+						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {
 							if (bnriconnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(bnriconnum).c_str();
 								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
@@ -1867,9 +1870,12 @@ int main()
 				}
 
 				bnricontexloaded = true;
-				bnriconnum = 0+pagenum*20;
+				bnriconnum = 0+settings.ui.pagenum*20;
 			}			
 			if (!boxarttexloaded) {
+				boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
+				boxartXmovepos += (18*8)*settings.ui.pagenum*20;
+				
 				if (!settings.twl.forwarder) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
@@ -1877,7 +1883,7 @@ int main()
 					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
-						for(boxartnum = pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
+						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
 							if (boxartnum < (int)files.size()) {
 								const char *tempfile = files.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
@@ -1911,7 +1917,7 @@ int main()
 							}
 						}
 					}else{
-						for(boxartnum = pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
+						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
 							if (boxartnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
@@ -1952,7 +1958,7 @@ int main()
 					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
-						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
 							if (boxartnum < (int)fcfiles.size()) {
 								const char *tempfile = fcfiles.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
@@ -1997,7 +2003,7 @@ int main()
 							}
 						}
 					}else{
-						for(boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
+						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
 							if (boxartnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(boxartnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
@@ -2045,11 +2051,11 @@ int main()
 				}
 				
 				// Load up to 6 boxarts.
-				for (boxartnum = pagenum*20; boxartnum < 6+pagenum*20; boxartnum++) {
+				for (boxartnum = settings.ui.pagenum*20; boxartnum < 6+settings.ui.pagenum*20; boxartnum++) {
 					LoadBoxArt();
 				}
 				boxarttexloaded = true;
-				boxartnum = 0+pagenum*20;
+				boxartnum = 0+settings.ui.pagenum*20;
 			}
 			
 			if (settings.ui.theme == 2) {	// akMenu/Wood theme
@@ -2114,7 +2120,7 @@ int main()
 						}
 						if (!settings.romselect.toplayout) {
 							if (!bannertextloaded) {
-								LoadBoxArt_WoodTheme(cursorPosition-pagenum*20);
+								LoadBoxArt_WoodTheme(settings.ui.cursorPosition-settings.ui.pagenum*20);
 								bannertextloaded = true;
 							}
 							boxartnum = 0;
@@ -2173,7 +2179,7 @@ int main()
 						for (filenum = filenameYmovepos; filenum < file_count; filenum++) {
 							if (filenum < 15+filenameYmovepos) {
 								u32 color;
-								if (cursorPosition == filenum) {
+								if (settings.ui.cursorPosition == filenum) {
 									color = SET_ALPHA(color_data->color, 255);
 								} else {
 									color = RGBA8(255, 255, 255, 255);
@@ -2200,7 +2206,7 @@ int main()
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
-						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", cursorPosition+1);		
+						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
 						// if(matching_files.size() == 0){
 							snprintf(romsel_counter2, sizeof(romsel_counter2), "%d", file_count);
 						// }else{
@@ -2251,14 +2257,14 @@ int main()
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
 							boxartXpos = 136;
-							if (!settings.twl.forwarder && pagenum == 0) {
-								if (cursorPosition < 2) {
+							if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
+								if (settings.ui.cursorPosition < 2) {
 									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
 									sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
 								}
 							}
-							for (boxartnum = pagenum*20; boxartnum < pagemax; boxartnum++) {
-								if (boxartnum < 9+pagenum*20) {
+							for (boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
+								if (boxartnum < 9+settings.ui.pagenum*20) {
 									ChangeBoxArtNo();
 									// Draw box art
 									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
@@ -2268,15 +2274,15 @@ int main()
 								}
 							}
 							if (applaunchprep) {
-								if (cursorPosition >= 0) {
-									boxartnum = cursorPosition;
+								if (settings.ui.cursorPosition >= 0) {
+									boxartnum = settings.ui.cursorPosition;
 									ChangeBoxArtNo();
 									sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
 									// Draw moving box art
 									sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
 									// Draw moving box art's reflection
 									sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
-								} else if (!settings.twl.forwarder && cursorPosition == -1) {
+								} else if (!settings.twl.forwarder && settings.ui.cursorPosition == -1) {
 									sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
 									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
 									sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
@@ -2286,8 +2292,8 @@ int main()
 					} else {
 						if (!settings.romselect.toplayout) {
 							boxartXpos = 136;
-							if (!settings.twl.forwarder && pagenum == 0) {
-								if (cursorPosition < 2) {
+							if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
+								if (settings.ui.cursorPosition < 2) {
 									sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
 									sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
 								}
@@ -2299,7 +2305,7 @@ int main()
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 							}
 						} else {
-							if (settings.twl.forwarder && pagenum == 0) {
+							if (settings.twl.forwarder && settings.ui.pagenum == 0) {
 								// int text_width = sftd_get_text_width(font, 12, noromtext1);
 								//int text_width = 0;
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
@@ -2326,13 +2332,13 @@ int main()
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 					// Draw the "Prev" and "Next" text for X/Y.
-					u32 lr_color = (pagenum != 0 && file_count <= (size_t)-pagenum*20)
+					u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
 					renderText(17, LshoulderYpos+4, 0.30, 0.50, false, "Previous Page");
 
-					lr_color = (file_count > (size_t)20+pagenum*20)
+					lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
@@ -2440,8 +2446,8 @@ int main()
 						
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
-						if (cursorPosition < 0)
-							cursorPosition = 0;
+						if (settings.ui.cursorPosition < 0)
+							settings.ui.cursorPosition = 0;
 					} else if (settings.ui.theme == 1) {
 						/** This is better than a glitched screen */
 						sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -2451,18 +2457,18 @@ int main()
 						menu_ctrlset = CTRL_SET_MENU;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
-						if (cursorPosition < 0)
-							cursorPosition = 0;
+						if (settings.ui.cursorPosition < 0)
+							settings.ui.cursorPosition = 0;
 					} else {
-						pagenum = 0; // Go to page 0
+						settings.ui.pagenum = 0; // Go to page 0
 						titleboxXmovepos = 0;
-						cursorPosition = 0 + pagenum * 20; // This is to reset cursor position after switching from R4 theme.
+						settings.ui.cursorPosition = 0 + settings.ui.pagenum * 20; // This is to reset cursor position after switching from R4 theme.
 						if (settings.twl.forwarder) {
 							if (fcfiles.size() <= 0) {
 								startbordermovepos = 0;
 								startborderscalesize = 1.0;
 								// No ROMs were found.
-								cursorPosition = -1;
+								settings.ui.cursorPosition = -1;
 								titleboxXmovepos = +64;
 								noromsfound = true;
 							}
@@ -2471,15 +2477,15 @@ int main()
 								startbordermovepos = 0;
 								startborderscalesize = 1.0;
 								// No ROMs were found.
-								cursorPosition = -1;
+								settings.ui.cursorPosition = -1;
 								titleboxXmovepos = +64;
 								noromsfound = true;
 							}
 						}							
-						storedcursorPosition = cursorPosition; // This is to reset cursor position after switching from R4 theme.
+						storedcursorPosition = settings.ui.cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						boxartXmovepos = 0;
 						// Reload 1st box art
-						LoadBoxArt_WoodTheme(0-pagenum*20);
+						LoadBoxArt_WoodTheme(0-settings.ui.pagenum*20);
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				} else if (gbarunnervalue == 1) {
@@ -2507,8 +2513,8 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				bannertextloaded = false;
-				if (cursorPosition >= 0) {
-					if (cursorPosition >= (int)file_count)
+				if (settings.ui.cursorPosition >= 0) {
+					if (settings.ui.cursorPosition >= (int)file_count)
 						showbubble = false;
 					else {
 						showbubble = true;
@@ -2524,7 +2530,7 @@ int main()
 						sfx_stop->play();
 					}
 				}
-				storedcursorPosition = cursorPosition;
+				storedcursorPosition = settings.ui.cursorPosition;
 			} else if (titleboxXmovetimer == 8) {
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
@@ -2539,39 +2545,39 @@ int main()
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				// Load the previous box art
-				if ( cursorPosition == 3+pagenum*20 ||
-				cursorPosition == 6+pagenum*20 ||
-				cursorPosition == 9+pagenum*20 ||
-				cursorPosition == 12+pagenum*20 ||
-				cursorPosition == 15+pagenum*20 ||
-				cursorPosition == 18+pagenum*20 ) {
-					boxartnum = cursorPosition-1;
+				if ( settings.ui.cursorPosition == 3+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 9+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 15+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
+					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
 					boxartnum--;
 					LoadBoxArt();
 					boxartnum--;
 					LoadBoxArt();
 				}
-				if ( cursorPosition == 6+pagenum*20 ||
-				cursorPosition == 12+pagenum*20 ||
-				cursorPosition == 18+pagenum*20 ) {
+				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
 					boxartXmovepos = -144*7;
 					boxartXmovepos += 18*2;
 				}
 			} else {
 				if (!cursorPositionset) {
-					cursorPosition--;
+					settings.ui.cursorPosition--;
 					cursorPositionset = true;
 				}
-				if (pagenum == 0) {
-					if (cursorPosition != -3) {
+				if (settings.ui.pagenum == 0) {
+					if (settings.ui.cursorPosition != -3) {
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
 						titleboxXmovetimer = 0;
 						titleboxXmoveleft = false;
 						cursorPositionset = false;
-						cursorPosition++;
+						settings.ui.cursorPosition++;
 						if (!playwrongsounddone) {
 							if (dspfirmfound) {
 								sfx_wrong->stop();
@@ -2581,14 +2587,14 @@ int main()
 						}
 					}
 				} else {
-					if (cursorPosition != -1+pagenum*20) {
+					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*20) {
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
 						titleboxXmovetimer = 0;
 						titleboxXmoveleft = false;
 						cursorPositionset = false;
-						cursorPosition++;
+						settings.ui.cursorPosition++;
 						if (!playwrongsounddone) {
 							if (dspfirmfound) {
 								sfx_wrong->stop();
@@ -2607,8 +2613,8 @@ int main()
 			} else if (titleboxXmovetimer == 9) {
 				// Delay a frame
 				bannertextloaded = false;
-				if (cursorPosition >= 0) {
-					if (cursorPosition >= (int)file_count)
+				if (settings.ui.cursorPosition >= 0) {
+					if (settings.ui.cursorPosition >= (int)file_count)
 						showbubble = false;
 					else {
 						showbubble = true;
@@ -2624,24 +2630,24 @@ int main()
 						sfx_stop->play();
 					}
 				}
-				storedcursorPosition = cursorPosition;
+				storedcursorPosition = settings.ui.cursorPosition;
 				// Load the next box art
-				if ( cursorPosition == 4+pagenum*20 ||
-				cursorPosition == 7+pagenum*20 ||
-				cursorPosition == 10+pagenum*20 ||
-				cursorPosition == 13+pagenum*20 ||
-				cursorPosition == 16+pagenum*20 ||
-				cursorPosition == 19+pagenum*20 ) {
-					boxartnum = cursorPosition+2;
+				if ( settings.ui.cursorPosition == 4+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 10+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 16+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
+					boxartnum = settings.ui.cursorPosition+2;
 					LoadBoxArt();
 					boxartnum++;
 					LoadBoxArt();
 					boxartnum++;
 					LoadBoxArt();
 				}
-				if ( cursorPosition == 7+pagenum*20 ||
-				cursorPosition == 13+pagenum*20 ||
-				cursorPosition == 19+pagenum*20 ) {
+				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
 					boxartXmovepos = -144;
 				}
 			} else if (titleboxXmovetimer == 8) {
@@ -2659,17 +2665,17 @@ int main()
 				boxartXmovepos -= 18;
 			} else {
 				if (!cursorPositionset) {
-					cursorPosition++;
+					settings.ui.cursorPosition++;
 					cursorPositionset = true;
 				}
-				if (cursorPosition != filenum) {
+				if (settings.ui.cursorPosition != filenum) {
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {
 					titleboxXmovetimer = 0;
 					titleboxXmoveright = false;
 					cursorPositionset = false;
-					cursorPosition--;
+					settings.ui.cursorPosition--;
 					if (!playwrongsounddone) {
 						if (dspfirmfound) {
 							sfx_wrong->stop();
@@ -2836,7 +2842,7 @@ int main()
 						}
 						if (doSlot1Update) {
 							// Slot-1 card has changed.
-							if (cursorPosition == -1) {
+							if (settings.ui.cursorPosition == -1) {
 								// Reload the banner text.
 								bannertextloaded = false;
 							}
@@ -2908,10 +2914,10 @@ int main()
 					} else {
 						int Ypos = 26;
 						filenameYpos = 36;
-						for (filenum = pagenum*20; filenum < pagemax; filenum++) {
+						for (filenum = settings.ui.pagenum*20; filenum < pagemax; filenum++) {
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
-							if (cursorPosition == filenum) {
+							if (settings.ui.cursorPosition == filenum) {
 								drawRectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
 							}
 
@@ -2923,7 +2929,7 @@ int main()
 							setTextColor(RGBA8(255, 255, 255, 255)); // white
 							renderText_w(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, false, wstr.c_str());
 
-							if (cursorPosition == filenum)
+							if (settings.ui.cursorPosition == filenum)
 								sf2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 							else
 								sf2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
@@ -2942,7 +2948,7 @@ int main()
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
-						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", cursorPosition+1);		
+						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
 						// if(matching_files.size() == 0){
 							snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
 						// }else{
@@ -3003,7 +3009,7 @@ int main()
 						}
 						if (!bannertextloaded) {
 							char path[256];
-							bnriconnum = cursorPosition;
+							bnriconnum = settings.ui.cursorPosition;
 							if (settings.twl.forwarder) {
 								const char *tempfile = fcfiles.at(bnriconnum).c_str();
 								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
@@ -3026,7 +3032,7 @@ int main()
 							if (settings.twl.forwarder) {
 								// if(matching_files.size() == 0){
 									if (fcfiles.size() != 0) {
-										romsel_filename = fcfiles.at(cursorPosition).c_str();
+										romsel_filename = fcfiles.at(settings.ui.cursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
@@ -3045,7 +3051,7 @@ int main()
 								} else {
 								// if(matching_files.size() == 0){
 									if (files.size() != 0) {
-										romsel_filename = files.at(cursorPosition).c_str();
+										romsel_filename = files.at(settings.ui.cursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
@@ -3079,7 +3085,7 @@ int main()
 							}
 							bannertextloaded = true;
 						}
-						if (cursorPosition >= 0) {
+						if (settings.ui.cursorPosition >= 0) {
 							int y = 32, dy = 12;
 							// Print the banner text, center-aligned.
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
@@ -3101,14 +3107,14 @@ int main()
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// if (dspfirmfound) { sfx_menuselect->play(); }
 						bool drawBannerText = true;
-						if (cursorPosition == -2) {
+						if (settings.ui.cursorPosition == -2) {
 							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
 							// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
 							//const int text_width = 0;
 							setTextColor(RGBA8(0, 0, 0, 255)); // black
 							renderText_w(8, 38, 0.70, 0.70, false, curn2text);
 							drawBannerText = false;
-						} else if (cursorPosition == -1) {
+						} else if (settings.ui.cursorPosition == -1) {
 							if (settings.twl.forwarder) {
 								static const char add_games_text[] = "Add Games";
 								// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
@@ -3191,7 +3197,7 @@ int main()
 									// Banner file is not available.
 									strcpy(path, "romfs:/notextbanner");
 								}
-								bnriconnum = cursorPosition;
+								bnriconnum = settings.ui.cursorPosition;
 								FILE *f_bnr = fopen(path, "rb");
 								if (f_bnr) {
 									romsel_gameline = grabText(f_bnr, language);
@@ -3231,7 +3237,7 @@ int main()
 								renderText_w(8, y, 0.75, 0.75, false, romsel_gameline[i].c_str());
 							}
 
-							if (cursorPosition >= 0 && settings.ui.counter) {
+							if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {
 								char romsel_counter1[16];
 								snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 								const char *p_romsel_counter;
@@ -3265,7 +3271,7 @@ int main()
 						renderText_w(home_x+20, 220, 0.50, 0.50, false, home_text);
 					}
 
-					if (pagenum == 0) {
+					if (settings.ui.pagenum == 0) {
 						if (settings.ui.iconsize) {
 							sf2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 108, 1.25, 1.25);
 							sf2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
@@ -3292,7 +3298,7 @@ int main()
 							}
 							if (doSlot1Update) {
 								// Slot-1 card has changed.
-								if (cursorPosition == -1) {
+								if (settings.ui.cursorPosition == -1) {
 									// Reload the banner text.
 									bannertextloaded = false;
 								}
@@ -3328,7 +3334,7 @@ int main()
 						ndsiconXpos = 144;
 					}
 					//filenameYpos = 0;
-					for (filenum = pagenum*20; filenum < 20+pagenum*20; filenum++) {
+					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
 						if (filenum < pagemax) {
 							if (settings.ui.iconsize) {
 								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
@@ -3370,11 +3376,11 @@ int main()
 							startbordermovepos = 0;
 							startborderscalesize = 1.0;
 						}
-						if (!settings.twl.forwarder && cursorPosition == -1 && !gamecardIsInserted()) {
+						if (!settings.twl.forwarder && settings.ui.cursorPosition == -1 && !gamecardIsInserted()) {
 							// Slot-1 selected, but no cartridge is present.
 							// Don't print "START" and the cursor border.
 						} else {
-							if (!is3DSX || cursorPosition == -2) {
+							if (!is3DSX || settings.ui.cursorPosition == -2) {
 								if (showbubble) {
 									// Print "START" and the cursor border.
 									if (settings.ui.iconsize) {
@@ -3402,9 +3408,9 @@ int main()
 							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
 						else
 							sf2d_draw_texture_part_blend(bottomtex, 128, 116, 128, 116, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
-						if (cursorPosition == -2) {
+						if (settings.ui.cursorPosition == -2) {
 							sf2d_draw_texture(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
-						} else if (cursorPosition == -1) {
+						} else if (settings.ui.cursorPosition == -1) {
 							if (settings.twl.forwarder)
 								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
 							else {
@@ -3418,7 +3424,7 @@ int main()
 						} else {
 							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
 							if (!applaunchicon) {
-								bnriconnum = cursorPosition;
+								bnriconnum = settings.ui.cursorPosition;
 								ChangeBNRIconNo();
 								bnricontexlaunch = bnricontexnum;
 								applaunchicon = true;
@@ -3470,8 +3476,8 @@ int main()
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									if (settings.twl.forwarder) {
 										settings.twl.forwarder = false;
-										cursorPosition = 0;
-										pagenum = 0;
+										settings.ui.cursorPosition = 0;
+										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
 										bannertextloaded = false;
@@ -3483,8 +3489,8 @@ int main()
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									if (!settings.twl.forwarder) {
 										settings.twl.forwarder = true;
-										cursorPosition = 0;
-										pagenum = 0;
+										settings.ui.cursorPosition = 0;
+										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
 										bannertextloaded = false;
@@ -3541,11 +3547,11 @@ int main()
 						wood_ndsiconscaletimer = 0;
 					}
 				} else {
-					if(cursorPosition < 0) {
+					if(settings.ui.cursorPosition < 0) {
 						filenameYmovepos = 0;
 						titleboxXmovepos -= 64;
 						boxartXmovepos -= 18*8;
-						cursorPosition = 0;
+						settings.ui.cursorPosition = 0;
 						// updatebotscreen = true;
 					}
 					if(hDown & KEY_A){
@@ -3553,16 +3559,16 @@ int main()
 							if (settings.twl.forwarder) {
 								settings.twl.launchslot1 = true;
 								// if(matching_files.size() == 0){
-									rom = fcfiles.at(cursorPosition).c_str();
+									rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 								// }else {
-							// 	rom = matching_files.at(cursorPosition).c_str();
+							// 	rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							// }
 							} else {
 								settings.twl.launchslot1 = false;
 								// if(matching_files.size() == 0){
-									rom = files.at(cursorPosition).c_str();
+									rom = files.at(settings.ui.cursorPosition).c_str();
 								// }else {
-								// 	rom = matching_files.at(cursorPosition).c_str();
+								// 	rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								// }
 								sav = ReplaceAll(rom, ".nds", ".sav");
 							}
@@ -3578,33 +3584,33 @@ int main()
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_L){
-						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
-							pagenum--;
+						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*20) {
+							settings.ui.pagenum--;
 							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 						}
 					} else if(hDown & KEY_R){
 						if (file_count > (size_t)pagemax) {
-							pagenum++;
+							settings.ui.pagenum++;
 							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 						}
 					} else if(hDown & KEY_DOWN){
-						cursorPosition++;
-						if (cursorPosition >= pagemax) {
-							cursorPosition = 0+pagenum*20;
+						settings.ui.cursorPosition++;
+						if (settings.ui.cursorPosition >= pagemax) {
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 						}
 						wood_downpressed = true;
 						wood_ndsiconscaletimer = 0;
 						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
-						cursorPosition--;
-						if (cursorPosition < 0+pagenum*20) {
-							cursorPosition = pagemax-1;
+						settings.ui.cursorPosition--;
+						if (settings.ui.cursorPosition < 0+settings.ui.pagenum*20) {
+							settings.ui.cursorPosition = pagemax-1;
 						}
 						wood_uppressed = true;
 						wood_ndsiconscaletimer = 0;
@@ -3614,8 +3620,8 @@ int main()
 						wood_ndsiconscaletimer = 0;
 					}
 					if (filenum > 4) {
-						if (cursorPosition > 2+pagenum*20)
-							filenameYmovepos = -cursorPosition+2+pagenum*20;
+						if (settings.ui.cursorPosition > 2+settings.ui.pagenum*20)
+							filenameYmovepos = -settings.ui.cursorPosition+2+settings.ui.pagenum*20;
 						else
 							filenameYmovepos = 0;
 					}
@@ -3670,17 +3676,17 @@ int main()
 						updatetopscreen = true;
 					}
 				} else {
-					if(cursorPosition < 0) {
+					if(settings.ui.cursorPosition < 0) {
 						filenameYmovepos = 0;
 						titleboxXmovepos -= 64;
 						boxartXmovepos -= 18*8;
-						cursorPosition = 0;
+						settings.ui.cursorPosition = 0;
 						updatetopscreen = true;
 					}
 					if(hDown & KEY_L) {
 						settings.twl.forwarder = !settings.twl.forwarder;
-						cursorPosition = 0;
-						pagenum = 0;
+						settings.ui.cursorPosition = 0;
+						settings.ui.pagenum = 0;
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
 						bannertextloaded = false;
@@ -3691,16 +3697,16 @@ int main()
 							if (settings.twl.forwarder) {
 								settings.twl.launchslot1 = true;
 								// if(matching_files.size() == 0){
-									rom = fcfiles.at(cursorPosition).c_str();
+									rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 								// }else {
-							// 	rom = matching_files.at(cursorPosition).c_str();
+							// 	rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							// }
 							} else {
 								settings.twl.launchslot1 = false;
 								// if(matching_files.size() == 0){
-									rom = files.at(cursorPosition).c_str();
+									rom = files.at(settings.ui.cursorPosition).c_str();
 								// }else {
-								// 	rom = matching_files.at(cursorPosition).c_str();
+								// 	rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								// }
 								sav = ReplaceAll(rom, ".nds", ".sav");
 							}
@@ -3715,31 +3721,31 @@ int main()
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_DOWN){
-						cursorPosition++;
-						if (cursorPosition == filenum) {
+						settings.ui.cursorPosition++;
+						if (settings.ui.cursorPosition == filenum) {
 							filenameYmovepos = 0;
-							cursorPosition = 0;
+							settings.ui.cursorPosition = 0;
 						}
 						bannertextloaded = false;
 						updatetopscreen = true;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
-						if (cursorPosition == 0) {
-							cursorPosition = filenum;
+						if (settings.ui.cursorPosition == 0) {
+							settings.ui.cursorPosition = filenum;
 						}
-						cursorPosition--;
+						settings.ui.cursorPosition--;
 						bannertextloaded = false;
 						updatetopscreen = true;
 					} else if ((hDown & KEY_LEFT) && (filenum > 10)) {
-						cursorPosition -= 10;
-						if (cursorPosition < 0) {
-							cursorPosition = 0;
+						settings.ui.cursorPosition -= 10;
+						if (settings.ui.cursorPosition < 0) {
+							settings.ui.cursorPosition = 0;
 						}
 						bannertextloaded = false;			
 						updatetopscreen = true;
 					} else if ((hDown & KEY_RIGHT) && (filenum > 10)) {
-						cursorPosition += 10;
-						if (cursorPosition >= filenum) {
-							cursorPosition = filenum-1;
+						settings.ui.cursorPosition += 10;
+						if (settings.ui.cursorPosition >= filenum) {
+							settings.ui.cursorPosition = filenum-1;
 						}
 						bannertextloaded = false;			
 						updatetopscreen = true;
@@ -3748,10 +3754,10 @@ int main()
 						updatetopscreen = true;
 					}
 					if (filenum > 15) {
-						if (cursorPosition > filenum-8)
+						if (settings.ui.cursorPosition > filenum-8)
 							filenameYmovepos = filenum-15;
-						else if (cursorPosition > 7)
-							filenameYmovepos = cursorPosition-7;
+						else if (settings.ui.cursorPosition > 7)
+							filenameYmovepos = settings.ui.cursorPosition-7;
 						else
 							filenameYmovepos = 0;
 					}
@@ -3761,8 +3767,8 @@ int main()
 				startborderscalesize = 1.0;
 				if (!noromsfound && file_count == 0) {
 					// No ROMs were found.
-					cursorPosition = -1;
-					storedcursorPosition = cursorPosition;
+					settings.ui.cursorPosition = -1;
+					storedcursorPosition = settings.ui.cursorPosition;
 					titleboxXmovepos = +64;
 					boxartXmovepos = 0;
 					// updatebotscreen = true;
@@ -3793,15 +3799,15 @@ int main()
 						
 						if (settings.twl.forwarder) {
 							if(matching_files.size() == 0){
-								rom = fcfiles.at(cursorPosition).c_str();
+								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 							} else {
-								rom = matching_files.at(cursorPosition).c_str();
+								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
 						} else {
 							if(matching_files.size() == 0){
-								rom = files.at(cursorPosition).c_str();
+								rom = files.at(settings.ui.cursorPosition).c_str();
 							} else {
-								rom = matching_files.at(cursorPosition).c_str();
+								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
 						}
 						
@@ -3832,9 +3838,9 @@ int main()
 								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
 									
 									if(matching_files.size() == 0){
-										rom_iter = fcfiles.at(cursorPosition);
+										rom_iter = fcfiles.at(settings.ui.cursorPosition);
 									} else {
-										rom_iter = matching_files.at(cursorPosition);
+										rom_iter = matching_files.at(settings.ui.cursorPosition);
 									}
 									
 									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
@@ -3849,9 +3855,9 @@ int main()
 								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
 									
 									if(matching_files.size() == 0){
-										rom_iter = files.at(cursorPosition);
+										rom_iter = files.at(settings.ui.cursorPosition);
 									} else {
-										rom_iter = matching_files.at(cursorPosition);
+										rom_iter = matching_files.at(settings.ui.cursorPosition);
 									}
 									
 									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
@@ -3876,16 +3882,16 @@ int main()
 							std::string del_rom;
 							if (settings.twl.forwarder) {
 								if(matching_files.size() == 0){
-									del_rom = fcfiles.at(cursorPosition).c_str();
+									del_rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 								} else {
-									del_rom = matching_files.at(cursorPosition).c_str();
+									del_rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 								deletemode_internal(ROM_FLASHCARD, del_rom);
 							} else {
 								if(matching_files.size() == 0){
-									del_rom = files.at(cursorPosition);
+									del_rom = files.at(settings.ui.cursorPosition);
 								} else {
-									del_rom = matching_files.at(cursorPosition);
+									del_rom = matching_files.at(settings.ui.cursorPosition);
 								}
 								deletemode_internal(ROM_SD, del_rom);
 							}
@@ -3893,9 +3899,9 @@ int main()
 						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
 						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 
-						pagenum = 0; // Go to page 0
-						cursorPosition = 0; // Move the cursor to 0
-						storedcursorPosition = cursorPosition; // Move the cursor to 0
+						settings.ui.pagenum = 0; // Go to page 0
+						settings.ui.cursorPosition = 0; // Move the cursor to 0
+						storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
 						titleboxXmovepos = 0; // Move the cursor to 0
 						boxartXmovepos = 0; // Move the cursor to 0
 						boxarttexloaded = false; // Reload boxarts
@@ -3915,7 +3921,7 @@ int main()
 						} else if (touch.px > 192 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
-								if (cursorPosition == -1) {
+								if (settings.ui.cursorPosition == -1) {
 									if (filenum == 0) {
 										if (!playwrongsounddone) {
 											if (dspfirmfound) {
@@ -3938,7 +3944,7 @@ int main()
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
 						//titleboxXmovepos -= 64;
 						if (!titleboxXmoveleft) {
-							if (cursorPosition == -1) {
+							if (settings.ui.cursorPosition == -1) {
 								if (filenum == 0) {
 									if (!playwrongsounddone) {
 										if (dspfirmfound) {
@@ -3977,18 +3983,18 @@ int main()
 						// Switch to per-game settings.
 						menudboxmode = DBOX_MODE_SETTINGS;
 						if (!showdialogbox_menu) {
-							if (cursorPosition >= 0 && menudbox_Ypos == -240) {
+							if (settings.ui.cursorPosition >= 0 && menudbox_Ypos == -240) {
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = fcfiles.at(cursorPosition).c_str();
+										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 									} else {
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								} else {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = files.at(settings.ui.cursorPosition).c_str();
 									} else {
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								}
 								LoadPerGameSettings();
@@ -4005,10 +4011,10 @@ int main()
 						// Don't run the action again 'til R is pressed again
 						menuaction_nextpage = false;
 						if (file_count > (size_t)pagemax) {
-							pagenum++;
+							settings.ui.pagenum++;
 							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
-							storedcursorPosition = cursorPosition;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							storedcursorPosition = settings.ui.cursorPosition;
 							titleboxXmovepos = 0;
 							boxartXmovepos = 0;
 							// noromsfound = false;
@@ -4023,11 +4029,11 @@ int main()
 					} else if (menuaction_prevpage) {
 						// Don't run the action again 'til L is pressed again
 						menuaction_prevpage = false;
-						if ((size_t)pagenum != 0 && file_count <= (size_t)0-pagenum*20) {
-							pagenum--;
+						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*20) {
+							settings.ui.pagenum--;
 							bannertextloaded = false;
-							cursorPosition = 0+pagenum*20;
-							storedcursorPosition = cursorPosition;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							storedcursorPosition = settings.ui.cursorPosition;
 							titleboxXmovepos = 0;
 							boxartXmovepos = 0;
 							// noromsfound = false;
@@ -4041,14 +4047,14 @@ int main()
 						}
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
 						showbubble = false;
-						if (!is3DSX || cursorPosition == -2) {
+						if (!is3DSX || settings.ui.cursorPosition == -2) {
 							bool playlaunchsound = true;
 							if (titleboxXmovetimer == 0) {
-								if(cursorPosition == -2) {
+								if(settings.ui.cursorPosition == -2) {
 									titleboxXmovetimer = 1;
 									screenmodeswitch = true;
 									applaunchprep = true;
-								} else if(cursorPosition == -1) {
+								} else if(settings.ui.cursorPosition == -1) {
 									if (!settings.twl.forwarder && !gamecardIsInserted()) {
 										// Slot-1 is selected, but no
 										// cartridge is present.
@@ -4074,16 +4080,16 @@ int main()
 									if (settings.twl.forwarder) {
 										settings.twl.launchslot1 = true;
 										if(matching_files.size() == 0){
-											rom = fcfiles.at(cursorPosition).c_str();
+											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 										}else {
-											rom = matching_files.at(cursorPosition).c_str();
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
 									} else {
 										settings.twl.launchslot1 = false;
 										if(matching_files.size() == 0){
-											rom = files.at(cursorPosition).c_str();
+											rom = files.at(settings.ui.cursorPosition).c_str();
 										}else {
-											rom = matching_files.at(cursorPosition).c_str();
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
 										sav = ReplaceAll(rom, ".nds", ".sav");
 									}
@@ -4110,7 +4116,7 @@ int main()
 					
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT) {
-							if (cursorPosition >= 0) {
+							if (settings.ui.cursorPosition >= 0) {
 								// Switch to game-specific settings.
 								menudboxmode = DBOX_MODE_SETTINGS;
 							}
@@ -4224,9 +4230,9 @@ int main()
 
 								if (matching_files.size() != 0) {
 									/** Prepare some stuff to show correctly the filtered roms */
-									pagenum = 0; // Go to page 0
-									cursorPosition = 0; // Move the cursor to 0
-									storedcursorPosition = cursorPosition; // Move the cursor to 0
+									settings.ui.pagenum = 0; // Go to page 0
+									settings.ui.cursorPosition = 0; // Move the cursor to 0
+									storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
 									titleboxXmovepos = 0; // Move the cursor to 0
 									boxartXmovepos = 0; // Move the cursor to 0
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
@@ -4318,9 +4324,9 @@ int main()
 
 									if (matching_files.size() != 0) {
 										/** Prepare some stuff to show correctly the filtered roms */
-										pagenum = 0; // Go to page 0
-										cursorPosition = 0; // Move the cursor to 0
-										storedcursorPosition = cursorPosition; // Move the cursor to 0
+										settings.ui.pagenum = 0; // Go to page 0
+										settings.ui.cursorPosition = 0; // Move the cursor to 0
+										storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
 										titleboxXmovepos = 0; // Move the cursor to 0
 										boxartXmovepos = 0; // Move the cursor to 0
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
@@ -4345,15 +4351,15 @@ int main()
 							// Switch to the "Start" menu.
 							if (settings.twl.forwarder) {
 								if(matching_files.size() == 0){
-									rom = fcfiles.at(cursorPosition).c_str();
+									rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 								} else {
-									rom = matching_files.at(cursorPosition).c_str();
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							} else {
 								if (matching_files.size() == 0) {
-									rom = files.at(cursorPosition).c_str();
+									rom = files.at(settings.ui.cursorPosition).c_str();
 								}else{
-									rom = matching_files.at(cursorPosition).c_str();
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 								
 							}
@@ -4419,15 +4425,15 @@ int main()
 								gamesettings_cursorPosition = 3;
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = fcfiles.at(cursorPosition).c_str();
+										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 									} else {
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								} else {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = files.at(settings.ui.cursorPosition).c_str();
 									}else{
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
 									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
@@ -4449,15 +4455,15 @@ int main()
 							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
-										rom = fcfiles.at(cursorPosition).c_str();
+										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 									} else {
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								} else {
 									if(matching_files.size() == 0){
-										rom = files.at(cursorPosition).c_str();
+										rom = files.at(settings.ui.cursorPosition).c_str();
 									}else{
-										rom = matching_files.at(cursorPosition).c_str();
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								}
 								SavePerGameSettings();
@@ -4498,15 +4504,15 @@ int main()
 								case 3:
 									if (settings.twl.forwarder) {
 										if(matching_files.size() == 0){
-											rom = fcfiles.at(cursorPosition).c_str();
+											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 										}else{
-											rom = matching_files.at(cursorPosition).c_str();
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}										
 									} else {
 										if(matching_files.size() == 0){
-											rom = files.at(cursorPosition).c_str();
+											rom = files.at(settings.ui.cursorPosition).c_str();
 										}else{
-											rom = matching_files.at(cursorPosition).c_str();
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
 										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
 										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
@@ -4528,15 +4534,15 @@ int main()
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
 							if (settings.twl.forwarder) {
 								if(matching_files.size() == 0){
-									rom = fcfiles.at(cursorPosition).c_str();
+									rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 								}else{
-									rom = matching_files.at(cursorPosition).c_str();
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							} else {
 								if(matching_files.size() == 0){
-									rom = files.at(cursorPosition).c_str();
+									rom = files.at(settings.ui.cursorPosition).c_str();
 								}else{
-									rom = matching_files.at(cursorPosition).c_str();
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							}
 							SavePerGameSettings();
@@ -4553,10 +4559,10 @@ int main()
 						}
 						if (matching_files.size() != 0) matching_files.clear();
 						if (delete_queue.size() != 0) delete_queue.clear();
-						pagenum = 0;
+						settings.ui.pagenum = 0;
 						bannertextloaded = false;
-						cursorPosition = 0;
-						storedcursorPosition = cursorPosition;
+						settings.ui.cursorPosition = 0;
+						storedcursorPosition = settings.ui.cursorPosition;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						noromsfound = false;
@@ -4718,18 +4724,18 @@ int main()
 				// TODO: Allow rainbow LED even in CTR? (It'll stay
 				// cycling as long as no event causes it to change.)
 				if (usepergamesettings) {
-					if (cursorPosition >= 0 && gbarunnervalue == 0) {
+					if (settings.ui.cursorPosition >= 0 && gbarunnervalue == 0) {
 						if (settings.twl.forwarder) {
 							if(matching_files.size() == 0){
-								rom = fcfiles.at(cursorPosition).c_str();
+								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 							}else{
-								rom = matching_files.at(cursorPosition).c_str();
+								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
 						} else {
 							if(matching_files.size() == 0){
-								rom = files.at(cursorPosition).c_str();
+								rom = files.at(settings.ui.cursorPosition).c_str();
 							} else {
-								rom = matching_files.at(cursorPosition).c_str();
+								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
 						}
 						LoadPerGameSettings();
