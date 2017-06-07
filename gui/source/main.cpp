@@ -1631,6 +1631,7 @@ int main()
 		menu_ctrlset = CTRL_SET_MENU;
 	sf2d_set_3D(1);
 
+	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
 
 	// Loop as long as the status is not exit
