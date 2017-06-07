@@ -34,6 +34,7 @@ bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
 bool updateLOADCARD_DSTT = false;
 bool updateR4 = false;
+//bool doCleanInstall = true;
 
 std::string gui_url;
 std::string nand_url;
@@ -214,7 +215,7 @@ struct ReadJson {
 
 ReadJson internal_json_reader(json_value* json, json_value* val, std::string str1, std::string str2, std::string str3, std::string str4){
 	ReadJson rj;
-	for(u32 i = 0; i < json->u.object.length; i++) {
+	for(u32 i = 0; i < (json->u.object.length -1); i++) {
 		// Create two variables that will store the values and it size
 		char* name = val->u.object.values[i].name;
 		u32 nameLen = val->u.object.values[i].name_length;
@@ -255,17 +256,35 @@ int checkUpdate(void) {
 	u32 responseCode = 0;
 	httpcContext context;	
 	
-	// TODO MANAGE EXCEPTIONS!!!!
 	httpcInit(0);
-	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
-    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
-	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
-	httpcBeginRequest(&context);
-	httpcGetResponseStatusCode(&context, &responseCode);	
+	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		return -1;
+	}
+	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		return -1;
+	}
+	if(R_FAILED(httpcBeginRequest(&context))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		return -1;
+	}
+	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		return -1;
+	}
     if (responseCode != 200) {
-        // This is an error trying to reach the file, so insert error here.
-    }
+		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		return -1;
+	}
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
@@ -359,16 +378,50 @@ int checkUpdate(void) {
 					// Version is lower or same.
 					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
 
-					if (screenmode == SCREEN_MODE_SETTINGS) {				
-						showdialogbox = false;
-					} else {
-						sf2d_end_frame();
-						sf2d_swapbuffers();
-					}
+					sf2d_end_frame();
+					sf2d_swapbuffers();
 
 					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
 					free(jsonText);
-					httpcCloseContext(&context);						
+					httpcCloseContext(&context);
+
+					bool checkanswer = true;
+
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					if (screenmode == SCREEN_MODE_SETTINGS) {
+						sf2d_draw_texture(settingstex, 0, 0);
+					}
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					static const char msg[] =
+							"TWLoader is up-to-date\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							": Close";					
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					
+					while(checkanswer) {
+						hidScanInput();
+
+						const u32 hDown = hidKeysDown();
+						
+						if (hDown & KEY_A) {
+							//doCleanInstall = true;
+							checkanswer = false;	// Exit loop
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+					
 					return -1;
 				}
 								
@@ -867,18 +920,35 @@ int downloadBootstrapVersion(bool type)
 	httpcContext context;	
 	int res = -1;	
 	
-	// TODO MANAGE EXCEPTIONS!!!!
 	httpcInit(0);
-	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
-    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
-	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
-	httpcBeginRequest(&context);
-	httpcGetResponseStatusCode(&context, &responseCode);	
+	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		return -1;
+	}
+	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		return -1;
+	}
+	if(R_FAILED(httpcBeginRequest(&context))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		return -1;
+	}
+	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		return -1;
+	}
     if (responseCode != 200) {
-        // This is an error trying to reach the file, so insert error here.
-		return res;
-    }
+		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		return -1;
+	}
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
