@@ -255,17 +255,35 @@ int checkUpdate(void) {
 	u32 responseCode = 0;
 	httpcContext context;	
 	
-	// TODO MANAGE EXCEPTIONS!!!!
 	httpcInit(0);
-	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
-    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
-	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
-	httpcBeginRequest(&context);
-	httpcGetResponseStatusCode(&context, &responseCode);	
+	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		return -1;
+	}
+	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		return -1;
+	}
+	if(R_FAILED(httpcBeginRequest(&context))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		return -1;
+	}
+	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		return -1;
+	}
     if (responseCode != 200) {
-        // This is an error trying to reach the file, so insert error here.
-    }
+		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		return -1;
+	}
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
@@ -867,18 +885,35 @@ int downloadBootstrapVersion(bool type)
 	httpcContext context;	
 	int res = -1;	
 	
-	// TODO MANAGE EXCEPTIONS!!!!
 	httpcInit(0);
-	httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0);
-    httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader");
-	httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
-	httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED);
-	httpcBeginRequest(&context);
-	httpcGetResponseStatusCode(&context, &responseCode);	
+	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		return -1;
+	}
+	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		return -1;
+	}
+	if(R_FAILED(httpcBeginRequest(&context))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		return -1;
+	}
+	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		return -1;
+	}
     if (responseCode != 200) {
-        // This is an error trying to reach the file, so insert error here.
-		return res;
-    }
+		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		return -1;
+	}
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
