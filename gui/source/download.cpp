@@ -34,6 +34,7 @@ bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
 bool updateLOADCARD_DSTT = false;
 bool updateR4 = false;
+//bool doCleanInstall = true;
 
 std::string gui_url;
 std::string nand_url;
@@ -377,16 +378,50 @@ int checkUpdate(void) {
 					// Version is lower or same.
 					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
 
-					if (screenmode == SCREEN_MODE_SETTINGS) {				
-						showdialogbox = false;
-					} else {
-						sf2d_end_frame();
-						sf2d_swapbuffers();
-					}
+					sf2d_end_frame();
+					sf2d_swapbuffers();
 
 					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
 					free(jsonText);
-					httpcCloseContext(&context);						
+					httpcCloseContext(&context);
+
+					bool checkanswer = true;
+
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					if (screenmode == SCREEN_MODE_SETTINGS) {
+						sf2d_draw_texture(settingstex, 0, 0);
+					}
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					static const char msg[] =
+							"TWLoader is up-to-date\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							"\n"
+							": Close";					
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					
+					while(checkanswer) {
+						hidScanInput();
+
+						const u32 hDown = hidKeysDown();
+						
+						if (hDown & KEY_A) {
+							//doCleanInstall = true;
+							checkanswer = false;	// Exit loop
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+					
 					return -1;
 				}
 								
