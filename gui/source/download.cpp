@@ -964,7 +964,7 @@ int downloadBootstrapVersion(bool type)
 				
 				json_value* val = json->u.object.values[4].value;
 
-				for(u32 i = 0; i < json->u.object.length; i++) {
+				for(u32 i = 0; i < (json->u.object.length - 1); i++) {
 					char* name = val->u.object.values[i].name;
 					u32 nameLen = val->u.object.values[i].name_length;
 					json_value* subVal = val->u.object.values[i].value;
@@ -1034,7 +1034,6 @@ void checkBootstrapVersion(void){
 		fileSize = ftell(VerFile);
 		rewind(VerFile);
 		fread(buf,1,fileSize,VerFile);
-		buf[fileSize - 1] = '\0';
 		settings_releasebootstrapver = buf;
 		fclose(VerFile);
 		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file:", settings_releasebootstrapver.c_str());
@@ -1059,7 +1058,6 @@ void checkBootstrapVersion(void){
 			fileSize = ftell(VerFile);
 			rewind(VerFile);
 			fread(buf,1,fileSize,VerFile);
-			buf[fileSize - 1] = '\0';
 			settings_releasebootstrapver = buf;
 			fclose(VerFile);
 			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release bootstrap ver file #2:", settings_releasebootstrapver.c_str());
@@ -1083,7 +1081,6 @@ void checkBootstrapVersion(void){
 		fileSize = ftell(VerFile);
 		rewind(VerFile);
 		fread(buf,1,fileSize,VerFile);
-		buf[fileSize - 1] = '\0';
 		settings_unofficialbootstrapver = buf;
 		fclose(VerFile);
 		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file:", settings_unofficialbootstrapver.c_str());
@@ -1102,7 +1099,6 @@ void checkBootstrapVersion(void){
 			fileSize = ftell(VerFile);
 			rewind(VerFile);
 			fread(buf,1,fileSize,VerFile);
-			buf[fileSize - 1] = '\0';
 			settings_unofficialbootstrapver = buf;
 			fclose(VerFile);
 			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file #2:", settings_unofficialbootstrapver.c_str());
