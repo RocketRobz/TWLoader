@@ -685,7 +685,6 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
-			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 			if (gbarunnervalue == 0) {
 				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 				char path[256];
@@ -697,6 +696,7 @@ static void SaveBootstrapConfig(void)
 			}
 		}
 	}
+	bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
 	
@@ -1802,8 +1802,8 @@ int main()
 				colortexloaded = true;
 			}
 			if (!bnricontexloaded) {
-				titleboxXmovepos = (-64)*settings.ui.cursorPosition;
-				titleboxXmovepos += (64)*settings.ui.pagenum*20;
+				// titleboxXmovepos = (-64)*settings.ui.cursorPosition;
+				// titleboxXmovepos += (64)*settings.ui.pagenum*20;
 				
 				if (!settings.twl.forwarder) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -1873,8 +1873,8 @@ int main()
 				bnriconnum = 0+settings.ui.pagenum*20;
 			}			
 			if (!boxarttexloaded) {
-				boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
-				boxartXmovepos += (18*8)*settings.ui.pagenum*20;
+				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
+				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
 				if (!settings.twl.forwarder) {
 					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);

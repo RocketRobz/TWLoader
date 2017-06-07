@@ -1405,7 +1405,7 @@ void LoadSettings(void) {
 	settings.ui.fcromfolder = settingsini.GetString("FRONTEND", "FCROM_FOLDER", "");
 	RemoveTrailingSlashes(settings.ui.fcromfolder);
 	settings.ui.pagenum = settingsini.GetInt("FRONTEND", "PAGE_NUMBER", 0);
-	settings.ui.cursorPosition = settingsini.GetInt("FRONTEND", "CURSOR_POSITION", 0);
+	// settings.ui.cursorPosition = settingsini.GetInt("FRONTEND", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
@@ -1459,7 +1459,7 @@ void SaveSettings(void) {
 	settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
-	settingsini.SetInt("FRONTEND", "CURSOR_POSITION", settings.ui.cursorPosition);
+	// settingsini.SetInt("FRONTEND", "CURSOR_POSITION", settings.ui.cursorPosition);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
