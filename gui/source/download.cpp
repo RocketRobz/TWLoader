@@ -964,7 +964,7 @@ int downloadBootstrapVersion(bool type)
 				
 				json_value* val = json->u.object.values[4].value;
 
-				for(u32 i = 0; i < json->u.object.length; i++) {
+				for(u32 i = 0; i < (json->u.object.length - 1); i++) {
 					char* name = val->u.object.values[i].name;
 					u32 nameLen = val->u.object.values[i].name_length;
 					json_value* subVal = val->u.object.values[i].value;
