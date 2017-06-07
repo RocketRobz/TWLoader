@@ -214,7 +214,7 @@ struct ReadJson {
 
 ReadJson internal_json_reader(json_value* json, json_value* val, std::string str1, std::string str2, std::string str3, std::string str4){
 	ReadJson rj;
-	for(u32 i = 0; i < json->u.object.length; i++) {
+	for(u32 i = 0; i < (json->u.object.length -1); i++) {
 		// Create two variables that will store the values and it size
 		char* name = val->u.object.values[i].name;
 		u32 nameLen = val->u.object.values[i].name_length;
