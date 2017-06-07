@@ -387,13 +387,16 @@ int checkUpdate(void) {
 
 					bool checkanswer = true;
 
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					if (screenmode == SCREEN_MODE_SETTINGS) {
-						sf2d_draw_texture(settingstex, 0, 0);
-					}
-					sf2d_draw_texture(dialogboxtex, 0, 0);
-					static const char msg[] =
-							"TWLoader is up-to-date\n"
+					while(checkanswer) {
+						textVtxArrayPos = 0; // Clear the text vertex array
+
+						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+						if (screenmode == SCREEN_MODE_SETTINGS) {
+							sf2d_draw_texture(settingstex, 0, 0);
+						}
+						sf2d_draw_texture(dialogboxtex, 0, 0);
+						static const char msg[] =
+							"TWLoader is up-to-date.\n"
 							"\n"
 							"\n"
 							"\n"
@@ -407,9 +410,10 @@ int checkUpdate(void) {
 							"\n"
 							"\n"
 							": Close";					
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					
-					while(checkanswer) {
+						renderText(12, 16, 0.5f, 0.5f, false, msg);
+						sf2d_end_frame();
+						sf2d_swapbuffers();
+						
 						hidScanInput();
 
 						const u32 hDown = hidKeysDown();
@@ -419,6 +423,7 @@ int checkUpdate(void) {
 							checkanswer = false;	// Exit loop
 							sf2d_end_frame();
 							sf2d_swapbuffers();
+							DialogBoxDisappear(msg, 0);
 						}
 					}
 					
