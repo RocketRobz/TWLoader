@@ -302,7 +302,7 @@ static string dialog_text;
  * Make the dialog box appear.
  * @param text Dialog box text.
  */
-void DialogBoxAppear(const char *text, int mode) {
+void DialogBoxAppear(int x, int y, const char *text) {
 	if (showdialogbox)
 		return;
 
@@ -327,10 +327,11 @@ void DialogBoxAppear(const char *text, int mode) {
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i-240);
 		setTextColor(0xFF000000); // black
-		if (mode == 1) {
-			renderText(12, 72+i-240, 0.6f, 0.6f, false, dialog_text.c_str());
-		} else
-			renderText(12, 16+i-240, 0.5f, 0.5f, false, dialog_text.c_str());
+		// if (mode == 1) {
+		// 	renderText(12, 72+i-240, 0.6f, 0.6f, false, dialog_text.c_str());
+		// } else
+		// 	renderText(12, 16+i-240, 0.5f, 0.5f, false, dialog_text.c_str());
+		renderText(x, y+i-240, 0.5f, 0.5f, false, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -341,7 +342,7 @@ void DialogBoxAppear(const char *text, int mode) {
  * Make the dialog box disappear.
  * @param text Dialog box text.
  */
-void DialogBoxDisappear(const char *text, int mode) {
+void DialogBoxDisappear(int x, int y, const char *text) {
 	if (!showdialogbox)
 		return;
 
@@ -362,10 +363,11 @@ void DialogBoxDisappear(const char *text, int mode) {
 		}
 		sf2d_draw_texture(dialogboxtex, 0, i);
 		setTextColor(0xFF000000); // black
-		if (mode == 1) {
-			renderText(12, 72+i, 0.6f, 0.6f, false, dialog_text.c_str());
-		} else
-			renderText(12, 16+i, 0.5f, 0.5f, false, dialog_text.c_str());
+		// if (mode == 1) {
+		// 	renderText(12, 72+i, 0.6f, 0.6f, false, dialog_text.c_str());
+		// } else
+		// 	renderText(12, 16+i, 0.5f, 0.5f, false, dialog_text.c_str());
+		renderText(x, y+i, 0.5f, 0.5f, false, dialog_text.c_str());
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
@@ -382,8 +384,8 @@ static int CreateGameSave(const char *filename) {
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 	if (!f_nds_file) {
-		DialogBoxAppear("fopen(nds_path) failed, continuing anyway.", 0);
-		DialogBoxDisappear("fopen(nds_path) failed, continuing anyway.", 0);
+		DialogBoxAppear(12, 16, "fopen(nds_path) failed, continuing anyway.");
+		DialogBoxDisappear(12, 16, "fopen(nds_path) failed, continuing anyway.");
 		return -1;
 	}
 
@@ -393,7 +395,7 @@ static int CreateGameSave(const char *filename) {
 	fclose(f_nds_file);
 	
 	if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
-		DialogBoxAppear("Creating save file...", 1);
+		DialogBoxAppear(12, 72, "Creating save file...");
 		static const int BUFFER_SIZE = 4096;
 		char buffer[BUFFER_SIZE];
 		memset(buffer, 0, sizeof(buffer));
@@ -424,7 +426,7 @@ static int CreateGameSave(const char *filename) {
 			fclose(pFile);
 		}
 
-		DialogBoxDisappear("Done!", 1);
+		DialogBoxDisappear(12, 72, "Done!");
 	}
 	return 0;
 }
@@ -1583,7 +1585,7 @@ int main()
 		}
 	}
 
-	DialogBoxDisappear(" ", 0);
+	DialogBoxDisappear(12, 16, " ");
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
@@ -1669,7 +1671,7 @@ int main()
 				"\n"
 				"\n"
 				"                 Press the HOME button to exit.";
-			DialogBoxAppear(twlnand_msg, 0);
+			DialogBoxAppear(12, 12, twlnand_msg);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			setTextColor(RGBA8(0, 0, 0, 255));

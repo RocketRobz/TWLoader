@@ -16,8 +16,8 @@ extern bool run;	// Set to false to exit to the Home Menu.
 // Dialog box
 extern sf2d_texture *dialogboxtex; // Dialog box
 extern void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color);
-extern void DialogBoxAppear(const char *text, int mode);
-extern void DialogBoxDisappear(const char *text, int mode);
+extern void DialogBoxAppear(int x, int y, const char *text);
+extern void DialogBoxDisappear(int x, int y, const char *text);
 extern bool showdialogbox;
 
 // Shoulder button images.

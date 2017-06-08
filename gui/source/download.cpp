@@ -242,7 +242,7 @@ ReadJson internal_json_reader(json_value* json, json_value* val, std::string str
 int checkUpdate(void) {
 	if (logEnabled)	LogFM("checkUpdate", "Checking updates...");
 	static const char title[] = "Now checking TWLoader version...";
-	DialogBoxAppear(title, 0);
+	DialogBoxAppear(12, 16, title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -423,7 +423,7 @@ int checkUpdate(void) {
 							checkanswer = false;	// Exit loop
 							sf2d_end_frame();
 							sf2d_swapbuffers();
-							DialogBoxDisappear(msg, 0);
+							DialogBoxDisappear(12, 16, msg);
 						}
 					}
 					
@@ -618,7 +618,7 @@ void DownloadTWLoaderCIAs(void) {
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) ) {
-			DialogBoxDisappear("Update failed.", 0);
+			DialogBoxDisappear(12, 16, "Update failed.");
 		}
 		if(resGUI == 0 && updateACE_RPG) {
 			static const char msg[] =
@@ -636,7 +636,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear("Download failed.", 0);
+				DialogBoxDisappear(12, 16, "Download failed.");
 			}
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
@@ -655,7 +655,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear("Download failed.", 0);
+				DialogBoxDisappear(12, 16, "Download failed.");
 			}
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
@@ -674,7 +674,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear("Download failed.", 0);
+				DialogBoxDisappear(12, 16, "Download failed.");
 			}
 		}
 		if (resGUI == 0 && updateR4) {
@@ -693,7 +693,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear("Download failed.", 0);
+				DialogBoxDisappear(12, 16, "Download failed.");
 			}
 		}
 		if (resGUI == 0) {			
@@ -703,7 +703,7 @@ void DownloadTWLoaderCIAs(void) {
 			run = false;
 		}
 	} else {
-		DialogBoxDisappear("Update cancelled.", 0);
+		DialogBoxDisappear(12, 16, "Update cancelled.");
 	}
 }
 
@@ -712,7 +712,7 @@ void DownloadTWLoaderCIAs(void) {
  */
 void UpdateBootstrapUnofficial(void) {
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
-	DialogBoxAppear(title, 0);
+	DialogBoxAppear(12, 16, title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -728,7 +728,7 @@ void UpdateBootstrapUnofficial(void) {
 	checkBootstrapVersion();
 	downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		DialogBoxDisappear("Done!", 0);
+		DialogBoxDisappear(12, 16, "Done!");
 	}
 }
 
@@ -737,7 +737,7 @@ void UpdateBootstrapUnofficial(void) {
  */
 void UpdateBootstrapRelease(void) {
 	static const char title[] = "Now updating bootstrap (Release)...";
-	DialogBoxAppear(title, 0);
+	DialogBoxAppear(12, 16, title);
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
@@ -753,7 +753,7 @@ void UpdateBootstrapRelease(void) {
 	checkBootstrapVersion();
 	downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		DialogBoxDisappear("Done!", 0);
+		DialogBoxDisappear(12, 16, "Done!");
 	}
 }
 
@@ -1223,7 +1223,7 @@ void downloadBoxArt(void)
 			snprintf(str, sizeof(str), "%zu", boxartnum);
 			
 			// Show the dialog.
-			DialogBoxAppear(title, 0);
+			DialogBoxAppear(12, 16, title);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			setTextColor(RGBA8(0, 0, 0, 255));
@@ -1238,7 +1238,7 @@ void downloadBoxArt(void)
 			
 			downloadBoxArt_internal(ba_TID, ROM_SD);
 		}
-		DialogBoxDisappear(NULL, 0);
+		DialogBoxDisappear(12, 16, NULL);
 		boxart_dl_tids.clear();
 	}
 	// Check if we're missing any boxart for ROMs on the flashcard.
@@ -1315,7 +1315,7 @@ void downloadBoxArt(void)
 			snprintf(str, sizeof(str), "%zu", boxartnum);
 			
 			// Show the dialog.
-			DialogBoxAppear(title, 0);
+			DialogBoxAppear(12, 16, title);
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			sf2d_draw_texture(dialogboxtex, 0, 0);
 			setTextColor(RGBA8(0, 0, 0, 255));
@@ -1330,7 +1330,7 @@ void downloadBoxArt(void)
 
 			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
 		}
-		DialogBoxDisappear(NULL, 0);
+		DialogBoxDisappear(12, 16, NULL);
 		boxart_dl_tids.clear();
 	}
 	
@@ -1383,7 +1383,7 @@ void downloadBoxArt(void)
 		snprintf(str, sizeof(str), "%zu", boxartnum);
 		
 		// Show the dialog.
-		DialogBoxAppear(title, 0);
+		DialogBoxAppear(12, 16, title);
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_texture(dialogboxtex, 0, 0);
 		setTextColor(RGBA8(0, 0, 0, 255));
