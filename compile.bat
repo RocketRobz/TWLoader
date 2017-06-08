@@ -1,5 +1,5 @@
 @echo off
-mkdir "7zfile/flashcardroot/_nds"
+mkdir "7zfile/flashcardsdroot (all)/_nds"
 mkdir "7zfile/sdroot/3ds/TWLoader"
 mkdir "7zfile/sdroot/_nds/twloader/loadflashcard"
 mkdir "7zfile/sdroot/_nds/twloader/cia"
@@ -9,7 +9,7 @@ copy "r4.nds" "../../7zfile/sdroot/_nds/twloader/loadflashcard/r4.nds"
 copy "r4idsn.nds" "../../7zfile/sdroot/_nds/twloader/loadflashcard/r4idsn.nds"
 copy "loadcard_dstt.nds" "../../7zfile/sdroot/_nds/loadcard_dstt.nds"
 copy "GBARunner2.nds" "../../7zfile/sdroot/_nds/GBARunner2.nds"
-copy "GBARunner2_flashcard.nds" "../../7zfile/flashcardroot/GBARunner2.nds"
+copy "GBARunner2_flashcard.nds" "../../7zfile/flashcardsdroot (all)/GBARunner2.nds"
 cd ..
 copy "unofficial-bootstrap.nds" "../7zfile/sdroot/_nds/unofficial-bootstrap.nds"
 copy "release-bootstrap.nds" "../7zfile/sdroot/_nds/release-bootstrap.nds"
@@ -42,7 +42,7 @@ copy "TWLoader.smdh" "../TWLoader-update/TWLoader.smdh"
 cd ..
 cd flashcard-side
 make
-copy "flashcard-side.nds" "../7zfile/flashcardroot/_nds/twloader.nds"
+copy "flashcard-side.nds" "../7zfile/flashcardsdroot (all)/_nds/twloader.nds"
 copy "flashcard-side.nds" "../TWLoader-update/twloader.nds"
 pause
 
