@@ -1637,7 +1637,9 @@ int main()
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
 	
-	bootSplash();
+	if (settings.twl.bootscreen != 0) {
+		bootSplash();
+	}
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
