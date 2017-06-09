@@ -2,6 +2,7 @@
 #define _GNU_SOURCE 1
 #include "main.h"
 
+#include "dsbootsplash.h"
 #include "download.h"
 #include "settings.h"
 #include "textfns.h"
@@ -1635,6 +1636,8 @@ int main()
 
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
+	
+	bootSplash();
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
