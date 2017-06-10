@@ -23,12 +23,13 @@ static const char *const lang_RU[STR_MAX] = {
 	"Показать имя файла",										// "Show filename"
 	"Игровой счетчик",											// "Game counter"
 	"Пользовательское изображение снизу",						// "Custom bottom image"
-	"Автоматическое обновление: bootsrap",						// "Auto-update bootstrap"
 	"Автоматическое обновление: TWLoader",						// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Обновить TWLoader",										// "Update TWLoader"
 	"DS/DSi стартовый экран",									// "DS/DSi Boot Screen"
 	"Сообщение о здоровье и безопасности",						// "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"VRAM ускорение",											// "VRAM boost"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
 	"Вывод консоли",											// "Console output"
-	"Заблокировать ARM9 SCFG_EXT",								// "Lock ARM9 SCFG_EXT"
+	"Автоматическое обновление: bootsrap",						// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"включая игровой баннер.",									// "including game banner text."
 
 	"Оформление для TWLoader.",									// "The theme to use in TWLoader."
-	"Нажмите  для под-тем оформления.",						// "Press A for sub-themes."
+	"Нажмите START для под-тем оформления.",					// "Press START for sub-themes."
 
 	"Цвет заливки сверху,",										// "The color of the top background,"
 	"границ START и круглых точек.",							// "the START border, and the circling dots."
@@ -92,6 +93,9 @@ static const char *const lang_RU[STR_MAX] = {
 
 	"Загрузить собственное изображение для низа",				// "Loads a custom bottom screen image"
 	"игрового меню.",											// "for the game menu."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	"Автоматическое обновление nds-bootstrap при старте.",		// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)

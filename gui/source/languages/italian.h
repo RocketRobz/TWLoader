@@ -23,12 +23,13 @@ static const char *const lang_IT[STR_MAX] = {
 	"Visualizza il nome dei file",                          	// "Show filename"
 	"Contatore giochi",                                    		// "Game counter"
 	"Sfondo inferiore personalizzato",                    		// "Custom bottom image"
-	"Aggiorna automaticamente bootstrap",             		    // "Auto-update bootstrap"
 	"Aggiorna automaticamente TWLoader",             	       	// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Aggiorna il TWLoader",										// "Update TWLoader"
 	"Schermata di avvio DS/DSi",                                // "DS/DSi Boot Screen"
 	"Messaggio Salute e Sicurezza",                             // "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Seleziona la Flashcard",                                   // "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"VRAM boost",                                               // "VRAM boost"
 	"Resetta lo Slot-1",                                       	// "Reset Slot-1"
 	"Console output",                                           // "Console output"
-	"Blocca ARM9 SCFG_EXT",                                     // "Lock ARM9 SCFG_EXT"
+	"Aggiorna automaticamente bootstrap",             		    // "Auto-update bootstrap"
 	"Bootstrap",                                               	// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"incluso il testo dei banner dei giochi.",                  // "including game banner text."
 
 	"Il tema usato con il TWLoader.",                           // "The theme to use in TWLoader."
-	"Premi  per i sotto-temi.",                               	// "Press A for sub-themes."
+	"Premi START per i sotto-temi.",                            // "Press START for sub-themes."
 
 	"Il colore dello sfondo superiore, del bordo",              // "The color of the top background,"
 	"dello START, e dei punti di contorno.",           			// "the START border, and the circling dots."
@@ -92,6 +93,9 @@ static const char *const lang_IT[STR_MAX] = {
 
 	"Carica una immagine personalizzata per il ",               // "Loads a custom bottom screen image"
 	"menu dei DSi.",                                 	        // "for the DSi Menu theme."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	"Aggiorna automaticamente nds-bootstrap ",                  // "Auto-update nds-bootstrap at launch."
 	"all'avvio.",                                               // (empty)

@@ -23,12 +23,13 @@ static const char *const lang_KO[STR_MAX] = {
 	"파일이름 보기",													// "Show filename"
 	"기게임 카운터",													// "Game counter"
 	"커스텀 하단 이미지",												// "Custom bottom image"
-	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
 	"TWLoader 자동 업데이트",										// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"TWLoader 업데이트",											// "Update TWLoader"
 	"DS/DSi 부트 스크린",											// "DS/DSi Boot Screen"
 	"안전 및 주의사항 메세지",											// "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"플래시카드 선택",												// "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"VRAM 부스트",													// "VRAM boost"
 	"리셋 슬롯-1",													// "Reset Slot-1"
 	"콘솔 출력",													// "Console output"
-	"ARM9 SCFG_EXT 잠금",											// "Lock ARM9 SCFG_EXT"
+	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
 	"부트스트랩",													// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"UI에서 사용할 언어",												// "including game banner text."
 
 	"TWLoader 테마",												// "The theme to use in TWLoader."
-	"서브테마를 설정하려면  를 누르세요",									// "Press A for sub-themes."
+	"서브테마를 설정하려면 START 를 누르세요",								// "Press START for sub-themes."
 
 	"위쪽 바탕화면 색상",												// "The color of the top background,"
 	"시작 테두리 포함",												// "the START border, and the circling dots."
@@ -92,6 +93,9 @@ static const char *const lang_KO[STR_MAX] = {
 
 	"게임 메뉴에",													// "Loads a custom bottom screen image"
 	"사용자 설정 스크린 이미지 띄우기.",									// "for the game menu."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	"시작 시 nds-부트스트랩 업데이트",										// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)

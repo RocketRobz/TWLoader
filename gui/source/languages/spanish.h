@@ -23,12 +23,13 @@ static const char *const lang_ES[STR_MAX] = {
 	"Mostrar nombre del archivo",								// "Show filename"
 	"Contador de juegos",										// "Game counter"
 	"Usar imagen personalizada",								// "Custom bottom image"
-	"Auto actualizar bootstrap",								// "Auto-update bootstrap"
 	"Auto actualizar TWLoader",									// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Actualizar TWLoader",										// "Update TWLoader"
 	"Pantalla de arranque DS/DSi",								// "DS/DSi Boot Screen"
 	"Mensaje de Salud y Seguridad",								// "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Seleccionar flashcard",									// "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Aumentar VRAM",											// "VRAM boost"
 	"Reiniciar el Slot-1",										// "Reset Slot-1"
 	"Salida de consola",										// "Console output"
-	"Bloquear el SCFG_EXT del ARM9",							// "Lock ARM9 SCFG_EXT"
+	"Auto actualizar bootstrap",								// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"(también afecta al banner de las roms)",					// "including game banner text."
 
 	"El tema para TWLoader.",									// "The theme to use in TWLoader."
-	"Pulsa  para elegir un sub tema.",							// "Press A for sub-themes."
+	"Pulsa START para elegir un sub tema.",						// "Press START for sub-themes."
 
 	"El color del fondo de la pantalla superior, el marco",		// "The color of the top background,"
 	"de selección de ROMs y el círculo de puntos.",				// "the START border, and the circling dots."
@@ -92,6 +93,9 @@ static const char *const lang_ES[STR_MAX] = {
 
 	"Carga una imagen personalizada para",						// "Loads a custom bottom screen image"
 	"la pantalla inferior.",									// "for the game menu."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	"Auto actualizar bootstrap durante el arranque.",			// "Auto-update nds-bootstrap at launch."
 	"",															// (empty) 

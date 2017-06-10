@@ -43,12 +43,13 @@ typedef enum _StrID {
 	STR_SETTINGS_FILENAME,										// "Show filename"
 	STR_SETTINGS_COUNTER,										// "Game counter"
 	STR_SETTINGS_CUSTOM_BOTTOM,									// "Custom bottom image"
-	STR_SETTINGS_AUTOUPDATE_BOOTSTRAP,							// "Auto-update bootstrap"
 	STR_SETTINGS_AUTOUPDATE_TWLOADER,							// "Auto-update TWLoader"
 	STR_SETTINGS_TWLOADER_FILETYPE,								// "TWLoader filetype"
 	STR_SETTINGS_UPDATE_TWLOADER,								// "Update TWLoader"
 	STR_SETTINGS_DS_DSi_BOOT_SCREEN,							// "DS/DSi Boot Screen"
 	STR_SETTINGS_DS_DSi_SAFETY_MESSAGE,							// "Health and Safety message"
+	STR_SETTINGS_SHOW_BOOT_SCREEN,								// "Show Boot Screen"
+	STR_SETTINGS_ROM_PATH,										// "ROM path"
 	
 	/** Settings: NTR/TWL_mode **/
 	STR_SETTINGS_FLASHCARD_SELECT,								// "Flashcard(s) select"
@@ -57,7 +58,7 @@ typedef enum _StrID {
 	STR_SETTINGS_VRAM_BOOST,									// "VRAM boost"
 	STR_SETTINGS_RESET_SLOT_1,									// "Reset Slot-1"
 	STR_SETTINGS_CONSOLE_OUTPUT,								// "Console output"
-	STR_SETTINGS_LOCK_ARM9_SCFG_EXT,							// "Lock ARM9 SCFG_EXT"
+	STR_SETTINGS_AUTOUPDATE_BOOTSTRAP,							// "Auto-update bootstrap"
 	STR_SETTINGS_BOOTSTRAP,										// "Bootstrap"
 	
 	/** Settings: Top Screen **/
@@ -96,7 +97,7 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_LANGUAGE_2,						// "including game banner text."
 	
 	STR_SETTINGS_DESCRIPTION_THEME_1,							// "The theme to use in TWLoader."
-	STR_SETTINGS_DESCRIPTION_THEME_2,							// "Press A for sub-themes."
+	STR_SETTINGS_DESCRIPTION_THEME_2,							// "Press START for sub-themes."
 	
 	STR_SETTINGS_DESCRIPTION_COLOR_1,							// "The color of the top background,"
 	STR_SETTINGS_DESCRIPTION_COLOR_2,							// "the START border, and the circling dots."
@@ -113,10 +114,13 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1,					// "Loads a custom bottom screen image"
 	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2,					// "for the DSi Menu theme."
 	
+	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1,				// "Where do you want to see the"
+	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2,				// "DS/DSi boot screen?"
+
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1,			// "Auto-update nds-bootstrap at launch."
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2,			// (empty)
 	
-	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1,				// "Auto-download the CIA of the latest"
+	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1,				// "Auto-update to the latest"
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2,				// "TWLoader version at launch."
 	
 	/** Settings: NTR/TWL_mode descriptions **/

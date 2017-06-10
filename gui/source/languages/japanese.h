@@ -23,12 +23,13 @@ static const char *const lang_JP[STR_MAX] = {
 	"Show filename",											// "Show filename"
 	"Game counter",												// "Game counter"
 	"Custom bottom image",										// "Custom bottom image"
-	"Auto-update bootstrap",									// "Auto-update bootstrap"
 	"Auto-update TWLoader",										// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Update TWLoader",											// "Update TWLoader"
 	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
 	"Health and Safety message",								// "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"VRAM boost",												// "VRAM boost"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
-	"Lock ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
+	"Auto-update bootstrap",									// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"including game banner text.",								// "including game banner text."
 
 	"The theme to use in TWLoader.",							// "The theme to use in TWLoader."
-	"Press  for sub-themes.",									// "Press A for sub-themes."
+	"Press START for sub-themes.",								// "Press START for sub-themes."
 
 	"The color of the top background,",							// "The color of the top background,"
 	"the START border, and the circling dots.",					// "the START border, and the circling dots."
@@ -93,10 +94,13 @@ static const char *const lang_JP[STR_MAX] = {
 	"Loads a custom bottom screen image",						// "Loads a custom bottom screen image"
 	"for the DSi Menu theme.",									// "for the DSi Menu theme."
 
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
 	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
 
-	"Auto-download the CIA of the latest",						// "Auto-download the CIA of the latest"
+	"Auto-update to the latest",								// "Auto-update to the latest"
 	"TWLoader version at launch.",								// "TWLoader version at launch."
 
 	/** Settings: NTR/TWL_mode descriptions **/

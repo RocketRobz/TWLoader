@@ -41,7 +41,7 @@ void bootSplash() {
 	
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
-		if (settings.twl.bootscreen == 2)
+		if (settings.ui.bootscreen >= 2)
 			sfx_boot = new sound("romfs:/sounds/BootSplash/dsiboot.wav", 2, false);
 		else
 			sfx_boot = new sound("romfs:/sounds/BootSplash/dsboot.wav", 2, false);
@@ -115,6 +115,11 @@ void bootSplash() {
 	int wipePos = 0;
 	int bootSplash_fade = 255;
 	int i_alpha = 0;
+	int touchtocontinue_yPos;
+	if (settings.ui.healthsafety)
+		touchtocontinue_yPos = 209;
+	else
+		touchtocontinue_yPos = 124;
 	bool touchtocontinue_show = false;
 	int touchtocontinue_alpha = 0;
 	bool touchtocontinue_fadein = true;
@@ -130,6 +135,10 @@ void bootSplash() {
 		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 			sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
 			drawRectangle(0, 0, 400, 240, RGBA8(255, 255, 255, 255));
+			if (settings.ui.bootscreen == 1) {
+				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+			}
 			sf2d_end_frame();
 		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -221,7 +230,7 @@ void bootSplash() {
 			if (topfb == 1) offset3D_temp = offset3D_nint;
 			else offset3D_temp = -offset3D_nint;
 			sf2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
-			if (settings.twl.bootscreen == 2 && splashScreenTime > 60*1) {
+			if (settings.ui.bootscreen >= 2 && splashScreenTime > 60*1) {
 				if (topfb == 1) offset3D_temp = offset3D_i;
 				else offset3D_temp = -offset3D_i;
 				i_alpha += 10;
@@ -329,24 +338,30 @@ void bootSplash() {
 			sf2d_draw_texture(wipetex, wipePos-320, 0);
 			drawRectangle(wipePos, 0, 400, 240, RGBA8(255, 255, 255, 255));
 			if (fadeout) drawRectangle(0, 0, 400, 240, RGBA8(255, 255, 255, bootSplash_fade));
+			if (settings.ui.bootscreen == 1) {
+				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+			}
 			sf2d_end_frame();
 		}
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, 255));
-		sf2d_draw_texture(hstex, 12, 16);
-		setTextColor(RGBA8(0, 0, 0, 255));
-		renderText(34, 19, 0.65, 0.65, false, "WARNING - HEALTH AND SAFETY");
-		renderText(29, 56, 0.55, 0.55, false, "BEFORE PLAYING, READ THE HEALTH");
-		renderText(29, 80, 0.55, 0.55, false, "AND SAFETY PRECAUTIONS BOOKLET");
-		renderText(47, 104, 0.55, 0.55, false, "FOR IMPORTANT INFORMATION");
-		renderText(35, 128, 0.55, 0.55, false, "ABOUT YOUR HEALTH AND SAFETY.");
-		renderText(16, 160, 0.38, 0.50, false, "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT");
-		setTextColor(RGBA8(61, 161, 191, 255));
-		renderText(36, 178, 0.55, 0.55, false, "www.nintendo.com/healthandsafety/");
+		if (settings.ui.healthsafety) {
+			sf2d_draw_texture(hstex, 12, 16);
+			setTextColor(RGBA8(0, 0, 0, 255));
+			renderText(34, 19, 0.65, 0.65, false, "WARNING - HEALTH AND SAFETY");
+			renderText(29, 56, 0.55, 0.55, false, "BEFORE PLAYING, READ THE HEALTH");
+			renderText(29, 80, 0.55, 0.55, false, "AND SAFETY PRECAUTIONS BOOKLET");
+			renderText(47, 104, 0.55, 0.55, false, "FOR IMPORTANT INFORMATION");
+			renderText(35, 128, 0.55, 0.55, false, "ABOUT YOUR HEALTH AND SAFETY.");
+			renderText(16, 160, 0.38, 0.50, false, "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT");
+			setTextColor(RGBA8(61, 161, 191, 255));
+			renderText(36, 178, 0.55, 0.55, false, "www.nintendo.com/healthandsafety/");
+		}
 		if (touchtocontinue_show) {
 			setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
-			renderText(32, 209, 0.55, 0.55, false, "Touch the Touch Screen to continue.");
+			renderText(32, touchtocontinue_yPos, 0.55, 0.55, false, "Touch the Touch Screen to continue.");
 		}
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, bootSplash_fade));
 		sf2d_end_frame();

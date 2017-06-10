@@ -23,12 +23,13 @@ static const char *const lang_FR[STR_MAX] = {
 	"Afficher le nom du fichier",                               // "Show filename"
 	"Compteur de jeux",                                          // "Game counter"
 	"Image du bas personnalisée",                               // "Custom bottom image"
-	"Mise à jour auto. bootstrap",                        // "Auto-update bootstrap"
 	"Mise à jour auto. TWLoader",                           	// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Mettre à jour TWLoader",									// "Update TWLoader"
 	"Écran de démarrage DS/DSi",                                // "DS/DSi Boot Screen"
 	"Message de Santé et Sécurité",                             // "Health and Safety message"
+	"Show Boot Screen",											// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 	 
 	/** Settings: NTR/TWL_mode **/
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Boost VRAM",                                               // "VRAM boost"
 	"Reset Slot-1",                                          // "Reset Slot-1"
 	"Affichage Console",                                           		// "Console output"
-	"Verrouiller SCFG_EXT ARM9",                                 // "Lock ARM9 SCFG_EXT"
+	"Mise à jour auto. bootstrap",                        // "Auto-update bootstrap"
 	"Bootstrap",                                                // "Bootstrap"
 	 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"incluant le texte des bannières des jeux.",                // "including game banner text."
 	 
 	"Le thème à utiliser dans TWLoader.",                       // "The theme to use in TWLoader."
-	"Appuyez sur  pour les sous-thèmes.",                      // "Press A for sub-themes."
+	"Appuyez sur START pour les sous-thèmes.",                  // "Press START for sub-themes."
 	 
 	"La couleur de l'arrière plan du haut,",                    // "The color of the top background,"
 	"de la bordure START et du contour des points.",            // "the START border, and the circling dots."
@@ -93,6 +94,9 @@ static const char *const lang_FR[STR_MAX] = {
 	"Charge une image personnalisée sur l'écran du bas",        // "Loads a custom bottom screen image"
 	"dans le menu des DSi.",                                   // "for the game menu."
 	 
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
 	"Mise à jour auto. de nds-bootstrap au démarrage.",         // "Auto-update nds-bootstrap at launch."
 	"",                                                         // (empty)
 

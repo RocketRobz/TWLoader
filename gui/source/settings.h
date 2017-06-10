@@ -62,6 +62,9 @@ typedef struct _Settings_t {
 		int filetype;	// 0 = CIA, 1 = 3DSX, 2 = CIA & 3DSX
 		int autoupdate;	// 0 = Off, 1 = Release, 2 = Unofficial
 		bool autoupdate_twldr;
+		int showbootscreen;	// 0 = No, 1 = Before ROM select screen, 2 = After launching a ROM
+		int bootscreen;	// 0 = Nintendo DS, 1 = Nintendo DS (OAR), 2 = Nintendo DSi
+		bool healthsafety;
 	} ui;
 
 	struct {
@@ -81,8 +84,6 @@ typedef struct _Settings_t {
 			6: SuperCard DSTWO
 		*/
 
-		int bootscreen;	// 0 = None, 1 = Nintendo DS, 2 = Nintendo DSi
-		bool healthsafety;
 		bool launchslot1;
 		bool resetslot1;
 		int console;	// 0 = Off, 1 = On, 2 = On (Debug)

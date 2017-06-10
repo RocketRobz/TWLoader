@@ -1637,9 +1637,8 @@ int main()
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
 	
-	if (settings.twl.bootscreen != 0) {
+	if (settings.ui.showbootscreen == 1)
 		bootSplash();
-	}
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
@@ -4764,6 +4763,9 @@ int main()
 					PergameLed();
 				}
 			}
+
+			if (settings.ui.showbootscreen == 2)
+				bootSplash();
 
 			// Buffers for APT_DoApplicationJump().
 			u8 param[0x300];

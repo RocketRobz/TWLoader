@@ -7,7 +7,7 @@
 static const char *const lang_EN[STR_MAX] = {
 
 	/** GUI **/
-	": 返回主畫面",												// "Return to HOME Menu"
+	": 返回主畫面",													// "Return to HOME Menu"
 	"啟動",														// "START" (used on cartridge indicator)
 	"沒有卡帶",													// "No cartridge"
 	"未知的卡帶", 													// "Unknown Cartridge"
@@ -23,12 +23,13 @@ static const char *const lang_EN[STR_MAX] = {
 	"顯示檔案名稱",													// "Show filename"
 	"遊戲計數器",													// "Game counter"
 	"自訂下層圖案",													// "Custom bottom image"
-	"自動更新 bootstrap",											// "Auto-update bootstrap"
-	"自動更新到最新的 TWLoader",										// "Auto-update to latest TWLoader"
+	"自動更新到最新的 TWLoader",										// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"更新 TWLoader",												// "Update TWLoader"
-	"DS/DSi 啟動畫面",											// "DS/DSi Boot Screen"
+	"DS/DSi 啟動畫面",												// "DS/DSi Boot Screen"
 	"健康與安全信息",												// "Health and Safety message"
+	"Show 啟動畫面",												// "Show Boot Screen"
+	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"選擇燒錄卡",													// "Flashcard(s) select"
@@ -37,7 +38,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"VRAM 加速",													// "VRAM boost"
 	"重置 Slot-1",												// "Reset Slot-1"
 	"控制台輸出",													// "Console output"
-	"鎖定 ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
+	"自動更新 bootstrap",											// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -76,7 +77,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"包含遊戲橫幅上的文字.",											// "including game banner text."
 
 	"TWLoader所使用的主題.",										// "The theme to use in TWLoader."
-	"點擊  來使用副主題.",											// "Press A for sub-themes."
+	"點擊 START 來使用副主題.",											// "Press START for sub-themes."
 
 	"上面背景的顏色,",												// "The color of the top background,"
 	"START 的邊緣以及小圓點.",										// "the START border, and the circling dots."
@@ -92,6 +93,9 @@ static const char *const lang_EN[STR_MAX] = {
 
 	"選定一個你喜歡的圖像",											// "Loads a custom bottom screen image"
 	"給遊戲選單使用.",												// "for the game menu."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	"啟動時自動更新 nds-bootstrap.",								// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
