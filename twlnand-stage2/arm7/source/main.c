@@ -28,12 +28,21 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
-#include <maxmod7.h>
+
+//---------------------------------------------------------------------------------
+void ReturntoDSiMenu() {
+//---------------------------------------------------------------------------------
+	// This will skip the power-off/sleep mode screen when returning to HOME Menu
+	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
+	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi/3DS HOME Menu
+}
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-
+	if(fifoCheckValue32(FIFO_USER_06)) {
+		ReturntoDSiMenu();
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -83,7 +92,7 @@ void SCFGFifoCheck (void)
 		fifoWaitValue32(FIFO_USER_07);
         if(fifoCheckValue32(FIFO_USER_04)) { REG_SCFG_CLK = 0x0181; }
         if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_ROM = 0x703; }
-		if(fifoCheckValue32(FIFO_USER_06)) { REG_SCFG_EXT = 0x93A50000; }
+		// if(fifoCheckValue32(FIFO_USER_06)) { REG_SCFG_EXT = 0x93A50000; }
         // fifoSendValue32(FIFO_USER_07, 0);
     // }
 }
@@ -115,12 +124,12 @@ int main() {
 	
 	fifoInit();
 	
-	mmInstall(FIFO_MAXMOD);
-	
 	SetYtrigger(80);
 	
-	installSoundFIFO();
 	installSystemFIFO();
+
+	i2cWriteRegister(0x4A, 0x12, 0x00);		// Press power-button for auto-reset.
+											// Fixes issue with DS games staying on (with screens off) for 5 seconds after pressing POWER button.
 
 	fifoWaitValue32(FIFO_USER_01);
 	if(fifoCheckValue32(FIFO_USER_02)) { TWL_ResetSlot1(); }

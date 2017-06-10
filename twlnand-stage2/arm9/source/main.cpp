@@ -32,7 +32,6 @@
 
 #include "nds_loader_arm9.h"
 
-#include "bootsplash.h"
 #include "inifile.h"
 #include "log.h"
 
@@ -115,8 +114,6 @@ int main(int argc, char **argv) {
 	// REG_SCFG_CLK = 0x80;
 	REG_SCFG_CLK = 0x85;
 
-	bool HealthandSafety_MSG = true;
-	bool UseNTRSplash = true;
 	bool TWLCLK = true;
 	bool TWLVRAM = false;
 	bool TriggerExit = false;
@@ -201,13 +198,6 @@ int main(int argc, char **argv) {
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		}
 		
-		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 2) { UseNTRSplash = false; }
-		if(twloaderini.GetInt("TWL-MODE","HEALTH&SAFETY_MSG",0) == 0) { HealthandSafety_MSG = false; }
-		if(twloaderini.GetInt("TWL-MODE","GBARUNNER",0) == 0)
-			if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) >= 1) {
-				BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
-				if (logEnabled)	LogFM("TWL.Main.BootSplashInit", "Boot splash played");
-			}
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;
@@ -224,15 +214,13 @@ int main(int argc, char **argv) {
 			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
 		}
 
-		if(twloaderini.GetInt("TWL-MODE","BOOT_ANIMATION",0) == 0) {
-			if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
-				if(REG_SCFG_MC == 0x11) { 
-					if (consoleOn == false) {
-						consoleDemoInit(); }
-					printf("Please insert a cartridge...\n");
-					do { swiWaitForVBlank(); } 
-					while (REG_SCFG_MC == 0x11);
-				}
+		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
+			if(REG_SCFG_MC == 0x11) { 
+				if (consoleOn == false) {
+					consoleDemoInit(); }
+				printf("Please insert a cartridge...\n");
+				do { swiWaitForVBlank(); } 
+				while (REG_SCFG_MC == 0x11);
 			}
 		}
 		
@@ -327,18 +315,20 @@ int main(int argc, char **argv) {
 	std::string filename;
 
 	if (!fatInitDefault()) {
-		BootSplashInit(UseNTRSplash, HealthandSafety_MSG, PersonalData->language);
-		
 		// Subscreen as a console
 		videoSetModeSub(MODE_0_2D);
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
 
 		iprintf ("fatinitDefault failed!\n");		
+		iprintf ("\n");		
+		iprintf ("Press B to return to\n");		
+		iprintf ("HOME Menu.\n");		
 			
-		doPause();
-		
-		TriggerExit = true;
+		while (1) {
+			scanKeys();
+			if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_06, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
+		}
 	}
 
 	vector<string> extensionList;
@@ -362,15 +352,14 @@ int main(int argc, char **argv) {
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
 		
-		iprintf ("bootstrap not found\n");
-		doPause();
-		
-		TriggerExit = true;
+		iprintf ("bootstrap not found.\n");		
+		iprintf ("\n");		
+		iprintf ("Press B to return to\n");		
+		iprintf ("HOME Menu.\n");
 
 		while (1) {
-			swiWaitForVBlank();
 			scanKeys();
-			if (!(keysHeld() & KEY_A)) break;
+			if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_06, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
 		}
 	}
 
