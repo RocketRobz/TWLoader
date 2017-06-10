@@ -1225,11 +1225,11 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 6) {
 			cursor_pos[1] += 2;
-			if (cursor_pos[1] > 6) cursor_pos[1] -= 2;
+			if (cursor_pos[1] > 5) cursor_pos[1] -= 2;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[1] > 0) {
 			cursor_pos[1] -= 2;
-			if (cursor_pos[1] < 0) cursor_pos[1] -= 2;
+			if (cursor_pos[1] < 0) cursor_pos[1] += 2;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_RIGHT) && cursor_pos[1] < 6) {
 			if (cursor_pos[1] == 0
@@ -1336,7 +1336,7 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 6) {
 			cursor_pos[0] += 2;
-			if (cursor_pos[0] > 6) cursor_pos[0] -= 2;
+			if (cursor_pos[0] > 5) cursor_pos[0] -= 2;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
 			cursor_pos[0] -= 2;
