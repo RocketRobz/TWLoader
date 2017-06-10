@@ -29,8 +29,8 @@ VERSION_DIRTY := $(subst v,,$(shell git describe --tags --abbrev=0))
 VERSION_PARTS := $(subst ., ,$(VERSION_DIRTY))
 
 VERSION_MAJOR := 5
-VERSION_MINOR := 0
-VERSION_MICRO := 1
+VERSION_MINOR := 1
+VERSION_MICRO := 0
 
 #VERSION_MAJOR := $(word 1, $(VERSION_PARTS))
 #VERSION_MINOR := $(word 2, $(VERSION_PARTS))

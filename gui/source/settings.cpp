@@ -833,26 +833,26 @@ void settingsDrawBottomScreen(void)
 			setTextColor(SET_ALPHA(color_data->color, 255));
 			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
 			renderText(30, 52, 0.55, 0.55, false, "SD:/");
-			renderText(52, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
+			renderText(61, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
 			
 			// Unselected Flashcard
 			setTextColor(RGBA8(255, 255, 255, 255));
 			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
 			renderText(30, 78, 0.55, 0.55, false, "SD:/");
-			renderText(52, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
+			renderText(61, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
 			
 		}else if (cursor_pos[4] == 1){
 			// Unselected SD
 			setTextColor(RGBA8(255, 255, 255, 255));
 			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
 			renderText(30, 52, 0.55, 0.55, false, "SD:/");
-			renderText(52, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
+			renderText(61, 52, 0.55, 0.55, false, settings.ui.romfolder.c_str());
 			
 			// Selected Flashcard
 			setTextColor(SET_ALPHA(color_data->color, 255));
 			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
 			renderText(30, 78, 0.55, 0.55, false, "SD:/");
-			renderText(52, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
+			renderText(61, 78, 0.55, 0.55, false, settings.ui.fcromfolder.c_str());
 			
 		}
 		
@@ -1104,12 +1104,16 @@ bool settingsMoveCursor(u32 hDown)
 		} else if ((hDown & KEY_DOWN) && cursor_pos[0] < 9) {
 			cursor_pos[0]++;
 			if(is3DSX) {
-				if(cursor_pos[0] == 9)
-					cursor_pos[0]--;
+				if(cursor_pos[0] == 8)
+					cursor_pos[0]++;
 			}
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[0] > 0) {
 			cursor_pos[0]--;
+			if(is3DSX) {
+				if(cursor_pos[0] == 8)
+					cursor_pos[0]--;
+			}
 			sfx = sfx_select;
 		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
