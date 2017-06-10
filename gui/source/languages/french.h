@@ -24,15 +24,17 @@ static const char *const lang_FR[STR_MAX] = {
 	"Compteur de jeux",                                          // "Game counter"
 	"Image du bas personnalisée",                               // "Custom bottom image"
 	"Mise à jour auto. bootstrap",                        // "Auto-update bootstrap"
-	"Mise à jour auto. TWLoader",                           	// "Auto-update to latest TWLoader"
+	"Mise à jour auto. TWLoader",                           	// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Mettre à jour TWLoader",									// "Update TWLoader"
+	"Écran de démarrage DS/DSi",                                // "DS/DSi Boot Screen"
+	"Message de Santé et Sécurité",                             // "Health and Safety message"
 	 
 	/** Settings: NTR/TWL_mode **/
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
 	"Boost VRAM",                                               // "VRAM boost"
-	"Écran de démarrage DS/DSi",                                // "DS/DSi Boot Screen"
-	"Message de Santé et Sécurité",                             // "Health and Safety message"
 	"Reset Slot-1",                                          // "Reset Slot-1"
 	"Affichage Console",                                           		// "Console output"
 	"Verrouiller SCFG_EXT ARM9",                                 // "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_FR[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Mise à jour du bootstrap (release)",        // "X: Update bootstrap (Official release)"
 	": Mise à jour du bootstrap (non-officiel)",    // "Y: Update bootstrap (Unofficial release)"
-	"START: Mettre à jour TWLoader",                            // "START: Update TWLoader"
 	 
 	/** Settings: GUI values **/
 	 
@@ -90,7 +91,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"est affiché au dessous de la bulle de texte.",            // "is shown below the text bubble."
 	 
 	"Charge une image personnalisée sur l'écran du bas",        // "Loads a custom bottom screen image"
-	"dans le menu des jeux.",                                   // "for the game menu."
+	"dans le menu des DSi.",                                   // "for the game menu."
 	 
 	"Mise à jour auto. de nds-bootstrap au démarrage.",         // "Auto-update nds-bootstrap at launch."
 	"",                                                         // (empty)

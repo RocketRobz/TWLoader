@@ -24,15 +24,17 @@ static const char *const lang_RU[STR_MAX] = {
 	"Игровой счетчик",											// "Game counter"
 	"Пользовательское изображение снизу",						// "Custom bottom image"
 	"Автоматическое обновление: bootsrap",						// "Auto-update bootstrap"
-	"Автоматическое обновление: TWLoader",						// "Auto-update to latest TWLoader"
+	"Автоматическое обновление: TWLoader",						// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Обновить TWLoader",										// "Update TWLoader"
+	"DS/DSi стартовый экран",									// "DS/DSi Boot Screen"
+	"Сообщение о здоровье и безопасности",						// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
 	"Радуга LED",												// "Rainbow LED"
 	"ARM9 CPU скорость",										// "ARM9 CPU Speed"
 	"VRAM ускорение",											// "VRAM boost"
-	"DS/DSi стартовый экран",									// "DS/DSi Boot Screen"
-	"Сообщение о здоровье и безопасности",						// "Health and Safety message"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
 	"Вывод консоли",											// "Console output"
 	"Заблокировать ARM9 SCFG_EXT",								// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_RU[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Обновить Bootstrap (Оффициальная версия)",				// "X: Update bootstrap (Official release)"
 	": Обновить Bootstrap (Неоффициальная версия)",			// "Y: Update bootstrap (Unofficial release)"
-	"START: Обновить TWLoader",									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 

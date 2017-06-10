@@ -24,15 +24,17 @@ static const char *const lang_DE[STR_MAX] = {
 	"Spielzähler",												// "Game counter"
 	"Benutzerdefiniertes unteres Bild",							// "Custom bottom image"
 	"Bootstrap automatisch updaten",							// "Auto-update bootstrap"
-	"TWLoader automatisch updaten",								// "Auto-update to latest TWLoader"
+	"TWLoader automatisch updaten",								// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"TWLoader aktualisieren",									// "Update TWLoader"
+	"DS/DSi Startbildschirm",									// "DS/DSi Boot Screen"
+	"Gesundheits- und Sicherheitsinfos",						// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
 	"Regenbogen LED",											// "Rainbow LED"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
 	"VRAM Beschleunigung",										// "VRAM boost"
-	"DS/DSi Startbildschirm",									// "DS/DSi Boot Screen"
-	"Gesundheits- und Sicherheitsinfos",						// "Health and Safety message"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
 	"Konsolenausgabe",											// "Console output"
 	"ARM9 SCFG_EXT feststellen",								// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Bootstrap updaten (Offizielle Version)",				// "X: Update bootstrap (Official release)"
 	": Bootstrap updaten (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
-	"START: TWLoader aktualisieren",							// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 

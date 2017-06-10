@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-extern bool is3DSX;	// Is the program running as 3DSX?
+extern bool isDemo;	// Is the program running as demo version?
 extern bool run;	// Set to false to exit to the Home Menu.
 
 // Dialog box

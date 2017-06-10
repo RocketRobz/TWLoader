@@ -44,15 +44,17 @@ typedef enum _StrID {
 	STR_SETTINGS_COUNTER,										// "Game counter"
 	STR_SETTINGS_CUSTOM_BOTTOM,									// "Custom bottom image"
 	STR_SETTINGS_AUTOUPDATE_BOOTSTRAP,							// "Auto-update bootstrap"
-	STR_SETTINGS_AUTOUPDATE_TWLOADER,							// "Auto-update to latest TWLoader"
+	STR_SETTINGS_AUTOUPDATE_TWLOADER,							// "Auto-update TWLoader"
+	STR_SETTINGS_TWLOADER_FILETYPE,								// "TWLoader filetype"
+	STR_SETTINGS_UPDATE_TWLOADER,								// "Update TWLoader"
+	STR_SETTINGS_DS_DSi_BOOT_SCREEN,							// "DS/DSi Boot Screen"
+	STR_SETTINGS_DS_DSi_SAFETY_MESSAGE,							// "Health and Safety message"
 	
 	/** Settings: NTR/TWL_mode **/
 	STR_SETTINGS_FLASHCARD_SELECT,								// "Flashcard(s) select"
 	STR_SETTINGS_RAINBOW_LED,									// "Rainbow LED"
 	SRT_SETTINGS_ARM9_CPU_SPEED,								// "ARM9 CPU Speed"
 	STR_SETTINGS_VRAM_BOOST,									// "VRAM boost"
-	STR_SETTINGS_DS_DSi_BOOT_SCREEN,							// "DS/DSi Boot Screen"
-	STR_SETTINGS_DS_DSi_SAFETY_MESSAGE,							// "Health and Safety message"
 	STR_SETTINGS_RESET_SLOT_1,									// "Reset Slot-1"
 	STR_SETTINGS_CONSOLE_OUTPUT,								// "Console output"
 	STR_SETTINGS_LOCK_ARM9_SCFG_EXT,							// "Lock ARM9 SCFG_EXT"
@@ -61,7 +63,6 @@ typedef enum _StrID {
 	/** Settings: Top Screen **/
 	STR_SETTINGS_XBUTTON_RELEASE,								// "X: Update bootstrap (Official release)"
 	STR_SETTINGS_YBUTTON_UNOFFICIAL,							// "Y: Update bootstrap (Unofficial release)"
-	STR_SETTINGS_SETTINGS_START_UPDATE_TWLOADER,				// "START: Update TWLoader"
 	
 	/** Settings: GUI values **/
 	
@@ -103,14 +104,14 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_MENUCOLOR_1,						// "The color of the top border,"
 	STR_SETTINGS_DESCRIPTION_MENUCOLOR_2,						// "and the bottom background."
 	
-	STR_SETTINGS_DESCRIPTION_FILENAME_1,						// "Shows game filename at the top of the bubble."
-	STR_SETTINGS_DESCRIPTION_FILENAME_2,						// (empty)
+	STR_SETTINGS_DESCRIPTION_FILENAME_1,						// "Shows game filename at the"
+	STR_SETTINGS_DESCRIPTION_FILENAME_2,						// "top of the bubble."
 	
-	STR_SETTINGS_DESCRIPTION_COUNTER_1,							// "A number of selected game and listed games"
-	STR_SETTINGS_DESCRIPTION_COUNTER_2,							// "is shown below the text bubble."
+	STR_SETTINGS_DESCRIPTION_COUNTER_1,							// "A number of selected game and listed"
+	STR_SETTINGS_DESCRIPTION_COUNTER_2,							// "games is shown below the text bubble."
 	
 	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1,					// "Loads a custom bottom screen image"
-	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2,					// "for the game menu."
+	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2,					// "for the DSi Menu theme."
 	
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1,			// "Auto-update nds-bootstrap at launch."
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2,			// (empty)

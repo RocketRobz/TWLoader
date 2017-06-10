@@ -24,15 +24,17 @@ static const char *const lang_EN[STR_MAX] = {
 	"Game counter",												// "Game counter"
 	"Custom bottom image",										// "Custom bottom image"
 	"Auto-update bootstrap",									// "Auto-update bootstrap"
-	"Auto-update to latest TWLoader",							// "Auto-update to latest TWLoader"
+	"Auto-update TWLoader",										// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Update TWLoader",											// "Update TWLoader"
+	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
+	"Health and Safety message",								// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"Rainbow LED",												// "Rainbow LED"
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
 	"VRAM boost",												// "VRAM boost"
-	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
-	"Health and Safety message",								// "Health and Safety message"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
 	"Lock ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_EN[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
 	": Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
-	"START: Update TWLoader",    								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 
@@ -83,14 +84,14 @@ static const char *const lang_EN[STR_MAX] = {
 	"The color of the top border,",								// "The color of the top border,"
 	"and the bottom background.",								// "and the bottom background."
 
-	"Shows game filename at the top of the bubble.",			// "Shows game filename at the top of the bubble."
-	"",															// (empty)
+	"Shows game filename at the",								// "Shows game filename at the"
+	"top of the bubble.",										// "top of the bubble."
 
-	"A number of selected game and listed games",				// "A number of selected game and listed games"
-	"is shown below the text bubble.",							// "is shown below the text bubble."
+	"A number of selected game and listed",						// "A number of selected game and listed"
+	"games is shown below the text bubble.",					// "games is shown below the text bubble."
 
 	"Loads a custom bottom screen image",						// "Loads a custom bottom screen image"
-	"for the game menu.",										// "for the game menu."
+	"for the DSi Menu theme.",									// "for the DSi Menu theme."
 
 	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)

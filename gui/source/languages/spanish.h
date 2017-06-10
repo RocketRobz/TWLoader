@@ -24,15 +24,17 @@ static const char *const lang_ES[STR_MAX] = {
 	"Contador de juegos",										// "Game counter"
 	"Usar imagen personalizada",								// "Custom bottom image"
 	"Auto actualizar bootstrap",								// "Auto-update bootstrap"
-	"Auto actualizar TWLoader",									// "Auto-update to latest TWLoader"
+	"Auto actualizar TWLoader",									// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Actualizar TWLoader",										// "Update TWLoader"
+	"Pantalla de arranque DS/DSi",								// "DS/DSi Boot Screen"
+	"Mensaje de Salud y Seguridad",								// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Seleccionar flashcard",									// "Flashcard(s) select"
 	"LED arcoiris",												// "Rainbow LED"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
 	"Aumentar VRAM",											// "VRAM boost"
-	"Pantalla de arranque DS/DSi",								// "DS/DSi Boot Screen"
-	"Mensaje de Salud y Seguridad",								// "Health and Safety message"
 	"Reiniciar el Slot-1",										// "Reset Slot-1"
 	"Salida de consola",										// "Console output"
 	"Bloquear el SCFG_EXT del ARM9",							// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_ES[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Actualizar bootstrap (Versión estable)",				// "X: Update bootstrap (Official release)"
 	": Actualizar bootstrap (Versión inestable)",				// "Y: Update bootstrap (Unofficial release)"
-	"START: Actualizar TWLoader",								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 

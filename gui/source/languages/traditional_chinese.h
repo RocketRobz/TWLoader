@@ -25,14 +25,16 @@ static const char *const lang_EN[STR_MAX] = {
 	"自訂下層圖案",													// "Custom bottom image"
 	"自動更新 bootstrap",											// "Auto-update bootstrap"
 	"自動更新到最新的 TWLoader",										// "Auto-update to latest TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"更新 TWLoader",												// "Update TWLoader"
+	"DS/DSi 啟動畫面",											// "DS/DSi Boot Screen"
+	"健康與安全信息",												// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"選擇燒錄卡",													// "Flashcard(s) select"
 	"彩虹 LED",													// "Rainbow LED"
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
 	"VRAM 加速",													// "VRAM boost"
-	"DS/DSi 啟動畫面",											// "DS/DSi Boot Screen"
-	"健康與安全信息",												// "Health and Safety message"
 	"重置 Slot-1",												// "Reset Slot-1"
 	"控制台輸出",													// "Console output"
 	"鎖定 ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_EN[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": 更新 bootstrap (官方釋出版本)",								// "X: Update bootstrap (Official release)"
 	": 更新 bootstrap (非官方釋出版本)",							// "Y: Update bootstrap (Unofficial release)"
-	"START: 更新 TWLoader",    									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 

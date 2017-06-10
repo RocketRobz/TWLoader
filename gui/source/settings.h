@@ -59,8 +59,9 @@ typedef struct _Settings_t {
 		bool iconsize;
 		bool counter;
 		bool custombot;
+		int filetype;	// 0 = CIA, 1 = 3DSX, 2 = CIA & 3DSX
 		int autoupdate;	// 0 = Off, 1 = Release, 2 = Unofficial
-		bool autodl;
+		bool autoupdate_twldr;
 	} ui;
 
 	struct {

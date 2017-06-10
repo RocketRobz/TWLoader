@@ -24,15 +24,17 @@ static const char *const lang_PT[STR_MAX] = {
 	"Contador de jogos",										// "Game counter"
 	"Imagem da parte inferior personalizada",					// "Custom bottom image"
 	"Actualização automática: Bootstrap",						// "Auto-update bootstrap"
-	"Actualização automática: Último TWLoader",					// "Auto-update to latest TWLoader"
+	"Actualização automática: TWLoader",						// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Actualizar TWLoader",										// "Update TWLoader"
+	"Ecrã de Boot DS/DSi",										// "DS/DSi Boot Screen"
+	"Mensagem de saúde e segurança",							// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Selectionar Flashcard(s)",									// "Flashcard(s) select"
 	"LED Arco-íris",											// "Rainbow LED"
 	"Velocidade do CPU ARM9",									// "ARM9 CPU Speed"
 	"Boost de VRAM",											// "VRAM boost"
-	"Ecrã de Boot DS/DSi",										// "DS/DSi Boot Screen"
-	"Mensagem de saúde e segurança",							// "Health and Safety message"
 	"Reiniciar Slot-1",											// "Reset Slot-1"
 	"Console output",											// "Console output"
 	"Bloquear ARM9 SCFG_EXT",									// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_PT[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Actualizar bootstrap (Versão oficial)",					// "X: Update bootstrap (Official release)"
 	": Actualizar bootstrap (Versão não-oficial)",				// "Y: Update bootstrap (Unofficial release)"
-	"START: Actualizar TWLoader",								// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 
@@ -90,7 +91,7 @@ static const char *const lang_PT[STR_MAX] = {
 	"aparece por baixo da bolha de texto.",						// "is shown below the text bubble."
 
 	"Carrega uma imagem personalizada para",					// "Loads a custom bottom screen image"
-	"a parte inferior do menu do jogo.",						// "for the game menu."
+	"a parte inferior do menu do DSi.",							// "for the DSi Menu theme."
 
 	"Actualizar automáticamente o nds-bootstrap",				// "Auto-update nds-bootstrap at launch."
 	"durante o lançamento da aplicação.",						// (empty)

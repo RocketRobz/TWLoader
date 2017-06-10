@@ -24,15 +24,17 @@ static const char *const lang_KO[STR_MAX] = {
 	"기게임 카운터",													// "Game counter"
 	"커스텀 하단 이미지",												// "Custom bottom image"
 	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
-	"TWLoader 자동 업데이트",										// "Auto-update to latest TWLoader"
+	"TWLoader 자동 업데이트",										// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"TWLoader 업데이트",											// "Update TWLoader"
+	"DS/DSi 부트 스크린",											// "DS/DSi Boot Screen"
+	"안전 및 주의사항 메세지",											// "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"플래시카드 선택",												// "Flashcard(s) select"
 	"무지개색 LED",													// "Rainbow LED"
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
 	"VRAM 부스트",													// "VRAM boost"
-	"DS/DSi 부트 스크린",											// "DS/DSi Boot Screen"
-	"안전 및 주의사항 메세지",											// "Health and Safety message"
 	"리셋 슬롯-1",													// "Reset Slot-1"
 	"콘솔 출력",													// "Console output"
 	"ARM9 SCFG_EXT 잠금",											// "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_KO[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": 부트스트랩 업데이트 (공식 릴리즈)",									// "X: Update bootstrap (Official release)"
 	": 부트스트랩 업데이트 (비공식 릴리즈)",								// "Y: Update bootstrap (Unofficial release)"
-	"START: TWLoader 업데이트",    									// "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 

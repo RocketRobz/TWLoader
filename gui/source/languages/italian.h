@@ -24,15 +24,17 @@ static const char *const lang_IT[STR_MAX] = {
 	"Contatore giochi",                                    		// "Game counter"
 	"Sfondo inferiore personalizzato",                    		// "Custom bottom image"
 	"Aggiorna automaticamente bootstrap",             		    // "Auto-update bootstrap"
-	"Aggiorna automaticamente TWLoader",             	       	// "Auto-update to latest TWLoader"
+	"Aggiorna automaticamente TWLoader",             	       	// "Auto-update TWLoader"
+	"TWLoader filetype",										// "TWLoader filetype"
+	"Aggiorna il TWLoader",										// "Update TWLoader"
+	"Schermata di avvio DS/DSi",                                // "DS/DSi Boot Screen"
+	"Messaggio Salute e Sicurezza",                             // "Health and Safety message"
 
 	/** Settings: NTR/TWL_mode **/
 	"Seleziona la Flashcard",                                   // "Flashcard(s) select"
 	"LED arcobaleno",                                           // "Rainbow LED"
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
 	"VRAM boost",                                               // "VRAM boost"
-	"Schermata di avvio DS/DSi",                                // "DS/DSi Boot Screen"
-	"Messaggio Salute e Sicurezza",                             // "Health and Safety message"
 	"Resetta lo Slot-1",                                       	// "Reset Slot-1"
 	"Console output",                                           // "Console output"
 	"Blocca ARM9 SCFG_EXT",                                     // "Lock ARM9 SCFG_EXT"
@@ -41,7 +43,6 @@ static const char *const lang_IT[STR_MAX] = {
 	/** Settings: Top Screen **/
 	": Aggiorna il bootstrap (Versione ufficiale)",           	// "X: Update bootstrap (Official release)"
 	": Aggiorna il bootstrap (Versione non ufficiale)",       	// "Y: Update bootstrap (Unofficial release)"
-	"START: Aggiorna il TWLoader",                              // "START: Update TWLoader"
 
 	/** Settings: GUI values **/
 	
@@ -90,7 +91,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"è mostrato sotto il testo del banner.",                   	// "is shown below the text bubble."
 
 	"Carica una immagine personalizzata per il ",               // "Loads a custom bottom screen image"
-	"menu dei giochi.",                                         // "for the game menu."
+	"menu dei DSi.",                                 	        // "for the DSi Menu theme."
 
 	"Aggiorna automaticamente nds-bootstrap ",                  // "Auto-update nds-bootstrap at launch."
 	"all'avvio.",                                               // (empty)
