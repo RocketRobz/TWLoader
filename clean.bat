@@ -1,5 +1,8 @@
 @echo off
-cd twlnand-side
+cd twlnand-stage1
+make clean
+cd ..
+cd twlnand-stage2
 make clean
 cd ..
 cd flashcard-side

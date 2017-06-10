@@ -15,6 +15,8 @@ extern bool run;	// Set to false to exit to the Home Menu.
 
 // Dialog box
 extern sf2d_texture *dialogboxtex; // Dialog box
+extern sf2d_texture *dboxtex_button;
+extern sf2d_texture *dboxtex_buttonback;
 extern void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color);
 extern void DialogBoxAppear(int x, int y, const char *text);
 extern void DialogBoxDisappear(int x, int y, const char *text);

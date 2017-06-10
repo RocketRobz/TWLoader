@@ -68,8 +68,8 @@ sf2d_texture *rectangletex;
 // Dialog box textures.
 sf2d_texture *dialogboxtex;	// Dialog box
 static sf2d_texture *dboxtex_iconbox = NULL;
-static sf2d_texture *dboxtex_button = NULL;
-static sf2d_texture *dboxtex_buttonback = NULL;
+sf2d_texture *dboxtex_button;
+sf2d_texture *dboxtex_buttonback;
 
 sf2d_texture *settingslogotex;	// TWLoader logo.
 

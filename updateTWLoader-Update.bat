@@ -1,6 +1,7 @@
 @echo off
 cd "TWLoader-update"
 copy "TWLoader.3dsx" "../../TWLoader-update/TWLoader.3dsx"
+copy "TWLoader_demo.3dsx" "../../TWLoader-update/TWLoader_demo.3dsx"
 copy "TWLoader.cia" "../../TWLoader-update/TWLoader.cia"
 copy "NTR_Launcher.nds" "../../TWLoader-update/NTR_Launcher.nds"
 copy "prev_ver" "../../TWLoader-update/prev_ver"
