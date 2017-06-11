@@ -622,7 +622,6 @@ void settingsDrawBottomScreen(void)
 			renderText(x, y, 0.50, 0.50, false, value_desc);
 		}
 		setTextColor(RGBA8(255, 255, 255, 255));
-		int Ypos = 40;
 		if (cursor_pos[1] == 0) {
 			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1));
 			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2));

@@ -146,6 +146,7 @@ sound *sfx_back = NULL;
 // Title box animation.
 static int titleboxXpos = 0;
 static int titleboxXmovepos = 0;
+static float scrollwindowXmovepos = 0.0;
 static bool titleboxXmoveleft = false;
 static bool titleboxXmoveright = false;
 static int titleboxYmovepos = 116;
@@ -1486,7 +1487,11 @@ int main()
 	sf2d_texture *iconnulltex = sfil_load_PNG_file("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
-	sf2d_texture *scrollbartex = sfil_load_PNG_file("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
+	sf2d_texture *scrollbartex = sfil_load_PNG_file("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // Scroll bar on bottom screen
+	sf2d_texture *buttonarrowtex = sfil_load_PNG_file("romfs:/graphics/button_arrow.png", SF2D_PLACE_RAM); // Arrow button for scroll bar
+	sf2d_texture *bipstex = sfil_load_PNG_file("romfs:/graphics/bips.png", SF2D_PLACE_RAM); // Little dots of scroll bar
+	sf2d_texture *scrollwindowtex = sfil_load_PNG_file("romfs:/graphics/scroll_window.png", SF2D_PLACE_RAM); // Window behind dots of scroll bar
+	sf2d_texture *scrollwindowfronttex = sfil_load_PNG_file("romfs:/graphics/scroll_windowfront.png", SF2D_PLACE_RAM); // Front of window for scroll bar
 	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
 	sf2d_texture *startbordertex = NULL;	// "START" border
 	sf2d_texture *settingsicontex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
@@ -2564,6 +2569,7 @@ int main()
 				}
 				storedcursorPosition = settings.ui.cursorPosition;
 			} else if (titleboxXmovetimer == 8) {
+				scrollwindowXmovepos -= 1.53;
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				startbordermovepos = 1;
@@ -2574,6 +2580,7 @@ int main()
 					sfx_select->stop();
 					sfx_select->play();
 				}
+				scrollwindowXmovepos -= 1.53;
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				// Load the previous box art
@@ -2603,6 +2610,7 @@ int main()
 				}
 				if (settings.ui.pagenum == 0) {
 					if (settings.ui.cursorPosition != -3) {
+						scrollwindowXmovepos -= 1.53;
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
@@ -2620,6 +2628,7 @@ int main()
 					}
 				} else {
 					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*20) {
+						scrollwindowXmovepos -= 1.53;
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
@@ -2683,6 +2692,7 @@ int main()
 					boxartXmovepos = -144;
 				}
 			} else if (titleboxXmovetimer == 8) {
+				scrollwindowXmovepos += 1.53;
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
 				startbordermovepos = 1;
@@ -2693,6 +2703,7 @@ int main()
 					sfx_select->stop();
 					sfx_select->play();
 				}
+				scrollwindowXmovepos += 1.53;
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
 			} else {
@@ -2701,6 +2712,7 @@ int main()
 					cursorPositionset = true;
 				}
 				if (settings.ui.cursorPosition != filenum) {
+					scrollwindowXmovepos += 1.53;
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {
@@ -2724,7 +2736,7 @@ int main()
 			boxartreflYmovepos += 2;
 			titleboxYmovepos -= 6;
 			ndsiconYmovepos -= 6;
-			if (titleboxYmovepos == -240) {
+			if (titleboxYmovepos < -240) {
 				if (screenmodeswitch) {
 					musicbool = false;
 					screenmode = SCREEN_MODE_SETTINGS;
@@ -2732,8 +2744,9 @@ int main()
 					rad = 0.0f;
 					boxartYmovepos = 63;
 					boxartreflYmovepos = 264;
-					titleboxYmovepos = 120;
-					ndsiconYmovepos = 133;
+					scrollwindowXmovepos = 0;
+					titleboxYmovepos = 116;
+					ndsiconYmovepos = 129;
 					fadein = true;
 					screenmodeswitch = false;
 					applaunchprep = false;
@@ -3136,7 +3149,9 @@ int main()
 						sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
 
 					sf2d_draw_texture(scrollbartex, 0, 240-28);
-
+					sf2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+					sf2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+					
 					if(!isDemo) {
 						if (!settings.ui.iconsize) {
 							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
@@ -3211,9 +3226,14 @@ int main()
 						titleboxXpos = 128;
 						ndsiconXpos = 144;
 					}
-					//filenameYpos = 0;
+
+					if (settings.ui.cursorPosition >= 0) sf2d_draw_texture(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
+
+					float bipxPos = 37.0;
 					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
 						if (filenum < pagemax) {
+							sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
+							bipxPos += 12.5;
 							if (settings.ui.iconsize) {
 								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
 								titleboxXpos += 80;
@@ -3232,6 +3252,8 @@ int main()
 								ndsiconXpos += 64;
 							}
 						} else {
+							sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
+							bipxPos += 12.5;
 							if (settings.ui.iconsize) {
 								sf2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
 								titleboxXpos += 80;
@@ -3243,6 +3265,7 @@ int main()
 							}
 						}
 					}
+					if (settings.ui.cursorPosition >= 0) sf2d_draw_texture_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
 
 					if (settings.ui.iconsize) {
 						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
@@ -3937,6 +3960,7 @@ int main()
 						settings.ui.pagenum = 0; // Go to page 0
 						settings.ui.cursorPosition = 0; // Move the cursor to 0
 						storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
+						scrollwindowXmovepos = 0; // Move the cursor to 0
 						titleboxXmovepos = 0; // Move the cursor to 0
 						boxartXmovepos = 0; // Move the cursor to 0
 						boxarttexloaded = false; // Reload boxarts
@@ -4050,6 +4074,7 @@ int main()
 							bannertextloaded = false;
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							storedcursorPosition = settings.ui.cursorPosition;
+							scrollwindowXmovepos = 0;
 							titleboxXmovepos = 0;
 							boxartXmovepos = 0;
 							// noromsfound = false;
@@ -4069,6 +4094,7 @@ int main()
 							bannertextloaded = false;
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							storedcursorPosition = settings.ui.cursorPosition;
+							scrollwindowXmovepos = 0;
 							titleboxXmovepos = 0;
 							boxartXmovepos = 0;
 							// noromsfound = false;
@@ -4268,6 +4294,7 @@ int main()
 									settings.ui.pagenum = 0; // Go to page 0
 									settings.ui.cursorPosition = 0; // Move the cursor to 0
 									storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
+									scrollwindowXmovepos = 0; // Move the cursor to 0
 									titleboxXmovepos = 0; // Move the cursor to 0
 									boxartXmovepos = 0; // Move the cursor to 0
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
@@ -4362,6 +4389,7 @@ int main()
 										settings.ui.pagenum = 0; // Go to page 0
 										settings.ui.cursorPosition = 0; // Move the cursor to 0
 										storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
+										scrollwindowXmovepos = 0; // Move the cursor to 0
 										titleboxXmovepos = 0; // Move the cursor to 0
 										boxartXmovepos = 0; // Move the cursor to 0
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
@@ -4598,6 +4626,7 @@ int main()
 						bannertextloaded = false;
 						settings.ui.cursorPosition = 0;
 						storedcursorPosition = settings.ui.cursorPosition;
+						scrollwindowXmovepos = 0;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
 						noromsfound = false;
