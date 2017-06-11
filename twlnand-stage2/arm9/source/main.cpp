@@ -212,29 +212,6 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(REG_SCFG_MC != 0x11) { 
-			if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
-				if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
-					if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 0 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 1 || twloaderini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {} else {
-						fifoSendValue32(FIFO_USER_02, 1);
-						if (logEnabled)	LogFM("TWL.Main", "Reset Slot-1 ON");
-						if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-							printf("RESET_SLOT1 ON\n");		
-						}
-					}
-				} else {
-					fifoSendValue32(FIFO_USER_02, 1);
-					if (logEnabled)	LogFM("TWL.Main", "Reset Slot-1 ON");
-					if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-						printf("RESET_SLOT1 ON\n");		
-					}
-				}
-			}
-		}
-
-		fifoSendValue32(FIFO_USER_01, 1);
-		fifoWaitValue32(FIFO_USER_03);
-
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
 			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {

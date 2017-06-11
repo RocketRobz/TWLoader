@@ -131,9 +131,9 @@ int main() {
 	i2cWriteRegister(0x4A, 0x12, 0x00);		// Press power-button for auto-reset.
 											// Fixes issue with DS games staying on (with screens off) for 5 seconds after pressing POWER button.
 
-	fifoWaitValue32(FIFO_USER_01);
-	if(fifoCheckValue32(FIFO_USER_02)) { TWL_ResetSlot1(); }
-	fifoSendValue32(FIFO_USER_03, 1);
+	// fifoWaitValue32(FIFO_USER_01);
+	// if(fifoCheckValue32(FIFO_USER_02)) { TWL_ResetSlot1(); }
+	// fifoSendValue32(FIFO_USER_03, 1);
 	
     SCFGFifoCheck();
 
