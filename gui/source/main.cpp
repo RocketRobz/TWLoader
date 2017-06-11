@@ -3835,9 +3835,10 @@ int main()
 				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
 					if(hDown & KEY_R) {
 						menuaction_nextpage = true;
-					} else if((hidKeysUp() & KEY_L) && settings.ui.cursorPosition >= 0 && showbubble) {
+					} else if(hidKeysUp() & KEY_L) {
 						if ((hHeld & KEY_X) | (hDown & KEY_X) | (hidKeysUp() & KEY_X)) {
-							addgametodeletequeue = true;							
+							if (settings.ui.cursorPosition >= 0 && showbubble)
+								addgametodeletequeue = true;							
 						} else {
 							menuaction_prevpage = true;
 						}
