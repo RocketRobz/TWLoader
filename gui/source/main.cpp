@@ -3835,13 +3835,13 @@ int main()
 				if(titleboxXmovetimer == 0 && menu_ctrlset == CTRL_SET_GAMESEL) {
 					if(hDown & KEY_R) {
 						menuaction_nextpage = true;
-					} else if(hidKeysUp() & KEY_L) {
+					} else if((hidKeysUp() & KEY_L) && settings.ui.cursorPosition >= 0 && showbubble) {
 						if ((hHeld & KEY_X) | (hDown & KEY_X) | (hidKeysUp() & KEY_X)) {
 							addgametodeletequeue = true;							
 						} else {
 							menuaction_prevpage = true;
 						}
-					} else if(hDown & KEY_X) {
+					} else if((hDown & KEY_X) && settings.ui.cursorPosition >= 0 && showbubble) {
 						buttondeletegame = true;
 					}
 					if(hDown & KEY_Y) {
