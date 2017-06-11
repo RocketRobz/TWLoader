@@ -42,6 +42,7 @@ bool consoleOn = false;
 
 int main() {
 
+	bool NTRCLOCK = true;
 	bool EnableSD = false;
 
 	// If slot is powered off, tell Arm7 slot power on is required.
@@ -54,12 +55,20 @@ int main() {
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 
+		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { NTRCLOCK = false; }
+
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleOn = true;
 			consoleDemoInit();
 		}
 
-		fifoSendValue32(FIFO_USER_04, 1);
+		if( NTRCLOCK == true ) {
+			fifoSendValue32(FIFO_USER_04, 1);
+			// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
+			// setCpuClock(false);
+			REG_SCFG_CLK = 0x80;
+			swiWaitForVBlank();
+		}
 
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
