@@ -4773,7 +4773,10 @@ int main()
 				} else {
 					tid = NTRLAUNCHER_TID;
 				}
+			} else if (settings.ui.cursorPosition == -1) {
+				tid = NTRLAUNCHER_TID;
 			}
+			
 			FS_MediaType mediaType = MEDIATYPE_NAND;
 			bool switchToTwl = true;	
 			
