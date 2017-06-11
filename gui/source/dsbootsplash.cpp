@@ -27,6 +27,37 @@ using std::vector;
 sound *sfx_boot;
 
 /**
+ * Fade from white to black.
+ */
+void fade_whiteToBlack() {
+	int fade = 0;
+	while (1) {
+		fade += 9;
+		if (fade > 255)
+			fade = 255;
+		
+		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+			sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
+			drawRectangle(0, 0, 400, 240, RGBA8(255, 255, 255, 255));
+			drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fade));
+			if (settings.ui.bootscreen == 1) {
+				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+			}
+			sf2d_end_frame();
+		}
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, 255));
+		drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fade));
+		sf2d_end_frame();
+		
+		sf2d_swapbuffers();
+		
+		if (fade == 255) break;
+	}
+}
+
+/**
  * Play DS boot splash.
  */
 void bootSplash() {
@@ -174,8 +205,8 @@ void bootSplash() {
 			if (bootSplash_fade > 0) bootSplash_fade -= 9;
 			else bootSplash_fade = 0;
 		} else {
-			if (bootSplash_fade < 255) bootSplash_fade += 9;
-			else bootSplash_fade = 255;
+			bootSplash_fade += 9;
+			if (bootSplash_fade > 255) bootSplash_fade = 255;
 		}
 		
 		if (topoPos < 80) topoPos += 2;

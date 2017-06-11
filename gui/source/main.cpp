@@ -1448,6 +1448,7 @@ int main()
 	dboxtex_button = sfil_load_PNG_file("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
 	dboxtex_buttonback = sfil_load_PNG_file("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
 
+	sf2d_texture *r4loadingtex = sfil_load_PNG_file("romfs:/graphics/r4/loading.png", SF2D_PLACE_RAM);		// R4 "Loading..." screen
 	sf2d_texture *toplogotex = NULL;		// Top of R4 menu
 	sf2d_texture *toptex = sfil_load_PNG_file("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
 	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
@@ -1637,8 +1638,22 @@ int main()
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
 	
-	if (settings.ui.showbootscreen == 1)
+	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
+		if (settings.ui.theme == 0) fade_whiteToBlack();
+	}
+
+	if (settings.ui.theme >= 1) {
+		sf2d_start_frame(GFX_TOP, GFX_LEFT);
+		sf2d_draw_texture(r4loadingtex, 40, 0);
+		sf2d_end_frame();
+		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+		sf2d_draw_texture(r4loadingtex, 40, 0);
+		sf2d_end_frame();
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+	}
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
@@ -4764,8 +4779,10 @@ int main()
 				}
 			}
 
-			if (settings.ui.showbootscreen == 2)
+			if (settings.ui.showbootscreen == 2) {
 				bootSplash();
+				fade_whiteToBlack();
+			}
 
 			// Buffers for APT_DoApplicationJump().
 			u8 param[0x300];

@@ -583,7 +583,7 @@ void settingsDrawBottomScreen(void)
 			custombotvaluetext,
 			autodlvaluetext,
 			filetypevaluetext,
-			NULL,
+			"",
 			bootscreenvaluetext,
 			healthsafetyvaluetext,
 		};
