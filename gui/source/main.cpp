@@ -4018,7 +4018,7 @@ int main()
 						// Switch to per-game settings.
 						menudboxmode = DBOX_MODE_SETTINGS;
 						if (!showdialogbox_menu) {
-							if (settings.ui.cursorPosition >= 0 && menudbox_Ypos == -240) {
+							if (settings.ui.cursorPosition >= 0 && showbubble && menudbox_Ypos == -240) {
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
 										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
@@ -4151,7 +4151,7 @@ int main()
 					
 					if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT) {
-							if (settings.ui.cursorPosition >= 0) {
+							if (settings.ui.cursorPosition >= 0 && showbubble) {
 								// Switch to game-specific settings.
 								menudboxmode = DBOX_MODE_SETTINGS;
 							}
