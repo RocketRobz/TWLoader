@@ -16,23 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BIOS_DECOMPRESS_CALLBACK_H
-#define BIOS_DECOMPRESS_CALLBACK_H
+#ifndef FIFOCHECK_H
+#define FIFOCHECK_H
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <nds/bios.h>
-#include <nds/ndstypes.h>
-
-extern TDecompressionStream decompressBiosCallback;
-
-
+void fifocheck (void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // BIOS_DECOMPRESS_CALLBACK_H
+#endif // FIFOCHECK_H
 

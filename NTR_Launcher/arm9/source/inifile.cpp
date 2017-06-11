@@ -276,7 +276,7 @@ std::string CIniFile::GetFileString(const std::string& Section,const std::string
 
   m_bLastResult=false;
 
-  if(iFileLines>=0)
+  if(iFileLines>0)
   {
     while(ii<iFileLines)
     {
@@ -390,3 +390,4 @@ bool CIniFile::ReplaceLine(size_t line,const std::string& str)
   m_FileContainer[line]=str;
   return true;
 }
+

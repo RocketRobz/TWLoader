@@ -1,3 +1,5 @@
+#include <nds/asminc.h>
+
 @This code comes from a post by CaitSith2 at gbadev.org - THANKS!!
 @
 @Code to dump the complete Nintendo DS ARM7 bios, including the
@@ -9,12 +11,12 @@
 @Additionally, if the PC is outside the 0x0000 - 0x1204 range, that range of the bios
 @is completely locked out from reading.
 
-.global readBios
+
 @ void readBios (u8* dest, u32 src, u32 size)
 
-    .align
-readBios:
     .arm
+
+BEGIN_ASM_FUNC readBios
     adr r3,bios_dump+1
     bx r3
     .thumb

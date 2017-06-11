@@ -1,4 +1,4 @@
-NTR Launcher - v1.0 - Apache Thunder - Original code from NitroHax but with cheat engine/menu stripped out.
+NTR Launcher - Apache Thunder - Original code from NitroHax but with cheat engine/menu stripped out.
 
 Launcher side of NitroHax without the cheat engine. Nothing much else to say about it. :P
 
@@ -6,10 +6,3 @@ The source to "Launch DS Cart" on FileTrip was never released. I rebuilt it afte
 That has been corrected here. :D
 
 Credits go to Chism for NitroHax which this source is based from.
-
-
-ahezard's fork of libnds and maxmod are required to compile this. You can find them here:
-
-https://github.com/ahezard/libnds
-
-https://github.com/devkitPro/maxmod

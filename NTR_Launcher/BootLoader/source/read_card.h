@@ -31,7 +31,7 @@
 
 int cardInit (tNDSHeader* ndsHeader, u32* chipID);
 
-void cardRead (u32 src, u32* dest, size_t size); 
+void cardRead (u32 src, u32* dest, size_t size);
 
 #endif // READ_CARD_H
 

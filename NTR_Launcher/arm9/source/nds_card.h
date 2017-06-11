@@ -28,6 +28,10 @@ extern "C" {
 
 void getHeader (u32* ndsHeader);
 
+void SwitchToNTRCARD();
+
+void SwitchToTWLCARD();
+
 
 #ifdef __cplusplus
 }

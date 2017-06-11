@@ -22,17 +22,18 @@ DATA		:=	data
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork
+ARCH	:=	-march=armv5te -mtune=arm946e-s -mthumb -mthumb-interwork
 
 CFLAGS	:=	-g -Wall -O2\
- 			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
+ 			-fomit-frame-pointer\
 			-ffast-math \
+			-Wall -Wextra -Werror \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9 -fno-strict-aliasing
 CXXFLAGS	:=	$(CFLAGS)
 
-ASFLAGS	:=	-g $(ARCH) -march=armv5te -mtune=arm946e-s
+ASFLAGS	:=	-g $(ARCH) $(INCLUDE)
 
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
@@ -100,6 +101,7 @@ $(BUILD):
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) *.elf *.nds* *.bin 
+	@rm -fr $(DATA) *.elf *.nds* *.bin 
  
 #---------------------------------------------------------------------------------
 else
@@ -116,7 +118,6 @@ $(ARM9BIN)	:	$(ARM9ELF)
 $(ARM9ELF)	:	$(OFILES)
 	@echo linking $(notdir $@)
 	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
-
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data 

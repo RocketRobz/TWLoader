@@ -36,10 +36,11 @@
 #include <nds/dma.h>
 #include <nds/arm7/audio.h>
 #include <nds/ipc.h>
-#include <nds/registers_alt.h>
-#include <nds/memory.h>
-#include <nds/card.h>
-#include <stdio.h>
+
+// #include <nds/registers_alt.h>
+// #include <nds/memory.h>
+// #include <nds/card.h>
+// #include <stdio.h>
 
 #ifndef NULL
 #define NULL 0
@@ -57,6 +58,7 @@ tNDSHeader* ndsHeader = (tNDSHeader*)NDS_HEAD;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Used for debugging purposes
+/* Disabled for now. Re-enable to debug problems
 static void errorOutput (u32 code) {
 	// Wait until the ARM9 is ready
 	while (arm9_stateFlag != ARM9_READY);
@@ -67,6 +69,7 @@ static void errorOutput (u32 code) {
 	// Stop
 	while(1);
 }
+*/
 
 static void debugOutput (u32 code) {
 	// Wait until the ARM9 is ready
@@ -128,7 +131,7 @@ void arm7_resetMemory (void) {
 		SCHANNEL_SOURCE(i) = 0;
 		SCHANNEL_LENGTH(i) = 0;
 	}
-	SOUND_CR = 0;
+	REG_SOUNDCNT = 0;
 
 	// Clear out ARM7 DMA channels and timers
 	for (i=0; i<4; i++) {
@@ -215,8 +218,9 @@ void arm7_startBinary (void)
 
 	while(REG_VCOUNT!=191);
 	while(REG_VCOUNT==191);
+
 	// Start ARM7
-	resetCpu();
+	((void (*)())(*(u32*)(0x27FFE34)))();
 }
 
 
@@ -240,11 +244,11 @@ void arm7_main (void) {
 	// Load the NDS file
 	errorCode = arm7_loadBinary();
 	if (errorCode) {
-		errorOutput(errorCode);
+		debugOutput(errorCode);
 	}
-	
-	debugOutput (ERR_STS_HOOK_BIN);
-	
+
+	debugOutput (ERR_STS_START);
+
 	arm7_startBinary();
 	
 	return;

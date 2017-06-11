@@ -17,10 +17,12 @@
 @ void arm7_clearmem (void* loc, size_t len);
 @ Clears memory using an stmia loop
 
-.arm
-.global arm7_clearmem
+#include <nds/asminc.h>
 
-arm7_clearmem:
+.arm
+
+
+BEGIN_ASM_FUNC arm7_clearmem
 	add    r1, r0, r1
 	stmfd  sp!, {r4-r9}
 	mov    r2, #0
@@ -33,7 +35,8 @@ arm7_clearmem:
 	mov    r9, #0
 
 clearmem_loop:
-	stmia  r0!, {r2-r9}	cmp    r0, r1
+	stmia  r0!, {r2-r9}
+	cmp    r0, r1
 	blt    clearmem_loop
 
 	ldmfd  sp!, {r4-r9}

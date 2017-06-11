@@ -21,6 +21,7 @@
 
 #include "load_bin.h"
 #include "launch_engine.h"
+
 #define LCDC_BANK_C (u16*)0x06840000
 
 void vramcpy (void* dst, const void* src, int len)
@@ -36,6 +37,7 @@ void vramcpy (void* dst, const void* src, int len)
 // Basic engine with no cheat related code.
 void runLaunchEngine (bool EnableSD)
 {
+
 	irqDisable(IRQ_ALL);
 
 	// Direct CPU access to VRAM bank C
@@ -49,20 +51,18 @@ void runLaunchEngine (bool EnableSD)
 
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
-
+	
 	if( EnableSD ) {
 		REG_SCFG_EXT=0x83000000;
 	} else {
 		REG_SCFG_EXT=0x03000000;
 	}
-
+	
 	// Reset into a passme loop
-	// REG_EXMEMCNT = 0xffff;
 	REG_EXMEMCNT |= ARM7_OWNS_ROM | ARM7_OWNS_CARD;
 	*((vu32*)0x027FFFFC) = 0;
 	*((vu32*)0x027FFE04) = (u32)0xE59FF018;
 	*((vu32*)0x027FFE24) = (u32)0x027FFE04;
-
 	swiSoftReset(); 
 }
 

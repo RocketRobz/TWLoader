@@ -16,23 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "bios_decompress_callback.h"
+#include <nds.h>
 
-int getSizeBiosCallback (uint8 * source, uint16 * dest, uint32 r2)
+void fifocheck (void)
 {
-	return *((int*)source);
+
+	if(*((vu32*)0x027FFE24) == (u32)0x027FFE04)
+	{
+		if(fifoCheckValue32(FIFO_USER_04)) {
+			if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_CLK = 0x0181; } else { REG_SCFG_CLK = 0x0180; }
+		}
+		if(fifoCheckValue32(FIFO_USER_06)) { /*Do Nothing*/ } else { REG_SCFG_ROM = 0x703; }
+		if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_EXT = 0x93A53000; } else { REG_SCFG_EXT = 0x12A03000; }
+
+		irqDisable (IRQ_ALL);
+		*((vu32*)0x027FFE34) = (u32)0x06000000;
+
+		swiSoftReset();
+	} 
 }
-
-uint8 readByteBiosCallback (uint8 * source)
-{
-	return *source;
-}
-
-TDecompressionStream decompressBiosCallback =
-{
-  getSizeBiosCallback,
-  (void*)0,
-  readByteBiosCallback
-} ;
-
 

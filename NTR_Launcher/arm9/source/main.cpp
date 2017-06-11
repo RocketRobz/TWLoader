@@ -31,34 +31,35 @@
 #include "crc.h"
 #include "version.h" 
 
-int main(int argc, const char* argv[]) {
-	
+// #define REG_ROMCTRL		(*(vu32*)0x40001A4)
+// #define REG_SCFG_ROM	(*(vu32*)0x4004000)
+// #define REG_SCFG_CLK	(*(vu32*)0x4004004)
+// #define REG_SCFG_EXT	(*(vu32*)0x4004008)
+// #define REG_SCFG_MC		(*(vu32*)0x4004010)
+
+
+bool consoleOn = false;
+
+int main() {
+
 	bool EnableSD = false;
-
-	bool consoleOn = false;
-
-	swiWaitForVBlank();
 
 	// If slot is powered off, tell Arm7 slot power on is required.
 	if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
 	if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
 
-	dsi_forceTouchDsmode();
-
 	u32 ndsHeader[0x80];
 	char gameid[4];
-	uint32_t headerCRC;
 	
-	/* scanKeys();
-	int pressed = keysDown(); */
-
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
-			consoleDemoInit();
 			consoleOn = true;
+			consoleDemoInit();
 		}
+
+		fifoSendValue32(FIFO_USER_04, 1);
 
 		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
@@ -68,7 +69,20 @@ int main(int argc, const char* argv[]) {
 			// Tell Arm7 to use alternate SCFG_EXT values.
 			fifoSendValue32(FIFO_USER_05, 1);
 		}
-		
+
+		// if(ntrlauncher_config.GetInt("NTRLAUNCHER","TWLMODE",0) == 1) {
+		// 	// Tell Arm7 not to switch into NTR mode (this will only work on alt build of NTR Launcher)
+		// 	fifoSendValue32(FIFO_USER_06, 1);
+		// }
+
+		if(twloaderini.GetInt("TWL-MODE","RESET_SLOT1",0) == 1) {
+			fifoSendValue32(FIFO_USER_02, 1);
+			fifoSendValue32(FIFO_USER_07, 1);
+		}
+
+	} else {
+		fifoSendValue32(FIFO_USER_02, 1);
+		fifoSendValue32(FIFO_USER_07, 1);
 	}
 
 	// Tell Arm7 it's ready for card reset (if card reset is nessecery)
@@ -76,18 +90,16 @@ int main(int argc, const char* argv[]) {
 	// Waits for Arm7 to finish card reset (if nessecery)
 	fifoWaitValue32(FIFO_USER_03);
 
-
 	// Wait for card to stablize before continuing
-	for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 
 	sysSetCardOwner (BUS_OWNER_ARM9);
 
 	getHeader (ndsHeader);
 
-	for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 	
 	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
-	headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
 
 	while(1) {
 		if(REG_SCFG_MC == 0x11) { 

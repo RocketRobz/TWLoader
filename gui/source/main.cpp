@@ -148,7 +148,7 @@ static int titleboxXpos = 0;
 static int titleboxXmovepos = 0;
 static bool titleboxXmoveleft = false;
 static bool titleboxXmoveright = false;
-static int titleboxYmovepos = 120;
+static int titleboxYmovepos = 116;
 int titleboxXmovetimer = 1; // Set to 1 for fade-in effect to run
 
 static bool wood_uppressed = false;
@@ -1261,6 +1261,10 @@ static void drawMenuDialogBox(void)
 extern const u64 TWLNAND_TID;
 const u64 TWLNAND_TID = 0x0004800554574C44ULL;
 
+// TWLoader's NTR Launcher Title ID.
+extern const u64 NTRLAUNCHER_TID;
+const u64 NTRLAUNCHER_TID = 0x0004800554574C31ULL;
+
 /**
 * Check if the TWLNAND-side title is installed or not
 * Title ID: 0x0004800554574C44ULL
@@ -1482,6 +1486,7 @@ int main()
 	sf2d_texture *iconnulltex = sfil_load_PNG_file("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
+	sf2d_texture *scrollbartex = sfil_load_PNG_file("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
 	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
 	sf2d_texture *startbordertex = NULL;	// "START" border
 	sf2d_texture *settingsicontex = sfil_load_PNG_file("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
@@ -1621,7 +1626,7 @@ int main()
 	int boxartYmovepos = 63;
 	int boxartreflYmovepos = 264;
 	int ndsiconXpos;
-	int ndsiconYmovepos = 133;
+	int ndsiconYmovepos = 129;
 	int wood_ndsiconscaletimer = 0;
 	int wood_ndsiconscalelag = 0;
 	int wood_ndsiconscalemovepos = 0;
@@ -3130,6 +3135,182 @@ int main()
 					else
 						sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
 
+					sf2d_draw_texture(scrollbartex, 0, 240-28);
+
+					if(!isDemo) {
+						if (!settings.ui.iconsize) {
+							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+							// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+							const int home_width = 144+16;
+							const int home_x = (320-home_width)/2;
+							sf2d_draw_texture(homeicontex, home_x, 194); // Draw HOME icon
+							setTextColor(RGBA8(0, 0, 0, 255));
+							renderText_w(home_x+20, 195, 0.50, 0.50, false, home_text);
+						}
+					}
+
+					if (settings.ui.pagenum == 0) {
+						if (settings.ui.iconsize) {
+							sf2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 104, 1.25, 1.25);
+							sf2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+						} else {
+							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 112);
+							sf2d_draw_texture(settingsicontex, setsboxXpos+titleboxXmovepos, 115);
+						}
+
+						if (!settings.twl.forwarder) {
+							// Poll for Slot-1 changes.
+							bool forcePoll = false;
+							bool doSlot1Update = false;
+							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+								// Card is inserted, but we don't know its type.
+								// Force an update.
+								forcePoll = true;
+							}
+							bool s1chg = gamecardPoll(forcePoll);
+							if (s1chg) {
+								// Update Slot-1 if:
+								// - forcePoll is false
+								// - forcePoll is true, and card is no longer unknown.
+								doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+							}
+							if (doSlot1Update) {
+								// Slot-1 card has changed.
+								if (settings.ui.cursorPosition == -1) {
+									// Reload the banner text.
+									bannertextloaded = false;
+								}
+							}
+
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+							else
+								sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 116);
+							sf2d_texture *cardicontex = gamecardGetIcon();
+							if (!cardicontex)
+								cardicontex = iconnulltex;
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+							else
+								sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+						} else {
+							// Get flash cart games.
+							if (settings.ui.iconsize)
+								sf2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+							else
+								sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 115);
+						}
+					} else {
+						sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 112);
+					}
+
+					if (settings.ui.iconsize) {
+						titleboxXpos = 120;
+						ndsiconXpos = 140;
+					} else {
+						titleboxXpos = 128;
+						ndsiconXpos = 144;
+					}
+					//filenameYpos = 0;
+					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
+						if (filenum < pagemax) {
+							if (settings.ui.iconsize) {
+								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								titleboxXpos += 80;
+
+								bnriconnum = filenum;
+								ChangeBNRIconNo();
+								sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+								ndsiconXpos += 80;
+							} else {
+								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
+								titleboxXpos += 64;
+
+								bnriconnum = filenum;
+								ChangeBNRIconNo();
+								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+								ndsiconXpos += 64;
+							}
+						} else {
+							if (settings.ui.iconsize) {
+								sf2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								titleboxXpos += 80;
+								ndsiconXpos += 80;
+							} else {
+								sf2d_draw_texture(boxemptytex, titleboxXpos+titleboxXmovepos, 116);
+								titleboxXpos += 64;
+								ndsiconXpos += 64;
+							}
+						}
+					}
+
+					if (settings.ui.iconsize) {
+						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
+					} else {
+						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 112, -1, 1);
+					}
+					if (!applaunchprep) {
+						if (titleboxXmovetimer == 0) {
+							startbordermovepos = 0;
+							startborderscalesize = 1.0;
+						}
+						if (!settings.twl.forwarder && settings.ui.cursorPosition == -1 && !gamecardIsInserted()) {
+							// Slot-1 selected, but no cartridge is present.
+							// Don't print "START" and the cursor border.
+						} else {
+							if (!isDemo || settings.ui.cursorPosition == -2) {
+								if (showbubble) {
+									// Print "START" and the cursor border.
+									if (settings.ui.iconsize) {
+										sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
+										const wchar_t *start_text = TR(STR_START);
+										// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
+										//const int start_width = 0;
+										// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
+										setTextColor(RGBA8(255, 255, 255, 255));
+										renderText_w(136, 180, 0.60, 0.60, false, start_text);
+									} else {
+										sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
+										const wchar_t *start_text = TR(STR_START);
+										// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+										//const int start_width = 0;
+										// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+										setTextColor(RGBA8(255, 255, 255, 255));
+										renderText_w(140, 173, 0.50, 0.50, false, start_text);
+									}
+								}
+							}
+						}
+					} else {
+						if (settings.ui.custombot)
+							sf2d_draw_texture_part(bottomtex, 128, 112, 128, 112, 64, 80);
+						else
+							sf2d_draw_texture_part_blend(bottomtex, 128, 112, 128, 112, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
+						if (settings.ui.cursorPosition == -2) {
+							sf2d_draw_texture(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
+						} else if (settings.ui.cursorPosition == -1) {
+							if (settings.twl.forwarder)
+								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
+							else {
+								// Draw selected Slot-1 game that moves up
+								sf2d_draw_texture(carttex(), 128, titleboxYmovepos);
+								sf2d_texture *cardicontex = gamecardGetIcon();
+								if (!cardicontex)
+									cardicontex = iconnulltex;
+								sf2d_draw_texture(cardicontex, 144, ndsiconYmovepos);
+							}
+						} else {
+							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
+							if (!applaunchicon) {
+								bnriconnum = settings.ui.cursorPosition;
+								ChangeBNRIconNo();
+								bnricontexlaunch = bnricontexnum;
+								applaunchicon = true;
+							}
+							sf2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
+						}
+						sf2d_draw_texture_rotate(dotcircletex, 160, 148, rad);  // Dots moving in circles
+					}
 					if (showbubble) {
 						sf2d_draw_texture(bubbletex, 0, 0);
 						// if (dspfirmfound) { sfx_menuselect->play(); }
@@ -3286,179 +3467,6 @@ int main()
 						}
 					} else {
 						sf2d_draw_texture(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
-					}
-
-					if(!isDemo) {
-						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-						// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-						const int home_width = 144+16;
-						const int home_x = (320-home_width)/2;
-						sf2d_draw_texture(homeicontex, home_x, 219); // Draw HOME icon
-						setTextColor(RGBA8(0, 0, 0, 255));
-						renderText_w(home_x+20, 220, 0.50, 0.50, false, home_text);
-					}
-
-					if (settings.ui.pagenum == 0) {
-						if (settings.ui.iconsize) {
-							sf2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 108, 1.25, 1.25);
-							sf2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
-						} else {
-							sf2d_draw_texture(bracetex, -32+titleboxXmovepos, 116);
-							sf2d_draw_texture(settingsicontex, setsboxXpos+titleboxXmovepos, 119);
-						}
-
-						if (!settings.twl.forwarder) {
-							// Poll for Slot-1 changes.
-							bool forcePoll = false;
-							bool doSlot1Update = false;
-							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
-								// Card is inserted, but we don't know its type.
-								// Force an update.
-								forcePoll = true;
-							}
-							bool s1chg = gamecardPoll(forcePoll);
-							if (s1chg) {
-								// Update Slot-1 if:
-								// - forcePoll is false
-								// - forcePoll is true, and card is no longer unknown.
-								doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
-							}
-							if (doSlot1Update) {
-								// Slot-1 card has changed.
-								if (settings.ui.cursorPosition == -1) {
-									// Reload the banner text.
-									bannertextloaded = false;
-								}
-							}
-
-							if (settings.ui.iconsize)
-								sf2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
-							else
-								sf2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 120);
-							sf2d_texture *cardicontex = gamecardGetIcon();
-							if (!cardicontex)
-								cardicontex = iconnulltex;
-							if (settings.ui.iconsize)
-								sf2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-							else
-								sf2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-						} else {
-							// Get flash cart games.
-							if (settings.ui.iconsize)
-								sf2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 111, 1.25, 1.25);
-							else
-								sf2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 119);
-						}
-					} else {
-						sf2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 116);
-					}
-
-					if (settings.ui.iconsize) {
-						titleboxXpos = 120;
-						ndsiconXpos = 140;
-					} else {
-						titleboxXpos = 128;
-						ndsiconXpos = 144;
-					}
-					//filenameYpos = 0;
-					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
-						if (filenum < pagemax) {
-							if (settings.ui.iconsize) {
-								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
-								titleboxXpos += 80;
-
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 127, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-								ndsiconXpos += 80;
-							} else {
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
-
-								bnriconnum = filenum;
-								ChangeBNRIconNo();
-								sf2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 133, bnriconframenum*32, 0, 32, 32);
-								ndsiconXpos += 64;
-							}
-						} else {
-							if (settings.ui.iconsize) {
-								sf2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
-								titleboxXpos += 80;
-								ndsiconXpos += 80;
-							} else {
-								sf2d_draw_texture(boxemptytex, titleboxXpos+titleboxXmovepos, 120);
-								titleboxXpos += 64;
-								ndsiconXpos += 64;
-							}
-						}
-					}
-
-					if (settings.ui.iconsize) {
-						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 108, -1.25, 1.25);
-					} else {
-						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 116, -1, 1);
-					}
-					if (!applaunchprep) {
-						if (titleboxXmovetimer == 0) {
-							startbordermovepos = 0;
-							startborderscalesize = 1.0;
-						}
-						if (!settings.twl.forwarder && settings.ui.cursorPosition == -1 && !gamecardIsInserted()) {
-							// Slot-1 selected, but no cartridge is present.
-							// Don't print "START" and the cursor border.
-						} else {
-							if (!isDemo || settings.ui.cursorPosition == -2) {
-								if (showbubble) {
-									// Print "START" and the cursor border.
-									if (settings.ui.iconsize) {
-										sf2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
-										const wchar_t *start_text = TR(STR_START);
-										// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
-										//const int start_width = 0;
-										// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
-										setTextColor(RGBA8(255, 255, 255, 255));
-										renderText_w(136, 184, 0.60, 0.60, false, start_text);
-									} else {
-										sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
-										const wchar_t *start_text = TR(STR_START);
-										// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-										//const int start_width = 0;
-										// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
-										setTextColor(RGBA8(255, 255, 255, 255));
-										renderText_w(140, 177, 0.50, 0.50, false, start_text);
-									}
-								}
-							}
-						}
-					} else {
-						if (settings.ui.custombot)
-							sf2d_draw_texture_part(bottomtex, 128, 116, 128, 116, 64, 80);
-						else
-							sf2d_draw_texture_part_blend(bottomtex, 128, 116, 128, 116, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
-						if (settings.ui.cursorPosition == -2) {
-							sf2d_draw_texture(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
-						} else if (settings.ui.cursorPosition == -1) {
-							if (settings.twl.forwarder)
-								sf2d_draw_texture(getfcgameboxtex, 128, titleboxYmovepos-1);
-							else {
-								// Draw selected Slot-1 game that moves up
-								sf2d_draw_texture(carttex(), 128, titleboxYmovepos);
-								sf2d_texture *cardicontex = gamecardGetIcon();
-								if (!cardicontex)
-									cardicontex = iconnulltex;
-								sf2d_draw_texture(cardicontex, 144, ndsiconYmovepos);
-							}
-						} else {
-							sf2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
-							if (!applaunchicon) {
-								bnriconnum = settings.ui.cursorPosition;
-								ChangeBNRIconNo();
-								bnricontexlaunch = bnricontexnum;
-								applaunchicon = true;
-							}
-							sf2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
-						}
-						sf2d_draw_texture_rotate(dotcircletex, 160, 152, rad);  // Dots moving in circles
 					}
 					if (menudbox_Ypos != -240) {
 						// Draw the menu dialog box.
@@ -4726,7 +4734,17 @@ int main()
 			SaveBootstrapConfig();
 
 			// Prepare for the app launch.
-			u64 tid = TWLNAND_TID;
+			u64 tid;
+			tid = TWLNAND_TID;
+			if (settings.twl.forwarder) {
+				CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
+				if(settingsini.GetInt("TWL-MODE","FLASHCARD",0) == 0
+				|| settingsini.GetInt("TWL-MODE","FLASHCARD",0) == 1
+				|| settingsini.GetInt("TWL-MODE","FLASHCARD",0) == 4) {
+				} else {
+					tid = NTRLAUNCHER_TID;
+				}
+			}
 			FS_MediaType mediaType = MEDIATYPE_NAND;
 			bool switchToTwl = true;	
 			
