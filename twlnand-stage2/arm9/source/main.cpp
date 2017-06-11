@@ -292,10 +292,6 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
-			runFile("sd:/_nds/twloader/NTR_Launcher.nds");
-		}
-		
 		for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 0) {
