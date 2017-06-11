@@ -94,14 +94,11 @@ static const char *const lang_NL[STR_MAX] = {
 	"Loads a custom bottom screen image",						// "Loads a custom bottom screen image"
 	"for the DSi Menu theme.",									// "for the DSi Menu theme."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
-
 	"Auto-update to the latest",								// "Auto-update to the latest"
 	"TWLoader version at launch.",								// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Pick a flashcard to use to",								// "Pick a flashcard to use to"
@@ -128,11 +125,14 @@ static const char *const lang_NL[STR_MAX] = {
 	"Displays some text before launched game.",					// "Displays some text before launched game."
 	"",															// (empty)
 
-	"Locks the ARM9 SCFG_EXT,",									// "Locks the ARM9 SCFG_EXT,"
-	"avoiding conflict with recent libnds.",					// "avoiding conflict with recent libnds."
+	// "Locks the ARM9 SCFG_EXT,",									// "Locks the ARM9 SCFG_EXT,"
+	// "avoiding conflict with recent libnds.",					// "avoiding conflict with recent libnds."
 
-	"Change between release and",								// "Change between release and"
-	"unofficial bootstrap file.",								// "unofficial bootstrap file."
+	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
+	"",															// (empty)
+
+	"Pick release, unofficial,",								// "Pick release, unofficial,"
+	"or old bootstrap.",										// "or old bootstrap."
 
 	/** Start menu **/
 	// Options
@@ -153,7 +153,7 @@ static const char *const lang_NL[STR_MAX] = {
 	// Options
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
 	"VRAM boost",												// "VRAM boost"
-	"Lock ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"Set as donor ROM",											// "Set as donor ROM"
 	"Set LED color",											// "Set LED color"
 	// Values

@@ -94,14 +94,11 @@ static const char *const lang_KO[STR_MAX] = {
 	"게임 메뉴에",													// "Loads a custom bottom screen image"
 	"사용자 설정 스크린 이미지 띄우기.",									// "for the game menu."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"시작 시 nds-부트스트랩 업데이트",										// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
-
 	"시작 시",														// "Auto-download the CIA of the latest"
 	"TWLoader 최신 CIA 자동 다운로드",									// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"ROM 파일이 있는",												// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_KO[STR_MAX] = {
 	"게임구동 전 텍스트 출력",											// "Displays some text before launched game."
 	"",															// (empty)
 
-	"최신 nds 라이브러리와 충돌 회피를 피하기 위해 ",							// "Locks the ARM9 SCFG_EXT,"
-	"ARM9 SCFG_EXT 잠금",											// "avoiding conflict with recent libnds."
+	// "최신 nds 라이브러리와 충돌 회피를 피하기 위해 ",							// "Locks the ARM9 SCFG_EXT,"
+	// "ARM9 SCFG_EXT 잠금",											// "avoiding conflict with recent libnds."
+
+	"시작 시 nds-부트스트랩 업데이트",										// "Auto-update nds-bootstrap at launch."
+	"",															// (empty)
 
 	"부트스트랩 파일을 ",												// "Change between release and"
 	"공식/비공식으로 변경.",											// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_KO[STR_MAX] = {
 	// Options
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
 	"VRAM 부스트",													// "VRAM boost"
-	"ARM9 SCFG_EXT 고정",											// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"donor ROM으로 설정",											// "Set as donor ROM"
 	"LED 색상",													// "Set LED color"
 	// Values

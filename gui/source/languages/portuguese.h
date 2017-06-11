@@ -94,14 +94,11 @@ static const char *const lang_PT[STR_MAX] = {
 	"Carrega uma imagem personalizada para",					// "Loads a custom bottom screen image"
 	"a parte inferior do menu do DSi.",							// "for the DSi Menu theme."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"Actualizar automáticamente o nds-bootstrap",				// "Auto-update nds-bootstrap at launch."
-	"durante o lançamento da aplicação.",						// (empty)
-
 	"Download automático da versão mais recente",				// "Auto-download the CIA of the latest"
 	"do TWLoader durante o lançamento.",						// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Escolha uma flashcard para iniciar",						// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_PT[STR_MAX] = {
 	"Mostra algum texto antes do lançamento do jogo.",			// "Displays some text before launched game."
 	"",															// (empty)
 
-	"Bloquear o ARM9 SCFG_EXT, para evitar",					// "Locks the ARM9 SCFG_EXT,"
-	"conflitos com libnds recentes.",							// "avoiding conflict with recent libnds."
+	// "Bloquear o ARM9 SCFG_EXT, para evitar",					// "Locks the ARM9 SCFG_EXT,"
+	// "conflitos com libnds recentes.",							// "avoiding conflict with recent libnds."
+
+	"Actualizar automáticamente o nds-bootstrap",				// "Auto-update nds-bootstrap at launch."
+	"durante o lançamento da aplicação.",						// (empty)
 
 	"Mudar entre bootstrap oficial ou",							// "Change between release and"
 	"não-oficial.",												// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_PT[STR_MAX] = {
 	// Options
 	"Velocidade do CPU ARM9",									// "ARM9 CPU Speed"
 	"Boost VRAM",												// "VRAM boost"
-	"Bloquear ARM9 SCFG_EXT",									// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"Definir como ROM donor",									// "Set as donor ROM"
 	"Definir a cor do LED",										// "Set LED color"
 	// Values

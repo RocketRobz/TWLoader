@@ -13,6 +13,8 @@
 extern bool isDemo;	// Is the program running as demo version?
 extern bool run;	// Set to false to exit to the Home Menu.
 
+extern std::string fat;
+
 // Dialog box
 extern sf2d_texture *dialogboxtex; // Dialog box
 extern sf2d_texture *dboxtex_button;

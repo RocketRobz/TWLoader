@@ -92,14 +92,14 @@ typedef struct _Settings_t {
 		int mpuregion; // Region 0, 1, 2, 3
 		int mpusize; // Size 0, 1, 3145728
 		
-		bool bootstrapfile; // true == release, false == unofficial
+		int bootstrapfile; // 0 = release, 1 = unofficial, 2 = old
 	} twl;
 	
 	struct {
 		// -1 == default; 0 == off, 1 == on
 		s8 cpuspeed;	// false == NTR, true == TWL
 		s8 extvram;
-		s8 lockarm9scfgext;
+		s8 usedonor;
 		s8 donor;
 		int red;
 		int green;

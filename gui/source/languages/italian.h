@@ -94,14 +94,11 @@ static const char *const lang_IT[STR_MAX] = {
 	"Carica una immagine personalizzata per il ",               // "Loads a custom bottom screen image"
 	"menu dei DSi.",                                 	        // "for the DSi Menu theme."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"Aggiorna automaticamente nds-bootstrap ",                  // "Auto-update nds-bootstrap at launch."
-	"all'avvio.",                                               // (empty)
-
 	"Scarica automaticamente l'ultima",                         // "Auto-download the CIA of the latest"
 	"versione del CIA TWLoader  all'avvio.",                    // "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Seleziona una flashcard da usare",                         // "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_IT[STR_MAX] = {
 	"Mosta del testo prima del gioco avviato.",                 // "Displays some text before launched game."
 	"",                                                         // (empty)
 
-	"Blocca il SCFG_EXT ARM9,",                                 // "Locks the ARM9 SCFG_EXT,"
-	"evitando conflitti con le recenti libnds.",               	// "avoiding conflict with recent libnds."
+	// "Blocca il SCFG_EXT ARM9,",                                 // "Locks the ARM9 SCFG_EXT,"
+	// "evitando conflitti con le recenti libnds.",               	// "avoiding conflict with recent libnds."
+
+	"Aggiorna automaticamente nds-bootstrap ",                  // "Auto-update nds-bootstrap at launch."
+	"all'avvio.",                                               // (empty)
 
 	"Cabia tra versione ufficiale e",                           // "Change between release and"
 	"non ufficiale del file di bootstrap.",                     // "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_IT[STR_MAX] = {
 	// Options
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
 	"VRAM boost",                                               // "VRAM boost"
-	"Blocca Scfg_Ext ARM9",                                     // "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",                                     	// "Use set donor ROM"
 	"Imposta come ROM donor",                               	// "Set as donor ROM"
 	"Imposta colore del LED",                                   // "Set LED color"
 	// Values

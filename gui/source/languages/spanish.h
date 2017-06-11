@@ -94,14 +94,11 @@ static const char *const lang_ES[STR_MAX] = {
 	"Carga una imagen personalizada para",						// "Loads a custom bottom screen image"
 	"la pantalla inferior.",									// "for the game menu."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"Auto actualizar bootstrap durante el arranque.",			// "Auto-update nds-bootstrap at launch."
-	"",															// (empty) 
-
 	"Auto actualizar e installar los CIAS de TWLoader",			// "Auto-download the CIA of the latest"
 	"durante el arranque.",										// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Elije una flashcard para cargar",							// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_ES[STR_MAX] = {
 	"Muestra información de depuración",						// "Displays some text before launched game."
 	"antes de lanzar la ROM.",									// (empty) 
 
-	"Bloquea el SCFG_EXT del ARM9, evitando",					// "Locks the ARM9 SCFG_EXT,"
-	"conflictos con las librerias libnds más recientes.",		// "avoiding conflict with recent libnds."
+	// "Bloquea el SCFG_EXT del ARM9, evitando",					// "Locks the ARM9 SCFG_EXT,"
+	// "conflictos con las librerias libnds más recientes.",		// "avoiding conflict with recent libnds."
+
+	"Auto actualizar bootstrap durante el arranque.",			// "Auto-update nds-bootstrap at launch."
+	"",															// (empty) 
 
 	"Cambia entre la version 'Release' (estable) ",				// "Change between release and"
 	"y la 'Unofficial' (inestable).",							// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_ES[STR_MAX] = {
 	// Options
 	"Velocidad CPU ARM9:",										// "ARM9 CPU Speed"
 	"Aumento VRAM:",											// "VRAM boost"
-	"Bloq. SCFG_EXT ARM9:",										// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"Elegir como donante",										// "Set as donor ROM"
 	"Elegir color del LED",										// "Set LED color"
 	// Values

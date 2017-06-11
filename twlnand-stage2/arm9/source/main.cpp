@@ -173,28 +173,16 @@ int main(int argc, char **argv) {
 			} else {
 				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
 			}
-			if(gamesettingsini.GetInt("GAME-SETTINGS","LOCK_ARM9_SCFG_EXT",0) == -1) {
-				if(twloaderini.GetInt("TWL-MODE","LOCK_ARM9_SCFG_EXT",0) == 1) {
-					bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 1);
-				} else {
-					bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 0);
-				}
+			if(gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",0) == 1) {
+				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
 			} else {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","LOCK_ARM9_SCFG_EXT",0) == 1) {
-					bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 1);
-				} else {
-					bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 0);
-				}
+				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 0);
 			}
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
 			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-			if(twloaderini.GetInt("TWL-MODE","LOCK_ARM9_SCFG_EXT",0) == 1) {
-				bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 1);
-			} else {
-				bootstrapini.SetInt("NDS-BOOTSTRAP","LOCK_ARM9_SCFG_EXT", 0);
-			}
+			bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		}
 		

@@ -94,14 +94,11 @@ static const char *const lang_RU[STR_MAX] = {
 	"Загрузить собственное изображение для низа",				// "Loads a custom bottom screen image"
 	"игрового меню.",											// "for the game menu."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"Автоматическое обновление nds-bootstrap при старте.",		// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
-
 	"Автоматическая загрузка последнего CIA файла",				// "Auto-download the CIA of the latest"
 	"TWLoader при запуске.",									// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Выберите флешкарту для",									// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_RU[STR_MAX] = {
 	"Показывает текст перед запуском игры.",					// "Displays some text before launched game."
 	"",															// (empty)
 
-	"Блокировака ARM9 SCFG_EXT позволяет избегать",				// "Locks the ARM9 SCFG_EXT,"
-	"конфликтов с последними сборками libnds.",					// "avoiding conflict with recent libnds."
+	// "Блокировака ARM9 SCFG_EXT позволяет избегать",				// "Locks the ARM9 SCFG_EXT,"
+	// "конфликтов с последними сборками libnds.",					// "avoiding conflict with recent libnds."
+
+	"Автоматическое обновление nds-bootstrap при старте.",		// "Auto-update nds-bootstrap at launch."
+	"",															// (empty)
 
 	"Использовать стабильный или неоффициальный",				// "Change between release and"
 	"Bootstrap файл или наоборот",								// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_RU[STR_MAX] = {
 	// Options
 	"Скорость ARM9 CPU",										// "ARM9 CPU Speed"
 	"VRAM ускорение",											// "VRAM boost"
-	"Блокировка ARM9 SCFG_EXT",									// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"Выбрать донорский ROM",									// "Set as donor ROM"
 	"Выбрать цвет LED",											// "Set LED color"
 	// Values

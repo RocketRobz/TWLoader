@@ -174,6 +174,7 @@ static const char bootstrapini_bootsplash[] = "BOOTSPLASH";
 static const char bootstrapini_debug[] = "DEBUG";
 static const char bootstrapini_resetslot1[] = "RESETSLOT1";
 static const char bootstrapini_lockarm9scfgext[] = "LOCK_ARM9_SCFG_EXT";
+static const char bootstrapini_usearm7donor[] = "USE_ARM7_DONOR";
 static const char bootstrapini_mpuregion[] = "PATCH_MPU_REGION";
 static const char bootstrapini_mpusize[] = "PATCH_MPU_SIZE";
 static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
@@ -220,7 +221,7 @@ std::string sav;		// Associated save file.
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
-static const std::string fat = "sd:/";
+std::string fat = "sd:/";
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
@@ -700,9 +701,18 @@ static void SaveBootstrapConfig(void)
 			}
 		}
 	}
+	if (settings.twl.bootstrapfile == 2) {
+		bootstrapPath = "sd:/_nds/old-bootstrap.nds";
+	} else if (settings.twl.bootstrapfile == 1) {
+		bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
+	} else {
+		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
+	}
+	if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using path:", bootstrapPath.c_str());
 	bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
 	
 	// TODO: Change the default to 0?
 	switch (settings.twl.console) {
@@ -738,7 +748,7 @@ static void LoadPerGameSettings(void)
 	CIniFile gamesettingsini(path);
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
 	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
-	settings.pergame.lockarm9scfgext = gamesettingsini.GetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, -1);
+	settings.pergame.usedonor = gamesettingsini.GetInt("GAME-SETTINGS", "USE_ARM7_DONOR", 1);
 	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED_RED", -1);
 	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
 	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED_BLUE", -1);
@@ -773,7 +783,7 @@ static void SavePerGameSettings(void)
 	CIniFile gamesettingsini(path);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
-	gamesettingsini.SetInt("GAME-SETTINGS", bootstrapini_lockarm9scfgext, settings.pergame.lockarm9scfgext);
+	gamesettingsini.SetInt("GAME-SETTINGS", "USE_ARM7_DONOR", settings.pergame.usedonor);
 	gamesettingsini.SetInt("GAME-SETTINGS", "LED_RED", settings.pergame.red);
 	gamesettingsini.SetInt("GAME-SETTINGS", "LED_GREEN", settings.pergame.green);
 	gamesettingsini.SetInt("GAME-SETTINGS", "LED_BLUE", settings.pergame.blue);
@@ -1131,7 +1141,7 @@ static void drawMenuDialogBox(void)
 		} buttons[] = {
 			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
 			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
-			{ 23, 129, &settings.pergame.lockarm9scfgext, TR(STR_START_LOCK_ARM9_SCFG_EXT), {L"Off", L"On"}},
+			{ 23, 129, &settings.pergame.usedonor, TR(STR_START_USE_ARM7_DONOR), {L"Off", L"On"}},
 			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {NULL, NULL}},
 			{ 23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
 		};
@@ -1431,7 +1441,13 @@ int main()
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 
 	LoadSettings();	
-	bootstrapPath = settings.twl.bootstrapfile ? "sd:/_nds/release-bootstrap.nds" : "sd:/_nds/unofficial-bootstrap.nds";
+	if (settings.twl.bootstrapfile == 2) {
+		bootstrapPath = "sd:/_nds/old-bootstrap.nds";
+	} else if (settings.twl.bootstrapfile == 1) {
+		bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
+	} else {
+		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
+	}
 	if (logEnabled) LogFMA("Main.bootstrapPath", "Using path:", bootstrapPath.c_str());
 	LoadBootstrapConfig();
 
@@ -4477,9 +4493,9 @@ int main()
 								}
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Lock ARM9 SCFG_EXT
 								gamesettings_cursorPosition = 2;
-								settings.pergame.lockarm9scfgext++;
-								if(settings.pergame.lockarm9scfgext == 2)
-									settings.pergame.lockarm9scfgext = -1;
+								settings.pergame.usedonor++;
+								if(settings.pergame.usedonor == 2)
+									settings.pergame.usedonor = -1;
 								if (dspfirmfound) {
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
@@ -4556,9 +4572,9 @@ int main()
 									}
 									break;
 								case 2:
-									settings.pergame.lockarm9scfgext++;
-									if(settings.pergame.lockarm9scfgext == 2)
-										settings.pergame.lockarm9scfgext = -1;
+									settings.pergame.usedonor++;
+									if(settings.pergame.usedonor == 2)
+										settings.pergame.usedonor = 0;
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();

@@ -94,15 +94,12 @@ static const char *const lang_FR[STR_MAX] = {
 	"Charge une image personnalisée sur",        		    // "Loads a custom bottom screen image"
 	"l'écran du bas dans le menu des jeux.",                    // "for the game menu."
 	 
-	"Où voulez-vour voir l'écran de",			    // "Where do you want to see the"
-	"démarrage DS/DSi ?",					    // "DS/DSi boot screen?"
-
-	"Mise à jour auto. de nds-bootstrap",         		    // "Auto-update nds-bootstrap at launch."
-	"au démarrage.",                                            // (empty)
-
 	"Télécharger automatiquement le dernier",              	    // "Auto-download the CIA of the latest"
 	"CIA de TWLoader au démarrage.",                            // "TWLoader version at launch."
 	 
+	"Où voulez-vour voir l'écran de",			    // "Where do you want to see the"
+	"démarrage DS/DSi ?",					    // "DS/DSi boot screen?"
+
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Sélectionnez un linker à utiliser pour",                   // "Pick a flashcard to use to"
 	"lancer les ROMs.",                                         // "run ROMs from it."
@@ -128,11 +125,14 @@ static const char *const lang_FR[STR_MAX] = {
 	"Aficher du texte avant de lancer un jeu.",                 // "Displays some text before launched game."
 	"",                                                         // (empty)
 	 
-	"Verrouille le SCFG_EXT de l'ARM9,",                        // "Locks the ARM9 SCFG_EXT,"
-	"évitant les conflits avec la récente libnds.",      	    // "avoiding conflict with recent libnds."
+	// "Verrouille le SCFG_EXT de l'ARM9,",                        // "Locks the ARM9 SCFG_EXT,"
+	// "évitant les conflits avec la récente libnds.",      	    // "avoiding conflict with recent libnds."
 	 
-	"Changer entre les fichiers de bootstrap ",                 // "Change between release and"
-	"(release et non-officiel).",                               // "unofficial bootstrap file."
+	"Mise à jour auto. de nds-bootstrap",         		    // "Auto-update nds-bootstrap at launch."
+	"au démarrage.",                                            // (empty)
+
+	"Changer entre les fichiers de bootstrap",                 // "Pick release, unofficial,"
+	"(release non-officiel, et vieux).",                               // "or old bootstrap."
 	 
 	/** Start menu **/
 	// Options
@@ -153,7 +153,7 @@ static const char *const lang_FR[STR_MAX] = {
 	// Options
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
 	"Boost VRAM",                                               // "VRAM boost"
-	"Verrouiller SCFG_EXT ARM9",                                // "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",                                		// "Use set donor ROM"
 	"Définir comme donor ROM",                                  // "Set as donor ROM"
 	"Définir la couleur de la DEL",                             // "Set LED color"
 	// Values

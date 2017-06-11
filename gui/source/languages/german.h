@@ -94,14 +94,11 @@ static const char *const lang_DE[STR_MAX] = {
 	"Läd ein benutzerdefiniertes Bild für den unteren",			// "Loads a custom bottom screen image"
 	"Bildschirm im Spiele-Menü.",								// "for the game menu."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"nds-bootstrap beim Start automatisch updaten.",			// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
-
 	"Die neuste TWLoader Version beim Start",					// "Auto-download the CIA of the latest"
 	"automatisch herunterladen.",								// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Wähle die Flashkarte, die du zum",							// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_DE[STR_MAX] = {
 	"Zeigt etwas Text vor dem Spielstart an.",					// "Displays some text before launched game."
 	"",															// (empty)
 
-	"Stellt den ARM9 SCFG_EXT fest,",							// "Locks the ARM9 SCFG_EXT,"
-	"vermeidet Konflikt mit aktuellem libnds",					// "avoiding conflict with recent libnds."
+	// "Stellt den ARM9 SCFG_EXT fest,",							// "Locks the ARM9 SCFG_EXT,"
+	// "vermeidet Konflikt mit aktuellem libnds",					// "avoiding conflict with recent libnds."
+
+	"nds-bootstrap beim Start automatisch updaten.",			// "Auto-update nds-bootstrap at launch."
+	"",															// (empty)
 
 	"Wechsele zwischen offizieller",							// "Change between release and"
 	"und inoffizieller Bootstrap Version",						// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_DE[STR_MAX] = {
 	// Options
 	"CPU Geschwindigkeit",										// "ARM9 CPU Speed" (Removed ARM9, because it did not fit inside the box)
 	"VRAM Beschleunigung",										// "VRAM boost"
-	"SCFG_EXT feststellen",										// "Lock ARM9 SCFG_EXT" (Removed ARM9, because it did not fit inside the box)
+	"Use set donor ROM",										// "Use set donor ROM"
 	"Setze als Donor ROM",										// "Set as donor ROM"
 	"LED Farbe",												// "Set LED color"
 	// Values

@@ -94,14 +94,11 @@ static const char *const lang_EN[STR_MAX] = {
 	"選定一個你喜歡的圖像",											// "Loads a custom bottom screen image"
 	"給遊戲選單使用.",												// "for the game menu."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
-
-	"啟動時自動更新 nds-bootstrap.",								// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
-
 	"啟動時自動下載最新版本的",										// "Auto-download the CIA of the latest"
 	"TWLoader CIA.",											// "TWLoader version at launch."
+
+	"Where do you want to see the",								// "Where do you want to see the"
+	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"選擇一個要使用來運行",											// "Pick a flashcard to use to"
@@ -128,8 +125,11 @@ static const char *const lang_EN[STR_MAX] = {
 	"顯示遊戲之前顯示一些文本.",										// "Displays some text before launched game."
 	"",															// (empty)
 
-	"鎖定 ARM9 SCFG_EXT,",										// "Locks the ARM9 SCFG_EXT,"
-	"避免與當前的 libnds 衝突.",										// "avoiding conflict with recent libnds."
+	// "鎖定 ARM9 SCFG_EXT,",										// "Locks the ARM9 SCFG_EXT,"
+	// "避免與當前的 libnds 衝突.",										// "avoiding conflict with recent libnds."
+
+	"啟動時自動更新 nds-bootstrap.",								// "Auto-update nds-bootstrap at launch."
+	"",															// (empty)
 
 	"在官方與非官方的",												// "Change between release and"
 	"bootstrap 檔案之間切換.",										// "unofficial bootstrap file."
@@ -153,7 +153,7 @@ static const char *const lang_EN[STR_MAX] = {
 	// Options
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
 	"VRAM 提速",													// "VRAM boost"
-	"鎖定 ARM9 SCFG_EXT",										// "Lock ARM9 SCFG_EXT"
+	"Use set donor ROM",										// "Use set donor ROM"
 	"設置為 donor ROM",											// "Set as donor ROM"
 	"設定 LED 顏色",												// "Set LED color"
 	// Values

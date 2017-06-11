@@ -250,12 +250,18 @@ void settingsDrawTopScreen(void)
 		}else{
 			renderText(336, 222, 0.60, 0.60f, false, settings_vertext);
 		}
-		if (settings.twl.bootstrapfile) {
-			setTextColor(RGBA8(0, 0, 255, 255));
-			renderText(5, 222, 0.60, 0.60f, false, settings_releasebootstrapver.c_str());
-		} else {
+		if (settings.twl.bootstrapfile == 2) {
+			fat = "fat:/";
+			setTextColor(RGBA8(255, 0, 0, 255));
+			renderText(5, 222, 0.60, 0.60f, false, "Version 0.2.0");
+		} else if (settings.twl.bootstrapfile == 1) {
+			fat = "sd:/";
 			setTextColor(RGBA8(0, 255, 0, 255));
 			renderText(5, 222, 0.60, 0.60f, false, settings_unofficialbootstrapver.c_str());
+		} else if (settings.twl.bootstrapfile == 0) {
+			fat = "sd:/";
+			setTextColor(RGBA8(0, 0, 255, 255));
+			renderText(5, 222, 0.60, 0.60f, false, settings_releasebootstrapver.c_str());
 		}
 
 		draw_volume_slider(setvoltex);
@@ -630,6 +636,13 @@ void settingsDrawBottomScreen(void)
 			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1));
 			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2));
 		}
+		if (cursor_pos[1] == 2) {
+			renderText(8, 184, 0.60, 0.60f, false, "Select the filetype of TWLoader");
+			renderText(8, 198, 0.60, 0.60f, false, "you're using.");
+		}
+		if (cursor_pos[1] == 3) {
+			renderText(8, 184, 0.60, 0.60f, false, "Press  to update TWLoader.");
+		}
 		if (cursor_pos[1] == 4) {
 			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
 			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2));
@@ -752,7 +765,19 @@ void settingsDrawBottomScreen(void)
 				break;
 		}
 
-		const char *bootstrapfilevaluetext = (settings.twl.bootstrapfile ? "Release" : "Unofficial");
+		const char *bootstrapfilevaluetext;
+		switch (settings.twl.bootstrapfile) {
+			case 0:
+			default:
+				bootstrapfilevaluetext = "Release";
+				break;
+			case 1:
+				bootstrapfilevaluetext = "Unofficial";
+				break;
+			case 2:
+				bootstrapfilevaluetext = "0.2.0";
+				break;
+		}
 
 		const char *consolevaluetext;
 		switch (settings.twl.console) {
@@ -1163,7 +1188,17 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					break;
 				case 7: // Bootstrap version
-					settings.twl.bootstrapfile = ! settings.twl.bootstrapfile;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.twl.bootstrapfile++;
+						if (settings.twl.bootstrapfile > 2) {
+							settings.twl.bootstrapfile = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.twl.bootstrapfile--;
+						if (settings.twl.bootstrapfile < 0) {
+							settings.twl.bootstrapfile = 2;
+						}
+					}
 					break;					
 			}
 			sfx = sfx_select;
@@ -1755,6 +1790,8 @@ void LoadSettings(void) {
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
 	settings.twl.bootstrapfile = settingsini.GetInt("TWL-MODE", "BOOTSTRAP_FILE", 0);
+	if (settings.twl.bootstrapfile == 2) fat = "fat:/";
+	else fat = "sd:/";
 
 	// TODO: Change the default to -1?
 	switch (settingsini.GetInt("TWL-MODE", "DEBUG", 0)) {
@@ -1809,6 +1846,8 @@ void SaveSettings(void) {
 	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
 	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
 	settingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
+	if (settings.twl.bootstrapfile == 2) fat = "fat:/";
+	else fat = "sd:/";
 
 	// TODO: Change default to 0?
 	switch (settings.twl.console) {

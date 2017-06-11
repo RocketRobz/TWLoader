@@ -114,14 +114,11 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1,					// "Loads a custom bottom screen image"
 	STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2,					// "for the DSi Menu theme."
 	
-	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1,				// "Where do you want to see the"
-	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2,				// "DS/DSi boot screen?"
-
-	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1,			// "Auto-update nds-bootstrap at launch."
-	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2,			// (empty)
-	
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1,				// "Auto-update to the latest"
 	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2,				// "TWLoader version at launch."
+	
+	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1,				// "Where do you want to see the"
+	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2,				// "DS/DSi boot screen?"
 	
 	/** Settings: NTR/TWL_mode descriptions **/
 	STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1,				// "Pick a flashcard to use to"
@@ -148,11 +145,14 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1,					// "Displays some text before launched game."
 	STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2,					// (empty)
 	
-	STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_1,				// "Locks the ARM9 SCFG_EXT,"
-	STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_2,				// "avoiding conflict with recent libnds."
+	// STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_1,				// "Locks the ARM9 SCFG_EXT,"
+	// STR_SETTINGS_DESCRIPTION_LOCK_ARM9_SCFG_EXT_2,				// "avoiding conflict with recent libnds."
 	
-	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1,						// "Change between release and"
-	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2,						// "unofficial bootstrap file."
+	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1,			// "Auto-update nds-bootstrap at launch."
+	STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2,			// (empty)
+
+	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1,						// "Pick release, unofficial,"
+	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2,						// "or old bootstrap."
 	
 	/** Start menu **/
 	// Options
@@ -173,7 +173,7 @@ typedef enum _StrID {
 	// Options
 	STR_START_ARM9_CPU_SPEED,									// "ARM9 CPU Speed"
 	STR_START_VRAM_BOOST,										// "VRAM boost"
-	STR_START_LOCK_ARM9_SCFG_EXT,								// "Lock ARM9 SCFG_EXT"
+	STR_START_USE_ARM7_DONOR,									// "Use set donor ROM"
 	STR_START_SET_DONOR,										// "Set as donor ROM"
 	STR_START_SET_LED,											// "Set LED color"
 	// Values
