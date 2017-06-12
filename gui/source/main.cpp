@@ -3987,13 +3987,15 @@ int main()
 					if(hDown & KEY_TOUCH){
 						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
 							if (showbubble) menuaction_launch = true;
-						} else if (touch.px < 128 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
+						} else if (touch.px < 128 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240
+								|| touch.px <= 25 && touch.py >= 212 && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveright) {
 								titleboxXmoveleft = true;
 							}
 							// updatebotscreen = true;
-						} else if (touch.px > 192 && touch.py >= 118 && touch.py <= 180  && menudbox_Ypos == -240) {
+						} else if (touch.px > 192 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240
+								|| touch.px >= 295 && touch.py >= 212 && menudbox_Ypos == -240) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
 								if (settings.ui.cursorPosition == -1) {
