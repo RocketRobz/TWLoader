@@ -191,7 +191,6 @@ int main(int argc, char **argv) {
 			consoleOn = true;
 		}
 		if(TWLCLK) {
-			REG_SCFG_CLK |= 0x1;
 			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("TWL_CLOCK ON\n");		

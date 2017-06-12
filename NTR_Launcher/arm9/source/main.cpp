@@ -42,8 +42,10 @@ bool consoleOn = false;
 
 int main() {
 
-	bool NTRCLOCK = true;
+	bool TWLCLK = true;
+	bool TWLVRAM = false;
 	bool EnableSD = false;
+	std::string	gamesettingsPath = "";
 
 	// If slot is powered off, tell Arm7 slot power on is required.
 	if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
@@ -55,14 +57,49 @@ int main() {
 	if (fatInitDefault()) {
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
 
-		if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 1) { NTRCLOCK = false; }
+		char *p = (char*)PersonalData->name;
+		
+		// text
+		for (int i = 0; i < 10; i++) {
+			if (p[i*2] == 0x00)
+				p[i*2/2] = 0;
+			else
+				p[i*2/2] = p[i*2];
+		}
+		
+		// if (logEnabled)	LogFMA("TWL.Main", "Got username", p);
+		
+		twloaderini.SetString("FRONTEND","NAME", p);
+		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
+		// if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
+		
+		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
+		
+		if(!access(gamesettingsPath.c_str(), F_OK)) {
+			CIniFile gamesettingsini( gamesettingsPath );
+			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
+				if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
+			} else {
+				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 0) {
+					TWLCLK = false;
+				}
+			}
+			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
+				if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			} else {
+				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			}
+		} else {
+			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
+			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+		}
 
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleOn = true;
 			consoleDemoInit();
 		}
 
-		if( NTRCLOCK == true ) {
+		if( TWLCLK == false ) {
 			fifoSendValue32(FIFO_USER_04, 1);
 			// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
 			// setCpuClock(false);
@@ -113,7 +150,7 @@ int main() {
 	while(1) {
 		if(REG_SCFG_MC == 0x11) { 
 		break; } else {
-			runLaunchEngine (EnableSD);
+			runLaunchEngine (EnableSD, TWLVRAM);
 		}
 	}
 	return 0;

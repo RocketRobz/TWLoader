@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-void runLaunchEngine (bool EnableSD);
+void runLaunchEngine (bool EnableSD, bool TWLVRAM);
 
 #ifdef __cplusplus
 }
