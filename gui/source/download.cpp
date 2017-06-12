@@ -1088,7 +1088,7 @@ int downloadBootstrapVersion(bool type)
 		if(json != NULL) {
 			if(json->type == json_object) {				
 				
-				json_value* val = json->u.object.values[4].value;
+				json_value* val = json->u.object.values[3].value;
 
 				for(u32 i = 0; i < (json->u.object.length - 1); i++) {
 					char* name = val->u.object.values[i].name;
