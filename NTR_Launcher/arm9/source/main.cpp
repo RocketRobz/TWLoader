@@ -84,10 +84,12 @@ int main() {
 					TWLCLK = false;
 				}
 			}
-			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
-				if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-			} else {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 6) {
+				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
+					if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+				} else {
+					if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+				}
 			}
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
