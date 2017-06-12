@@ -29,6 +29,7 @@ using std::vector;
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
 bool updateGUI = false;
 bool updateNAND = false;
+bool updateNAND_part2 = false;
 bool updateNAND_STG2 = false;
 bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
@@ -37,8 +38,13 @@ bool updateR4 = false;
 //bool doCleanInstall = true;
 
 std::string gui_url;
+std::string gui_3dsx_url;
+std::string gui_smdh_url;
+std::string demo_gui_3dsx_url;
+std::string demo_gui_smdh_url;
 std::string nand_url;
-std::string nand_stg2_url;
+std::string nand_part2_url;
+std::string nand_twld_url;
 std::string ace_rpg_url;
 std::string gbarunner2_url;
 std::string loadcard_dstt_url;
@@ -211,9 +217,22 @@ struct ReadJson {
     std::string strvalue2;
     std::string strvalue3;
     std::string strvalue4;
+    std::string strvalue5;
+    std::string strvalue6;
+    std::string strvalue7;
+    std::string strvalue8;
 };
 
-ReadJson internal_json_reader(json_value* json, json_value* val, std::string str1, std::string str2, std::string str3, std::string str4){
+ReadJson internal_json_reader(json_value* json, json_value* val,
+								std::string str1,
+								std::string str2,
+								std::string str3,
+								std::string str4,
+								std::string str5,
+								std::string str6,
+								std::string str7,
+								std::string str8)
+{
 	ReadJson rj;
 	for(u32 i = 0; i < (json->u.object.length -1); i++) {
 		// Create two variables that will store the values and it size
@@ -229,6 +248,14 @@ ReadJson internal_json_reader(json_value* json, json_value* val, std::string str
 				rj.strvalue3 = subVal->u.string.ptr;
 			} else if(strncmp(name, str4.c_str(), nameLen) == 0) {
 				rj.strvalue4 = subVal->u.string.ptr;
+			} else if(strncmp(name, str5.c_str(), nameLen) == 0) {
+				rj.strvalue5 = subVal->u.string.ptr;
+			} else if(strncmp(name, str6.c_str(), nameLen) == 0) {
+				rj.strvalue6 = subVal->u.string.ptr;
+			} else if(strncmp(name, str7.c_str(), nameLen) == 0) {
+				rj.strvalue7 = subVal->u.string.ptr;
+			} else if(strncmp(name, str8.c_str(), nameLen) == 0) {
+				rj.strvalue8 = subVal->u.string.ptr;
 			}
 		}
 	}
@@ -303,10 +330,14 @@ int checkUpdate(void) {
 				char read_gui_major[3];
 				char read_gui_minor[3];
 				char read_gui_micro[3];
-
+				
 				char read_nand_major[3];
 				char read_nand_minor[3];
 				char read_nand_micro[3];
+				
+				char read_nandpart2_major[3];
+				char read_nandpart2_minor[3];
+				char read_nandpart2_micro[3];
 				
 				char read_nandstg2_major[3];
 				char read_nandstg2_minor[3];
@@ -315,38 +346,54 @@ int checkUpdate(void) {
 
 				// Search in GUI object
 				json_value* val = json->u.object.values[0].value;
-				ReadJson result = internal_json_reader(json, val, "latest_major", "latest_minor", "latest_micro", "gui_url");
+				ReadJson result = internal_json_reader(json, val, "latest_major", "latest_minor", "latest_micro", "gui_url", "gui_3dsx_url", "gui_smdh_url", "demo_gui_3dsx_url", "demo_gui_smdh_url");
 				strncpy(read_gui_major, result.strvalue1.c_str(), sizeof(read_gui_major));
 				strncpy(read_gui_minor, result.strvalue2.c_str(), sizeof(read_gui_minor));
 				strncpy(read_gui_micro, result.strvalue3.c_str(), sizeof(read_gui_micro));
 				gui_url = result.strvalue4.c_str();
+				gui_3dsx_url = result.strvalue5.c_str();
+				gui_smdh_url = result.strvalue6.c_str();
+				demo_gui_3dsx_url = result.strvalue7.c_str();
+				demo_gui_smdh_url = result.strvalue8.c_str();
 
 				// Search in NAND object.
 				val = json->u.object.values[1].value;
-				result = internal_json_reader(json, val, "not_major", "not_minor", "not_micro", "nand_url");
+				json_value* val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "not_major", "not_minor", "not_micro", "nand_url", "nand_null", "nand_null", "nand_null", "nand_null");
 				strncpy(read_nand_major, result.strvalue1.c_str(), sizeof(read_nand_major));
 				strncpy(read_nand_minor, result.strvalue2.c_str(), sizeof(read_nand_minor));
 				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
 				nand_url = result.strvalue4.c_str();				
 
+				// Search in NAND (part2) object.
+				val2 = val->u.object.values[1].value;
+				result = internal_json_reader(json, val2, "p2_not_major", "p2_not_minor", "p2_not_micro", "nand_part2_url", "part2_null", "part2_null", "part2_null", "part2_null");
+				strncpy(read_nandpart2_major, result.strvalue1.c_str(), sizeof(read_nandpart2_major));
+				strncpy(read_nandpart2_minor, result.strvalue2.c_str(), sizeof(read_nandpart2_minor));
+				strncpy(read_nandpart2_micro, result.strvalue3.c_str(), sizeof(read_nandpart2_micro));
+				nand_part2_url = result.strvalue4.c_str();				
+
 				// Search in NAND STG2 object.
-				val = json->u.object.values[2].value;
-				result = internal_json_reader(json, val, "not_major", "not_minor", "not_micro", "nand_stg2_url");
+				val2 = val->u.object.values[2].value;
+				result = internal_json_reader(json, val2, "twld_not_major", "twld_not_minor", "twld_not_micro", "nand_twld_url", "twld_null", "twld_null", "twld_null", "twld_null");
 				strncpy(read_nandstg2_major, result.strvalue1.c_str(), sizeof(read_nandstg2_major));
 				strncpy(read_nandstg2_minor, result.strvalue2.c_str(), sizeof(read_nandstg2_minor));
 				strncpy(read_nandstg2_micro, result.strvalue3.c_str(), sizeof(read_nandstg2_micro));
-				nand_stg2_url = result.strvalue4.c_str();				
+				nand_twld_url = result.strvalue4.c_str();				
 
 				// Store latest and current version of GUI and NAND.
 				char latestVersion[16];
 				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
-
+				
 				char currentVersion[16];
 				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
-
+				
 				char latestNANDVersion[16];
 				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
-
+				
+				char latestNAND2Version[16];
+				snprintf(latestNAND2Version, sizeof(latestNAND2Version), "%s.%s.%s", read_nandpart2_major, read_nandpart2_minor, read_nandpart2_micro);
+				
 				char latestNANDSTG2Version[16];
 				snprintf(latestNANDSTG2Version, sizeof(latestNANDSTG2Version), "%s.%s.%s", read_nandstg2_major, read_nandstg2_minor, read_nandstg2_micro);
 				
@@ -363,6 +410,10 @@ int checkUpdate(void) {
 					if(strcmp(latestNANDVersion, currentVersion) > 0) {
 						if (logEnabled)	LogFM("checkUpdate", "NAND update available.");
 						updateNAND = true;
+					}
+					if(strcmp(latestNAND2Version, currentVersion) > 0) {
+						if (logEnabled)	LogFM("checkUpdate", "NAND (part 2) update available.");
+						updateNAND_part2 = true;
 					}
 					if(strcmp(latestNANDSTG2Version, currentVersion) > 0) {
 						if (logEnabled)	LogFM("checkUpdate", "NAND SD stage update available.");
@@ -409,7 +460,7 @@ int checkUpdate(void) {
 							"\n"
 							"\n"
 							"\n"
-							": Close";					
+							": OK";					
 						renderText(12, 16, 0.5f, 0.5f, false, msg);
 						sf2d_end_frame();
 						sf2d_swapbuffers();
@@ -431,9 +482,9 @@ int checkUpdate(void) {
 				}
 								
 				// Search in prebuilds object
-				val = json->u.object.values[3].value;
-				json_value* val2 = val->u.object.values[0].value;
-				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url");
+				val = json->u.object.values[2].value;
+				val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null");
 				ace_rpg_url = result.strvalue4.c_str();
 
 				char ace_rpg_version[16];
@@ -444,7 +495,7 @@ int checkUpdate(void) {
 				}
 				
 				val2 = val->u.object.values[1].value;
-				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url");
+				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null");
 				gbarunner2_url = result.strvalue4.c_str();
 
 				char GBARunner2_version[16];
@@ -455,7 +506,7 @@ int checkUpdate(void) {
 				}
 				
 				val2 = val->u.object.values[2].value;
-				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url");
+				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null");
 				loadcard_dstt_url = result.strvalue4.c_str();
 				char loadcard_dstt_version[16];
 				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
@@ -465,7 +516,7 @@ int checkUpdate(void) {
 				}
 				
 				val2 = val->u.object.values[3].value;
-				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url");
+				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url", "r4_null", "r4_null", "r4_null", "r4_null");
 				r4_url = result.strvalue4.c_str();
 
 				char r4_version[16];
@@ -539,42 +590,78 @@ void DownloadTWLoaderCIAs(void) {
 	
 	if(yestoupdate) {
 		int resGUI = -1;
+		int resGUI_3DSX = -1;
+		int resGUI_SMDH = -1;
 		int resNAND = -1;
+		int resNAND_part2 = -1;
 		int resNAND_STG2 = -1;
 		struct stat st;
 		if (updateGUI) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			static const char gui_msg[] =
-				"Now downloading latest TWLoader version...\n"
-				"(GUI)\n"
-				"\n"
-				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-		
-			if(stat("sdmc:/cia",&st) == 0){		
-				// Use root/cia folder instead
-				resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
-			}else{
-				mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-				resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
-			}
+			if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					sf2d_draw_texture(settingstex, 0, 0);
+				}
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				static const char gui_msg[] =
+					"Now downloading latest TWLoader version...\n"
+					"(GUI, CIA)\n"
+					"\n"
+					"Do not turn off the power.\n";
+				renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
+				sf2d_end_frame();
+				sf2d_swapbuffers();
 			
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
+				if(stat("sdmc:/cia",&st) == 0){		
+					// Use root/cia folder instead
+					resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
+				}else{
+					mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+					resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+				}
+				
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					sf2d_draw_texture(settingstex, 0, 0);
+				}
+				sf2d_draw_texture(dialogboxtex, 0, 0);
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
+			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					sf2d_draw_texture(settingstex, 0, 0);
+				}
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				static const char gui_msg[] =
+					"Now downloading latest TWLoader version...\n"
+					"(GUI, 3DSX)\n"
+					"\n"
+					"Do not turn off the power.\n";
+				renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
+				sf2d_end_frame();
+				sf2d_swapbuffers();
+				
+				if (isDemo) {
+					mkdir("sdmc:/3ds/TWLoader_demo", 0777);
+					resGUI_3DSX = downloadFile(demo_gui_3dsx_url.c_str(),"/3ds/TWLoader_demo/TWLoader_demo.3dsx", MEDIA_SD_FILE);
+					resGUI_SMDH = downloadFile(demo_gui_smdh_url.c_str(),"/3ds/TWLoader_demo/TWLoader_demo.smdh", MEDIA_SD_FILE);
+				} else {
+					mkdir("sdmc:/3ds/TWLoader", 0777);
+					resGUI_3DSX = downloadFile(gui_3dsx_url.c_str(),"/3ds/TWLoader/TWLoader.3dsx", MEDIA_SD_FILE);
+					resGUI_SMDH = downloadFile(gui_smdh_url.c_str(),"/3ds/TWLoader/TWLoader.smdh", MEDIA_SD_FILE);
+				}
+				
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					sf2d_draw_texture(settingstex, 0, 0);
+				}
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+			}
 		}
 		if (resGUI == 0 && updateNAND) {
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
-				"(TWLNAND side CIA)\n"
+				"(TWLNAND side CIA (part 1))\n"
 				"\n"
 				"Do not turn off the power.\n";
 			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
@@ -599,17 +686,45 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
-		if (updateNAND_STG2) {
+		if (resNAND == 0 && updateNAND_STG2) {
 			static const char twlnandstg2_msg[] =
 				"Now downloading latest TWLoader version...\n"
-				"(SD stage of TWLNAND side)\n"
+				"(SD stage of (part 1 of) TWLNAND side)\n"
 				"\n"
 				"Do not turn off the power.\n";
 			renderText(12, 16, 0.5f, 0.5f, false, twlnandstg2_msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 
-			resNAND_STG2 = downloadFile(nand_stg2_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
+			resNAND_STG2 = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(settingstex, 0, 0);
+			}
+			sf2d_draw_texture(dialogboxtex, 0, 0);			
+		}
+		if (resNAND_STG2 == 0 && updateNAND_part2) {
+			static const char twlnand2_msg[] =
+				"Now downloading latest TWLoader version...\n"
+				"(TWLNAND side CIA (part 2))\n"
+				"\n"
+				"Do not turn off the power.\n";
+			renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			// Delete first if installed.
+			if(checkTWLNANDSide2()){
+				amInit();
+				AM_DeleteTitle(MEDIATYPE_NAND, NTRLAUNCHER_TID);
+				amExit();
+			}
+
+			if(stat("sdmc:/cia",&st) == 0){		
+				// Use root/cia folder instead
+				resNAND = downloadFile(nand_part2_url.c_str(),"/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+			}else{		
+				resNAND = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
@@ -617,8 +732,14 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
-		if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) ) {
-			DialogBoxDisappear(12, 16, "Update failed.");
+		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
+			if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
+				DialogBoxDisappear(12, 16, "Update failed.");
+			}
+		} else if (settings.ui.filetype == 1) {
+			if(resGUI_3DSX != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
+				DialogBoxDisappear(12, 16, "Update failed.");
+			}
 		}
 		if(resGUI == 0 && updateACE_RPG) {
 			static const char msg[] =

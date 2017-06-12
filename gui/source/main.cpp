@@ -1288,6 +1288,18 @@ bool checkTWLNANDSide(void) {
 	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
 
+/**
+* Check if the TWLNAND-side (part 2) title is installed or not
+* Title ID: 0x0004800554574C31ULL
+* MediaType: MEDIATYPE_NAND
+* @return: true if installed, false if not
+*/
+bool checkTWLNANDSide2(void) {
+	u64 tid = NTRLAUNCHER_TID;
+	AM_TitleEntry entry;
+	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
+}
+
 void deletemode_internal(RomLocation location, std::string del_rom) {
 	char path[256];
 

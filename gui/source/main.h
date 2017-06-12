@@ -50,7 +50,9 @@ extern std::string settings_unofficialbootstrapver;
 extern char settings_vertext[13];
 
 extern const u64 TWLNAND_TID;	// TWLNAND title ID.
+extern const u64 NTRLAUNCHER_TID;	// TWLoader's NTR Launcher Title ID.
 extern bool checkTWLNANDSide(void);
+extern bool checkTWLNANDSide2(void);
 
 // Current screen mode.
 enum ScreenMode {

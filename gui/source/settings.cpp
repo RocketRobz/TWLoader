@@ -1324,15 +1324,17 @@ bool settingsMoveCursor(u32 hDown)
 					settings.ui.autoupdate_twldr = !settings.ui.autoupdate_twldr;
 					break;
 				case 2:
-					if (hDown & KEY_A) {
-						settings.ui.filetype++;
-						if (settings.ui.filetype > 2) {
-							settings.ui.filetype = 0;
-						}
-					} else if (hDown & KEY_Y) {
-						settings.ui.filetype--;
-						if (settings.ui.filetype < 0) {
-							settings.ui.filetype = 2;
+					if (!isDemo) {
+						if (hDown & KEY_A) {
+							settings.ui.filetype++;
+							if (settings.ui.filetype > 2) {
+								settings.ui.filetype = 0;
+							}
+						} else if (hDown & KEY_Y) {
+							settings.ui.filetype--;
+							if (settings.ui.filetype < 0) {
+								settings.ui.filetype = 2;
+							}
 						}
 					}
 					break;
@@ -1773,7 +1775,8 @@ void LoadSettings(void) {
 	settings.ui.counter = settingsini.GetInt("FRONTEND", "COUNTER", 0);
 	settings.ui.custombot = settingsini.GetInt("FRONTEND", "CUSTOM_BOTTOM", 0);
 	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
-	settings.ui.filetype = settingsini.GetInt("FRONTEND", "FILETYPE", 0);
+	if (!isDemo) settings.ui.filetype = settingsini.GetInt("FRONTEND", "FILETYPE", 0);
+	else settings.ui.filetype = 1;
 	settings.ui.showbootscreen = settingsini.GetInt("FRONTEND", "SHOW_BOOT_ANIMATION", 1);
 	settings.ui.bootscreen = settingsini.GetInt("FRONTEND", "BOOT_ANIMATION", 0);
 	settings.ui.healthsafety = settingsini.GetInt("FRONTEND", "HEALTH&SAFETY_MSG", 1);
@@ -1829,7 +1832,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "COUNTER", settings.ui.counter);
 	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
 	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);
-	settingsini.SetInt("FRONTEND", "FILETYPE", settings.ui.filetype);
+	if (!isDemo) settingsini.SetInt("FRONTEND", "FILETYPE", settings.ui.filetype);
 	settingsini.SetInt("FRONTEND", "SHOW_BOOT_ANIMATION", settings.ui.showbootscreen);
 	settingsini.SetInt("FRONTEND", "BOOT_ANIMATION", settings.ui.bootscreen);
 	settingsini.SetInt("FRONTEND", "HEALTH&SAFETY_MSG", settings.ui.healthsafety);
