@@ -1,5 +1,11 @@
 language: cpp
+os: linux
+dist: trusty
+sudo: required
 
+python:
+    - "2.7"
+    - "3.5"
 before_install:
   - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
   - export DEVKITPRO=/home/travis/devkitPro
@@ -45,6 +51,7 @@ install:
   - unzip /tmp/libnds.zip
   - cd libnds-master
   - make && sudo make install
+  - pip3 install requests
   - cd ..  
 script:
   - echo "Starting compilation"
@@ -58,8 +65,23 @@ script:
   - cd ..
   - echo "Compiling TWLoader GUI"
   - cd gui
-  - make
+  - make -j8 COMPILE_3DSX=0
+  - cd ..
+  - echo "Creating release ZIP"
+  - mkdir "Nightly"
+  - cd "twlnand-stage2"
+  - cp "Stage2.nds" "../Nightly/TWLD.twldr"
+  - cd ..
+  - cd gui
+  - cp "TWLoader.cia" "../Nightly/TWLoader.cia"
+  - cd ..
+  - cd "Nightly"
+  - zip "TWLoader.zip" *
+  - dir
+  - cd ..
   - echo "Compilation ended"
+after_success:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 upload-nightly.py; fi'
 addons:
   apt:
     sources:
@@ -69,3 +91,6 @@ addons:
     - g++-4.9
     - libstdc++6
     - lftp
+env:
+  matrix:
+    secure: mm0UyPlPqsswnelgQhXYop0+KUEUc3HaAKBvftyM8t6iHJdhoa9uSpYcc/muAdsdXGoC99obLlGhAZQBfNXc6WmTlujK9MWEg1JGY2bEQH02T/dmxMI8Jf+McfxyHK3XY0eHSC6YOXiI1SXeNWv0kw6GK7dGWks/aujBEuN+w4S9zU1zn68Us98lE5BfOfi2goEiiN6z1P1SqxbnoDpGIfM3KlBH7a8S7jhzQmTz01JwHv0rcySYdMUN+JM31U6vi4ccd9cvQDlXUwNDvEC2pMqMl3E8JbGmSs3PDizySIciZC4CnAY+dqJYRHSUxqBYNlYeq4sg7aLJIvalQVtz6UlbgjCjPcBTh6WRaRrrAZ7lxZfle0jnSwTv8PwJhcnASr3l0EfDRXLq+nBgjOldN29W7zFP5wZadGCSsIvOVcb6kvi5rQeBIzQ02wNoXh2l+dA9fLVQpxX4gxzzU0WLwVWvDIP+50FxrLlMjqjbPIFmu0Qqc36USruKkDLN83YftuH5e7j8KtGfayiZspUVC8BdUcRIw8In3pn9xuw357sWXvLN7hC7Nu+IUb+/pElypurWo7Kz8ymc3kzRSeHaAksNyD8TzGRIpl4gjuE96LCG4bqTa2kl+XHenJUJw8gTqQ9oXi2nsndheWyinMkxpkHUmfrpqMBfFBxf82xOgFU=
