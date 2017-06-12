@@ -91,7 +91,9 @@ int main() {
 			}
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
-			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 6) {
+				if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
+			}
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
