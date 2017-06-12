@@ -6,6 +6,18 @@
 // GERMAN
 static const char *const lang_DE[STR_MAX] = {
 
+	/** DS/DSi boot screen **/
+	"WARNING - HEALTH AND SAFETY",								// "WARNING - HEALTH AND SAFETY"
+	"BEFORE PLAYING, READ THE HEALTH",							// "BEFORE PLAYING, READ THE HEALTH"
+	"AND SAFETY PRECAUTIONS BOOKLET",							// "AND SAFETY PRECAUTIONS BOOKLET"
+	"FOR IMPORTANT INFORMATION",								// "FOR IMPORTANT INFORMATION"
+	"ABOUT YOUR HEALTH AND SAFETY.",							// "ABOUT YOUR HEALTH AND SAFETY."
+	"TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT",		// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"www.nintendo.com/healthandsafety/",						// "www.nintendo.com/healthandsafety/"
+	"",
+	
+	"Touch the Touch Screen to continue.",						// "Touch the Touch Screen to continue."
+	
 	/** GUI **/
 	": Zurück zum HOME-Menü",									// "Return to HOME Menu"
 	"START",													// "START" (used on cartridge indicator)

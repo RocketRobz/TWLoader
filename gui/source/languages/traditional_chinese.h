@@ -6,6 +6,18 @@
 // TRADITIONAL CHINESE
 static const char *const lang_EN[STR_MAX] = {
 
+	/** DS/DSi boot screen **/
+	"",
+	"",
+	"",
+	"",
+	"",
+	"www.iQue.com/service/",									// "www.nintendo.com/healthandsafety/"
+	"",
+	"",
+	
+	"",
+	
 	/** GUI **/
 	": 返回主畫面",													// "Return to HOME Menu"
 	"啟動",														// "START" (used on cartridge indicator)

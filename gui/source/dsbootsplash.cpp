@@ -1,4 +1,5 @@
 #include "main.h"
+#include "gamecard.h"
 #include "language.h"
 #include "log.h"
 #include "settings.h"
@@ -61,12 +62,25 @@ void fade_whiteToBlack() {
  * Play DS boot splash.
  */
 void bootSplash() {
-	sf2d_texture *ndslogotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/ndslogo.png", SF2D_PLACE_RAM);
+	sf2d_texture *ndslogotex;
+	if (settings.ui.language == 6 || settings.ui.language == 11)
+		ndslogotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/iquelogo.png", SF2D_PLACE_RAM);
+	else
+		ndslogotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/ndslogo.png", SF2D_PLACE_RAM);
 	sf2d_texture *itex = sfil_load_PNG_file("romfs:/graphics/BootSplash/i.png", SF2D_PLACE_RAM);
 	sf2d_texture *topotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/topo.png", SF2D_PLACE_RAM);
 	sf2d_texture *bottomotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/bottomo.png", SF2D_PLACE_RAM);
 	sf2d_texture *bigotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/bigo.png", SF2D_PLACE_RAM);
 	sf2d_texture *nintendotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/nintendo.png", SF2D_PLACE_RAM);
+	sf2d_texture *hstexttex;
+	sf2d_texture *hstouchtex;
+	if (settings.ui.language == 6 || settings.ui.language == 11) {
+		hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HS_CH.png", SF2D_PLACE_RAM);
+		hstouchtex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HStouch_CH.png", SF2D_PLACE_RAM);
+	} else if (settings.ui.language == 7) {
+		hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HS_KO.png", SF2D_PLACE_RAM);
+		hstouchtex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HStouch_KO.png", SF2D_PLACE_RAM);
+	}
 	sf2d_texture *hstex = sfil_load_PNG_file("romfs:/graphics/BootSplash/hs.png", SF2D_PLACE_RAM);
 	sf2d_texture *wipetex = sfil_load_PNG_file("romfs:/graphics/BootSplash/wipe.png", SF2D_PLACE_RAM);
 	
@@ -143,6 +157,10 @@ void bootSplash() {
 	
 	float offset3D_temp = 0.0f;
 	
+	int logopos = 40;
+	if (settings.ui.bootscreen == 2) logopos = 20;		// Move the DS logo to the left to make room for the "i"
+	if (settings.ui.language == 6 || settings.ui.language == 11) logopos -= 40;
+	
 	int wipePos = 0;
 	int bootSplash_fade = 255;
 	int i_alpha = 0;
@@ -185,6 +203,22 @@ void bootSplash() {
 
 		const u32 hDown = hidKeysDown();
 		const u32 hHeld = hidKeysHeld();
+		
+		// Poll for Slot-1 changes.
+		bool forcePoll = false;
+		bool doSlot1Update = false;
+		if (gamecardIsInserted()) {
+			// Card is inserted.
+			// Force an update.
+			forcePoll = true;
+		}
+		bool s1chg = gamecardPoll(forcePoll);
+		if (s1chg) {
+			// Update Slot-1 if:
+			// - forcePoll is false
+			// - forcePoll is true
+			doSlot1Update = (!forcePoll);
+		}
 
 		textVtxArrayPos = 0; // Clear the text vertex array
 		
@@ -242,14 +276,14 @@ void bootSplash() {
 			drawRectangle(0, 0, 400, 240, RGBA8(255, 255, 255, 255));
 			if (topfb == 1) offset3D_temp = offset3D_ndslogo;
 			else offset3D_temp = -offset3D_ndslogo;
-			sf2d_draw_texture(ndslogotex, offset3D_temp+40+21, 78);
-			sf2d_draw_texture(topotex, offset3D_temp+40+179, topoPos);
-			sf2d_draw_texture(bottomotex, offset3D_temp+40+179, bottomoPos);
+			sf2d_draw_texture(ndslogotex, offset3D_temp+logopos+21, 78);
+			sf2d_draw_texture(topotex, offset3D_temp+logopos+179, topoPos);
+			sf2d_draw_texture(bottomotex, offset3D_temp+logopos+179, bottomoPos);
 			if (oeffects) {
 				if (topfb == 1) offset3D_temp = offset3D_oeffect1;
 				else offset3D_temp = -offset3D_oeffect1;
-				sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect1_xPos, oeffect1_o1_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
-				sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect1_xPos, oeffect1_o2_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
+				sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o1_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
+				sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o2_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
 				offset3D_oeffect1_chng -= 0.04;
 				oeffect1_xPos -= 0.58;
 				oeffect1_o1_yPos -= 0.70;
@@ -258,21 +292,23 @@ void bootSplash() {
 				oeffect1_alpha -= 5;
 				if (oeffect1_alpha < 0) oeffect1_alpha = 0;
 			}
-			if (topfb == 1) offset3D_temp = offset3D_nint;
-			else offset3D_temp = -offset3D_nint;
-			sf2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
+			if (gamecardIsInserted()) {
+				if (topfb == 1) offset3D_temp = offset3D_nint;
+				else offset3D_temp = -offset3D_nint;
+				sf2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
+			}
 			if (settings.ui.bootscreen >= 2 && splashScreenTime > 60*1) {
 				if (topfb == 1) offset3D_temp = offset3D_i;
 				else offset3D_temp = -offset3D_i;
 				i_alpha += 10;
 				if (i_alpha > 255) i_alpha = 255;
-				sf2d_draw_texture_blend(itex, offset3D_temp+40+312, 70, RGBA8(255, 255, 255, i_alpha));
+				sf2d_draw_texture_blend(itex, offset3D_temp+logopos+312, 70, RGBA8(255, 255, 255, i_alpha));
 			}
 			if (oeffects) {
 				if (oeffectTimer >= 10) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect2;
 					else offset3D_temp = -offset3D_oeffect2;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect2_xPos, oeffect2_yPos, oeffect2_scale, oeffect2_scale, RGBA8(255, 255, 255, oeffect2_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect2_xPos, oeffect2_yPos, oeffect2_scale, oeffect2_scale, RGBA8(255, 255, 255, oeffect2_alpha));
 					offset3D_oeffect2_chng += 0.03;
 					oeffect2_xPos -= 0.50;
 					oeffect2_yPos -= 0.65;
@@ -288,7 +324,7 @@ void bootSplash() {
 				if (oeffectTimer >= 13) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect3;
 					else offset3D_temp = -offset3D_oeffect3;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect3_xPos, oeffect3_yPos, oeffect3_scale, oeffect3_scale, RGBA8(255, 255, 255, oeffect3_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect3_xPos, oeffect3_yPos, oeffect3_scale, oeffect3_scale, RGBA8(255, 255, 255, oeffect3_alpha));
 					offset3D_oeffect3_chng += 0.04;
 					oeffect3_xPos -= 0.76;
 					oeffect3_yPos -= 0.43;
@@ -304,7 +340,7 @@ void bootSplash() {
 				if (oeffectTimer >= 16) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect4;
 					else offset3D_temp = -offset3D_oeffect4;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect4_xPos, oeffect4_yPos, oeffect4_scale, oeffect4_scale, RGBA8(255, 255, 255, oeffect4_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect4_xPos, oeffect4_yPos, oeffect4_scale, oeffect4_scale, RGBA8(255, 255, 255, oeffect4_alpha));
 					offset3D_oeffect4_chng += 0.03;
 					oeffect4_xPos += 0.40;
 					oeffect4_yPos += 0.18;
@@ -320,7 +356,7 @@ void bootSplash() {
 				if (oeffectTimer >= 21) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect5;
 					else offset3D_temp = -offset3D_oeffect5;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect5_xPos, oeffect5_yPos, oeffect5_scale, oeffect5_scale, RGBA8(255, 255, 255, oeffect5_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect5_xPos, oeffect5_yPos, oeffect5_scale, oeffect5_scale, RGBA8(255, 255, 255, oeffect5_alpha));
 					offset3D_oeffect5_chng += 0.04;
 					oeffect5_xPos -= 0.31;
 					oeffect5_yPos += 0.47;
@@ -336,7 +372,7 @@ void bootSplash() {
 				if (oeffectTimer >= 36) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect6;
 					else offset3D_temp = -offset3D_oeffect6;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect6_xPos, oeffect6_yPos, oeffect6_scale, oeffect6_scale, RGBA8(255, 255, 255, oeffect6_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect6_xPos, oeffect6_yPos, oeffect6_scale, oeffect6_scale, RGBA8(255, 255, 255, oeffect6_alpha));
 					offset3D_oeffect6_chng += 0.05;
 					oeffect6_xPos -= 0.80;
 					oeffect6_yPos += 0.14;
@@ -352,7 +388,7 @@ void bootSplash() {
 				if (oeffectTimer >= 53) {
 					if (topfb == 1) offset3D_temp = offset3D_oeffect7;
 					else offset3D_temp = -offset3D_oeffect7;
-					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+40+oeffect7_xPos, oeffect7_yPos, oeffect7_scale, oeffect7_scale, RGBA8(255, 255, 255, oeffect7_alpha));
+					sf2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect7_xPos, oeffect7_yPos, oeffect7_scale, oeffect7_scale, RGBA8(255, 255, 255, oeffect7_alpha));
 					offset3D_oeffect7_chng += 0.04;
 					oeffect7_xPos += 0.48;
 					oeffect7_yPos -= 0.37;
@@ -378,21 +414,68 @@ void bootSplash() {
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, 255));
-		if (settings.ui.healthsafety) {
-			sf2d_draw_texture(hstex, 12, 16);
-			setTextColor(RGBA8(0, 0, 0, 255));
-			renderText(34, 19, 0.65, 0.65, false, "WARNING - HEALTH AND SAFETY");
-			renderText(29, 56, 0.55, 0.55, false, "BEFORE PLAYING, READ THE HEALTH");
-			renderText(29, 80, 0.55, 0.55, false, "AND SAFETY PRECAUTIONS BOOKLET");
-			renderText(47, 104, 0.55, 0.55, false, "FOR IMPORTANT INFORMATION");
-			renderText(35, 128, 0.55, 0.55, false, "ABOUT YOUR HEALTH AND SAFETY.");
-			renderText(16, 160, 0.38, 0.50, false, "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT");
-			setTextColor(RGBA8(61, 161, 191, 255));
-			renderText(36, 178, 0.55, 0.55, false, "www.nintendo.com/healthandsafety/");
-		}
-		if (touchtocontinue_show) {
-			setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
-			renderText(32, touchtocontinue_yPos, 0.55, 0.55, false, "Touch the Touch Screen to continue.");
+		switch (settings.ui.language) {
+			case 1:
+			default:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 12, 16);
+					setTextColor(RGBA8(0, 0, 0, 255));
+					renderText_w(34, 19, 0.65, 0.65, false, TR(STR_DSSPLASH_WARNING_HS));
+					renderText_w(29, 56, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS1));
+					renderText_w(29, 80, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS2));
+					renderText_w(47, 104, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(35, 128, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS4));
+					renderText_w(16, 160, 0.38, 0.50, false, TR(STR_DSSPLASH_WARNING_HS5));
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText_w(36, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS6));
+				}
+				if (touchtocontinue_show) {
+					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
+					renderText_w(32, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
+				}
+				break;
+			case 5:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 12, 16);
+					setTextColor(RGBA8(0, 0, 0, 255));
+					renderText_w(34, 21, 0.50, 0.55, false, TR(STR_DSSPLASH_WARNING_HS));
+					renderText_w(22, 55, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS1));
+					renderText_w(15, 75, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS2));
+					renderText_w(35, 95, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(78, 115, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS4));
+					renderText_w(18, 147, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS5));
+					renderText_w(60, 161, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS6));
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText_w(36, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
+				}
+				if (touchtocontinue_show) {
+					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
+					renderText_w(34, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
+				}
+				break;
+			case 6:
+			case 11:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 49, 12);
+					sf2d_draw_texture(hstexttex, 0, 0);
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText(81, 166, 0.55, 0.55, false, "www.iQue.com/service/");
+				}
+				if (touchtocontinue_show) {
+					sf2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
+				}
+				break;
+			case 7:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 29, 10);
+					sf2d_draw_texture(hstexttex, 0, 0);
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText(66, 176, 0.55, 0.55, false, "www.nintendocaution.co.kr");
+				}
+				if (touchtocontinue_show) {
+					sf2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
+				}
+				break;
 		}
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, bootSplash_fade));
 		sf2d_end_frame();
@@ -417,15 +500,22 @@ void bootSplash() {
 		
 	}
 	
+	if (logEnabled)	LogFM("BootSplash", "Unloading jingle sound");
 	delete sfx_boot;
+	if (logEnabled)	LogFM("BootSplash", "Unloaded jingle sound");
 
+	if (logEnabled)	LogFM("BootSplash", "Freeing textures");
 	sf2d_free_texture(ndslogotex);
 	sf2d_free_texture(itex);
 	sf2d_free_texture(topotex);
 	sf2d_free_texture(bottomotex);
 	sf2d_free_texture(bigotex);
 	sf2d_free_texture(nintendotex);
+	if (settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
+		sf2d_free_texture(hstexttex);
+		sf2d_free_texture(hstouchtex);
+	}
 	sf2d_free_texture(hstex);
 	sf2d_free_texture(wipetex);
-
+	if (logEnabled)	LogFM("BootSplash", "Textures freed up");
 }

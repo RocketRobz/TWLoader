@@ -26,8 +26,20 @@ void langClear(void);
 // String IDs.
 typedef enum _StrID {
 	
+	/** DS/DSi boot screen **/
+	STR_DSSPLASH_WARNING_HS = 0,								// "WARNING - HEALTH AND SAFETY"
+	STR_DSSPLASH_WARNING_HS1,									// "BEFORE PLAYING, READ THE HEALTH"
+	STR_DSSPLASH_WARNING_HS2,									// "AND SAFETY PRECAUTIONS BOOKLET"
+	STR_DSSPLASH_WARNING_HS3,									// "FOR IMPORTANT INFORMATION"
+	STR_DSSPLASH_WARNING_HS4,									// "ABOUT YOUR HEALTH AND SAFETY."
+	STR_DSSPLASH_WARNING_HS5,									// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	STR_DSSPLASH_WARNING_HS6,									// "www.nintendo.com/healthandsafety/"
+	STR_DSSPLASH_WARNING_HS7,									// Reserved for other languages
+	
+	STR_DSSPLASH_TOUCH,											// "Touch the Touch Screen to continue."
+	
 	/** GUI **/
-	STR_RETURN_TO_HOME_MENU = 0,								// "Return to HOME Menu"
+	STR_RETURN_TO_HOME_MENU,									// "Return to HOME Menu"
 	STR_START,													// "START" (used on cartridge indicator)
 	STR_NO_CARTRIDGE,											// "No cartridge"
 	STR_UNKOWN,													// "Unknown Cartridge"

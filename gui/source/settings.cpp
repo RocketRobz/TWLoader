@@ -106,16 +106,14 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	switch (sys_language) {
+	switch (settings.ui.language) {
 		case 0:
-		case 6:
-		case 7:
 			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 			break;
 		case 1:
 		default:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_EN.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
 			break;
 		case 2:
@@ -133,6 +131,15 @@ void settingsLoadTextures(void)
 		case 5:
 			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 6:
+		case 11:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_CH.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_CH.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			break;
+		case 7:
+			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_KO.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_KO.png", SF2D_PLACE_RAM); // DS H&S screen in settings
 			break;
 	}
 	disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM); // Red circle with line

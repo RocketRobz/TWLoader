@@ -6,6 +6,18 @@
 // KOREAN
 static const char *const lang_KO[STR_MAX] = {
 
+	/** DS/DSi boot screen **/
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"www.nintendocaution.co.kr",								// "www.nintendo.com/healthandsafety/"
+	"",
+	
+	"",
+	
 	/** GUI **/
 	": 홈 메뉴로 돌아가",												// "Return to HOME Menu"
 	"시작",														// "START" (used on cartridge indicator)

@@ -1678,6 +1678,7 @@ int main()
 	
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
+		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
 		if (settings.ui.theme == 0) fade_whiteToBlack();
 	}
 
@@ -1698,6 +1699,7 @@ int main()
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
 	bool saveOnExit = isTWLNANDInstalled;
+	if (logEnabled)	LogFM("Main.aptMainLoop", "aptMainLoop is running");
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
@@ -4861,6 +4863,7 @@ int main()
 
 			if (settings.ui.showbootscreen == 2) {
 				bootSplash();
+				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
 				fade_whiteToBlack();
 			}
 
