@@ -31,8 +31,12 @@ sound *sfx_boot;
  * Fade from white to black.
  */
 void fade_whiteToBlack() {
+	bool runvoid = true;
+	
 	int fade = 0;
-	while (1) {
+	while (runvoid) {
+		textVtxArrayPos = 0; // Clear the text vertex array
+
 		fade += 9;
 		if (fade > 255)
 			fade = 255;
@@ -54,7 +58,7 @@ void fade_whiteToBlack() {
 		
 		sf2d_swapbuffers();
 		
-		if (fade == 255) break;
+		if (fade == 255) runvoid = false;
 	}
 }
 
@@ -62,6 +66,8 @@ void fade_whiteToBlack() {
  * Play DS boot splash.
  */
 void bootSplash() {
+	bool runvoid = true;
+
 	sf2d_texture *ndslogotex;
 	if (settings.ui.language == 6 || settings.ui.language == 11)
 		ndslogotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/iquelogo.png", SF2D_PLACE_RAM);
@@ -197,7 +203,7 @@ void bootSplash() {
 		sf2d_swapbuffers();
 	}
 
-	while (1) {
+	while (runvoid) {
 		// Scan hid shared memory for input events
 		hidScanInput();
 
@@ -515,7 +521,7 @@ void bootSplash() {
 			}
 		}
 		
-		if (fadeout && bootSplash_fade == 255) break;
+		if (fadeout && bootSplash_fade == 255) runvoid = false;
 		
 	}
 	
