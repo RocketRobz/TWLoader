@@ -33,7 +33,7 @@ typedef enum _StrID {
 	STR_DSSPLASH_WARNING_HS3,									// "FOR IMPORTANT INFORMATION"
 	STR_DSSPLASH_WARNING_HS4,									// "ABOUT YOUR HEALTH AND SAFETY."
 	STR_DSSPLASH_WARNING_HS5,									// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	STR_DSSPLASH_WARNING_HS6,									// "www.nintendo.com/healthandsafety/"
+	STR_DSSPLASH_WARNING_HS6,									// "www.nintendo.com/healthsafety/"
 	STR_DSSPLASH_WARNING_HS7,									// Reserved for other languages
 	
 	STR_DSSPLASH_TOUCH,											// "Touch the Touch Screen to continue."

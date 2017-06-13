@@ -7,16 +7,16 @@
 static const char *const lang_FR[STR_MAX] = {
      
 	/** DS/DSi boot screen **/
-	"WARNING - HEALTH AND SAFETY",								// "WARNING - HEALTH AND SAFETY"
-	"BEFORE PLAYING, READ THE HEALTH",							// "BEFORE PLAYING, READ THE HEALTH"
-	"AND SAFETY PRECAUTIONS BOOKLET",							// "AND SAFETY PRECAUTIONS BOOKLET"
-	"FOR IMPORTANT INFORMATION",								// "FOR IMPORTANT INFORMATION"
-	"ABOUT YOUR HEALTH AND SAFETY.",							// "ABOUT YOUR HEALTH AND SAFETY."
-	"TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT",		// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"www.nintendo.com/healthandsafety/",						// "www.nintendo.com/healthandsafety/"
-	"",
+	"ATTENTION - SANTE ET SECURITE",							// "WARNING - HEALTH AND SAFETY"
+	"AVANT DE JOUER, LISEZ LE LIVRET",							// "BEFORE PLAYING, READ THE HEALTH"
+	"DE PRECAUTIONS POUR DES INFORMATIONS",						// "AND SAFETY PRECAUTIONS BOOKLET"
+	"IMPROTANTES SUR VOTRE SANTE ET SECURITE",					// "FOR IMPORTANT INFORMATION"
+	"POUR OPTENER UN EXEMPLAIRE SUPPLEMENTAIRE",				// "ABOUT YOUR HEALTH AND SAFETY."
+	"CORRESPONDANT A VOTRE REGION,",							// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"CONNECTEZ-VOUS A L'ADRESSE SUIVANTE :",
+	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthsafety/"
 	
-	"Touch the Touch Screen to continue.",						// "Touch the Touch Screen to continue."
+	"Touchez l'écran tactile pour continuer.",					// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
 	": Retourner au Menu HOME",			    // "Return to HOME Menu"

@@ -427,7 +427,26 @@ void bootSplash() {
 					renderText_w(35, 128, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS4));
 					renderText_w(16, 160, 0.38, 0.50, false, TR(STR_DSSPLASH_WARNING_HS5));
 					setTextColor(RGBA8(61, 161, 191, 255));
-					renderText_w(36, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS6));
+					renderText_w(50, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS6));
+				}
+				if (touchtocontinue_show) {
+					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
+					renderText_w(32, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
+				}
+				break;
+			case 2:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 12, 16);
+					setTextColor(RGBA8(0, 0, 0, 255));
+					renderText_w(34, 19, 0.62, 0.62, false, TR(STR_DSSPLASH_WARNING_HS));
+					renderText_w(56, 56, 0.45, 0.47, false, TR(STR_DSSPLASH_WARNING_HS1));
+					renderText_w(32, 79, 0.45, 0.47, false, TR(STR_DSSPLASH_WARNING_HS2));
+					renderText_w(25, 102, 0.45, 0.47, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(37, 126, 0.38, 0.50, false, TR(STR_DSSPLASH_WARNING_HS4));
+					renderText_w(72, 143, 0.38, 0.50, false, TR(STR_DSSPLASH_WARNING_HS5));
+					renderText_w(52, 160, 0.38, 0.50, false, TR(STR_DSSPLASH_WARNING_HS6));
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText_w(50, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
 					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
@@ -441,12 +460,12 @@ void bootSplash() {
 					renderText_w(34, 21, 0.50, 0.55, false, TR(STR_DSSPLASH_WARNING_HS));
 					renderText_w(22, 55, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS1));
 					renderText_w(15, 75, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS2));
-					renderText_w(35, 95, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(24, 95, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS3));
 					renderText_w(78, 115, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS4));
 					renderText_w(18, 147, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS5));
 					renderText_w(60, 161, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS6));
 					setTextColor(RGBA8(61, 161, 191, 255));
-					renderText_w(36, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
+					renderText_w(50, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
 					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
