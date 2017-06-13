@@ -33,7 +33,6 @@
 #define NDS_HEADER
 
 #include <sf2d.h>
-#include <sfil.h>
 #include "citrostuff.h"
 #include <stdio.h>
 
@@ -235,7 +234,7 @@ std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
  * @param setfont Font to use for messages.
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const char* title, const char* counter1, const char* counter2);
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2);
 
 /**
  * Get the icon from an NDS banner.

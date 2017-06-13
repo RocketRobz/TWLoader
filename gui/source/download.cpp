@@ -62,6 +62,15 @@ bool checkWifiStatus(void) {
 	u32 wifiStatus;
 	bool res = false;
 
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		sf2d_draw_texture(settingstex, 0, 0);
+	}
+	setTextColor(RGBA8(255, 255, 255, 255));
+	renderText(12, 16, 0.5f, 0.5f, false, "Checking Wi-Fi status...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+
 	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
 		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
 		res = true;
@@ -269,13 +278,17 @@ ReadJson internal_json_reader(json_value* json, json_value* val,
 int checkUpdate(void) {
 	if (logEnabled)	LogFM("checkUpdate", "Checking updates...");
 	static const char title[] = "Now checking TWLoader version...";
-	DialogBoxAppear(12, 16, title);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		DialogBoxAppear(12, 16, title);
+	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		sf2d_draw_texture(settingstex, 0, 0);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		setTextColor(RGBA8(0, 0, 0, 255));
+	} else {
+		setTextColor(RGBA8(255, 255, 255, 255));
 	}
-	sf2d_draw_texture(dialogboxtex, 0, 0);
-	setTextColor(RGBA8(0, 0, 0, 255));
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
@@ -423,8 +436,8 @@ int checkUpdate(void) {
 					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 					if (screenmode == SCREEN_MODE_SETTINGS) {
 						sf2d_draw_texture(settingstex, 0, 0);
+						sf2d_draw_texture(dialogboxtex, 0, 0);
 					}
-					sf2d_draw_texture(dialogboxtex, 0, 0);
 
 					// Version is lower or same.
 					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
@@ -444,8 +457,11 @@ int checkUpdate(void) {
 						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 						if (screenmode == SCREEN_MODE_SETTINGS) {
 							sf2d_draw_texture(settingstex, 0, 0);
+							sf2d_draw_texture(dialogboxtex, 0, 0);
+							setTextColor(RGBA8(0, 0, 0, 255));
+						} else {
+							setTextColor(RGBA8(255, 255, 255, 255));
 						}
-						sf2d_draw_texture(dialogboxtex, 0, 0);
 						static const char msg[] =
 							"TWLoader is up-to-date.\n"
 							"\n"
@@ -554,9 +570,11 @@ void DownloadTWLoaderCIAs(void) {
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			sf2d_draw_texture(settingstex, 0, 0);
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			setTextColor(RGBA8(0, 0, 0, 255));
+		} else {
+			setTextColor(RGBA8(255, 255, 255, 255));
 		}
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		setTextColor(RGBA8(0, 0, 0, 255));
 		static const char gui_msg[] =
 			"An update for TWLoader is available.\n"
 			"Do you want to update?\n"
@@ -601,8 +619,11 @@ void DownloadTWLoaderCIAs(void) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					sf2d_draw_texture(settingstex, 0, 0);
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					setTextColor(RGBA8(0, 0, 0, 255));
+				} else {
+					setTextColor(RGBA8(255, 255, 255, 255));
 				}
-				sf2d_draw_texture(dialogboxtex, 0, 0);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, CIA)\n"
@@ -623,15 +644,21 @@ void DownloadTWLoaderCIAs(void) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					sf2d_draw_texture(settingstex, 0, 0);
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					setTextColor(RGBA8(0, 0, 0, 255));
+				} else {
+					setTextColor(RGBA8(255, 255, 255, 255));
 				}
-				sf2d_draw_texture(dialogboxtex, 0, 0);
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					sf2d_draw_texture(settingstex, 0, 0);
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					setTextColor(RGBA8(0, 0, 0, 255));
+				} else {
+					setTextColor(RGBA8(255, 255, 255, 255));
 				}
-				sf2d_draw_texture(dialogboxtex, 0, 0);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, 3DSX)\n"
@@ -654,8 +681,11 @@ void DownloadTWLoaderCIAs(void) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					sf2d_draw_texture(settingstex, 0, 0);
+					sf2d_draw_texture(dialogboxtex, 0, 0);
+					setTextColor(RGBA8(0, 0, 0, 255));
+				} else {
+					setTextColor(RGBA8(255, 255, 255, 255));
 				}
-				sf2d_draw_texture(dialogboxtex, 0, 0);
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
@@ -683,8 +713,11 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
 			static const char twlnandstg2_msg[] =
@@ -700,8 +733,11 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
 			static const char twlnand2_msg[] =
@@ -728,17 +764,36 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);			
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
 			if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
-				DialogBoxDisappear(12, 16, "Update failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Update failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Update failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		} else if (settings.ui.filetype == 1) {
 			if(resGUI_3DSX != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
-				DialogBoxDisappear(12, 16, "Update failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Update failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Update failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		}
 		if(resGUI == 0 && updateACE_RPG) {
@@ -754,10 +809,21 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear(12, 16, "Download failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Download failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
@@ -773,10 +839,21 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear(12, 16, "Download failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Download failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
@@ -792,10 +869,21 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear(12, 16, "Download failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Download failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		}
 		if (resGUI == 0 && updateR4) {
@@ -811,10 +899,21 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				sf2d_draw_texture(settingstex, 0, 0);
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
 			}
-			sf2d_draw_texture(dialogboxtex, 0, 0);
 			if (res != 0) {
-				DialogBoxDisappear(12, 16, "Download failed.");
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					DialogBoxDisappear(12, 16, "Download failed.");
+				} else for (int i = 0; i < 15; i++) {
+					textVtxArrayPos = 0; // Clear the text vertex array
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+				}
 			}
 		}
 		if (resGUI == 0) {			
@@ -824,7 +923,15 @@ void DownloadTWLoaderCIAs(void) {
 			run = false;
 		}
 	} else {
-		DialogBoxDisappear(12, 16, "Update cancelled.");
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, "Update cancelled.");
+		} else for (int i = 0; i < 15; i++) {
+			textVtxArrayPos = 0; // Clear the text vertex array
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			renderText(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		}
 	}
 }
 
@@ -833,13 +940,16 @@ void DownloadTWLoaderCIAs(void) {
  */
 void UpdateBootstrapUnofficial(void) {
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
-	DialogBoxAppear(12, 16, title);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		DialogBoxAppear(12, 16, title);
+	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(settingstex, 0, 0);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		setTextColor(RGBA8(0, 0, 0, 255));
+	} else {
+		setTextColor(RGBA8(255, 255, 255, 255));
 	}
-	sf2d_draw_texture(dialogboxtex, 0, 0);
-	setTextColor(RGBA8(0, 0, 0, 255));
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
@@ -858,13 +968,16 @@ void UpdateBootstrapUnofficial(void) {
  */
 void UpdateBootstrapRelease(void) {
 	static const char title[] = "Now updating bootstrap (Release)...";
-	DialogBoxAppear(12, 16, title);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		DialogBoxAppear(12, 16, title);
+	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(settingstex, 0, 0);
+		sf2d_draw_texture(dialogboxtex, 0, 0);
+		setTextColor(RGBA8(0, 0, 0, 255));
+	} else {
+		setTextColor(RGBA8(255, 255, 255, 255));
 	}
-	sf2d_draw_texture(dialogboxtex, 0, 0);
-	setTextColor(RGBA8(0, 0, 0, 255));
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
@@ -1344,10 +1457,16 @@ void downloadBoxArt(void)
 			snprintf(str, sizeof(str), "%zu", boxartnum);
 			
 			// Show the dialog.
-			DialogBoxAppear(12, 16, title);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				DialogBoxAppear(12, 16, title);
+			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			setTextColor(RGBA8(0, 0, 0, 255));
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
+			}
 			renderText(12, 16, 0.5f, 0.5f, false, title);
 			renderText(12, 32, 0.5f, 0.5f, false, str);
 			renderText(39, 32, 0.5f, 0.5f, false, "/");
@@ -1359,7 +1478,9 @@ void downloadBoxArt(void)
 			
 			downloadBoxArt_internal(ba_TID, ROM_SD);
 		}
-		DialogBoxDisappear(12, 16, NULL);
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, NULL);
+		}
 		boxart_dl_tids.clear();
 	}
 	// Check if we're missing any boxart for ROMs on the flashcard.
@@ -1436,10 +1557,16 @@ void downloadBoxArt(void)
 			snprintf(str, sizeof(str), "%zu", boxartnum);
 			
 			// Show the dialog.
-			DialogBoxAppear(12, 16, title);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				DialogBoxAppear(12, 16, title);
+			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			setTextColor(RGBA8(0, 0, 0, 255));
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				sf2d_draw_texture(dialogboxtex, 0, 0);
+				setTextColor(RGBA8(0, 0, 0, 255));
+			} else {
+				setTextColor(RGBA8(255, 255, 255, 255));
+			}
 			renderText(12, 16, 0.5f, 0.5f, false, title);
 			renderText(12, 32, 0.5f, 0.5f, false, str);
 			renderText(39, 32, 0.5f, 0.5f, false, "/");
@@ -1451,7 +1578,9 @@ void downloadBoxArt(void)
 
 			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
 		}
-		DialogBoxDisappear(12, 16, NULL);
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, NULL);
+		}
 		boxart_dl_tids.clear();
 	}
 	
@@ -1504,10 +1633,16 @@ void downloadBoxArt(void)
 		snprintf(str, sizeof(str), "%zu", boxartnum);
 		
 		// Show the dialog.
-		DialogBoxAppear(12, 16, title);
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxAppear(12, 16, title);
+		}
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			sf2d_draw_texture(dialogboxtex, 0, 0);
+			setTextColor(RGBA8(0, 0, 0, 255));
+		} else {
+			setTextColor(RGBA8(255, 255, 255, 255));
+		}
 		renderText(12, 16, 0.5f, 0.5f, false, title);
 		renderText(12, 32, 0.5f, 0.5f, false, str);
 		renderText(39, 32, 0.5f, 0.5f, false, "/");

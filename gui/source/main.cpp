@@ -1424,6 +1424,45 @@ int main()
 	hidInit();
 	acInit();
 		
+	int filenum = 0;
+	bool noromsfound = false;
+	
+	bool cursorPositionset = false;
+	
+	int soundwaittimer = 0;
+	bool playwrongsounddone = false;
+
+	bool colortexloaded = false;
+	bool colortexloaded_bot = false;
+	bool bnricontexloaded = false;
+	bool boxarttexloaded = false;
+
+	bool updatetopscreen = true;
+	bool screenmodeswitch = false;
+	bool applaunchicon = false;
+	
+	float rad = 0.0f;
+	
+	int boxartXpos;
+	int boxartXmovepos = 0;
+
+	int filenameYpos;
+	int filenameYmovepos = 0;
+	int setsboxXpos = 0;
+	int cartXpos = 64;
+	int boxartYmovepos = 63;
+	int boxartreflYmovepos = 264;
+	int ndsiconXpos;
+	int ndsiconYmovepos = 129;
+	int wood_ndsiconscaletimer = 0;
+	int wood_ndsiconscalelag = 0;
+	int wood_ndsiconscalemovepos = 0;
+	float wood_ndsiconscalesize = 0.00f;
+	bool wood_ndsiconscaledown = false;
+
+	int startbordermovepos = 0;
+	float startborderscalesize = 1.0f;
+
 	bool bannertextloaded = false;	
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
@@ -1449,7 +1488,13 @@ int main()
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 	if (logEnabled)	LogFM("Main.Directories", "Directories are made, or already made");
 	
+	setTextColor(RGBA8(255, 255, 255, 255));
+
 	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	renderText(12, 16, 0.5f, 0.5f, false, settings_vertext);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 
 	LoadSettings();	
@@ -1472,6 +1517,12 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	renderText(12, 16, 0.5f, 0.5f, false, "Loading textures...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loading");
 
 	rectangletex = sfil_load_PNG_file("romfs:/graphics/rectangle.png", SF2D_PLACE_RAM); // Rectangle
 
@@ -1539,6 +1590,10 @@ int main()
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm found!");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found");
@@ -1547,6 +1602,10 @@ int main()
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		renderText(12, 16, 0.5f, 0.5f, false, "Custom music file found!");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
 		if (logEnabled)	LogFM("Main.dspfirm", "No music file found");
@@ -1554,6 +1613,11 @@ int main()
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		renderText(12, 16, 0.5f, 0.5f, false, "Loading .wav files...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		
 		bgm_menu = new sound(musicpath);
 		//bgm_settings = new sound("sdmc:/_nds/twloader/music/settings.wav");
 		sfx_launch = new sound("romfs:/sounds/launch.wav", 2, false);
@@ -1563,6 +1627,10 @@ int main()
 		sfx_wrong = new sound("romfs:/sounds/wrong.wav", 2, false);
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	// Scan the ROM directories.
 	scanRomDirectories();
@@ -1579,6 +1647,10 @@ int main()
 	if (checkWifiStatus()) {
 		downloadBoxArt();
 	}
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
@@ -1599,7 +1671,7 @@ int main()
 			continue;
 		if (logEnabled)	LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
 		
-		if(cacheBanner(f_nds_file, tempfile, dialogboxtex, title, romsel_counter1, romsel_counter2sd) == 0) {
+		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd) == 0) {
 			if (logEnabled)	LogFM("Main. Banner scanning", "Done!");
 		}else {
 			if (logEnabled)	LogFM("Main. Banner scanning", "Error!");
@@ -1607,6 +1679,10 @@ int main()
 		
 		fclose(f_nds_file);
 	}
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
 
 	if (checkWifiStatus()) {
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -1625,49 +1701,10 @@ int main()
 		}
 	}
 
-	DialogBoxDisappear(12, 16, " ");
+	showdialogbox = false;
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-
-	int filenum = 0;
-	bool noromsfound = false;
-	
-	bool cursorPositionset = false;
-	
-	int soundwaittimer = 0;
-	bool playwrongsounddone = false;
-
-	bool colortexloaded = false;
-	bool colortexloaded_bot = false;
-	bool bnricontexloaded = false;
-	bool boxarttexloaded = false;
-
-	bool updatetopscreen = true;
-	bool screenmodeswitch = false;
-	bool applaunchicon = false;
-	
-	float rad = 0.0f;
-	
-	int boxartXpos;
-	int boxartXmovepos = 0;
-
-	int filenameYpos;
-	int filenameYmovepos = 0;
-	int setsboxXpos = 0;
-	int cartXpos = 64;
-	int boxartYmovepos = 63;
-	int boxartreflYmovepos = 264;
-	int ndsiconXpos;
-	int ndsiconYmovepos = 129;
-	int wood_ndsiconscaletimer = 0;
-	int wood_ndsiconscalelag = 0;
-	int wood_ndsiconscalemovepos = 0;
-	float wood_ndsiconscalesize = 0.00f;
-	bool wood_ndsiconscaledown = false;
-
-	int startbordermovepos = 0;
-	float startborderscalesize = 1.0f;
 	
 	if (settings.ui.theme >= 1)
 		menu_ctrlset = CTRL_SET_MENU;
@@ -1692,10 +1729,16 @@ int main()
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_end_frame();
 		sf2d_swapbuffers();
+	} else {
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		renderText(12, 16, 0.5f, 0.5f, false, "Loading...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
 	}
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
+	const bool isTWLNAND2Installed = checkTWLNANDSide2();
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
 	bool saveOnExit = isTWLNANDInstalled;
@@ -1710,13 +1753,14 @@ int main()
 
 		textVtxArrayPos = 0; // Clear the text vertex array
 
-		// Check if the TWLNAND-side title is installed.
+		// Check if the TWLNAND-side title (part 1) is installed.
 		if (!isTWLNANDInstalled) {
+			textVtxArrayPos = 0; // Clear the text vertex array
 			static const char twlnand_msg[] =
-				"The TWLNAND-side title has not been installed.\n"
-				"Please install the TWLNAND-side CIA:\n"
+				"TWLNAND-side (part 1) has not been installed.\n"
+				"Please install the TWLNAND-side (part 1) CIA:\n"
 				"\n"
-				"/_nds/twloader/cias/TWLoader - TWLNAND side.cia\n"
+				"sd:/_nds/twloader/cias/TWLoader - TWLNAND side.cia\n"
 				"\n"
 				"\n"
 				"\n"
@@ -1730,11 +1774,49 @@ int main()
 				"\n"
 				"\n"
 				"                 Press the HOME button to exit.";
-			DialogBoxAppear(12, 12, twlnand_msg);
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			sf2d_end_frame();
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			setTextColor(RGBA8(0, 0, 0, 255));
+			setTextColor(RGBA8(255, 255, 255, 255));
 			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+			continue;
+		}
+		// Check if the TWLNAND-side (part 2) title is installed.
+		if (!isTWLNAND2Installed) {
+			textVtxArrayPos = 0; // Clear the text vertex array
+			static const char twlnand2_msg[] =
+				"TWLNAND-side (part 2) has not been installed.\n"
+				"Please install the TWLNAND-side (part 2) CIA:\n"
+				"\n"
+				"sd:/_nds/twloader/cias/\n"
+				"TWLoader - TWLNAND side (part 2).cia\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"\n"
+				"                 Press the HOME button to exit.";
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
 			sf2d_end_frame();
 			sf2d_swapbuffers();
 			continue;

@@ -133,7 +133,7 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
  * @param setfont Font to use for messages.
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const char* title, const char* counter1, const char* counter2) {
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
@@ -146,8 +146,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const c
 		return 0;
 	}
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_draw_texture(dbox, 0, 0);
-	setTextColor(RGBA8(0, 0, 0, 255));
+	setTextColor(RGBA8(255, 255, 255, 255));
 	renderText(12, 16, 0.5f, 0.5f, false, title);
 	renderText(12, 48, 0.5f, 0.5f, false, counter1);
 	renderText(39, 48, 0.5f, 0.5f, false, "/");
@@ -167,7 +166,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const c
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
-		setTextColor(RGBA8(0, 0, 0, 255));
+		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -191,7 +190,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const c
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
-		setTextColor(RGBA8(0, 0, 0, 255));
+		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -205,7 +204,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const c
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(12, 32, 0.5f, 0.5f, false, "Invalid banner loaded; not caching.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
@@ -217,7 +216,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, sf2d_texture* dbox, const c
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(12, 32, 0.5f, 0.5f, false, "Error writing the banner cache file.");
 		sf2d_end_frame();
 		sf2d_swapbuffers();
