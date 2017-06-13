@@ -1374,6 +1374,29 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 	}
 }
 
+sf2d_texture *bottomtex = NULL;		// Bottom of menu
+sf2d_texture *scrollbartex = NULL; // Scroll bar on bottom screen
+sf2d_texture *buttonarrowtex = NULL; // Arrow button for scroll bar
+sf2d_texture *bubbletex = NULL; // Text bubble
+
+void dsiMenuTheme_loadingScreen() {
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	if (settings.ui.custombot == 1)
+		sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+	else
+		sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
+
+	sf2d_draw_texture(scrollbartex, 0, 240-28);
+	sf2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+	sf2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+
+	sf2d_draw_texture(bubbletex, 0, 0);
+	setTextColor(RGBA8(0, 0, 0, 255));
+	renderText(8, 38, 0.70, 0.70, false, "Loading...");
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+}
+
 int main()
 {
 	sf2d_init();
@@ -1558,7 +1581,6 @@ int main()
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
 
 	sf2d_texture *iconstex = NULL;		// Bottom of menu (3 icons)
-	sf2d_texture *bottomtex = NULL;		// Bottom of menu
 	sf2d_texture *sdicontex = sfil_load_PNG_file("romfs:/graphics/wood/sd.png", SF2D_PLACE_RAM);
 	sf2d_texture *flashcardicontex = sfil_load_PNG_file("romfs:/graphics/wood/flashcard.png", SF2D_PLACE_RAM);
 	sf2d_texture *gbaicontex = sfil_load_PNG_file("romfs:/graphics/wood/gba.png", SF2D_PLACE_RAM);
@@ -1566,8 +1588,8 @@ int main()
 	sf2d_texture *iconnulltex = sfil_load_PNG_file("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
 	sf2d_texture *homeicontex = sfil_load_PNG_file("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
 	sf2d_texture *bottomlogotex = sfil_load_PNG_file("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
-	sf2d_texture *scrollbartex = sfil_load_PNG_file("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // Scroll bar on bottom screen
-	sf2d_texture *buttonarrowtex = sfil_load_PNG_file("romfs:/graphics/button_arrow.png", SF2D_PLACE_RAM); // Arrow button for scroll bar
+	scrollbartex = sfil_load_PNG_file("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // Scroll bar on bottom screen
+	buttonarrowtex = sfil_load_PNG_file("romfs:/graphics/button_arrow.png", SF2D_PLACE_RAM); // Arrow button for scroll bar
 	sf2d_texture *bipstex = sfil_load_PNG_file("romfs:/graphics/bips.png", SF2D_PLACE_RAM); // Little dots of scroll bar
 	sf2d_texture *scrollwindowtex = sfil_load_PNG_file("romfs:/graphics/scroll_window.png", SF2D_PLACE_RAM); // Window behind dots of scroll bar
 	sf2d_texture *scrollwindowfronttex = sfil_load_PNG_file("romfs:/graphics/scroll_windowfront.png", SF2D_PLACE_RAM); // Front of window for scroll bar
@@ -1582,7 +1604,7 @@ int main()
 	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *boxemptytex = sfil_load_PNG_file("romfs:/graphics/box_empty.png", SF2D_PLACE_RAM); // (DSiWare) empty box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
-	sf2d_texture *bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
+	bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
 
 	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures load successfully");
 
@@ -1949,11 +1971,10 @@ int main()
 				// titleboxXmovepos = (-64)*settings.ui.cursorPosition;
 				// titleboxXmovepos += (64)*settings.ui.pagenum*20;
 				
+				if (settings.ui.theme == 0 && fadealpha == 0) {
+					dsiMenuTheme_loadingScreen();
+				}
 				if (!settings.twl.forwarder) {
-					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (SD Card)...");
-					sf2d_end_frame();
-					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
 						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {						
@@ -1977,10 +1998,6 @@ int main()
 						}
 					}
 				} else {
-					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now loading banner icons (Flashcard)...");
-					sf2d_end_frame();
-					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
 						for (bnriconnum = settings.ui.pagenum*20; bnriconnum < pagemax; bnriconnum++) {
@@ -2020,11 +2037,10 @@ int main()
 				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
 				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
+				if (settings.ui.theme == 0 && fadealpha == 0) {
+					dsiMenuTheme_loadingScreen();
+				}
 				if (!settings.twl.forwarder) {
-					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (SD Card)...");
-					sf2d_end_frame();
-					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
 						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax_ba; boxartnum++) {
@@ -2096,10 +2112,6 @@ int main()
 						}
 					}
 				} else {
-					/* sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					// sftd_draw_textf(font, 2, 2, RGBA8(255, 255, 255, 255), 12, "Now storing box art filenames (Flashcard)...");
-					sf2d_end_frame();
-					sf2d_swapbuffers(); */
 					char path[256];
 					if(matching_files.size() == 0){
 						for(boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
