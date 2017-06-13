@@ -1738,7 +1738,7 @@ int main()
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-		if (settings.ui.theme == 0) fade_whiteToBlack();
+		// if (settings.ui.theme == 0) fade_whiteToBlack();
 	}
 
 	if (settings.ui.theme >= 1) {
