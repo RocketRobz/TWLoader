@@ -28,7 +28,7 @@ using std::vector;
 sound *sfx_boot;
 
 /**
- * Fade from white to black.
+ * Fade from white to black. (causes a crash after code is done running, for some users.)
  */
 void fade_whiteToBlack() {
 	bool runvoid = true;

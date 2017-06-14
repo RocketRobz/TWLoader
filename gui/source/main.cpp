@@ -1740,7 +1740,7 @@ int main()
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-		if (settings.ui.theme == 0) fade_whiteToBlack();
+		// if (settings.ui.theme == 0) fade_whiteToBlack();
 	}
 
 	if (settings.ui.theme >= 1) {
@@ -4910,7 +4910,7 @@ int main()
 			if (settings.ui.showbootscreen == 2) {
 				bootSplash();
 				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-				fade_whiteToBlack();
+				// fade_whiteToBlack();
 			}
 
 			// Buffers for APT_DoApplicationJump().
