@@ -1784,7 +1784,7 @@ void LoadSettings(void) {
 	settings.romselect.toplayout = settingsini.GetInt("FRONTEND", "TOP_LAYOUT", 0);
 	if (!isDemo) settings.ui.filetype = settingsini.GetInt("FRONTEND", "FILETYPE", 0);
 	else settings.ui.filetype = 1;
-	settings.ui.showbootscreen = settingsini.GetInt("FRONTEND", "SHOW_BOOT_ANIMATION", 1);
+	settings.ui.showbootscreen = settingsini.GetInt("FRONTEND", "SHOW_BOOT_ANIMATION", 2);
 	settings.ui.bootscreen = settingsini.GetInt("FRONTEND", "BOOT_ANIMATION", 0);
 	settings.ui.healthsafety = settingsini.GetInt("FRONTEND", "HEALTH&SAFETY_MSG", 1);
 	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);

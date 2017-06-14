@@ -1776,7 +1776,7 @@ int main()
 		textVtxArrayPos = 0; // Clear the text vertex array
 
 		// Check if the TWLNAND-side title (part 1) is installed.
-		if (!isTWLNANDInstalled) {
+		if (!isTWLNANDInstalled && !isDemo) {
 			textVtxArrayPos = 0; // Clear the text vertex array
 			static const char twlnand_msg[] =
 				"TWLNAND-side (part 1) has not been installed.\n"
@@ -1810,7 +1810,7 @@ int main()
 			continue;
 		}
 		// Check if the TWLNAND-side (part 2) title is installed.
-		if (!isTWLNAND2Installed) {
+		if (!isTWLNAND2Installed && !isDemo) {
 			textVtxArrayPos = 0; // Clear the text vertex array
 			static const char twlnand2_msg[] =
 				"TWLNAND-side (part 2) has not been installed.\n"
