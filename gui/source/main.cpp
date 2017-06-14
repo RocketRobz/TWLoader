@@ -1752,6 +1752,11 @@ int main()
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	} else {
+		setTextColor(RGBA8(255, 255, 255, 255));
+		sf2d_start_frame(GFX_TOP, GFX_LEFT);
+		sf2d_end_frame();
+		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+		sf2d_end_frame();
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		renderText(12, 16, 0.5f, 0.5f, false, "Loading...");
 		sf2d_end_frame();
