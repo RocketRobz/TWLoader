@@ -8,6 +8,9 @@ cd ..
 cd flashcard-side
 make clean
 cd ..
+cd flashcard-softreset
+make clean
+cd ..
 cd NTR_Launcher
 make clean
 cd ..
