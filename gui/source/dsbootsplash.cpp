@@ -511,8 +511,10 @@ void bootSplash() {
 				| KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT
 				| KEY_START | KEY_SELECT | KEY_TOUCH)) || splashScreenTime == 60*60)
 			{
-				sfx_boot->stop();
-				sfx_select->play();
+				if(dspfirmfound) {
+					sfx_boot->stop();
+					sfx_select->play();
+				}
 				fadeout = true;
 			}
 		}
