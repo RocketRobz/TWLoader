@@ -531,16 +531,26 @@ void bootSplash() {
 
 	if (logEnabled)	LogFM("BootSplash", "Freeing textures");
 	sf2d_free_texture(ndslogotex);
+	ndslogotex = NULL;
 	sf2d_free_texture(itex);
+	itex = NULL;
 	sf2d_free_texture(topotex);
+	topotex = NULL;
 	sf2d_free_texture(bottomotex);
+	bottomotex = NULL;
 	sf2d_free_texture(bigotex);
+	bigotex = NULL;
 	sf2d_free_texture(nintendotex);
+	nintendotex = NULL;
 	if (settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
 		sf2d_free_texture(hstexttex);
+		hstexttex = NULL;
 		sf2d_free_texture(hstouchtex);
+		hstouchtex = NULL;
 	}
 	sf2d_free_texture(hstex);
+	hstex = NULL;
 	sf2d_free_texture(wipetex);
+	wipetex = NULL;
 	if (logEnabled)	LogFM("BootSplash", "Textures freed up");
 }
