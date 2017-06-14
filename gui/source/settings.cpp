@@ -46,10 +46,13 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_FLASH_CARD = 4,			// Flash card options
 	SUBSCREEN_MODE_SUB_THEME = 5,			// Sub-theme select
 	SUBSCREEN_MODE_CHANGE_ROM_PATH = 6,		// Sub-menu with rom path location
+	SUBSCREEN_MODE_TWLNAND_NOT_FOUND = 7,	// TWLNAND side not found message
 };
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
 /** Settings **/
+
+const char *twlnand_msg;
 
 static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 
@@ -76,7 +79,11 @@ Settings_t settings;
  */
 void settingsResetSubScreenMode(void)
 {
-	subscreenmode = SUBSCREEN_MODE_FRONTEND;
+	if (TWLNANDnotfound_msg != 2) {
+		subscreenmode = SUBSCREEN_MODE_TWLNAND_NOT_FOUND;
+	} else {
+		subscreenmode = SUBSCREEN_MODE_FRONTEND;
+	}
 	memset(cursor_pos, 0, sizeof(cursor_pos));
 }
 
@@ -331,15 +338,6 @@ void settingsDrawBottomScreen(void)
 		renderText(300, 6, 0.50, 0.50, false, "4");
 	}
 	
-	/* if(!isDemo) {
-		const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-		// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-		const int home_width = 16;
-		const int home_x = (320-home_width)/2;
-		sf2d_draw_texture(whomeicontex, home_x, 220); // Draw HOME icon
-		// sftd_draw_wtext(font, home_x+16, 221, RGBA8(255, 255, 255, 255), 13, home_text);
-	} */
-
 	// X positions.
 	static const int Xpos = 24;
 	static const int XposValue = 236;
@@ -1080,6 +1078,35 @@ void settingsDrawBottomScreen(void)
 		
 		renderText(8, 184, 0.60, 0.60, false, ": Change path");
 		renderText(8, 198, 0.60, 0.60, false, ": Return");
+	} else if (subscreenmode == SUBSCREEN_MODE_TWLNAND_NOT_FOUND) {
+		if(!isDemo) {
+			const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+			// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+			const int home_width = 144+16;
+			const int home_x = (320-home_width)/2;
+			sf2d_draw_texture(whomeicontex, home_x, 221); // Draw HOME icon
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText_w(home_x+20, 222, 0.50, 0.50, false, home_text);
+		}
+
+		title = L"An error has occurred.";
+
+		if (TWLNANDnotfound_msg == 0) {
+			twlnand_msg =
+				"TWLNAND-side (part 1) has not been installed.\n"
+				"Please install the TWLNAND-side (part 1) CIA:\n"
+				"\n"
+				"sd:/_nds/twloader/cias/TWLoader - TWLNAND side.cia";
+		} else if (TWLNANDnotfound_msg == 1) {
+			twlnand_msg =
+				"TWLNAND-side (part 2) has not been installed.\n"
+				"Please install the TWLNAND-side (part 2) CIA:\n"
+				"\n"
+				"sd:/_nds/twloader/cias/\n"
+				"TWLoader - TWLNAND side (part 2).cia";
+		}
+		setTextColor(RGBA8(255, 255, 255, 255));
+		renderText(16, 40, 0.4, 0.4, false, twlnand_msg);
 	}
 	setTextColor(RGBA8(255, 255, 255, 255));
 	renderText_w(2, 2, 0.75, 0.75, false, title);

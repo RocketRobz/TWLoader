@@ -80,6 +80,8 @@ std::string	bootstrapPath;
 // Current screen mode.
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 
+int TWLNANDnotfound_msg = 2;
+
 /* enum RomSelect_Mode {	// R4 Theme only
 	ROMSEL_MODE_MENU = 0,	// Menu
 	ROMSEL_MODE_ROMSEL = 1,	// ROM Select
@@ -1762,13 +1764,27 @@ int main()
 		sf2d_end_frame();
 		sf2d_swapbuffers();
 	}
-
+	
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
 	const bool isTWLNAND2Installed = checkTWLNANDSide2();
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
 	bool saveOnExit = isTWLNANDInstalled;
+	
+	// Check if the TWLNAND-side title (both parts) is installed.
+	if (!isTWLNANDInstalled && !isDemo || !isTWLNAND2Installed && !isDemo) {
+		if (!isTWLNAND2Installed) {
+			TWLNANDnotfound_msg = 1;
+			if (logEnabled)	LogFM("Main.isTWLNAND2Installed", "TWLNAND side (part 2) not installed");
+		} else {
+			TWLNANDnotfound_msg = 0;
+			if (logEnabled)	LogFM("Main.isTWLNANDInstalled", "TWLNAND side (part 1) not installed");
+		}
+		screenmode = SCREEN_MODE_SETTINGS;
+		settingsResetSubScreenMode();
+	}
+
 	if (logEnabled)	LogFM("Main.aptMainLoop", "aptMainLoop is running");
 	while(run && aptMainLoop()) {
 	//while(run) {
@@ -1779,76 +1795,7 @@ int main()
 		const u32 hHeld = hidKeysHeld();
 
 		textVtxArrayPos = 0; // Clear the text vertex array
-
-		// Check if the TWLNAND-side title (part 1) is installed.
-		if (!isTWLNANDInstalled && !isDemo) {
-			textVtxArrayPos = 0; // Clear the text vertex array
-			static const char twlnand_msg[] =
-				"TWLNAND-side (part 1) has not been installed.\n"
-				"Please install the TWLNAND-side (part 1) CIA:\n"
-				"\n"
-				"sd:/_nds/twloader/cias/TWLoader - TWLNAND side.cia\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"                 Press the HOME button to exit.";
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
-			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-			continue;
-		}
-		// Check if the TWLNAND-side (part 2) title is installed.
-		if (!isTWLNAND2Installed && !isDemo) {
-			textVtxArrayPos = 0; // Clear the text vertex array
-			static const char twlnand2_msg[] =
-				"TWLNAND-side (part 2) has not been installed.\n"
-				"Please install the TWLNAND-side (part 2) CIA:\n"
-				"\n"
-				"sd:/_nds/twloader/cias/\n"
-				"TWLoader - TWLNAND side (part 2).cia\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"\n"
-				"                 Press the HOME button to exit.";
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
-			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
-			continue;
-		}
-
+		
 		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
 		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
 		offset3D[0].boxart = CONFIG_3D_SLIDERSTATE * -5.0f;
@@ -1972,7 +1919,7 @@ int main()
 				settingsUnloadTextures();
 				colortexloaded = true;
 			}
-			if (!bnricontexloaded) {
+			if (!bnricontexloaded && TWLNANDnotfound_msg == 2) {
 				// titleboxXmovepos = (-64)*settings.ui.cursorPosition;
 				// titleboxXmovepos += (64)*settings.ui.pagenum*20;
 				
@@ -2038,7 +1985,7 @@ int main()
 				bnricontexloaded = true;
 				bnriconnum = 0+settings.ui.pagenum*20;
 			}			
-			if (!boxarttexloaded) {
+			if (!boxarttexloaded && TWLNANDnotfound_msg == 2) {
 				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
 				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
@@ -2969,8 +2916,8 @@ int main()
 					}
 					colortexloaded_bot = true;
 				}
+
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				
 				if (settings.ui.theme == 2) {
 					if (wood_ndsiconscaletimer == 60) {
 						// Scale icon at 30fps

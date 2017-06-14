@@ -61,6 +61,8 @@ enum ScreenMode {
 };
 extern ScreenMode screenmode;
 
+extern int TWLNANDnotfound_msg;
+
 // Files
 extern std::vector<std::string> files;
 extern std::vector<std::string> fcfiles;
