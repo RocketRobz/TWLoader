@@ -12,7 +12,7 @@ copy "GBARunner2.nds" "../../7zfile/sdroot/_nds/GBARunner2.nds"
 copy "GBARunner2_flashcard.nds" "../../7zfile/flashcardsdroot (all)/GBARunner2.nds"
 cd ..
 copy "unofficial-bootstrap.nds" "../7zfile/sdroot/_nds/unofficial-bootstrap.nds"
-copy "unofficial-bootstrap" "../7zfile/sdroot/_nds/twloader/unofficial-bootstrap"
+copy "release-bootstrap.nds" "../7zfile/sdroot/_nds/release-bootstrap.nds"
 cd ..
 cd "twlnand-stage1"
 make clean
