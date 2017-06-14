@@ -28,13 +28,11 @@ using std::vector;
 sound *sfx_boot;
 
 /**
- * Fade from white to black. (causes a crash after code is done running, for some users.)
+ * Fade from white to black.
  */
 void fade_whiteToBlack() {
-	bool runvoid = true;
-	
 	int fade = 0;
-	while (runvoid) {
+	while (aptMainLoop()) {
 		textVtxArrayPos = 0; // Clear the text vertex array
 
 		fade += 9;
@@ -58,7 +56,7 @@ void fade_whiteToBlack() {
 		
 		sf2d_swapbuffers();
 		
-		if (fade == 255) runvoid = false;
+		if (fade == 255) break;
 	}
 }
 
@@ -66,8 +64,6 @@ void fade_whiteToBlack() {
  * Play DS boot splash.
  */
 void bootSplash() {
-	bool runvoid = true;
-
 	sf2d_texture *ndslogotex;
 	if (settings.ui.language == 6 || settings.ui.language == 11)
 		ndslogotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/iquelogo.png", SF2D_PLACE_RAM);
@@ -203,7 +199,7 @@ void bootSplash() {
 		sf2d_swapbuffers();
 	}
 
-	while (runvoid) {
+	while (aptMainLoop()) {
 		// Scan hid shared memory for input events
 		hidScanInput();
 
@@ -521,7 +517,7 @@ void bootSplash() {
 			}
 		}
 		
-		if (fadeout && bootSplash_fade == 255) runvoid = false;
+		if (fadeout && bootSplash_fade == 255) break;
 		
 	}
 	

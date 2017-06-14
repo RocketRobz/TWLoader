@@ -1740,7 +1740,7 @@ int main()
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-		// if (settings.ui.theme == 0) fade_whiteToBlack();
+		if (settings.ui.theme == 0) fade_whiteToBlack();
 	}
 
 	if (settings.ui.theme >= 1) {
@@ -4910,19 +4910,21 @@ int main()
 			if (settings.ui.showbootscreen == 2) {
 				bootSplash();
 				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-				// fade_whiteToBlack();
+				if(aptMainLoop()) fade_whiteToBlack();
 			}
 
-			// Buffers for APT_DoApplicationJump().
-			u8 param[0x300];
-			u8 hmac[0x20];
-			// Clear both buffers
-			memset(param, 0, sizeof(param));
-			memset(hmac, 0, sizeof(hmac));
+			if(aptMainLoop()) {
+				// Buffers for APT_DoApplicationJump().
+				u8 param[0x300];
+				u8 hmac[0x20];
+				// Clear both buffers
+				memset(param, 0, sizeof(param));
+				memset(hmac, 0, sizeof(hmac));
 
-			APT_PrepareToDoApplicationJump(0, tid, mediaType);
-			// Tell APT to trigger the app launch and set the status of this app to exit
-			APT_DoApplicationJump(param, sizeof(param), hmac);
+				APT_PrepareToDoApplicationJump(0, tid, mediaType);
+				// Tell APT to trigger the app launch and set the status of this app to exit
+				APT_DoApplicationJump(param, sizeof(param), hmac);
+			}
 			break;
 		}
 	//}	// run
