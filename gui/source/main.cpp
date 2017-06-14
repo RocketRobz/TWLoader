@@ -1740,29 +1740,31 @@ int main()
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-		if (settings.ui.theme == 0) fade_whiteToBlack();
+		if (settings.ui.theme == 0 && aptMainLoop()) fade_whiteToBlack();
 	}
 
-	if (settings.ui.theme >= 1) {
-		sf2d_start_frame(GFX_TOP, GFX_LEFT);
-		sf2d_draw_texture(r4loadingtex, 40, 0);
-		sf2d_end_frame();
-		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-		sf2d_draw_texture(r4loadingtex, 40, 0);
-		sf2d_end_frame();
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-	} else {
-		setTextColor(RGBA8(255, 255, 255, 255));
-		sf2d_start_frame(GFX_TOP, GFX_LEFT);
-		sf2d_end_frame();
-		sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-		sf2d_end_frame();
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		renderText(12, 16, 0.5f, 0.5f, false, "Loading...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+	if (aptMainLoop()) {
+		if (settings.ui.theme >= 1) {
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_draw_texture(r4loadingtex, 40, 0);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+			sf2d_draw_texture(r4loadingtex, 40, 0);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		} else {
+			setTextColor(RGBA8(255, 255, 255, 255));
+			sf2d_start_frame(GFX_TOP, GFX_LEFT);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
+			sf2d_end_frame();
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			renderText(12, 16, 0.5f, 0.5f, false, "Loading...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		}
 	}
 	
 	// Loop as long as the status is not exit
@@ -1785,7 +1787,7 @@ int main()
 		settingsResetSubScreenMode();
 	}
 
-	if (logEnabled)	LogFM("Main.aptMainLoop", "aptMainLoop is running");
+	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "aptMainLoop is running");
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
