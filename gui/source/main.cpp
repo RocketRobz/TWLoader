@@ -2,6 +2,7 @@
 #define _GNU_SOURCE 1
 #include "main.h"
 
+#include "dumpdsp.h"
 #include "dsbootsplash.h"
 #include "download.h"
 #include "settings.h"
@@ -1500,6 +1501,7 @@ int main()
 	if (logEnabled)	createLog();
 
 	// make folders if they don't exist
+	mkdir("sdmc:/3ds", 0777);	// For DSP dump
 	mkdir("sdmc:/_nds", 0777);
 	mkdir("sdmc:/_nds/twloader", 0777);
 	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
@@ -1620,7 +1622,31 @@ int main()
 		sf2d_swapbuffers();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found");
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
+		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm not found.\n"
+			"Dumping DSP...");
+		sf2d_end_frame();
+		sf2d_swapbuffers();
+		dumpDsp();
+		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+			ndspInit();
+			dspfirmfound = true;
+			settings.ui.showbootscreen = 0;
+		}
+		for (int i = 0; i < 90; i++) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			if (!isDemo) {
+				renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+					"Running without sound.\n"
+					"(NTR/TWL mode will still have sound.)");
+			} else {
+				renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+					"Running without sound.");
+			}
+			sf2d_end_frame();
+			sf2d_swapbuffers();
+		}
 	}
 
 	bool musicbool = false;

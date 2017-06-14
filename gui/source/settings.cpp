@@ -1867,7 +1867,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "CUSTOM_BOTTOM", settings.ui.custombot);
 	settingsini.SetInt("FRONTEND", "TOP_LAYOUT", settings.romselect.toplayout);
 	if (!isDemo) settingsini.SetInt("FRONTEND", "FILETYPE", settings.ui.filetype);
-	settingsini.SetInt("FRONTEND", "SHOW_BOOT_ANIMATION", settings.ui.showbootscreen);
+	if (dspfirmfound) settingsini.SetInt("FRONTEND", "SHOW_BOOT_ANIMATION", settings.ui.showbootscreen);
 	settingsini.SetInt("FRONTEND", "BOOT_ANIMATION", settings.ui.bootscreen);
 	settingsini.SetInt("FRONTEND", "HEALTH&SAFETY_MSG", settings.ui.healthsafety);
 	settingsini.SetInt("FRONTEND", "AUTOUPDATE", settings.ui.autoupdate);
