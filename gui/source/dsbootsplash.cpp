@@ -248,8 +248,8 @@ void bootSplash() {
 		if (topoPos < 80) topoPos += 2;
 		else {
 			topoPos = 80;
-			if (!bootsoundplayed && !fadeout && dspfirmfound) {
-				sfx_boot->play();
+			if (!bootsoundplayed && !fadeout) {
+				if(dspfirmfound) sfx_boot->play();
 				bootsoundplayed = true;
 			}
 			oeffects = true;
