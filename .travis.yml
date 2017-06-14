@@ -13,7 +13,7 @@ before_install:
 
 install:
   - sudo perl devkitARMupdate.pl  
-  - wget --no-check-certificate https://codeload.github.com/smealum/ctrulib/zip/master -O /tmp/ctrulib.zip
+  - wget --no-check-certificate https://www.dropbox.com/s/di24n3crhhxevc7/ctrulib-master.zip?dl=1 -O /tmp/ctrulib.zip
   - unzip /tmp/ctrulib.zip
   - cd ctrulib-master/libctru
   - make && sudo make install
@@ -21,8 +21,7 @@ install:
   - wget --no-check-certificate https://www.dropbox.com/s/v2n6pmvh1dd4rzo/citro3d-master.zip?dl=1 -O /tmp/citro3d.zip
   - unzip /tmp/citro3d.zip
   - cd citro3d-master
-  - make -Werror=deprecated-declarations
-  - sudo make install
+  - make && sudo make install
   - cd ..  
   - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
