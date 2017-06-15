@@ -1632,9 +1632,9 @@ int main()
 		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 			ndspInit();
 			dspfirmfound = true;
-			settings.ui.showbootscreen = 0;
 		} else {
 			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
+			settings.ui.showbootscreen = 0;
 			for (int i = 0; i < 90; i++) {
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (!isDemo) {
