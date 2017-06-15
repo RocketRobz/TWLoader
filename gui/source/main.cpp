@@ -2469,18 +2469,18 @@ int main()
 					}
 					sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 					sf2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-					// Draw the "Prev" and "Next" text for X/Y.
+					// Draw the "Previous" and "Next" text for X/Y.
 					u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
-					renderText(17, LshoulderYpos+4, 0.30, 0.50, false, "Previous Page");
+					renderText(17, LshoulderYpos+4, 0.50, 0.50, false, "Previous");
 
 					lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
 							? RGBA8(0, 0, 0, 255)
 							: RGBA8(127, 127, 127, 255);
 					setTextColor(lr_color);
-					renderText(332, RshoulderYpos+4, 0.40, 0.50, false, "Next Page");
+					renderText(332, RshoulderYpos+4, 0.50, 0.50, false, "Next");
 
 					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 					sf2d_end_frame();
