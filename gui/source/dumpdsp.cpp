@@ -245,7 +245,7 @@ Result dumpCode(u64 tid , char* path)
 
 	ret = FSFILE_GetSize(fileHandle, &fileSize);
 	if(ret)return ret;
-	fileBuffer = malloc(fileSize);
+	fileBuffer = (u8*)malloc(fileSize);
 	if(ret)return ret;
 	ret = FSFILE_Read(fileHandle, &bytesRead, 0x0, fileBuffer, fileSize);
 	if(ret)return ret;
@@ -253,7 +253,7 @@ Result dumpCode(u64 tid , char* path)
 	if(ret)return ret;
 
 	u32 decompressedSize = lzss_get_decompressed_size(fileBuffer, fileSize);
-	u8* decompressedBuffer = linearMemAlign(decompressedSize, 0x1000);
+	u8* decompressedBuffer = (u8*)linearMemAlign(decompressedSize, 0x1000);
 	if(!decompressedBuffer)return 1;
 
 	lzss_decompress(fileBuffer, fileSize, decompressedBuffer, decompressedSize);
@@ -297,7 +297,7 @@ Result dumpCode(u64 tid , char* path)
 	return 0;
 }
 
-void dumpDSP()
+void dumpDsp()
 {
 	int i = 0;
 	Result res;
