@@ -1633,19 +1633,21 @@ int main()
 			ndspInit();
 			dspfirmfound = true;
 			settings.ui.showbootscreen = 0;
-		}
-		for (int i = 0; i < 90; i++) {
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			if (!isDemo) {
-				renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
-					"Running without sound.\n"
-					"(NTR/TWL mode will still have sound.)");
-			} else {
-				renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
-					"Running without sound.");
+		} else {
+			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
+			for (int i = 0; i < 90; i++) {
+				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				if (!isDemo) {
+					renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+						"Running without sound.\n"
+						"(NTR/TWL mode will still have sound.)");
+				} else {
+					renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+						"Running without sound.");
+				}
+				sf2d_end_frame();
+				sf2d_swapbuffers();
 			}
-			sf2d_end_frame();
-			sf2d_swapbuffers();
 		}
 	}
 
