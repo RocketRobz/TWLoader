@@ -1,4 +1,4 @@
-// for strcasestr()
+﻿// for strcasestr()
 #define _GNU_SOURCE 1
 #include "main.h"
 
@@ -92,6 +92,8 @@ RomSelect_Mode menudboxmode = DBOX_MODE_OPTIONS; */
 enum MenuDBox_Mode {
 	DBOX_MODE_OPTIONS = 0,	// Options
 	DBOX_MODE_SETTINGS = 1,	// Game Settings
+	DBOX_MODE_DELETE = 2,	// Delete confirmation
+	DBOX_MODE_DELETED = 3,	// Title deleted message
 };
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
@@ -1098,8 +1100,68 @@ static void drawMenuDialogBox(void)
 	drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	sf2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	sf2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	renderText_w(240, menudbox_Ypos+199, 0.50, 0.50, false, TR(STR_BACK));
-	if (menudboxmode == DBOX_MODE_SETTINGS) {
+	if (menudboxmode == DBOX_MODE_DELETED) {
+		renderText(244, menudbox_Ypos+199, 0.50, 0.50, false, ": OK");
+
+		setTextColor(RGBA8(0, 0, 0, 255));
+		renderText(64, 112+menudbox_Ypos, 0.50, 0.50, false, "Deleted.");
+	} else if (menudboxmode == DBOX_MODE_DELETE) {
+		renderText(244, menudbox_Ypos+199, 0.50, 0.50, false, ": No");
+
+		sf2d_draw_texture(dboxtex_buttonback, 143, menudbox_Ypos+193);
+		renderText(152, menudbox_Ypos+199, 0.50, 0.50, false, ": Yes");
+		
+		bnriconnum = settings.ui.cursorPosition;
+		ChangeBNRIconNo();
+		sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+		sf2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		
+		if (settings.ui.cursorPosition >= 0) {
+			setTextColor(RGBA8(0, 0, 0, 255));
+			int y = 16, dy = 19;
+			// Print the banner text, center-aligned.
+			const size_t banner_lines = std::min(3U, romsel_gameline.size());
+			for (size_t i = 0; i < banner_lines; i++, y += dy) {
+				// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+				// sftd_draw_wtext(font_b, 72+(240-text_width)/2, y+menudbox_Ypos, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+				renderText_w(72, y+menudbox_Ypos, 0.60, 0.60, false, romsel_gameline[i].c_str());
+			}
+			// sftd_draw_wtext(font, 64, 72+menudbox_Ypos, RGBA8(127, 127, 127, 255), 12, romsel_filename_w.c_str());
+			setTextColor(RGBA8(127, 127, 127, 255));
+			renderText_w(16, 72+menudbox_Ypos, 0.50, 0.50, false, romsel_filename_w.c_str());
+		}
+		
+		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		char romsel_counter1[16];
+		char romsel_counter2[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);		
+		if(matching_files.size() == 0){
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+		}else{
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+		}
+		
+		setTextColor(RGBA8(0, 0, 0, 255));
+		if (file_count < 100) {
+			renderText(16, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter1);
+			renderText(35, 204+menudbox_Ypos, 0.50, 0.50, false, "/");
+			renderText(40, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter2);
+		} else {
+			renderText(16, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter1);
+			renderText(43, 204+menudbox_Ypos, 0.50, 0.50, false, "/");
+			renderText(48, 204+menudbox_Ypos, 0.50, 0.50, false, romsel_counter2);
+		}
+		
+		setTextColor(RGBA8(0, 0, 0, 255));
+		if (settings.twl.forwarder) {
+			renderText(32, 128+menudbox_Ypos, 0.50, 0.50, false, "Are you sure you want to delete this title?\n" "(ROM and save data on the flashcard will be kept.)");
+		} else {
+			renderText(32, 128+menudbox_Ypos, 0.50, 0.50, false, "Are you sure you want to delete this title?\n" "(Save data will be kept.)");
+		}
+	} else if (menudboxmode == DBOX_MODE_SETTINGS) {
+		renderText_w(240, menudbox_Ypos+199, 0.50, 0.50, false, TR(STR_BACK));
+
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		sf2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
@@ -1224,6 +1286,8 @@ static void drawMenuDialogBox(void)
 			}
 		}
 	} else {
+		renderText_w(240, menudbox_Ypos+199, 0.50, 0.50, false, TR(STR_BACK));
+
 		// UI options.
 		const struct {
 			int x;
@@ -4003,7 +4067,17 @@ int main()
 							addgametodeletequeue = true;							
 						}
 					} else if((hDown & KEY_X) && settings.ui.cursorPosition >= 0 && showbubble) {
-						buttondeletegame = true;
+						// Show delete confirmation.
+						menudboxmode = DBOX_MODE_DELETE;
+						if (!showdialogbox_menu) {
+							if (menudbox_Ypos == -240) {
+								showdialogbox_menu = true;
+								menu_ctrlset = CTRL_SET_DBOX;
+								// Reset the cursor positions.
+								startmenu_cursorPosition = 0;
+								gamesettings_cursorPosition = 0;
+							}
+						}
 					}
 					if(hDown & KEY_Y) {
 						if (dspfirmfound) {
@@ -4045,91 +4119,6 @@ int main()
 						std::sort(delete_queue.begin(), delete_queue.end());
 					}
 					
-					if(buttondeletegame) {
-						// Delete game mode.
-						buttondeletegame = false; // Prevent deleting by accident.
-						
-						if(delete_queue.size() != 0) {
-							vector<string> delete_queue_copy = delete_queue; // Copy the vector 'cause we cannot delete while iterating it.
-							
-							std::string rom_iter;
-							if (settings.twl.forwarder) {
-								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
-									
-									if(matching_files.size() == 0){
-										rom_iter = fcfiles.at(settings.ui.cursorPosition);
-									} else {
-										rom_iter = matching_files.at(settings.ui.cursorPosition);
-									}
-									
-									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
-										// ROM found.
-										deletemode_internal(ROM_FLASHCARD, rom_iter);										
-										delete_queue.erase(iter);
-										if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
-									}
-								}
-
-							} else {				
-								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
-									
-									if(matching_files.size() == 0){
-										rom_iter = files.at(settings.ui.cursorPosition);
-									} else {
-										rom_iter = matching_files.at(settings.ui.cursorPosition);
-									}
-									
-									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
-										// ROM found.										
-										deletemode_internal(ROM_SD, rom_iter);										
-										delete_queue.erase(iter);
-										if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
-									}
-								}
-							}
-
-							if(delete_queue.size() != 0) {
-								if (logEnabled)	LogFM("Delete mode", "Error detected. Cannot clear vector");
-							} else {
-								delete_queue.clear();
-								delete_queue_copy.clear();
-							}
-
-						} else {
-							// We want to delete only one game
-							
-							std::string del_rom;
-							if (settings.twl.forwarder) {
-								if(matching_files.size() == 0){
-									del_rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-								} else {
-									del_rom = matching_files.at(settings.ui.cursorPosition).c_str();
-								}
-								deletemode_internal(ROM_FLASHCARD, del_rom);
-							} else {
-								if(matching_files.size() == 0){
-									del_rom = files.at(settings.ui.cursorPosition);
-								} else {
-									del_rom = matching_files.at(settings.ui.cursorPosition);
-								}
-								deletemode_internal(ROM_SD, del_rom);
-							}
-						}
-						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
-						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
-
-						settings.ui.pagenum = 0; // Go to page 0
-						settings.ui.cursorPosition = 0; // Move the cursor to 0
-						storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
-						scrollwindowXmovepos = 0; // Move the cursor to 0
-						titleboxXmovepos = 0; // Move the cursor to 0
-						boxartXmovepos = 0; // Move the cursor to 0
-						boxarttexloaded = false; // Reload boxarts
-						bnricontexloaded = false; // Reload banner icons
-						loadboxartnum = 0+settings.ui.pagenum*20;
-						loadbnriconnum = 0+settings.ui.pagenum*20;
-						bannertextloaded = false; // Reload banner text after deletion
-					}
 					hidTouchRead(&touch);
 					if(hDown & KEY_TOUCH){
 						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
@@ -4344,7 +4333,22 @@ int main()
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					hidTouchRead(&touch);
 					
-					if (menudboxmode == DBOX_MODE_OPTIONS) {
+					if (menudboxmode == DBOX_MODE_DELETED) {
+						if (hDown & (KEY_A | KEY_B)) {
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						}
+					} else if (menudboxmode == DBOX_MODE_DELETE) {
+						if (hDown & KEY_A) {
+							buttondeletegame = true;
+							menudboxmode = DBOX_MODE_DELETED;
+						} else if (hDown & KEY_B) {
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						}
+					} else if (menudboxmode == DBOX_MODE_OPTIONS) {
 						if (hDown & KEY_SELECT) {
 							if (settings.ui.cursorPosition >= 0 && showbubble) {
 								// Switch to game-specific settings.
@@ -4826,6 +4830,92 @@ int main()
 						}
 					}
 					
+					if(buttondeletegame) {
+						// Delete game mode.
+						buttondeletegame = false; // Prevent deleting by accident.
+						
+						if(delete_queue.size() != 0) {
+							vector<string> delete_queue_copy = delete_queue; // Copy the vector 'cause we cannot delete while iterating it.
+							
+							std::string rom_iter;
+							if (settings.twl.forwarder) {
+								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
+									
+									if(matching_files.size() == 0){
+										rom_iter = fcfiles.at(settings.ui.cursorPosition);
+									} else {
+										rom_iter = matching_files.at(settings.ui.cursorPosition);
+									}
+									
+									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
+										// ROM found.
+										deletemode_internal(ROM_FLASHCARD, rom_iter);										
+										delete_queue.erase(iter);
+										if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
+									}
+								}
+
+							} else {				
+								for (auto iter = delete_queue_copy.cbegin(); iter != delete_queue_copy.cend(); ++iter) {
+									
+									if(matching_files.size() == 0){
+										rom_iter = files.at(settings.ui.cursorPosition);
+									} else {
+										rom_iter = matching_files.at(settings.ui.cursorPosition);
+									}
+									
+									if (strcasestr(iter->c_str(), rom_iter.c_str()) != NULL) {
+										// ROM found.										
+										deletemode_internal(ROM_SD, rom_iter);										
+										delete_queue.erase(iter);
+										if (logEnabled)	LogFMA("Delete mode", "Rom deleted from queue", rom_iter.c_str());
+									}
+								}
+							}
+
+							if(delete_queue.size() != 0) {
+								if (logEnabled)	LogFM("Delete mode", "Error detected. Cannot clear vector");
+							} else {
+								delete_queue.clear();
+								delete_queue_copy.clear();
+							}
+
+						} else {
+							// We want to delete only one game
+							
+							std::string del_rom;
+							if (settings.twl.forwarder) {
+								if(matching_files.size() == 0){
+									del_rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+								} else {
+									del_rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
+								deletemode_internal(ROM_FLASHCARD, del_rom);
+							} else {
+								if(matching_files.size() == 0){
+									del_rom = files.at(settings.ui.cursorPosition);
+								} else {
+									del_rom = matching_files.at(settings.ui.cursorPosition);
+								}
+								deletemode_internal(ROM_SD, del_rom);
+							}
+						}
+						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
+						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+
+						settings.ui.pagenum = 0; // Go to page 0
+						settings.ui.cursorPosition = 0; // Move the cursor to 0
+						storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
+						scrollwindowXmovepos = 0; // Move the cursor to 0
+						titleboxXmovepos = 0; // Move the cursor to 0
+						boxartXmovepos = 0; // Move the cursor to 0
+						boxarttexloaded = false; // Reload boxarts
+						bnricontexloaded = false; // Reload banner icons
+						loadboxartnum = 0+settings.ui.pagenum*20;
+						loadbnriconnum = 0+settings.ui.pagenum*20;
+						bannertextloaded = false; // Reload banner text after deletion
+					}
+
 				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
