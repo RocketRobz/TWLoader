@@ -63,14 +63,13 @@ bool checkWifiStatus(void) {
 		u32 wifiStatus;
 		bool res = false;
 
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
+		if (screenmode != SCREEN_MODE_SETTINGS) {
+			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			setTextColor(RGBA8(255, 255, 255, 255));
+			renderText(12, 16, 0.5f, 0.5f, false, "Checking Wi-Fi status...");
+			sf2d_end_frame();
+			sf2d_swapbuffers();
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 16, 0.5f, 0.5f, false, "Checking Wi-Fi status...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
 
 		if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
 			if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
