@@ -3344,7 +3344,7 @@ int main()
 							const size_t banner_lines = std::min(3U, romsel_gameline.size());
 							for (size_t i = 0; i < banner_lines; i++, y += dy) {
 								// const int text_width = sftd_get_wtext_width(font_b, 12, romsel_gameline[i].c_str());
-								const int text_width = 0;
+								const int text_width = 180;
 								setTextColor(RGBA8(0, 0, 0, 255)); // black
 								renderText_w(84+(192-text_width)/2, y, 0.55, 0.55, false, romsel_gameline[i].c_str());
 							}
