@@ -419,6 +419,7 @@ void bootSplash() {
 		switch (settings.ui.language) {
 			case 1:
 			default:
+			// English
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 12, 16);
 					setTextColor(RGBA8(0, 0, 0, 255));
@@ -437,6 +438,7 @@ void bootSplash() {
 				}
 				break;
 			case 2:
+			// French
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 12, 16);
 					setTextColor(RGBA8(0, 0, 0, 255));
@@ -456,6 +458,7 @@ void bootSplash() {
 				}
 				break;
 			case 3:
+			// German
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 12, 16);
 					setTextColor(RGBA8(0, 0, 0, 255));
@@ -474,7 +477,28 @@ void bootSplash() {
 					renderText_w(14, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
+			case 4:
+			// Italian
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 12, 16);
+					setTextColor(RGBA8(0, 0, 0, 255));
+					renderText_w(34, 19, 0.60, 0.60, false, TR(STR_DSSPLASH_WARNING_HS));
+					renderText_w(22, 55, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS1));
+					renderText_w(30, 75, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS2));
+					renderText_w(24, 95, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(70, 115, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS4));
+					renderText_w(21, 147, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS5));
+					renderText_w(49, 161, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS6));
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText_w(50, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
+				}
+				if (touchtocontinue_show) {
+					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
+					renderText_w(34, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
+				}
+				break;
 			case 5:
+			// Spanish
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 12, 16);
 					setTextColor(RGBA8(0, 0, 0, 255));
@@ -495,6 +519,7 @@ void bootSplash() {
 				break;
 			case 6:
 			case 11:
+			// Chinese
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 49, 12);
 					sf2d_draw_texture(hstexttex, 0, 0);
@@ -506,6 +531,7 @@ void bootSplash() {
 				}
 				break;
 			case 7:
+			// Korean
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 29, 10);
 					sf2d_draw_texture(hstexttex, 0, 0);
