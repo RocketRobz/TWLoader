@@ -1601,6 +1601,8 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
+	
+	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
 	LoadSettings();	
 	if (settings.twl.bootstrapfile == 2) {
