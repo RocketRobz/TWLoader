@@ -763,9 +763,9 @@ void DownloadTWLoaderCIAs(void) {
 
 			if(stat("sdmc:/cia",&st) == 0){		
 				// Use root/cia folder instead
-				resNAND = downloadFile(nand_part2_url.c_str(),"/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+				resNAND_STG2 = downloadFile(nand_part2_url.c_str(),"/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
 			}else{		
-				resNAND = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+				resNAND_STG2 = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
 			}
 			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -939,6 +939,276 @@ void DownloadTWLoaderCIAs(void) {
 			sf2d_swapbuffers();
 		}
 	}
+}
+
+/**
+ * Check for missing files, and download them.
+ */
+int DownloadMissingFiles(void) {
+	u32 responseCode = 0;
+	httpcContext context;	
+	
+	httpcInit(0);
+	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		return -1;
+	}
+	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		return -1;
+	}
+	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		return -1;
+	}
+	if(R_FAILED(httpcBeginRequest(&context))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		return -1;
+	}
+	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
+		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		return -1;
+	}
+    if (responseCode != 200) {
+		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		return -1;
+	}
+	
+	u32 size = 0;
+	httpcGetDownloadSizeState(&context, NULL, &size);	
+	char* jsonText = (char*) calloc(sizeof(char), size);
+	if (logEnabled) LogFM("checkUpdate", "Downloading JSON info.");
+	if(jsonText != NULL) {
+		u32 bytesRead = 0;
+		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
+		json_value* json = json_parse(jsonText, size);
+		if (logEnabled) LogFM("checkUpdate", "JSON read.");
+
+		if(json != NULL) {
+			if(json->type == json_object) { // {} are objects, [] are arrays				
+				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
+
+				json_value* val;
+				json_value* val2;
+				ReadJson result;
+				
+				val = json->u.object.values[1].value;
+				val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "not_major", "not_minor", "not_micro", "nand_url", "nand_null", "nand_null", "nand_null", "nand_null");
+				nand_url = result.strvalue4.c_str();				
+
+				val2 = val->u.object.values[1].value;
+				result = internal_json_reader(json, val2, "p2_not_major", "p2_not_minor", "p2_not_micro", "nand_part2_url", "part2_null", "part2_null", "part2_null", "part2_null");
+				nand_part2_url = result.strvalue4.c_str();				
+				
+				val2 = val->u.object.values[2].value;
+				result = internal_json_reader(json, val2, "twld_not_major", "twld_not_minor", "twld_not_micro", "nand_twld_url", "twld_null", "twld_null", "twld_null", "twld_null");
+				nand_twld_url = result.strvalue4.c_str();				
+				
+				// Search in prebuilds object
+				val = json->u.object.values[2].value;
+				val2 = val->u.object.values[0].value;
+				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null");
+				ace_rpg_url = result.strvalue4.c_str();
+				
+				val2 = val->u.object.values[1].value;
+				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null");
+				gbarunner2_url = result.strvalue4.c_str();
+				
+				val2 = val->u.object.values[2].value;
+				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null");
+				loadcard_dstt_url = result.strvalue4.c_str();
+				
+				val2 = val->u.object.values[3].value;
+				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url", "r4_null", "r4_null", "r4_null", "r4_null");
+				r4_url = result.strvalue4.c_str();
+
+				struct stat st;
+				
+				if (!checkTWLNANDSide()) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char twlnand_msg[] =
+						"Now installing missing CIA...\n"
+						"(TWLNAND side CIA (part 1))\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+
+					int res;
+					if(stat("sdmc:/cia",&st) == 0){		
+						// Use root/cia folder instead
+						res = downloadFile(nand_url.c_str(),"/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+					}else{		
+						res = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
+					}
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (!checkTWLNANDSide2()) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char twlnand2_msg[] =
+						"Now downloading latest TWLoader version...\n"
+						"(TWLNAND side CIA (part 2))\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+
+					int res;
+					if(stat("sdmc:/cia",&st) == 0){		
+						// Use root/cia folder instead
+						res = downloadFile(nand_part2_url.c_str(),"/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+					}else{		
+						res = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
+					}
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/twloader/TWLD.twldr", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char twlnandstg2_msg[] =
+						"Now downloading missing file...\n"
+						"(SD stage of (part 1 of) TWLNAND side)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, twlnandstg2_msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					
+					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/twloader/loadflashcard/ace_rpg.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading missing file...\n"
+						"(ace_rpg.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/GBARunner2.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading missing file...\n"
+						"(GBARunner2.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/loadcard_dstt.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading missing file...\n"
+						"(loadcard_dstt.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/twloader/loadflashcard/r4.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading missing file...\n"
+						"(r4.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+			}
+		}
+	}
+	return -1;
 }
 
 /**

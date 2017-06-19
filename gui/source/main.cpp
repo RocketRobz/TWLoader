@@ -1765,6 +1765,15 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 
+	// Download missing files
+	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
+		dontCheckWiFi = true;
+	}
+
+	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	sf2d_end_frame();
+	sf2d_swapbuffers();
+
 	// Scan the ROM directories.
 	scanRomDirectories();
 

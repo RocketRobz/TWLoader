@@ -40,6 +40,12 @@ int checkUpdate(void);
 void DownloadTWLoaderCIAs(void);
 
 /**
+ * Check for missing files, and download them.
+ * @return non-zero if an error occurred.
+ */
+int DownloadMissingFiles(void);
+
+/**
  * Update nds-bootstrap to the latest unofficial build.
  */
 void UpdateBootstrapUnofficial(void);
