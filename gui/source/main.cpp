@@ -119,6 +119,7 @@ int bnriconnum = 0;
 int bnriconframenum = 0;
 int loadbnriconnum = 0;
 int boxartnum = 0;
+int boxartpage = 0;
 int loadboxartnum = 0;
 const char* temptext;
 const char* musicpath = "romfs:/null.wav";
@@ -2103,7 +2104,7 @@ int main()
 				bnricontexloaded = true;
 				bnriconnum = 0+settings.ui.pagenum*20;
 			}			
-			if (!boxarttexloaded && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
+			if (!boxarttexloaded && !settings.romselect.toplayout && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
 				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
 				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
@@ -2276,13 +2277,15 @@ int main()
 					}
 				}
 				
-				// Load up to 6 boxarts.
-				if (loadboxartnum < 6+settings.ui.pagenum*20) {
-					boxartnum = loadboxartnum;
-					LoadBoxArt();
-				}
 				loadboxartnum++;
-				if (loadboxartnum == pagemax_ba) boxarttexloaded = true;
+				if (loadboxartnum == pagemax_ba) {
+					// Load up to 6 boxarts.
+					for (int i = 0+settings.ui.pagenum*20; i < 6+settings.ui.pagenum*20; i++) {
+						boxartnum = i+boxartpage*3;
+						LoadBoxArt();
+					}
+					boxarttexloaded = true;
+				}
 				boxartnum = 0+settings.ui.pagenum*20;
 			}
 			
@@ -2484,18 +2487,12 @@ int main()
 					sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
-							if (loadboxartnum < 6+settings.ui.pagenum*20) {
+							if (loadboxartnum != pagemax_ba) {
 								if (fadealpha == 0) {
 									setTextColor(RGBA8(255, 255, 255, 255));
-									renderText(112, 104, 0.50, 0.50, false, "Loading box art...");
+									renderText(112, 104, 0.50, 0.50, false, "Storing box art paths...");
 								}
 							} else {
-								if (loadboxartnum != pagemax_ba && fadealpha == 0) {
-									if (fadealpha == 0) {
-										setTextColor(RGBA8(255, 255, 255, 255));
-										renderText(112, 44, 0.50, 0.50, false, "Storing box art paths...");
-									}
-								}
 								boxartXpos = 136;
 								if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
 									if (settings.ui.cursorPosition < 2) {
@@ -2799,6 +2796,7 @@ int main()
 				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 15+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
+					boxartpage--;
 					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
 					boxartnum--;
@@ -2888,6 +2886,7 @@ int main()
 				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 16+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
+					boxartpage++;
 					boxartnum = settings.ui.cursorPosition+2;
 					LoadBoxArt();
 					boxartnum++;
@@ -3755,6 +3754,7 @@ int main()
 										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
 										bannertextloaded = false;
@@ -3770,6 +3770,7 @@ int main()
 										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
 										bannertextloaded = false;
@@ -3869,6 +3870,7 @@ int main()
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
+							boxartpage = 0;
 							loadboxartnum = 0+settings.ui.pagenum*20;
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 						}
@@ -3879,6 +3881,7 @@ int main()
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
+							boxartpage = 0;
 							loadboxartnum = 0+settings.ui.pagenum*20;
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 						}
@@ -3972,6 +3975,7 @@ int main()
 						settings.ui.pagenum = 0;
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+						boxartpage = 0;
 						loadboxartnum = 0+settings.ui.pagenum*20;
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						bannertextloaded = false;
@@ -4236,6 +4240,7 @@ int main()
 							// noromsfound = false;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
+							boxartpage = 0;
 							loadboxartnum = 0+settings.ui.pagenum*20;
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							if (dspfirmfound) {
@@ -4258,6 +4263,7 @@ int main()
 							// noromsfound = false;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
+							boxartpage = 0;
 							loadboxartnum = 0+settings.ui.pagenum*20;
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							if (dspfirmfound) {
@@ -4475,6 +4481,7 @@ int main()
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
+									boxartpage = 0;
 									loadboxartnum = 0+settings.ui.pagenum*20;
 									loadbnriconnum = 0+settings.ui.pagenum*20;
 								}
@@ -4572,6 +4579,7 @@ int main()
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
 									}
@@ -4812,6 +4820,7 @@ int main()
 						settings.twl.forwarder = !settings.twl.forwarder;
 						bnricontexloaded = false;
 						boxarttexloaded = false;
+						boxartpage = 0;
 						loadboxartnum = 0+settings.ui.pagenum*20;
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						if (dspfirmfound) {
@@ -4913,6 +4922,7 @@ int main()
 						boxartXmovepos = 0; // Move the cursor to 0
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+						boxartpage = 0;
 						loadboxartnum = 0+settings.ui.pagenum*20;
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						bannertextloaded = false; // Reload banner text after deletion
