@@ -455,6 +455,25 @@ void bootSplash() {
 					renderText_w(32, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
+			case 3:
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 12, 16);
+					setTextColor(RGBA8(0, 0, 0, 255));
+					renderText_w(35, 21, 0.50, 0.55, false, TR(STR_DSSPLASH_WARNING_HS));
+					renderText_w(32, 55, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS1));
+					renderText_w(44, 75, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS2));
+					renderText_w(42, 95, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS3));
+					renderText_w(58, 115, 0.40, 0.40, false, TR(STR_DSSPLASH_WARNING_HS4));
+					renderText_w(28, 147, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS5));
+					renderText_w(32, 161, 0.38, 0.45, false, TR(STR_DSSPLASH_WARNING_HS6));
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText_w(50, 178, 0.55, 0.55, false, TR(STR_DSSPLASH_WARNING_HS7));
+				}
+				if (touchtocontinue_show) {
+					setTextColor(RGBA8(0, 0, 0, touchtocontinue_alpha));
+					renderText_w(14, touchtocontinue_yPos, 0.55, 0.55, false, TR(STR_DSSPLASH_TOUCH));
+				}
+				break;
 			case 5:
 				if (settings.ui.healthsafety) {
 					sf2d_draw_texture(hstex, 12, 16);
