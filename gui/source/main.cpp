@@ -1155,7 +1155,7 @@ static void drawMenuDialogBox(void)
 		
 		setTextColor(RGBA8(0, 0, 0, 255));
 		if (settings.twl.forwarder) {
-			renderText(32, 128+menudbox_Ypos, 0.50, 0.50, false, "Are you sure you want to delete this title?\n" "(ROM and save data on the flashcard will be kept.)");
+			renderText(32, 128+menudbox_Ypos, 0.50, 0.50, false, "Are you sure you want to delete this title?\n" "(ROM and save data on the flashcard\n" "will be kept.)");
 		} else {
 			renderText(32, 128+menudbox_Ypos, 0.50, 0.50, false, "Are you sure you want to delete this title?\n" "(Save data will be kept.)");
 		}
