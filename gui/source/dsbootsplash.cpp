@@ -76,7 +76,10 @@ void bootSplash() {
 	sf2d_texture *nintendotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/nintendo.png", SF2D_PLACE_RAM);
 	sf2d_texture *hstexttex;
 	sf2d_texture *hstouchtex;
-	if (settings.ui.language == 6 || settings.ui.language == 11) {
+	if (settings.ui.language == 0) {
+		hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HS_JP.png", SF2D_PLACE_RAM);
+		hstouchtex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HStouch_JP.png", SF2D_PLACE_RAM);
+	} else if (settings.ui.language == 6 || settings.ui.language == 11) {
 		hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HS_CH.png", SF2D_PLACE_RAM);
 		hstouchtex = sfil_load_PNG_file("romfs:/graphics/BootSplash/HStouch_CH.png", SF2D_PLACE_RAM);
 	} else if (settings.ui.language == 7) {
@@ -167,10 +170,17 @@ void bootSplash() {
 	int bootSplash_fade = 255;
 	int i_alpha = 0;
 	int touchtocontinue_yPos;
-	if (settings.ui.healthsafety)
-		touchtocontinue_yPos = 209;
-	else
-		touchtocontinue_yPos = 124;
+	if (settings.ui.language == 0) {
+		if (settings.ui.healthsafety)
+			touchtocontinue_yPos = 200;
+		else
+			touchtocontinue_yPos = 115;
+	} else {
+		if (settings.ui.healthsafety)
+			touchtocontinue_yPos = 209;
+		else
+			touchtocontinue_yPos = 124;
+	}
 	bool touchtocontinue_show = false;
 	int touchtocontinue_alpha = 0;
 	bool touchtocontinue_fadein = true;
@@ -417,6 +427,18 @@ void bootSplash() {
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, 255));
 		switch (settings.ui.language) {
+			case 0:
+			// Japanese
+				if (settings.ui.healthsafety) {
+					sf2d_draw_texture(hstex, 55, 14);
+					sf2d_draw_texture(hstexttex, 0, 0);
+					setTextColor(RGBA8(61, 161, 191, 255));
+					renderText(64, 176, 0.55, 0.55, false, "www.nintendo.co.jp/anzen/");
+				}
+				if (touchtocontinue_show) {
+					sf2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
+				}
+				break;
 			case 1:
 			default:
 			// English
@@ -585,7 +607,7 @@ void bootSplash() {
 	bigotex = NULL;
 	sf2d_free_texture(nintendotex);
 	nintendotex = NULL;
-	if (settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
+	if (settings.ui.language == 0 || settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
 		sf2d_free_texture(hstexttex);
 		hstexttex = NULL;
 		sf2d_free_texture(hstouchtex);
