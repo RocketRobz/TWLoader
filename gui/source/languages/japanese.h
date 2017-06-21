@@ -7,82 +7,82 @@
 static const char *const lang_JP[STR_MAX] = {
 
 	/** DS/DSi boot screen **/
-	"警告 - 健康と安全",												// "WARNING - HEALTH AND SAFETY"
+	"警告 - 健康と安全",											// "WARNING - HEALTH AND SAFETY"
 	"プレイする前に、健康を読む",											// "BEFORE PLAYING, READ THE HEALTH"
-	"安全に関する注意事項",												// "AND SAFETY PRECAUTIONS BOOKLET"
+	"安全に関する注意事項",											// "AND SAFETY PRECAUTIONS BOOKLET"
 	"重要な情報",													// "FOR IMPORTANT INFORMATION"
-	"あなたの健康と安全について。",											// "ABOUT YOUR HEALTH AND SAFETY."
-	"あなたの地域のために余分なコピーを取得するには、オンラインで行こう",						// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"あなたの健康と安全について。",										// "ABOUT YOUR HEALTH AND SAFETY."
+	"あなたの地域のために余分なコピーを取得するには、オンラインで行こう",				// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
 	"www.nintendo.co.jp/anzen/",								// "www.nintendo.com/healthsafety/"
 	"",
 	
-	"続けるにはタッチスクリーンをタッチします。",										// "Touch the Touch Screen to continue."
+	"続けるにはタッチスクリーンをタッチします。",									// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
 	": HOMEメニューに戻る",											// "Return to HOME Menu"
 	"スタート",														// "START" (used on cartridge indicator)
 	"No cartridge",												// "No cartridge"
 	"Unknown Cartridge",										// "Unknown Cartridge"
-	"Settings",													// "Settings"
-	": Back",													// "B: Back"	
+	"セッティング",													// "Settings"
+	": バック",													// "B: Back"	
 	": Add Games",												// "Y: Add Games"
 
 	/** Settings: GUI **/
-	"Language",													// "Language"
-	"Theme",													// "Theme"
-	"Color",													// "Color"
-	"Menu color",												// "Menu Color"
-	"Show filename",											// "Show filename"
-	"Game counter",												// "Game counter"
+	"言語",														// "Language"
+	"テーマ",														// "Theme"
+	"セッティングの色",												// "Color"
+	"メニューの色",													// "Menu Color"
+	"表示するファイル名",												// "Show filename"
+	"ゲームのカウンター",												// "Game counter"
 	"Custom bottom image",										// "Custom bottom image"
 	"Auto-update TWLoader",										// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
-	"Update TWLoader",											// "Update TWLoader"
+	"TWLoaderの自動更新",											// "Update TWLoader"
 	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
 	"Health and Safety message",								// "Health and Safety message"
-	"Show Boot Screen",											// "Show Boot Screen"
+	"ブートスクリーンの見せる",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
-	"Rainbow LED",												// "Rainbow LED"
-	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
-	"VRAM boost",												// "VRAM boost"
+	"虹LED",														// "Rainbow LED"
+	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
+	"VRAMブースト",													// "VRAM boost"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
-	"Auto-update bootstrap",									// "Auto-update bootstrap"
-	"Bootstrap",												// "Bootstrap"
+	"ブートストラップの自動更新",											// "Auto-update bootstrap"
+	"ブートストラップ",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	": Update bootstrap (Official release)",					// "X: Update bootstrap (Official release)"
-	": Update bootstrap (Unofficial release)",					// "Y: Update bootstrap (Unofficial release)"
+	": ブートストラップを更新する (公式)",								// "X: Update bootstrap (Official release)"
+	": ブートストラップを更新する (民間)",								// "Y: Update bootstrap (Unofficial release)"
 
 	/** Settings: GUI values **/
 
 	// Color
-	"Gray",														// "Gray"
-	"Brown",													// "Brown"
-	"Red",														// "Red"
-	"Pink",												 		// "Pink"
-	"Orange",													// "Orange"
-	"Yellow",													// "Yellow"
-	"Yellow-Green",												// "Yellow-Green"
-	"Green 1",													// "Green 1"
-	"Green 2",													// "Green 2"
-	"Light green",												// "Light green"
-	"Sky blue",													// "Sky blue"
-	"Light blue",												// "Light blue"
-	"Blue",														// "Blue"
-	"Violet",													// "Violet"
-	"Purple",													// "Purple"
-	"Fuchsia",													// "Fuchsia"
+	"灰色",														// "Gray"
+	"茶色",														// "Brown"
+	"赤",														// "Red"
+	"桃色",												 		// "Pink"
+	"橙色",														// "Orange"
+	"黄色",														// "Yellow"
+	"黄海",														// "Yellow-Green"
+	"緑",														// "Green 1"
+	"碧色",														// "Green 2"
+	"黄緑",														// "Light green"
+	"空色",														// "Sky blue"
+	"水色",														// "Light blue"
+	"青",														// "Blue"
+	"濃紫",														// "Violet"
+	"紫",														// "Purple"
+	"濃桃",														// "Fuchsia"
 	"Red&blue",													// "Red and blue"
 	"Green&yellow",												// "Green and yellow"
-	"Christmas",												// "Christmas"
+	"クリスマス",													// "Christmas"
 
 	// Menu Color
-	"White",													// "White"
-	"Black",													// "Black"
+	"白",														// "White"
+	"黒",														// "Black"
 
 	/** Settings: GUI descriptions **/
 	"The language to use for the UI,",							// "The language to use for the UI,"
@@ -116,8 +116,8 @@ static const char *const lang_JP[STR_MAX] = {
 	"Pick a flashcard to use to",								// "Pick a flashcard to use to"
 	"run ROMs from it.",										// "run ROMs from it."
 
-	"See rainbow colors glowing in",							// "See rainbow colors glowing in"
-	"the Notification LED.",									// "the Notification LED."
+	"通知設定LEDの虹,"												// "See rainbow colors glowing in"
+																// "the Notification LED."
 
 	"Set to TWL to get rid of lags in some games.",				// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
@@ -137,7 +137,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"Displays some text before launched game.",					// "Displays some text before launched game."
 	"",															// (empty)
 
-	// "Locks the ARM9 SCFG_EXT,",									// "Locks the ARM9 SCFG_EXT,"
+	// "Locks the ARM9 SCFG_EXT,",								// "Locks the ARM9 SCFG_EXT,"
 	// "avoiding conflict with recent libnds.",					// "avoiding conflict with recent libnds."
 
 	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
@@ -148,23 +148,23 @@ static const char *const lang_JP[STR_MAX] = {
 
 	/** Start menu **/
 	// Options
-	"Game location",											// "Game location"
-	"Box Art: On",												// "Box Art: On"
-	"Box Art: Off",												// "Box Art: OFF"
-	"Start GBARunner2",											// "Start GBARunner2"
-	"Top border: On",											// "Top border: On"
-	"Top border: Off",											// "Top border: Off"
+	"ゲームロケーション",												// "Game location"
+	"Box Art: はい",												// "Box Art: On"
+	"Box Art: いいえ",												// "Box Art: OFF"
+	"GBARunner2スタート",											// "Start GBARunner2"
+	"Top border: はい",											// "Top border: On"
+	"Top border: いいえ",											// "Top border: Off"
 	"Unset donor ROM",											// "Unset donor rom"	
-	"Search",													// "Search"
+	"探す",														// "Search"
 	// Values
-	"SD Card",													// "SD Card"
-	"Flashcard",												// "Flashcard"
+	"SDカード",													// "SD Card"
+	"フラッシュカード",													// "Flashcard"
 	"Use the keyboard to find roms",							// "Use the keyboard to find roms"
 
 	/** Select menu **/
 	// Options
-	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
-	"VRAM boost",												// "VRAM boost"
+	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
+	"VRAMブースト",													// "VRAM boost"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"Set as donor ROM",											// "Set as donor ROM"
 	"Set LED color",											// "Set LED color"
@@ -172,7 +172,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"Default",													// "Default"
 
 	/** Sub-theme **/
-	"Sub-theme select: DSi Menu",								// "Sub-theme select: DSi Menu"
+	"Sub-theme select: DSiメニュー",								// "Sub-theme select: DSi Menu"
 	"Sub-theme select: R4",										// "Sub-theme select: R4"
 	"Sub-theme select: akMenu/Wood",							// "Sub-theme select: Wood"
 
@@ -181,8 +181,8 @@ static const char *const lang_JP[STR_MAX] = {
 	/** Settings others minor strings **/
 	"/: Save and Return",										// "A/B: Save and Return"
 	"Left/Right: Pick",											// "Left/Right: Pick"
-	"Settings: GUI",											// "Settings: GUI"
-	"Settings: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"
+	"セッティングのGUI:",												// "Settings: GUI"
+	"セッティングのNTR/TWLモード",										// "Settings: NTR/TWL-mode"
 
 };
 
