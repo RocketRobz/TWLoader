@@ -89,6 +89,8 @@ typedef struct _Settings_t {
 		int console;	// 0 = Off, 1 = On, 2 = On (Debug)
 		bool lockarm9scfgext;
 		
+		int donorSdkVer;
+		
 		int mpuregion; // Region 0, 1, 2, 3
 		int mpusize; // Size 0, 1, 3145728
 		

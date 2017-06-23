@@ -408,9 +408,10 @@ static int CreateGameSave(const char *filename) {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
+	game_TID[3] = 0;
 	fclose(f_nds_file);
 	
-	if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
+	if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
 		DialogBoxAppear(12, 72, "Creating save file...");
 		static const int BUFFER_SIZE = 4096;
 		char buffer[BUFFER_SIZE];
@@ -419,17 +420,13 @@ static int CreateGameSave(const char *filename) {
 		int savesize = 524288;	// 512KB (default size for most games)
 		
 		// Set save size to 1MB for the following games
-		if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-			strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-			strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-			strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+		if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
 		{
 			savesize = 1048576;
 		}
 
 		// Set save size to 32MB for the following games
-		if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-			strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+		if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
 		{
 			savesize = 1048576*32;
 		}
@@ -445,6 +442,89 @@ static int CreateGameSave(const char *filename) {
 		DialogBoxDisappear(12, 72, "Done!");
 	}
 	return 0;
+}
+
+/**
+ * Set donor SDK version for a specific game.
+ */
+void SetDonorSDK() {
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+	
+	settings.twl.donorSdkVer = 0;
+
+	// Check for ROM hacks that need an SDK version.
+	static const char sdk2_list[][4] = {
+		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
+		"AMH",	// Metroid Prime Hunters
+		"ASM",	// Super Mario 64 DS
+	};
+	
+	static const char sdk3_list[][4] = {
+		"AMC",	// Mario Kart DS
+		"EKD",	// Ermii Kart DS (Mario Kart DS hack)
+		"ADA",	// Pokemon Diamond
+		"APA",	// Pokemon Pearl
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+	
+	static const char sdk4_list[][4] = {
+		"A6C",	// MegaMan Star Force - Dragon
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"YT7",	// SEGA Superstars Tennis
+		"AZL",	// Style Savvy
+	};
+
+	static const char sdk5_list[][4] = {
+		"CS3",	// Sonic and Sega All Stars Racing
+		"BXS",	// Sonic Colo(u)rs
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk2_list)/sizeof(sdk2_list[0]); i++) {
+		if (!memcmp(game_TID, sdk2_list[i], 3)) {
+			// Found a match.
+			settings.twl.donorSdkVer = 2;
+			break;
+		}
+	}
+	
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk3_list)/sizeof(sdk3_list[0]); i++) {
+		if (!memcmp(game_TID, sdk3_list[i], 3)) {
+			// Found a match.
+			settings.twl.donorSdkVer = 3;
+			break;
+		}
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk4_list)/sizeof(sdk4_list[0]); i++) {
+		if (!memcmp(game_TID, sdk4_list[i], 3)) {
+			// Found a match.
+			settings.twl.donorSdkVer = 4;
+			break;
+		}
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk5_list)/sizeof(sdk5_list[0]); i++) {
+		if (!memcmp(game_TID, sdk5_list[i], 3)) {
+			// Found a match.
+			settings.twl.donorSdkVer = 5;
+			break;
+		}
+	}
+
 }
 
 /**
@@ -699,8 +779,10 @@ static void SaveBootstrapConfig(void)
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.launchslot1) {
+			SetDonorSDK();
 			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "DONOR_SDK_VER", settings.twl.donorSdkVer);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			if (gbarunnervalue == 0) {
