@@ -4,7 +4,7 @@
 #include <3ds/types.h>
 
 // TRADITIONAL CHINESE
-static const char *const lang_EN[STR_MAX] = {
+static const char *const lang_TRCH[STR_MAX] = {
 
 	/** DS/DSi boot screen **/
 	"",
@@ -12,7 +12,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"",
 	"",
 	"",
-	"www.iQue.com/service/",									// "www.nintendo.com/healthandsafety/"
+	"www.iQue.com/service/",									// "www.nintendo.com/healthsafety/"
 	"",
 	"",
 	

@@ -13,7 +13,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"",
 	"",
 	"",
-	"www.nintendocaution.co.kr",								// "www.nintendo.com/healthandsafety/"
+	"www.nintendocaution.co.kr",								// "www.nintendo.com/healthsafety/"
 	"",
 	
 	"",

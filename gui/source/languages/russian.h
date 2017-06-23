@@ -13,7 +13,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"FOR IMPORTANT INFORMATION",								// "FOR IMPORTANT INFORMATION"
 	"ABOUT YOUR HEALTH AND SAFETY.",							// "ABOUT YOUR HEALTH AND SAFETY."
 	"TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT",		// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"www.nintendo.com/healthandsafety/",						// "www.nintendo.com/healthandsafety/"
+	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthsafety/"
 	"",
 	
 	"Touch the Touch Screen to continue.",						// "Touch the Touch Screen to continue."
