@@ -470,6 +470,7 @@ void SetDonorSDK() {
 	static const char sdk3_list[][4] = {
 		"AMC",	// Mario Kart DS
 		"EKD",	// Ermii Kart DS (Mario Kart DS hack)
+		"A2D",	// New Super Mario Bros.
 		"ADA",	// Pokemon Diamond
 		"APA",	// Pokemon Pearl
 		"ARZ",	// Rockman ZX/MegaMan ZX
@@ -525,6 +526,39 @@ void SetDonorSDK() {
 		}
 	}
 
+}
+
+/**
+ * Set compatibility check for a specific game.
+ */
+void SetCompatibilityCheck() {
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+	
+	settings.twl.run_timeout = true;
+
+	// Check for games that don't need compatibility checks.
+	static const char list[][4] = {
+		"###",	// Homebrew
+		"NTR",	// Download Play ROMs
+		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
+	};
+	
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
+		if (!memcmp(game_TID, list[i], 3)) {
+			// Found a match.
+			settings.twl.run_timeout = false;
+			break;
+		}
+	}
 }
 
 /**
@@ -780,9 +814,11 @@ static void SaveBootstrapConfig(void)
 		// Set ROM path if ROM is selected
 		if (!settings.twl.launchslot1) {
 			SetDonorSDK();
+			SetCompatibilityCheck();
 			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "DONOR_SDK_VER", settings.twl.donorSdkVer);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "CHECK_COMPATIBILITY", settings.twl.run_timeout);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			if (gbarunnervalue == 0) {
