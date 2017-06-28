@@ -226,54 +226,25 @@ Result http_read_internal(httpcContext* context, u32* bytesRead, void* buffer, u
     return res != (int) HTTPC_RESULTCODE_DOWNLOADPENDING ? res : 0;
 }
 
-struct ReadJson {
-    std::string strvalue1;
-    std::string strvalue2;
-    std::string strvalue3;
-    std::string strvalue4;
-    std::string strvalue5;
-    std::string strvalue6;
-    std::string strvalue7;
-    std::string strvalue8;
-};
+std::vector<std::string> internal_json_reader(json_value* json, json_value* val, vector<std::string> strNames) {
+	
+	std::vector<std::string> strvalues;
+	
+	for (int i = 0; i < (int) strNames.size(); i++) {
+		for(int j = 0; j < (int) json->u.object.length; j++) {
+			char* name = val->u.object.values[j].name;
+			int nameLen = val->u.object.values[j].name_length;
+			json_value* subVal = val->u.object.values[j].value;	
 
-ReadJson internal_json_reader(json_value* json, json_value* val,
-								std::string str1,
-								std::string str2,
-								std::string str3,
-								std::string str4,
-								std::string str5,
-								std::string str6,
-								std::string str7,
-								std::string str8)
-{
-	ReadJson rj;
-	for(u32 i = 0; i < (json->u.object.length -1); i++) {
-		// Create two variables that will store the values and it size
-		char* name = val->u.object.values[i].name;
-		u32 nameLen = val->u.object.values[i].name_length;
-		json_value* subVal = val->u.object.values[i].value;
-		if(subVal->type == json_string) {
-			if(strncmp(name, str1.c_str(), nameLen) == 0) {
-				rj.strvalue1 = subVal->u.string.ptr;
-			} else if(strncmp(name, str2.c_str(), nameLen) == 0) {
-				rj.strvalue2 = subVal->u.string.ptr;
-			} else if(strncmp(name, str3.c_str(), nameLen) == 0) {
-				rj.strvalue3 = subVal->u.string.ptr;
-			} else if(strncmp(name, str4.c_str(), nameLen) == 0) {
-				rj.strvalue4 = subVal->u.string.ptr;
-			} else if(strncmp(name, str5.c_str(), nameLen) == 0) {
-				rj.strvalue5 = subVal->u.string.ptr;
-			} else if(strncmp(name, str6.c_str(), nameLen) == 0) {
-				rj.strvalue6 = subVal->u.string.ptr;
-			} else if(strncmp(name, str7.c_str(), nameLen) == 0) {
-				rj.strvalue7 = subVal->u.string.ptr;
-			} else if(strncmp(name, str8.c_str(), nameLen) == 0) {
-				rj.strvalue8 = subVal->u.string.ptr;
+			if(subVal->type == json_string) {
+				if(strncmp(name, strNames[i].c_str(), nameLen) == 0) {
+					strvalues.push_back(std::string(subVal->u.string.ptr));
+				}
 			}
 		}
 	}
-	return rj;
+	
+	return strvalues;
 }
 
 /**
@@ -361,45 +332,99 @@ int checkUpdate(void) {
 				char read_nandstg2_minor[3];
 				char read_nandstg2_micro[3];
 				
-
-				// Search in GUI object
+				vector<std::string> strNames;
+				vector<std::string> strValues;
 				json_value* val = json->u.object.values[0].value;
-				ReadJson result = internal_json_reader(json, val, "latest_major", "latest_minor", "latest_micro", "gui_url", "gui_3dsx_url", "gui_smdh_url", "demo_gui_3dsx_url", "demo_gui_smdh_url");
-				strncpy(read_gui_major, result.strvalue1.c_str(), sizeof(read_gui_major));
-				strncpy(read_gui_minor, result.strvalue2.c_str(), sizeof(read_gui_minor));
-				strncpy(read_gui_micro, result.strvalue3.c_str(), sizeof(read_gui_micro));
-				gui_url = result.strvalue4.c_str();
-				gui_3dsx_url = result.strvalue5.c_str();
-				gui_smdh_url = result.strvalue6.c_str();
-				demo_gui_3dsx_url = result.strvalue7.c_str();
-				demo_gui_smdh_url = result.strvalue8.c_str();
-
-				// Search in NAND object.
-				val = json->u.object.values[1].value;
 				json_value* val2 = val->u.object.values[0].value;
-				result = internal_json_reader(json, val2, "not_major", "not_minor", "not_micro", "nand_url", "nand_null", "nand_null", "nand_null", "nand_null");
-				strncpy(read_nand_major, result.strvalue1.c_str(), sizeof(read_nand_major));
-				strncpy(read_nand_minor, result.strvalue2.c_str(), sizeof(read_nand_minor));
-				strncpy(read_nand_micro, result.strvalue3.c_str(), sizeof(read_nand_micro));
-				nand_url = result.strvalue4.c_str();				
+				
+				/** GUI SIDE CIA**/
+				strNames.push_back("latest_major");
+				strNames.push_back("latest_minor");
+				strNames.push_back("latest_micro");
+				strNames.push_back("gui_url");
 
-				// Search in NAND (part2) object.
+				strValues = internal_json_reader(json, val2, strNames);
+
+				strncpy(read_gui_major, strValues[0].c_str(), sizeof(read_gui_major));
+				strncpy(read_gui_minor, strValues[1].c_str(), sizeof(read_gui_minor));
+				strncpy(read_gui_micro, strValues[2].c_str(), sizeof(read_gui_micro));
+				
+				gui_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+
+				/** GUI SIDE 3DSX**/		
 				val2 = val->u.object.values[1].value;
-				result = internal_json_reader(json, val2, "p2_not_major", "p2_not_minor", "p2_not_micro", "nand_part2_url", "part2_null", "part2_null", "part2_null", "part2_null");
-				strncpy(read_nandpart2_major, result.strvalue1.c_str(), sizeof(read_nandpart2_major));
-				strncpy(read_nandpart2_minor, result.strvalue2.c_str(), sizeof(read_nandpart2_minor));
-				strncpy(read_nandpart2_micro, result.strvalue3.c_str(), sizeof(read_nandpart2_micro));
-				nand_part2_url = result.strvalue4.c_str();				
 
-				// Search in NAND STG2 object.
+				strNames.push_back("gui_3dsx_url");
+				strNames.push_back("gui_smdh_url");
+				strNames.push_back("demo_gui_3dsx_url");
+				strNames.push_back("demo_gui_smdh_url");
+
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				gui_3dsx_url = strValues[0];
+				gui_smdh_url = strValues[1];
+				demo_gui_3dsx_url = strValues[2];
+				demo_gui_smdh_url = strValues[3];
+				
+				strValues.clear();
+				strNames.clear();
+
+				/** NAND SIDE **/
+				val = json->u.object.values[1].value;
+				val2 = val->u.object.values[0].value;
+				strNames.push_back("not_major");
+				strNames.push_back("not_minor");
+				strNames.push_back("not_micro");
+				strNames.push_back("nand_url");
+
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				strncpy(read_nand_major, strValues[0].c_str(), sizeof(read_nand_major));
+				strncpy(read_nand_minor, strValues[1].c_str(), sizeof(read_nand_minor));
+				strncpy(read_nand_micro, strValues[2].c_str(), sizeof(read_nand_micro));
+				
+				nand_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+				
+				/** NAND SIDE PART 2 **/
+				val = json->u.object.values[1].value;
+				val2 = val->u.object.values[1].value;
+				strNames.push_back("p2_not_major");
+				strNames.push_back("p2_not_minor");
+				strNames.push_back("p2_not_micro");
+				strNames.push_back("nand_part2_url");
+
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				strncpy(read_nandpart2_major, strValues[0].c_str(), sizeof(read_nandpart2_major));
+				strncpy(read_nandpart2_minor, strValues[1].c_str(), sizeof(read_nandpart2_minor));
+				strncpy(read_nandpart2_micro, strValues[2].c_str(), sizeof(read_nandpart2_micro));
+				
+				nand_part2_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+				
+				/** NAND SIDE STG2 **/
+				val = json->u.object.values[1].value;
 				val2 = val->u.object.values[2].value;
-				result = internal_json_reader(json, val2, "twld_not_major", "twld_not_minor", "twld_not_micro", "nand_twld_url", "twld_null", "twld_null", "twld_null", "twld_null");
-				strncpy(read_nandstg2_major, result.strvalue1.c_str(), sizeof(read_nandstg2_major));
-				strncpy(read_nandstg2_minor, result.strvalue2.c_str(), sizeof(read_nandstg2_minor));
-				strncpy(read_nandstg2_micro, result.strvalue3.c_str(), sizeof(read_nandstg2_micro));
-				nand_twld_url = result.strvalue4.c_str();				
+				strNames.push_back("twld_not_major");
+				strNames.push_back("twld_not_minor");
+				strNames.push_back("twld_not_micro");
+				strNames.push_back("nand_twld_url");
 
-				// Store latest and current version of GUI and NAND.
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				strncpy(read_nandstg2_major, strValues[0].c_str(), sizeof(read_nandstg2_major));
+				strncpy(read_nandstg2_minor, strValues[1].c_str(), sizeof(read_nandstg2_minor));
+				strncpy(read_nandstg2_micro, strValues[2].c_str(), sizeof(read_nandstg2_micro));
+				
+				nand_twld_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+				
 				char latestVersion[16];
 				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
 				
@@ -419,6 +444,7 @@ int checkUpdate(void) {
 				if (logEnabled)	LogFMA("checkUpdate", "Reading GUI json version:", latestVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND json version:", latestNANDVersion);
 				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND STG2 json version:", latestNANDSTG2Version);
+				if (logEnabled)	LogFMA("checkUpdate", "Reading NAND Part 2 json version:", latestNAND2Version);
 				
 				// Check if current version is the latest (GUI)
 				if(strcmp(currentVersion, latestVersion) != 0) {
@@ -503,48 +529,87 @@ int checkUpdate(void) {
 				}
 								
 				// Search in prebuilds object
+				
+				/** RPG **/
 				val = json->u.object.values[2].value;
 				val2 = val->u.object.values[0].value;
-				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null");
-				ace_rpg_url = result.strvalue4.c_str();
+				strNames.push_back("ace_rpg_major");
+				strNames.push_back("ace_rpg_minor");
+				strNames.push_back("ace_rpg_micro");
+				strNames.push_back("ace_rpg_url");
+
+				strValues = internal_json_reader(json, val2, strNames);				
+				
+				ace_rpg_url = strValues[3];
 
 				char ace_rpg_version[16];
-				snprintf(ace_rpg_version, sizeof(ace_rpg_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				snprintf(ace_rpg_version, sizeof(ace_rpg_version), "%s.%s.%s", strValues[0].c_str(), strValues[1].c_str(), strValues[2].c_str());
 				if(strcmp(ace_rpg_version, currentVersion) > 0) {
 					updateACE_RPG = true;
 					if (logEnabled)	LogFM("checkUpdate", "Update available for ACE_RPG");	
 				}
 				
+				strValues.clear();
+				strNames.clear();
+
+				/** GBARunner2 **/
 				val2 = val->u.object.values[1].value;
-				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null");
-				gbarunner2_url = result.strvalue4.c_str();
+				strNames.push_back("GBARunner2_major");
+				strNames.push_back("GBARunner2_minor");
+				strNames.push_back("GBARunner2_micro");
+				strNames.push_back("GBARunner2_url");
+
+				strValues = internal_json_reader(json, val2, strNames);				
+				
+				gbarunner2_url = strValues[3];
 
 				char GBARunner2_version[16];
-				snprintf(GBARunner2_version, sizeof(GBARunner2_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				snprintf(GBARunner2_version, sizeof(GBARunner2_version), "%s.%s.%s", strValues[0].c_str(), strValues[1].c_str(), strValues[2].c_str());
 				if(strcmp(GBARunner2_version, currentVersion) > 0) {
 					updateGBARUNNER_2 = true;
-					if (logEnabled)	LogFM("checkUpdate", "Update available for GBARunner2");
+					if (logEnabled)	LogFM("checkUpdate", "Update available for GBARunner2");	
 				}
 				
+				strValues.clear();
+				strNames.clear();
+
+				/** DSTT **/
 				val2 = val->u.object.values[2].value;
-				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null");
-				loadcard_dstt_url = result.strvalue4.c_str();
+				strNames.push_back("loadcard_dstt_major");
+				strNames.push_back("loadcard_dstt_minor");
+				strNames.push_back("loadcard_dstt_micro");
+				strNames.push_back("loadcard_dstt_url");
+
+				strValues = internal_json_reader(json, val2, strNames);				
+				
+				loadcard_dstt_url = strValues[3];
+
 				char loadcard_dstt_version[16];
-				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				snprintf(loadcard_dstt_version, sizeof(loadcard_dstt_version), "%s.%s.%s", strValues[0].c_str(), strValues[1].c_str(), strValues[2].c_str());
 				if(strcmp(loadcard_dstt_version, currentVersion) > 0) {
 					updateLOADCARD_DSTT = true;
-					if (logEnabled)	LogFM("checkUpdate", "Update available for Loadcard_DSTT");
+					if (logEnabled)	LogFM("checkUpdate", "Update available for Loadcard_DSTT");	
 				}
 				
+				strValues.clear();
+				strNames.clear();
+
+				/** R4 **/
 				val2 = val->u.object.values[3].value;
-				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url", "r4_null", "r4_null", "r4_null", "r4_null");
-				r4_url = result.strvalue4.c_str();
+				strNames.push_back("r4_major");
+				strNames.push_back("r4_minor");
+				strNames.push_back("r4_micro");
+				strNames.push_back("r4_url");
+
+				strValues = internal_json_reader(json, val2, strNames);				
+				
+				r4_url = strValues[3];
 
 				char r4_version[16];
-				snprintf(r4_version, sizeof(r4_version), "%s.%s.%s", result.strvalue1.c_str(), result.strvalue2.c_str(), result.strvalue3.c_str());
+				snprintf(r4_version, sizeof(r4_version), "%s.%s.%s", strValues[0].c_str(), strValues[1].c_str(), strValues[2].c_str());
 				if(strcmp(r4_version, currentVersion) > 0) {
 					updateR4 = true;
-					if (logEnabled)	LogFM("checkUpdate", "Update available for R4");
+					if (logEnabled)	LogFM("checkUpdate", "Update available for R4");	
 				}
 			}
 		}
@@ -614,7 +679,6 @@ void DownloadTWLoaderCIAs(void) {
 	if(yestoupdate) {
 		int resGUI = -1;
 		int resGUI_3DSX = -1;
-		int resGUI_SMDH = -1;
 		int resNAND = -1;
 		int resNAND_part2 = -1;
 		int resNAND_STG2 = -1;
@@ -673,6 +737,8 @@ void DownloadTWLoaderCIAs(void) {
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 				
+				int resGUI_SMDH = -1;
+
 				if (isDemo) {
 					mkdir("sdmc:/3ds/TWLoader_demo", 0777);
 					resGUI_3DSX = downloadFile(demo_gui_3dsx_url.c_str(),"/3ds/TWLoader_demo/TWLoader_demo.3dsx", MEDIA_SD_FILE);
@@ -949,82 +1015,113 @@ int DownloadMissingFiles(void) {
 	
 	httpcInit(0);
 	if(R_FAILED(httpcOpenContext(&context, HTTPC_METHOD_GET, JSON_URL, 0))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error opening context.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error opening context.");
 		return -1;
 	}
 	if(R_FAILED(httpcAddRequestHeaderField(&context, "User-Agent", "TWLoader"))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error requesting header field.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error requesting header field.");
 		return -1;
 	}
 	if(R_FAILED(httpcSetSSLOpt(&context, SSLCOPT_DisableVerify))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error setting SSL certificate.");
 		return -1;
 	}
 	if(R_FAILED(httpcSetKeepAlive(&context, HTTPC_KEEPALIVE_ENABLED))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error while keeping alive the conection.");
 		return -1;
 	}
 	if(R_FAILED(httpcBeginRequest(&context))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error begining the request.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error begining the request.");
 		return -1;
 	}
 	if(R_FAILED(httpcGetResponseStatusCode(&context, &responseCode))) {
-		if (logEnabled)	LogFM("checkUpdate", "Error getting response code.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error getting response code.");
 		return -1;
 	}
     if (responseCode != 200) {
-		if (logEnabled)	LogFM("checkUpdate", "Error reaching the update.json file.");
+		if (logEnabled)	LogFM("DownloadMissingFiles", "Error reaching the update.json file.");
 		return -1;
 	}
 	
 	u32 size = 0;
 	httpcGetDownloadSizeState(&context, NULL, &size);	
 	char* jsonText = (char*) calloc(sizeof(char), size);
-	if (logEnabled) LogFM("checkUpdate", "Downloading JSON info.");
+	if (logEnabled) LogFM("DownloadMissingFiles", "Downloading JSON info.");
 	if(jsonText != NULL) {
 		u32 bytesRead = 0;
 		http_read_internal(&context, &bytesRead, (u8*) jsonText, size);
 		json_value* json = json_parse(jsonText, size);
-		if (logEnabled) LogFM("checkUpdate", "JSON read.");
+		if (logEnabled) LogFM("DownloadMissingFiles", "JSON read.");
 
 		if(json != NULL) {
 			if(json->type == json_object) { // {} are objects, [] are arrays				
-				if (logEnabled) LogFM("checkUpdate", "JSON main object read.");
+				if (logEnabled) LogFM("DownloadMissingFiles", "JSON main object read.");
 
 				json_value* val;
 				json_value* val2;
-				ReadJson result;
-				
+				vector<std::string> strNames;
+				vector<std::string> strValues;
 				val = json->u.object.values[1].value;
 				val2 = val->u.object.values[0].value;
-				result = internal_json_reader(json, val2, "not_major", "not_minor", "not_micro", "nand_url", "nand_null", "nand_null", "nand_null", "nand_null");
-				nand_url = result.strvalue4.c_str();				
-
-				val2 = val->u.object.values[1].value;
-				result = internal_json_reader(json, val2, "p2_not_major", "p2_not_minor", "p2_not_micro", "nand_part2_url", "part2_null", "part2_null", "part2_null", "part2_null");
-				nand_part2_url = result.strvalue4.c_str();				
 				
+				/** NAND SIDE **/ 
+				strNames.push_back("nand_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				nand_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
+				
+				/** NAND SIDE PART 2 **/
+				val2 = val->u.object.values[1].value;
+				strNames.push_back("nand_part2_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				nand_part2_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
+
+				/** NAND SIDE STG2 **/
 				val2 = val->u.object.values[2].value;
-				result = internal_json_reader(json, val2, "twld_not_major", "twld_not_minor", "twld_not_micro", "nand_twld_url", "twld_null", "twld_null", "twld_null", "twld_null");
-				nand_twld_url = result.strvalue4.c_str();				
+				strNames.push_back("nand_twld_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				nand_twld_url  = strValues[0];
+				strValues.clear();
+				strNames.clear();
 				
 				// Search in prebuilds object
+				
+				/** ACE PRG **/
 				val = json->u.object.values[2].value;
 				val2 = val->u.object.values[0].value;
-				result = internal_json_reader(json, val2, "ace_rpg_major", "ace_rpg_minor", "ace_rpg_micro", "ace_rpg_url", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null", "ace_rpg_null");
-				ace_rpg_url = result.strvalue4.c_str();
 				
-				val2 = val->u.object.values[1].value;
-				result = internal_json_reader(json, val2, "GBARunner2_major", "GBARunner2_minor", "GBARunner2_micro", "GBARunner2_url", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null", "GBARunner2_null");
-				gbarunner2_url = result.strvalue4.c_str();
-				
-				val2 = val->u.object.values[2].value;
-				result = internal_json_reader(json, val2, "loadcard_dstt_major", "loadcard_dstt_minor", "loadcard_dstt_micro", "loadcard_dstt_url", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null", "loadcard_dstt_null");
-				loadcard_dstt_url = result.strvalue4.c_str();
-				
-				val2 = val->u.object.values[3].value;
-				result = internal_json_reader(json, val2, "r4_major", "r4_minor", "r4_micro", "r4_url", "r4_null", "r4_null", "r4_null", "r4_null");
-				r4_url = result.strvalue4.c_str();
+				strNames.push_back("ace_rpg_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				ace_rpg_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
+
+				/** GBARunner2 **/
+				val2 = val->u.object.values[1].value;				
+				strNames.push_back("GBARunner2_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				gbarunner2_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
+
+				/** DSTT **/
+				val2 = val->u.object.values[2].value;				
+				strNames.push_back("loadcard_dstt_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				loadcard_dstt_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
+
+				/** R4 **/
+				val2 = val->u.object.values[3].value;				
+				strNames.push_back("r4_url");
+				strValues = internal_json_reader(json, val2, strNames);
+				r4_url = strValues[0];
+				strValues.clear();
+				strNames.clear();
 
 				struct stat st;
 				
@@ -1476,25 +1573,24 @@ int downloadBootstrapVersion(bool type)
 		if(json != NULL) {
 			if(json->type == json_object) {				
 				
-				json_value* val = json->u.object.values[3].value;
+				json_value* val = json->u.object.values[3].value;				
+				vector<std::string> strNames;
+				vector<std::string> strValues;
+								
+				/** Bootstrap **/
+				strNames.push_back("release_ver");
+				strNames.push_back("unofficial_ver");
+				strNames.push_back("release_url");
+				strNames.push_back("unofficial_url");
 
-				for(u32 i = 0; i < (json->u.object.length - 1); i++) {
-					char* name = val->u.object.values[i].name;
-					u32 nameLen = val->u.object.values[i].name_length;
-					json_value* subVal = val->u.object.values[i].value;
-					if(subVal->type == json_string) {
-						if(strncmp(name, "release_ver", nameLen) == 0) {
-							release_BS_ver = subVal->u.string.ptr;
-						} else if(strncmp(name, "unofficial_ver", nameLen) == 0) {
-							unofficial_BS_ver = subVal->u.string.ptr;
-						} else if(strncmp(name, "release_url", nameLen) == 0) {
-							release_BS_url = subVal->u.string.ptr;
-						} else if(strncmp(name, "unofficial_url", nameLen) == 0) {
-							unofficial_BS_url = subVal->u.string.ptr;
-						}
-					}
-				}
+				strValues = internal_json_reader(json, val, strNames);
 				
+				release_BS_ver = strValues[0];
+				unofficial_BS_ver = strValues[1];
+				release_BS_url = strValues[2];
+				unofficial_BS_url = strValues[3];
+				strValues.clear();
+				strNames.clear();				
 			}
 		}
 	}
