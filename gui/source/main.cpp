@@ -419,6 +419,18 @@ static int CreateGameSave(const char *filename) {
 
 		int savesize = 524288;	// 512KB (default size for most games)
 		
+		// Set save size to 8KB for the following games
+		if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+		{
+			savesize = 8192;
+		}
+
+		// Set save size to 256KB for the following games
+		if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+		{
+			savesize = 262144;
+		}
+
 		// Set save size to 1MB for the following games
 		if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
 		{
@@ -621,6 +633,7 @@ void SetMPUSettings() {
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"A2D",	// New Super Mario Bros.
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
