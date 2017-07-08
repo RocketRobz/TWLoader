@@ -6,14 +6,14 @@ import requests
 import git
 from shutil import copyfile
 print("Patching Makefile...")
-with open("../gui/Makefile", "r") as f:
+with open("gui/Makefile", "r") as f:
     makefile = f.read().replace("IS_NIGHTLY := 0", "IS_NIGHTLY := 1")
-with open("../gui/Makefile", "w") as f:
+with open("gui/Makefile", "w") as f:
     f.write(makefile)
     f.close()
 print("Patching ROMFS...")
-copyfile("romfs/logo.png", "../gui/data/logo.png")
-copyfile("romfs/logo_demo.png", "../gui/data/logo_demo.png")
+copyfile("romfs/logo.png", ".gui/data/logo.png")
+copyfile("romfs/logo_demo.png", "gui/data/logo_demo.png")
 print("Patching Nightly hash...")
 commit_json = requests.get(
     "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/updatenightlies.json").json()
