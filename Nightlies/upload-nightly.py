@@ -10,7 +10,8 @@ try:
     import requests
     itemstopush = {
         "Nightly/TWLoader.zip": "TWLoader.zip",
-        "Nightly/TWLoader.cia": "TWLoader-beta.cia"
+        "Nightly/TWLoader.cia": "TWLoader-beta.cia",
+		"Nightlies/updatenightlies.json": "updatenightlies.json"
     }
     version = str(
         check_output('git log -n 1 --pretty=format:"%h"', shell=True), 'utf-8')
@@ -52,6 +53,6 @@ try:
     for file in itemstopush:
         upload(file, itemstopush[file])
 except Exception as e:
-    print("An error occured during uploading nightly build.")
+    print("An error occured during uploading Nightly build.")
     print(e)
 raise SystemExit

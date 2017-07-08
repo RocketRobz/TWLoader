@@ -14,6 +14,8 @@ extern bool isDemo;	// Is the program running as demo version?
 extern bool storedWiFiRes;
 extern bool dontCheckWiFi;
 extern bool run;	// Set to false to exit to the Home Menu.
+extern bool isNightly;
+
 
 extern std::string fat;
 

@@ -46,6 +46,7 @@ using std::wstring;
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 bool isDemo = COMPILE_3DSX;
+bool isNightly = IS_NIGHTLY;
 
 #include "logo_png.h"
 #include "logo_demo_png.h"
@@ -1698,12 +1699,20 @@ int main()
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
 	
-	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
-	struct stat logBuf;
-	logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
-	/* Log configuration file end */
-	
-	if (logEnabled)	createLog();
+	if(isNightly){
+		logEnabled = true;
+		if (logEnabled)	createLog();
+		char nightlyhash[16];
+		snprintf(nightlyhash, 16, "%s", NIGHTLY);
+		LogFMA("Welcome to nightly channel!", "Version:", nightlyhash);
+		Log("********************************************************\n");	
+	} else {
+		/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
+		struct stat logBuf;
+		logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
+		/* Log configuration file end */
+		if (logEnabled)	createLog();
+	}		
 
 	// make folders if they don't exist
 	mkdir("sdmc:/3ds", 0777);	// For DSP dump

@@ -52,9 +52,12 @@ install:
   - cd libnds-master
   - make && sudo make install
   - pip3 install requests
+  - pip3 install gitpython
   - cd ..  
 script:
   - echo "Starting compilation"
+  - echo "Patching Nightly"
+  - python3 Nightlies/patch-nightly.py
   - cd twlnand-stage1
   - echo "Compiling TWLoader NAND Side Stage 1"
   - make
@@ -81,7 +84,7 @@ script:
   - cd ..
   - echo "Compilation ended"
 after_success:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 upload-nightly.py; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 Nightlies/upload-nightly.py; fi'
 addons:
   apt:
     sources:

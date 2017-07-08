@@ -25,8 +25,12 @@ COMPILE_3DSX  = 0
 # Generate version number
 #---------------------------------------------------------------------------------
 
-VERSION_DIRTY := $(subst v,,$(shell git describe --tags --abbrev=0))
-VERSION_PARTS := $(subst ., ,$(VERSION_DIRTY))
+#VERSION_DIRTY := $(subst v,,$(shell git describe --tags --abbrev=0))
+#VERSION_PARTS := $(subst ., ,$(VERSION_DIRTY))
+
+NIGHTLY := $(shell git describe --tags --match v[0-9]* --abbrev=8 | sed 's/-[0-9]*-g/-/')
+COMMIT := $(shell git rev-parse HEAD)
+IS_NIGHTLY := 0
 
 VERSION_MAJOR := 5
 VERSION_MINOR := 4
@@ -76,7 +80,7 @@ CITRA 	?= C:\emulators\citra\citra.exe $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -Wstrict-aliasing -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
+CFLAGS	:=	-g -Wall -Wstrict-aliasing -O2 -DCOMPILE_3DSX=$(COMPILE_3DSX) -DIS_NIGHTLY=$(IS_NIGHTLY) -DCOMMIT=\"$(COMMIT)\" -DNIGHTLY=\"$(NIGHTLY)\" -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO) -mword-relocations \
 		-ffunction-sections \
 		$(ARCH)
 
@@ -181,7 +185,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(TARGET).elf $(TARGET)-beta.cia
 
 
 #---------------------------------------------------------------------------------

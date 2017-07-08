@@ -258,11 +258,17 @@ void settingsDrawTopScreen(void)
 		setTextColor(RGBA8(255, 255, 255, 255));
 		renderText(318.0f, 1, 0.58f, 0.58f, false, RetTime(false).c_str());
 		
-		std::string version = settings_vertext;		
-		if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
-			renderText(324, 222, 0.60, 0.60f, false, settings_vertext);
+		if(!isNightly){
+			std::string version = settings_vertext;		
+			if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
+				renderText(324, 222, 0.60, 0.60f, false, settings_vertext);
+			}else{
+				renderText(336, 222, 0.60, 0.60f, false, settings_vertext);
+			}
 		}else{
-			renderText(336, 222, 0.60, 0.60f, false, settings_vertext);
+			char nightlyhash[16];
+			snprintf(nightlyhash, 16, "%s", NIGHTLY);
+			renderText(272, 222, 0.60, 0.60f, false, nightlyhash);			
 		}
 		if (settings.twl.bootstrapfile == 2) {
 			fat = "fat:/";

@@ -27,6 +27,7 @@ using std::vector;
 #include "json/json.h"
 
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
+const char* JSON_NIGHTLIES_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/updatenightlies.json";
 bool updateGUI = false;
 bool updateNAND = false;
 bool updateNAND_part2 = false;
@@ -53,6 +54,9 @@ std::string release_BS_ver;
 std::string unofficial_BS_ver;
 std::string release_BS_url;
 std::string unofficial_BS_url;
+
+std::string nightly_url = "";
+std::string nightly_commit = "";
 
 /**
  * Check Wi-Fi status.
@@ -239,11 +243,10 @@ std::vector<std::string> internal_json_reader(json_value* json, json_value* val,
 			if(subVal->type == json_string) {
 				if(strncmp(name, strNames[i].c_str(), nameLen) == 0) {
 					strvalues.push_back(std::string(subVal->u.string.ptr));
-				}
+					}
 			}
 		}
 	}
-	
 	return strvalues;
 }
 
@@ -337,22 +340,89 @@ int checkUpdate(void) {
 				json_value* val = json->u.object.values[0].value;
 				json_value* val2 = val->u.object.values[0].value;
 				
-				/** GUI SIDE CIA**/
-				strNames.push_back("latest_major");
-				strNames.push_back("latest_minor");
-				strNames.push_back("latest_micro");
-				strNames.push_back("gui_url");
+				if(!isNightly) {
+					/** GUI SIDE CIA**/
+					strNames.push_back("latest_major");
+					strNames.push_back("latest_minor");
+					strNames.push_back("latest_micro");
+					strNames.push_back("gui_url");
 
-				strValues = internal_json_reader(json, val2, strNames);
+					strValues = internal_json_reader(json, val2, strNames);
 
-				strncpy(read_gui_major, strValues[0].c_str(), sizeof(read_gui_major));
-				strncpy(read_gui_minor, strValues[1].c_str(), sizeof(read_gui_minor));
-				strncpy(read_gui_micro, strValues[2].c_str(), sizeof(read_gui_micro));
-				
-				gui_url = strValues[3];
-				strValues.clear();
-				strNames.clear();
+					strncpy(read_gui_major, strValues[0].c_str(), sizeof(read_gui_major));
+					strncpy(read_gui_minor, strValues[1].c_str(), sizeof(read_gui_minor));
+					strncpy(read_gui_micro, strValues[2].c_str(), sizeof(read_gui_micro));
+					
+					gui_url = strValues[3];
+					strValues.clear();
+					strNames.clear();
+				} else {
+					u32 responseCodeNightly = 0;
+					httpcContext contextNightly;	
+					
+					httpcInit(0);
+					if(R_FAILED(httpcOpenContext(&contextNightly, HTTPC_METHOD_GET, JSON_NIGHTLIES_URL, 0))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error opening context (nightly).");
+						return -1;
+					}
+					if(R_FAILED(httpcAddRequestHeaderField(&contextNightly, "User-Agent", "TWLoader"))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error requesting header field (nightly).");
+						return -1;
+					}
+					if(R_FAILED(httpcSetSSLOpt(&contextNightly, SSLCOPT_DisableVerify))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error setting SSL certificate (nightly).");
+						return -1;
+					}
+					if(R_FAILED(httpcSetKeepAlive(&contextNightly, HTTPC_KEEPALIVE_ENABLED))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error while keeping alive the conection (nightly).");
+						return -1;
+					}
+					if(R_FAILED(httpcBeginRequest(&contextNightly))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error begining the request (nightly).");
+						return -1;
+					}
+					if(R_FAILED(httpcGetResponseStatusCode(&contextNightly, &responseCodeNightly))) {
+						if (logEnabled)	LogFM("checkUpdate", "Error getting response code (nightly).");
+						return -1;
+					}
+					if (responseCodeNightly != 200) {
+						if (logEnabled)	LogFM("checkUpdate", "Error reaching the updateNightly.json file (nightly).");
+						return -1;
+					}
 
+					u32 sizeNightly = 0;
+					httpcGetDownloadSizeState(&contextNightly, NULL, &sizeNightly);	
+					char* jsonTextNightly = (char*) calloc(sizeof(char), sizeNightly);
+					if (logEnabled) LogFM("checkUpdate", "Downloading JSON info for Nightly.");
+					if(jsonTextNightly != NULL) {
+						u32 bytesReadNightly = 0;
+						http_read_internal(&contextNightly, &bytesReadNightly, (u8*) jsonTextNightly, sizeNightly);
+						json_value* jsonNightly = json_parse(jsonTextNightly, sizeNightly);
+						if (logEnabled) LogFM("checkUpdate", "JSON read (nightly).");
+
+						if(jsonNightly != NULL) {
+							if(jsonNightly->type == json_object) { // {} are objects, [] are arrays				
+								if (logEnabled) LogFM("checkUpdate", "JSON main object read (nightly).");
+								json_value* valN = jsonNightly->u.object.values[0].value;
+								
+								json_value* subValN = valN->u.object.values[0].value;
+	
+								if(strncmp(valN->u.object.values[0].name, "commit", valN->u.object.values[0].name_length) == 0) {
+									nightly_commit = subValN->u.string.ptr;
+								}
+								subValN = valN->u.object.values[1].value;								
+
+								if(strncmp(valN->u.object.values[1].name, "nighty_url", valN->u.object.values[1].name_length) == 0) {
+									nightly_url = subValN->u.string.ptr;
+								}
+							}
+						}
+					}
+					LogFM("Nightly URL", nightly_url.c_str());
+					LogFM("Nightly Commit", nightly_commit.c_str());
+					free(jsonTextNightly);
+				}
+				 
 				/** GUI SIDE 3DSX**/		
 				val2 = val->u.object.values[1].value;
 
@@ -426,11 +496,15 @@ int checkUpdate(void) {
 				strNames.clear();
 				
 				char latestVersion[16];
-				snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
-				
 				char currentVersion[16];
-				snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);					
-				
+
+				if(!isNightly) {					
+					snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", read_gui_major, read_gui_minor, read_gui_micro);
+					snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+				} else{
+					snprintf(latestVersion, sizeof(latestVersion), "%s", nightly_commit.c_str());
+					snprintf(currentVersion, sizeof(currentVersion), "%s", COMMIT);
+				}
 				char latestNANDVersion[16];
 				snprintf(latestNANDVersion, sizeof(latestNANDVersion), "%s.%s.%s", read_nand_major, read_nand_minor, read_nand_micro);
 				
@@ -702,12 +776,22 @@ void DownloadTWLoaderCIAs(void) {
 				sf2d_end_frame();
 				sf2d_swapbuffers();
 			
-				if(stat("sdmc:/cia",&st) == 0){		
-					// Use root/cia folder instead
-					resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
+				if(!isNightly){ 
+					if(stat("sdmc:/cia",&st) == 0){		
+						// Use root/cia folder instead
+						resGUI = downloadFile(gui_url.c_str(),"/cia/TWLoader.cia", MEDIA_SD_CIA);
+					}else{
+						mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+						resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+					}
 				}else{
-					mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
-					resGUI = downloadFile(gui_url.c_str(),"/_nds/twloader/cia/TWLoader.cia", MEDIA_SD_CIA);
+					if(stat("sdmc:/cia",&st) == 0){		
+						// Use root/cia folder instead
+						resGUI = downloadFile(nightly_url.c_str(),"/cia/TWLoader-beta.cia", MEDIA_SD_CIA);
+					}else{
+						mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
+						resGUI = downloadFile(nightly_url.c_str(),"/_nds/twloader/cia/TWLoader-beta.cia", MEDIA_SD_CIA);
+					}
 				}
 				
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
