@@ -19,13 +19,13 @@ static const char *const lang_FR[STR_MAX] = {
 	"Touchez l'écran tactile pour continuer.",					// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
-	": Retourner au Menu HOME",			    // "Return to HOME Menu"
-	"START",                                                    // "START" (used on cartridge indicator)
-	"Pas de cartouche",                                         // "No cartridge"
-	"Paramètres",                                               // "Settings"
-	"Cartouche inconnue",                                       // "Unknown Cartridge"
-	": Retour",                                               // "B: Back"    
-	": Ajouter jeux",					   // "Y: Add Games"
+	": Retourner au Menu HOME",			    	   // "Return to HOME Menu"
+	"START",                                                   // "START" (used on cartridge indicator)
+	"Pas de cartouche",                                        // "No cartridge"
+	"Cartouche inconnue",                                      // "Unknown Cartridge"
+	"Paramètres",                                              // "Settings"	
+	": Retour",                                              // "B: Back"    
+	": Ajouter jeux",					  // "Y: Add Games"
 	 
 	/** Settings: GUI **/
 	"Langue",                                                  // "Language"
