@@ -11,7 +11,7 @@ try:
     itemstopush = {
         "Nightly/TWLoader.zip": "TWLoader.zip",
         "Nightly/TWLoader.cia": "TWLoader-beta.cia",
-		"Nightlies/updatenightlies.json": "updatenightlies.json"
+		"updatenightlies.json": "updatenightlies.json"
     }
     version = str(
         check_output('git log -n 1 --pretty=format:"%h"', shell=True), 'utf-8')
