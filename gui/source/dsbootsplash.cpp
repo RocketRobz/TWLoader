@@ -426,7 +426,8 @@ void bootSplash() {
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(255, 255, 255, 255));
-		switch (settings.ui.language) {
+
+		switch ((settings.ui.language < 0 || settings.ui.language >= 12)? sys_language : settings.ui.language) {
 			case 0:
 			// Japanese
 				if (settings.ui.healthsafety) {
