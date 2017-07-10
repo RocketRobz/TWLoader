@@ -1745,8 +1745,12 @@ int main()
 	sf2d_swapbuffers();
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 	
-	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
-
+	/** Speed up New 3DS only. **/
+	bool isNew = 0;
+	APT_CheckNew3DS(&isNew);
+	if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
+	/** Speedup set up correctly. **/
+	
 	LoadSettings();	
 	if (settings.twl.bootstrapfile == 2) {
 		bootstrapPath = "sd:/_nds/old-bootstrap.nds";
