@@ -1251,6 +1251,9 @@ bool settingsMoveCursor(u32 hDown)
 		} else if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND3;
 			sfx = sfx_switch;
+		} else if (hDown & KEY_R) {
+			subscreenmode = SUBSCREEN_MODE_FRONTEND;
+			sfx = sfx_switch;
 		} else if (hDown & KEY_X) {
 			if (checkWifiStatus()) {
 				// Play the sound now instead of waiting.
@@ -1284,6 +1287,10 @@ bool settingsMoveCursor(u32 hDown)
 		if(hDown & KEY_TOUCH){
 			if (touch.px <= 72 && touch.py >= 220) {
 				subscreenmode = SUBSCREEN_MODE_FRONTEND3;
+				sfx = sfx_switch;
+			}
+			if (touch.px >= 248 && touch.py >= 220) {
+				subscreenmode = SUBSCREEN_MODE_FRONTEND;
 				sfx = sfx_switch;
 			}
 		}
@@ -1540,6 +1547,9 @@ bool settingsMoveCursor(u32 hDown)
 			|| cursor_pos[0] == 5)
 				cursor_pos[0]--;
 			sfx = sfx_select;
+		} else if (hDown & KEY_L) {
+			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
@@ -1549,6 +1559,10 @@ bool settingsMoveCursor(u32 hDown)
 			sfx = sfx_back;
 		}
 		if(hDown & KEY_TOUCH){
+			if (touch.px <= 72 && touch.py >= 220) {
+				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				sfx = sfx_switch;
+			}
 			if (touch.px >= 248 && touch.py >= 220) {
 				subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 				sfx = sfx_switch;
