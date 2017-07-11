@@ -1209,6 +1209,22 @@ int DownloadMissingFiles(void) {
 				strValues.clear();
 				strNames.clear();
 
+				/** Bootstrap **/
+				val = json->u.object.values[3].value;
+				strNames.push_back("release_ver");
+				strNames.push_back("unofficial_ver");
+				strNames.push_back("release_url");
+				strNames.push_back("unofficial_url");
+
+				strValues = internal_json_reader(json, val, strNames);
+				
+				release_BS_ver = strValues[0];
+				unofficial_BS_ver = strValues[1];
+				release_BS_url = strValues[2];
+				unofficial_BS_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+				
 				struct stat st;
 				
 				if (!checkTWLNANDSide()) {
@@ -1387,6 +1403,103 @@ int DownloadMissingFiles(void) {
 						}
 					}
 				}
+				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading release-bootstrap...\n"
+						"\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
+					if(!ver) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+					fputs(release_BS_ver.c_str(), ver);
+					fclose(ver);
+				}
+				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading unofficial-bootstrap...\n"
+						"\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
+					if(!ver) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+					fputs(unofficial_BS_ver.c_str(), ver);
+					fclose(ver);
+				}
+				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading release-bootstrap...\n"
+						"(release-bootstrap.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
+					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					setTextColor(RGBA8(255, 255, 255, 255));
+
+					static const char msg[] =
+						"Now downloading unofficial-bootstrap...\n"
+						"(unofficial-bootstrap.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					renderText(12, 16, 0.5f, 0.5f, false, msg);
+					sf2d_end_frame();
+					sf2d_swapbuffers();
+					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							textVtxArrayPos = 0; // Clear the text vertex array
+							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
+							sf2d_end_frame();
+							sf2d_swapbuffers();
+						}
+					}
+				}
+				
 			}
 		}
 	}
@@ -1693,6 +1806,9 @@ int downloadBootstrapVersion(bool type)
 		fclose(ver);
 	}else{
 		FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
+		if(!ver){
+			return res;
+		}
 		fputs(unofficial_BS_ver.c_str(), ver);
 		fclose(ver);
 	}
