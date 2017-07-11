@@ -1755,10 +1755,10 @@ int main()
 	sf2d_swapbuffers();
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 	
-	/** Speed up New 3DS only. **/
-	bool isNew = 0;
-	APT_CheckNew3DS(&isNew);
-	if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
+	/** Speed up New 3DS only. (Crashes for some O3DS users) **/
+	// bool isNew = 0;
+	// APT_CheckNew3DS(&isNew);
+	// if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 	/** Speedup set up correctly. **/
 	
 	LoadSettings();	
