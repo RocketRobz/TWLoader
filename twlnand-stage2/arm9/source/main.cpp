@@ -116,6 +116,7 @@ int main(int argc, char **argv) {
 
 	bool TWLCLK = true;
 	bool TWLVRAM = false;
+	int useArm7Donor = 1;
 	bool TriggerExit = false;
 	std::string	gamesettingsPath = "";
 
@@ -168,7 +169,10 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
 				}
 			}
-			if(gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",0) == 1) {
+			useArm7Donor = gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",1);
+			if(useArm7Donor == 2) {
+				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 2);
+			} else if(useArm7Donor == 1) {
 				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
 			} else {
 				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 0);
