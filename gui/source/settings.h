@@ -70,7 +70,7 @@ typedef struct _Settings_t {
 	struct {
 		bool rainbowled;
 		bool cpuspeed;	// false == NTR, true == TWL
-		bool extvram;
+		bool enablesd;
 		bool forwarder;
 
 		int flashcard;
@@ -102,7 +102,6 @@ typedef struct _Settings_t {
 	struct {
 		// -1 == default; 0 == off, 1 == on
 		s8 cpuspeed;	// false == NTR, true == TWL
-		s8 extvram;
 		s8 usedonor;
 		s8 donor;
 		int red;

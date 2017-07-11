@@ -47,7 +47,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
 	"Regenbogen LED",											// "Rainbow LED"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
-	"VRAM Beschleunigung",										// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
 	"Konsolenausgabe",											// "Console output"
 	"Bootstrap automatisch updaten",							// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_DE[STR_MAX] = {
 	"Stelle auf TWL, um Lags in",								// "Set to TWL to get rid of lags in some games."
 	"manchen Spielen zu vermeiden.",							// (empty)
 
-	"Erlaubt 8 bit VRAM Schreibvorgänge",						// "Allows 8 bit VRAM writes"
-	"und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
+	// "Erlaubt 8 bit VRAM Schreibvorgänge",						// "Allows 8 bit VRAM writes"
+	// "und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"Zeigt die DS/DSi Boot-Animation",							// "Displays the DS/DSi boot animation"
 	"vor dem Spielstart an.",									// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"CPU Geschwindigkeit",										// "ARM9 CPU Speed" (Removed ARM9, because it did not fit inside the box)
-	"VRAM Beschleunigung",										// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"Setze als Donor ROM",										// "Set as donor ROM"
 	"LED Farbe",												// "Set LED color"

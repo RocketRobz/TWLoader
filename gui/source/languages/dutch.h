@@ -47,7 +47,7 @@ static const char *const lang_NL[STR_MAX] = {
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"Rainbow LED",												// "Rainbow LED"
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
-	"VRAM boost",												// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
 	"Auto-update bootstrap",									// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_NL[STR_MAX] = {
 	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
 	"in some games.",											// "in some games."
 
-	"Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
-	"and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
+	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
+	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"Displays the DS/DSi boot animation",						// "Displays the DS/DSi boot animation"
 	"before launched game.",									// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_NL[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
-	"VRAM boost",												// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"Set as donor ROM",											// "Set as donor ROM"
 	"Set LED color",											// "Set LED color"

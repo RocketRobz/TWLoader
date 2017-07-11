@@ -47,7 +47,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Seleziona la Flashcard",                                   // "Flashcard(s) select"
 	"LED arcobaleno",                                           // "Rainbow LED"
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
-	"VRAM boost",                                               // "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Resetta lo Slot-1",                                       	// "Reset Slot-1"
 	"Console output",                                           // "Console output"
 	"Aggiorna automaticamente bootstrap",             		    // "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_IT[STR_MAX] = {
 	"Imposta su TWL per eliminare",                       		// "Set to TWL to get rid of lags in some games."
 	"il lag in alcuni giochi.",                                 // (empty)
 
-	"Abilita la scrittura della VRAM a 8 bit",                  // "Allows 8 bit VRAM writes"
-	"ed espande il bus a 32 bit.",                              // "and expands the bus to 32 bit."
+	// "Abilita la scrittura della VRAM a 8 bit",                  // "Allows 8 bit VRAM writes"
+	// "ed espande il bus a 32 bit.",                              // "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"Mostra la schermata di avvio del DS/DSi",                  // "Displays the DS/DSi boot animation"
 	"prima di avviare un gioco.",                               // "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_IT[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
-	"VRAM boost",                                               // "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",                                     	// "Use set donor ROM"
 	"Imposta come ROM donor",                               	// "Set as donor ROM"
 	"Imposta colore del LED",                                   // "Set LED color"

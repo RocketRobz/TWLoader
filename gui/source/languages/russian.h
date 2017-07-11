@@ -47,7 +47,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Выбор флешкарты",											// "Flashcard(s) select"
 	"Радуга LED",												// "Rainbow LED"
 	"ARM9 CPU скорость",										// "ARM9 CPU Speed"
-	"VRAM ускорение",											// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
 	"Вывод консоли",											// "Console output"
 	"Автоматическое обновление: bootsrap",						// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_RU[STR_MAX] = {
 	"Установить TWL, чтобы убрать лаги в",						// "Set to TWL to get rid of lags in some games."
 	"некоторых играх.",											// (empty)
 
-	"Позволяет делать 8 битные записи VRAM",					// "Allows 8 bit VRAM writes"
-	"и расширяет шину до 32 бит.",								// "and expands the bus to 32 bit."
+	// "Позволяет делать 8 битные записи VRAM",					// "Allows 8 bit VRAM writes"
+	// "и расширяет шину до 32 бит.",								// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"Показывать DS/DSi стартовую анимацию",						// "Displays the DS/DSi boot animation"
 	"перед запуском игр.",										// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_RU[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"Скорость ARM9 CPU",										// "ARM9 CPU Speed"
-	"VRAM ускорение",											// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"Выбрать донорский ROM",									// "Set as donor ROM"
 	"Выбрать цвет LED",											// "Set LED color"

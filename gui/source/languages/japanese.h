@@ -47,7 +47,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"虹LED",														// "Rainbow LED"
 	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
-	"VRAMブースト",													// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
 	"ブートストラップの自動更新",											// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_JP[STR_MAX] = {
 	"Set to TWL to get rid of lags in some games.",				// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
-	"Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
-	"and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
+	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
+	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"Displays the DS/DSi boot animation",						// "Displays the DS/DSi boot animation"
 	"before launched game.",									// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_JP[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
-	"VRAMブースト",													// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"Set as donor ROM",											// "Set as donor ROM"
 	"Set LED color",											// "Set LED color"

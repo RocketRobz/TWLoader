@@ -858,7 +858,6 @@ static void SaveBootstrapConfig(void)
 	if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using path:", bootstrapPath.c_str());
 	bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
-	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostvram, settings.twl.extvram);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
 	
 	// TODO: Change the default to 0?
@@ -894,7 +893,6 @@ static void LoadPerGameSettings(void)
 	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/gamesettings/%s", inifilename.c_str());
 	CIniFile gamesettingsini(path);
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
-	settings.pergame.extvram = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_VRAM", -1);
 	settings.pergame.usedonor = gamesettingsini.GetInt("GAME-SETTINGS", "USE_ARM7_DONOR", 1);
 	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED_RED", -1);
 	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
@@ -929,7 +927,6 @@ static void SavePerGameSettings(void)
 	snprintf(path, sizeof(path), "sdmc:/_nds/twloader/gamesettings/%s", inifilename.c_str());
 	CIniFile gamesettingsini(path);
 	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_CLOCK", settings.pergame.cpuspeed);
-	gamesettingsini.SetInt("GAME-SETTINGS", "TWL_VRAM", settings.pergame.extvram);
 	gamesettingsini.SetInt("GAME-SETTINGS", "USE_ARM7_DONOR", settings.pergame.usedonor);
 	gamesettingsini.SetInt("GAME-SETTINGS", "LED_RED", settings.pergame.red);
 	gamesettingsini.SetInt("GAME-SETTINGS", "LED_GREEN", settings.pergame.green);
@@ -1347,7 +1344,7 @@ static void drawMenuDialogBox(void)
 			const wchar_t *value_desc[2];	// 0 == off, 1 == on
 		} buttons[] = {
 			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
-			{161,  89, &settings.pergame.extvram, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
+			//{161,  89, &settings.pergame.enablesd, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
 			{ 23, 129, &settings.pergame.usedonor, TR(STR_START_USE_ARM7_DONOR), {L"Off", L"On"}},
 			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {NULL, NULL}},
 			{ 23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
@@ -1364,7 +1361,8 @@ static void drawMenuDialogBox(void)
 
 			const wchar_t *title = buttons[i].title;
 			const wchar_t *value_desc = TR(STR_START_DEFAULT);
-			if (i < 3) {
+			const char *norm_value_desc;
+			if (i < 1 || i == 2) {
 				switch (*(buttons[i].value)) {
 					case -1:
 					default:
@@ -1375,6 +1373,19 @@ static void drawMenuDialogBox(void)
 						break;
 					case 1:
 						value_desc = buttons[i].value_desc[1];
+						break;
+				}
+			} else {
+				switch (*(buttons[i].value)) {
+					case 0:
+					default:
+						norm_value_desc = "Off";
+						break;
+					case 1:
+						norm_value_desc = "On";
+						break;
+					case 2:
+						norm_value_desc = "Force-use";
 						break;
 				}
 			}
@@ -1394,13 +1405,19 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			if (i < 3) {
+			if (i < 1 || i == 2) {
 				// w = sftd_get_wtext_width(font, 12, value_desc);
 				w = 0;
 				// x = ((132 - w) / 2) + buttons[i].x;
 				x = ((2 - w) / 2) + buttons[i].x;
 				renderText_w(x, y, 0.50, 0.50, false, value_desc);
-			} else if (i == 4) {
+			} else if (i == 1) {
+				// w = sftd_get_wtext_width(font, 12, value_desc);
+				w = 0;
+				// x = ((132 - w) / 2) + buttons[i].x;
+				x = ((2 - w) / 2) + buttons[i].x;
+				renderText(x, y, 0.50, 0.50, false, norm_value_desc);
+			} else if (i == 3) {
 				// Show the RGB value.
 				char rgb_str[32];
 				snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
@@ -4771,32 +4788,28 @@ int main()
 							SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
 						} else if (hDown & KEY_RIGHT) {
-							if (gamesettings_cursorPosition == 0) {
-								gamesettings_cursorPosition = 1;
-							} else if (gamesettings_cursorPosition == 2) {
-								gamesettings_cursorPosition = 3;
+							if (gamesettings_cursorPosition == 1) {
+								gamesettings_cursorPosition = 2;
 							}
 						} else if (hDown & KEY_LEFT) {
-							if (gamesettings_cursorPosition == 1) {
-								gamesettings_cursorPosition = 0;
-							} else if (gamesettings_cursorPosition == 3) {
-								gamesettings_cursorPosition = 2;
+							if (gamesettings_cursorPosition == 2) {
+								gamesettings_cursorPosition = 1;
 							}
 						} else if (hDown & KEY_DOWN) {
 							if (gamesettings_cursorPosition == 0) {
-								gamesettings_cursorPosition = 2;
-							} else if (gamesettings_cursorPosition == 1) {
+								gamesettings_cursorPosition = 1;
+							} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 3;
-							} else if (gamesettings_cursorPosition == 2) {
-								gamesettings_cursorPosition = 4;
+							} else if (gamesettings_cursorPosition == 3) {
+								gamesettings_cursorPosition = 0;
 							}
 						} else if (hDown & KEY_UP) {
-							if (gamesettings_cursorPosition == 2) {
+							if (gamesettings_cursorPosition == 0) {
+								gamesettings_cursorPosition = 3;
+							} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 0;
 							} else if (gamesettings_cursorPosition == 3) {
 								gamesettings_cursorPosition = 1;
-							} else if (gamesettings_cursorPosition == 4) {
-								gamesettings_cursorPosition = 2;
 							}
 						} else if(hDown & KEY_TOUCH){
 							if (touch.px >= 23 && touch.px <= 155 && touch.py >= 89 && touch.py <= 123) { // ARM9 CPU Speed
@@ -4808,17 +4821,17 @@ int main()
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 89 && touch.py <= 123){ // VRAM boost
+							/* }else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 89 && touch.py <= 123){ // VRAM boost
 								gamesettings_cursorPosition = 1;
-								settings.pergame.extvram++;
-								if(settings.pergame.extvram == 2)
-									settings.pergame.extvram = -1;
+								settings.pergame.enablesd++;
+								if(settings.pergame.enablesd == 2)
+									settings.pergame.enablesd = -1;
 								if (dspfirmfound) {
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
-								}
+								} */
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Lock ARM9 SCFG_EXT
-								gamesettings_cursorPosition = 2;
+								gamesettings_cursorPosition = 1;
 								settings.pergame.usedonor++;
 								if(settings.pergame.usedonor == 2)
 									settings.pergame.usedonor = -1;
@@ -4827,7 +4840,7 @@ int main()
 									sfx_select->play();
 								}
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 129 && touch.py <= 163){ // Set as donor ROM
-								gamesettings_cursorPosition = 3;
+								gamesettings_cursorPosition = 2;
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
 										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
@@ -4847,7 +4860,7 @@ int main()
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 169 && touch.py <= 203){ // Set LED Color
-								gamesettings_cursorPosition = 4;								
+								gamesettings_cursorPosition = 3;								
 
 								RGB[0] = keyboardInputInt("Red color: max is 255");
 								RGB[1] = keyboardInputInt("Green color: max is 255");
@@ -4889,24 +4902,15 @@ int main()
 									}
 									break;
 								case 1:
-									settings.pergame.extvram++;
-									if(settings.pergame.extvram == 2)
-										settings.pergame.extvram = -1;
-									if (dspfirmfound) {
-										sfx_select->stop();	// Prevent freezing
-										sfx_select->play();
-									}
-									break;
-								case 2:
 									settings.pergame.usedonor++;
-									if(settings.pergame.usedonor == 2)
+									if(settings.pergame.usedonor == 3)
 										settings.pergame.usedonor = 0;
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
 									break;
-								case 3:
+								case 2:
 									if (settings.twl.forwarder) {
 										if(matching_files.size() == 0){
 											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
@@ -4926,7 +4930,7 @@ int main()
 									menudbox_movespeed = 1;
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
-								case 4:
+								case 3:
 									RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");

@@ -569,9 +569,9 @@ void settingsDrawBottomScreen(void)
 		
 		// Boot screen text.
 		static const char *const bootscreen_text[] = {
-			"Nintendo DS", "Nintendo DS (OAR)", "Nintendo DSi"
+			"Nintendo DS", "Nintendo DS (OAR)", "Nintendo DSi", "Nintendo DS (Black)", "Nintendo DSi (Black)"
 		};
-		if (settings.ui.bootscreen < 0 || settings.ui.bootscreen > 2)
+		if (settings.ui.bootscreen < 0 || settings.ui.bootscreen > 4)
 			settings.ui.bootscreen = 0;
 		const char *const bootscreenvaluetext = bootscreen_text[settings.ui.bootscreen];
 		const char *healthsafetyvaluetext = (settings.ui.healthsafety ? "On" : "Off");
@@ -759,7 +759,7 @@ void settingsDrawBottomScreen(void)
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
-		const char *extvramvaluetext = (settings.twl.extvram ? "On" : "Off");
+		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
 
 		const char *autoupdatevaluetext;
@@ -849,7 +849,7 @@ void settingsDrawBottomScreen(void)
 			setTextColor(RGBA8(255, 255, 255, 255));
 		}
 		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_VRAM_BOOST));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, extvramvaluetext);
+		renderText(XposValue, Ypos, 0.55, 0.55, false, enablesdvaluetext);
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 4) {
 			setTextColor(RGBA8(255, 255, 255, 255));
@@ -1195,8 +1195,8 @@ bool settingsMoveCursor(u32 hDown)
 				case 2:	// CPU speed
 					settings.twl.cpuspeed = !settings.twl.cpuspeed;
 					break;
-				case 3:	// VRAM boost
-					settings.twl.extvram = !settings.twl.extvram;
+				case 3:	// SD card access for Slot-1
+					settings.twl.enablesd = !settings.twl.enablesd;
 					break;
 				case 4:	// Reset Slot-1
 					settings.twl.resetslot1 = !settings.twl.resetslot1;
@@ -1393,13 +1393,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 4:	// Boot screen
 					if (hDown & KEY_A) {
 						settings.ui.bootscreen++;
-						if (settings.ui.bootscreen > 2) {
+						if (settings.ui.bootscreen > 4) {
 							settings.ui.bootscreen = 0;
 						}
 					} else if (hDown & KEY_Y) {
 						settings.ui.bootscreen--;
 						if (settings.ui.bootscreen < 0) {
-							settings.ui.bootscreen = 2;
+							settings.ui.bootscreen = 4;
 						}
 					}
 					break;
@@ -1827,9 +1827,9 @@ void LoadSettings(void) {
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
-	settings.twl.extvram = settingsini.GetInt("TWL-MODE", "TWL_VRAM", 1);
 	settings.twl.lockarm9scfgext = settingsini.GetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", 0);
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
+	settings.twl.enablesd = settingsini.GetInt("TWL-MODE", "SLOT1_ENABLESD", 0);
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
 	settings.twl.bootstrapfile = settingsini.GetInt("TWL-MODE", "BOOTSTRAP_FILE", 0);
@@ -1883,10 +1883,10 @@ void SaveSettings(void) {
 	// TWL settings.
 	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
 	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
-	settingsini.SetInt("TWL-MODE", "TWL_VRAM", settings.twl.extvram);
 	settingsini.SetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", settings.twl.lockarm9scfgext);
 	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
 	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
+	settingsini.SetInt("TWL-MODE", "SLOT1_ENABLESD", settings.twl.enablesd);
 	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
 	settingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
 	if (settings.twl.bootstrapfile == 2) fat = "fat:/";

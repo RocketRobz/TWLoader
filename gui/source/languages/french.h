@@ -47,7 +47,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
-	"Boost VRAM",                                               // "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
 	"Affichage Console",                                        // "Console output"
 	"Mise à jour auto. bootstrap",                        	    // "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer pour se débarrasser des",             		    // "Set to TWL to get rid of lags in some games."
 	"ralentissements dans certains jeux.",                      // (empty)
 	 
-	"Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
-	"et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
+	// "Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
+	// "et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 	 
 	"Afficher l'animation de démarrage de la",                  // "Displays the DS/DSi boot animation"
 	"DS/DSi avant le lancement du jeu.",                        // "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_FR[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
-	"Boost VRAM",                                               // "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",                                		// "Use set donor ROM"
 	"Définir comme donor ROM",                                  // "Set as donor ROM"
 	"Définir la couleur de la DEL",                             // "Set LED color"

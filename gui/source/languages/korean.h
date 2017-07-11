@@ -47,7 +47,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"플래시카드 선택",												// "Flashcard(s) select"
 	"무지개색 LED",													// "Rainbow LED"
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
-	"VRAM 부스트",													// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"리셋 슬롯-1",													// "Reset Slot-1"
 	"콘솔 출력",													// "Console output"
 	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_KO[STR_MAX] = {
 	"몇몇 게임에서 렉을 없애기 위해 TWL으로 설정",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
-	"8 bit VRAM 쓰기 허용",											// "Allows 8 bit VRAM writes"
-	"및 버스 크기 32bit으로 확장",										// "and expands the bus to 32 bit."
+	// "8 bit VRAM 쓰기 허용",											// "Allows 8 bit VRAM writes"
+	// "및 버스 크기 32bit으로 확장",										// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"게임 시작 전",													// "Displays the DS/DSi boot animation"
 	"DS/DSi 부팅애니메이션 보이기",										// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_KO[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
-	"VRAM 부스트",													// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"donor ROM으로 설정",											// "Set as donor ROM"
 	"LED 색상",													// "Set LED color"

@@ -47,7 +47,7 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"選擇燒錄卡",													// "Flashcard(s) select"
 	"彩虹 LED",													// "Rainbow LED"
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
-	"VRAM 加速",													// "VRAM boost"
+	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"重置 Slot-1",												// "Reset Slot-1"
 	"控制台輸出",													// "Console output"
 	"自動更新 bootstrap",											// "Auto-update bootstrap"
@@ -122,8 +122,11 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"設定到 TWL 來避免某些遊戲中的拖慢.",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
-	"允許 8 bit VRAM 寫入",										// "Allows 8 bit VRAM writes"
-	"以及拓展 bus 到 32 bit.",										// "and expands the bus to 32 bit."
+	// "允許 8 bit VRAM 寫入",										// "Allows 8 bit VRAM writes"
+	// "以及拓展 bus 到 32 bit.",										// "and expands the bus to 32 bit."
+
+	"Enables SD card access for",								// "Enables SD card access for"
+	"Slot-1 cards.",											// "Slot-1 cards."
 
 	"運行遊戲之前顯示",												// "Displays the DS/DSi boot animation"
 	" DS/DSi 開機動畫.",											// "before launched game."
@@ -164,7 +167,7 @@ static const char *const lang_TRCH[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
-	"VRAM 提速",													// "VRAM boost"
+	"SD access",												// "SD access"
 	"Use set donor ROM",										// "Use set donor ROM"
 	"設置為 donor ROM",											// "Set as donor ROM"
 	"設定 LED 顏色",												// "Set LED color"
