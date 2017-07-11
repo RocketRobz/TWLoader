@@ -193,11 +193,6 @@ static const char bootstrapini_ndsbootstrap[] = "NDS-BOOTSTRAP";
 bool run = true;
 // End
 
-// WiFi
-bool storedWiFiRes = false;
-bool dontCheckWiFi = false;
-// End
-
 bool showdialogbox = false;
 bool showdialogbox_menu = false;	// for Game Select menu
 int menudbox_movespeed = 22;
@@ -1755,10 +1750,10 @@ int main()
 	sf2d_swapbuffers();
 	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
 	
-	/** Speed up New 3DS only. (Crashes for some O3DS users) **/
-	// bool isNew = 0;
-	// APT_CheckNew3DS(&isNew);
-	// if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
+	/** Speed up New 3DS only. **/
+	bool isNew = 0;
+	APT_CheckNew3DS(&isNew);
+	if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 	/** Speedup set up correctly. **/
 	
 	LoadSettings();	
@@ -1923,7 +1918,7 @@ int main()
 
 	// Download missing files
 	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
-		dontCheckWiFi = true;
+		// Nothing
 	}
 
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
@@ -1943,7 +1938,6 @@ int main()
 	
 	// Download box art
 	if (checkWifiStatus()) {
-		dontCheckWiFi = true;
 		downloadBoxArt();
 	}
 
@@ -1984,7 +1978,6 @@ int main()
 	sf2d_swapbuffers();
 
 	if (checkWifiStatus()) {
-		dontCheckWiFi = true;
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
 			DownloadTWLoaderCIAs();
 		}
@@ -2001,8 +1994,6 @@ int main()
 				break;
 		}
 	}
-
-	dontCheckWiFi = false;
 
 	showdialogbox = false;
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);

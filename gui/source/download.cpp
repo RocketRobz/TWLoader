@@ -64,23 +64,17 @@ std::string nightly_zip = "";
  * @return True if Wi-Fi is connected; false if not.
  */
 bool checkWifiStatus(void) {
-	if(!dontCheckWiFi) {
-		u32 wifiStatus;
-		bool res = false;
+	u32 wifiStatus;
+	bool res = false;
 
-		if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
-			if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
-			res = true;
-		} else {
-			if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(true).c_str());
-		}
-		
-		storedWiFiRes = res;
-
-		return res;
+	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
+		if (logEnabled)	LogFMA("WifiStatus", "Active internet connection found", RetTime(true).c_str());
+		res = true;
 	} else {
-		return storedWiFiRes;
+		if (logEnabled)	LogFMA("WifiStatus", "No Internet connection found!", RetTime(true).c_str());
 	}
+	
+	return res;
 }
 
 /**
