@@ -168,11 +168,6 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
 				}
 			}
-			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
-				if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-			} else {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-			}
 			if(gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",0) == 1) {
 				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
 			} else {
@@ -181,7 +176,6 @@ int main(int argc, char **argv) {
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
-			if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
 			bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		}
@@ -222,14 +216,6 @@ int main(int argc, char **argv) {
 			}
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
 				printf("Switched to NTR mode\n");		
-		}
-		
-		if(TWLVRAM) {
-			REG_SCFG_EXT |= 0x2000;
-			if (logEnabled)	LogFM("TWL.Main", "VRAM boost on");
-			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-				printf("TWL_VRAM ON\n");		
-			}
 		}
 		
 		// Tell Arm7 to apply changes.
