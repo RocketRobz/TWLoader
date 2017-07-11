@@ -84,18 +84,8 @@ int main() {
 					TWLCLK = false;
 				}
 			}
-			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 6) {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == -1) {
-					if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-				} else {
-					if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-				}
-			}
 		} else {
 			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
-			if(twloaderini.GetInt("TWL-MODE","FLASHCARD",0) != 6) {
-				if(twloaderini.GetInt("TWL-MODE","TWL_VRAM",0) == 1) { TWLVRAM = true; }
-			}
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
@@ -111,7 +101,14 @@ int main() {
 			swiWaitForVBlank();
 		}
 
-		if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
+		if(twloaderini.GetInt("TWL-MODE","SLOT1_ENABLESD",0) == 1) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("SD access ON\n");		
+			}
+			EnableSD = true;
+			// Tell Arm7 to use alternate SCFG_EXT values.
+			fifoSendValue32(FIFO_USER_05, 1);
+		} else if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				printf("SD access ON\n");		
 			}
