@@ -1341,13 +1341,13 @@ static void drawMenuDialogBox(void)
 			int y;
 			const s8 *value;
 			const wchar_t *title;
-			const wchar_t *value_desc[2];	// 0 == off, 1 == on
+			const wchar_t *value_desc[3];	// 0 == off, 1 == on, 2 == custom
 		} buttons[] = {
-			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)"}},
-			//{161,  89, &settings.pergame.enablesd, TR(STR_START_VRAM_BOOST), {L"Off", L"On"}},
-			{ 23, 129, &settings.pergame.usedonor, TR(STR_START_USE_ARM7_DONOR), {L"Off", L"On"}},
-			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {NULL, NULL}},
-			{ 23, 169, NULL, TR(STR_START_SET_LED), {NULL, NULL}},
+			{ 23,  89, &settings.pergame.cpuspeed, TR(STR_START_ARM9_CPU_SPEED), {L"67 MHz (NTR)", L"133 MHz (TWL)", L""}},
+			//{161,  89, &settings.pergame.enablesd, TR(STR_START_VRAM_BOOST), {L"Off", L"On", L""}},
+			{ 23, 129, &settings.pergame.usedonor, TR(STR_START_USE_ARM7_DONOR), {L"Off", L"On", L"Force-use"}},
+			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {L"", L"", L""}},
+			{ 23, 169, NULL, TR(STR_START_SET_LED), {L"", L"", L""}},
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1361,8 +1361,7 @@ static void drawMenuDialogBox(void)
 
 			const wchar_t *title = buttons[i].title;
 			const wchar_t *value_desc = TR(STR_START_DEFAULT);
-			const char *norm_value_desc;
-			if (i < 1 || i == 2) {
+			if (i == 0 || i == 2) {
 				switch (*(buttons[i].value)) {
 					case -1:
 					default:
@@ -1375,17 +1374,17 @@ static void drawMenuDialogBox(void)
 						value_desc = buttons[i].value_desc[1];
 						break;
 				}
-			} else {
+			} else if (i == 1) {
 				switch (*(buttons[i].value)) {
 					case 0:
 					default:
-						norm_value_desc = "Off";
+						value_desc = buttons[i].value_desc[0];
 						break;
 					case 1:
-						norm_value_desc = "On";
+						value_desc = buttons[i].value_desc[1];
 						break;
 					case 2:
-						norm_value_desc = "Force-use";
+						value_desc = buttons[i].value_desc[2];
 						break;
 				}
 			}
@@ -1405,18 +1404,12 @@ static void drawMenuDialogBox(void)
 			y += 16;
 
 			// Draw the value.
-			if (i < 1 || i == 2) {
+			if (i < 3) {
 				// w = sftd_get_wtext_width(font, 12, value_desc);
 				w = 0;
 				// x = ((132 - w) / 2) + buttons[i].x;
 				x = ((2 - w) / 2) + buttons[i].x;
 				renderText_w(x, y, 0.50, 0.50, false, value_desc);
-			} else if (i == 1) {
-				// w = sftd_get_wtext_width(font, 12, value_desc);
-				w = 0;
-				// x = ((132 - w) / 2) + buttons[i].x;
-				x = ((2 - w) / 2) + buttons[i].x;
-				renderText(x, y, 0.50, 0.50, false, norm_value_desc);
 			} else if (i == 3) {
 				// Show the RGB value.
 				char rgb_str[32];

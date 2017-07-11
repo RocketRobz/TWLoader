@@ -273,7 +273,7 @@ void settingsDrawTopScreen(void)
 		if (settings.twl.bootstrapfile == 2) {
 			fat = "fat:/";
 			setTextColor(RGBA8(255, 0, 0, 255));
-			renderText(5, 222, 0.60, 0.60f, false, "Version 0.2.0");
+			renderText(5, 222, 0.60, 0.60f, false, "Old version");
 		} else if (settings.twl.bootstrapfile == 1) {
 			fat = "sd:/";
 			setTextColor(RGBA8(0, 255, 0, 255));
@@ -786,7 +786,7 @@ void settingsDrawBottomScreen(void)
 				bootstrapfilevaluetext = "Unofficial";
 				break;
 			case 2:
-				bootstrapfilevaluetext = "0.2.0";
+				bootstrapfilevaluetext = "Old";
 				break;
 		}
 
