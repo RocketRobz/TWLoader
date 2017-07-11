@@ -62,12 +62,14 @@ script:
   - echo "Compiling TWLoader NAND Side Stage 1 (part 1)"
   - make
   - python patch_ndsheader_dsiware.py Stage1.nds --mode dsi --maker 01 --code TWLD --title "TWLOADER-TWL" --out Stage1-DSiWare.nds
-  - make_cia --srl="Stage1-DSiWare.nds"
+  - chmod +x ./make_cia
+  - ./make_cia --srl="Stage1-DSiWare.nds"
   - cd ..
   - cd NTR_Launcher
   - echo "Compiling TWLoader NAND Side Stage 1 (part 2)"
   - make
-  - make_cia --srl="NTR_Launcher.nds"
+  - chmod +x ./make_cia
+  - ./make_cia --srl="NTR_Launcher.nds"
   - cd ..
   - cd twlnand-stage2
   - echo "Compiling TWLoader NAND Side Stage 2"

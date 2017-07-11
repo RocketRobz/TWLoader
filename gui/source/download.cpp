@@ -57,6 +57,7 @@ std::string unofficial_BS_url;
 
 std::string nightly_url = "";
 std::string nightly_commit = "";
+std::string nightly_zip = "";
 
 /**
  * Check Wi-Fi status.
@@ -407,11 +408,18 @@ int checkUpdate(void) {
 								if(strncmp(valN->u.object.values[1].name, "nighty_url", valN->u.object.values[1].name_length) == 0) {
 									nightly_url = subValN->u.string.ptr;
 								}
+								
+								subValN = valN->u.object.values[2].value;								
+
+								if(strncmp(valN->u.object.values[2].name, "zip_url", valN->u.object.values[2].name_length) == 0) {
+									nightly_zip = subValN->u.string.ptr;
+								}
 							}
 						}
 					}
-					LogFM("Nightly URL", nightly_url.c_str());
-					LogFM("Nightly Commit", nightly_commit.c_str());
+					//LogFM("Nightly URL", nightly_url.c_str());
+					//LogFM("Nightly Commit", nightly_commit.c_str());
+					//LogFM("Nightly ZIP", nightly_zip.c_str());
 					free(jsonTextNightly);
 				}
 				 
@@ -780,9 +788,11 @@ void DownloadTWLoaderCIAs(void) {
 					if(stat("sdmc:/cia",&st) == 0){		
 						// Use root/cia folder instead
 						resGUI = downloadFile(nightly_url.c_str(),"/cia/TWLoader-beta.cia", MEDIA_SD_CIA);
+						resGUI = downloadFile(nightly_zip.c_str(), "/cia/TWLoader-beta.zip", MEDIA_SD_FILE);
 					}else{
 						mkdir("sdmc:/_nds/twloader/cia", 0777); // Use twloader/cia folder instead
 						resGUI = downloadFile(nightly_url.c_str(),"/_nds/twloader/cia/TWLoader-beta.cia", MEDIA_SD_CIA);
+						resGUI = downloadFile(nightly_zip.c_str(),"/_nds/twloader/cia/TWLoader-beta.cia", MEDIA_SD_FILE);
 					}
 				}
 				
