@@ -59,19 +59,32 @@ script:
   - echo "Patching Nightly"
   - python3 Nightlies/patch-nightly.py
   - cd twlnand-stage1
-  - echo "Compiling TWLoader NAND Side Stage 1"
+  - echo "Compiling TWLoader NAND Side Stage 1 (part 1)"
   - make
+  - python patch_ndsheader_dsiware.py Stage1.nds --mode dsi --maker 01 --code TWLD --title "TWLOADER-TWL" --out Stage1-DSiWare.nds
+  - make_cia --srl="Stage1-DSiWare.nds"
+  - cd ..
+  - cd NTR_Launcher
+  - echo "Compiling TWLoader NAND Side Stage 1 (part 2)"
+  - make
+  - make_cia --srl="NTR_Launcher.nds"
   - cd ..
   - cd twlnand-stage2
   - echo "Compiling TWLoader NAND Side Stage 2"
   - make
   - cd ..
-  - echo "Compiling TWLoader GUI"
+  - echo "Compiling TWLoader GUI (cia)"
   - cd gui
   - make -j8 COMPILE_3DSX=0
   - cd ..
   - echo "Creating release ZIP"
   - mkdir "Nightly"
+  - cd "twlnand-stage1"
+  - cp "Stage1-DSiWare.cia" "../Nightly/TWLoader - TWLNAND side.cia"
+  - cd ..
+  - cd NTR_Launcher
+  - cp "NTR_Launcher.cia" "../Nightly/TWLoader -TWLNAND Side (part 2).cia"
+  - cd ..
   - cd "twlnand-stage2"
   - cp "Stage2.nds" "../Nightly/TWLD.twldr"
   - cd ..
