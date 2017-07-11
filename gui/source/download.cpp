@@ -587,8 +587,6 @@ int checkUpdate(void) {
 						if (hDown & KEY_A) {
 							//doCleanInstall = true;
 							checkanswer = false;	// Exit loop
-							sf2d_end_frame();
-							sf2d_swapbuffers();
 							DialogBoxDisappear(12, 16, msg);
 						}
 					}
