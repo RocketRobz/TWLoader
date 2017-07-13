@@ -7,25 +7,25 @@
 static const char *const lang_RU[STR_MAX] = {
 
 	/** DS/DSi boot screen **/
-	"WARNING - HEALTH AND SAFETY",								// "WARNING - HEALTH AND SAFETY"
-	"BEFORE PLAYING, READ THE HEALTH",							// "BEFORE PLAYING, READ THE HEALTH"
-	"AND SAFETY PRECAUTIONS BOOKLET",							// "AND SAFETY PRECAUTIONS BOOKLET"
-	"FOR IMPORTANT INFORMATION",								// "FOR IMPORTANT INFORMATION"
-	"ABOUT YOUR HEALTH AND SAFETY.",							// "ABOUT YOUR HEALTH AND SAFETY."
-	"TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT",		// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"ВНИМАНИЕ - ТЕХНИКА БЕЗОПАСНОСТИ",							// "WARNING - HEALTH AND SAFETY"
+	"ПЕРЕД ИГРОЙ, ПРОЧТИТЕ БУКЛЕТ",								// "BEFORE PLAYING, READ THE HEALTH"
+	"О ТЕХНИКЕ БЕЗОПАСНОСТИ",									// "AND SAFETY PRECAUTIONS BOOKLET"
+	"ДЛЯ ТОГО, ЧТОБЫ БОЛЬШЕ",									// "FOR IMPORTANT INFORMATION"
+	"УЗНАТЬ О НЕЙ.",											// "ABOUT YOUR HEALTH AND SAFETY."
+	"ДЛЯ ДОПОЛНИТЕЛЬНОЙ ИНФОРМАЦИИ, ЗАЙДИТЕ НА",				// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
 	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthsafety/"
 	"",
 	
-	"Touch the Touch Screen to continue.",						// "Touch the Touch Screen to continue."
+	"Коснитесь экрана, чтобы продолжить.",						// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
 	": Вернуться в меню HOME",									// "Return to HOME Menu"
-	"START",													// "START" (used on cartridge indicator)
-	"Отсутствует Картридж",										// "No cartridge"
-	"Неизвестный Картридж",										// "Unknown Cartridge"
+	"СТАРТ",													// "START" (used on cartridge indicator)
+	"Картридж отсутствует",										// "No cartridge"
+	"Неизвестный картридж",										// "Unknown Cartridge"
 	"Настройки",												// "Settings"
 	": Назад",													// "B: Back"
-	": Add Games",												// "Y: Add Games"
+	": Доб-ть игры",											// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Язык",														// "Language"
@@ -33,29 +33,29 @@ static const char *const lang_RU[STR_MAX] = {
 	"Цвет",														// "Color"
 	"Цвет меню",												// "Menu Color"
 	"Показать имя файла",										// "Show filename"
-	"Игровой счетчик",											// "Game counter"
-	"Пользовательское изображение снизу",						// "Custom bottom image"
-	"Автоматическое обновление: TWLoader",						// "Auto-update TWLoader"
-	"TWLoader filetype",										// "TWLoader filetype"
+	"Счётчик игр",												// "Game counter"
+	"Своё нижнее изобр.",										// "Custom bottom image"
+	"Автообнов. TWLoader",										// "Auto-update TWLoader"
+	"Файл TWLoader",											// "TWLoader filetype"
 	"Обновить TWLoader",										// "Update TWLoader"
-	"DS/DSi стартовый экран",									// "DS/DSi Boot Screen"
-	"Сообщение о здоровье и безопасности",						// "Health and Safety message"
-	"Show Boot Screen",											// "Show Boot Screen"
-	"ROM path",													// "ROM path"
+	"Экран DS/DSi",												// "DS/DSi Boot Screen"
+	"Экран Техники без-ти",										// "Health and Safety message"
+	"Старт. экран",												// "Show Boot Screen"
+	"Путь к ROM-у",												// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
 	"Радуга LED",												// "Rainbow LED"
-	"ARM9 CPU скорость",										// "ARM9 CPU Speed"
-	"SD card access for Slot-1",								// "SD card access for Slot-1"
+	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
+	"Доступ SD-карты для Slot-1",								// "SD card access for Slot-1"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
 	"Вывод консоли",											// "Console output"
-	"Автоматическое обновление: bootsrap",						// "Auto-update bootstrap"
-	"Bootstrap",												// "Bootstrap"
+	"Автообновление бутстрапа",									// "Auto-update bootstrap"
+	"Бутстрап",													// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	": Обновить Bootstrap (Оффициальная версия)",				// "X: Update bootstrap (Official release)"
-	": Обновить Bootstrap (Неоффициальная версия)",			// "Y: Update bootstrap (Unofficial release)"
+	": Обновить бутстрап (Оффициальная версия)",				// "X: Update bootstrap (Official release)"
+	": Обновить бутстрап (Неоффициальная версия)",				// "Y: Update bootstrap (Unofficial release)"
 
 	/** Settings: GUI values **/
 
@@ -89,10 +89,10 @@ static const char *const lang_RU[STR_MAX] = {
 	"включая игровой баннер.",									// "including game banner text."
 
 	"Оформление для TWLoader.",									// "The theme to use in TWLoader."
-	"Нажмите START для под-тем оформления.",					// "Press START for sub-themes."
+        "Нажмите START для выбора под-тем.",					// "Press START for sub-themes."
 
 	"Цвет заливки сверху,",										// "The color of the top background,"
-	"границ START и круглых точек.",							// "the START border, and the circling dots."
+	"кнопки START и круглых точек.",							// "the START border, and the circling dots."
 
 	"Цвет верхней границы",										// "The color of the top border,"
 	"и заливки снизу.",											// "and the bottom background."
@@ -100,64 +100,64 @@ static const char *const lang_RU[STR_MAX] = {
 	"Показать имя файла в пузыре сверху.",						// "Shows game filename at the top of the bubble."
 	"",															// (empty)
 
-	"Номер выбранной игры, общее количество игр",				// "A number of selected game and listed games"
-	"показаны ниже пузыря с текстом.",							// "is shown below the text bubble."
+	"Номер выбранной игры и общее число игр",					// "A number of selected game and listed games"
+	"будут показаны под текстом.",								// "is shown below the text bubble."
 
-	"Загрузить собственное изображение для низа",				// "Loads a custom bottom screen image"
+	"Загрузить своё изображение для низа",						// "Loads a custom bottom screen image"
 	"игрового меню.",											// "for the game menu."
 
-	"Автоматическая загрузка последнего CIA файла",				// "Auto-download the CIA of the latest"
+	"Автомат-ая загрузка посл-го CIA",							// "Auto-download the CIA of the latest"
 	"TWLoader при запуске.",									// "TWLoader version at launch."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+	"Когда вы хотите видеть",									// "Where do you want to see the"
+	"экран запуска DS/DSi?",									// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Выберите флешкарту для",									// "Pick a flashcard to use to"
 	"запуска ROM-ов с нее.",									// "run ROMs from it."
 
 	"Показывать смену цветов радуги",							// "See rainbow colors glowing in"
-	"на LED для уведомлений.",									// "the Notification LED."
+	"на уведомляющем-LED.",										// "the Notification LED."
 
-	"Установить TWL, чтобы убрать лаги в",						// "Set to TWL to get rid of lags in some games."
+	"Выберите TWL, чтобы убрать лаги в",						// "Set to TWL to get rid of lags in some games."
 	"некоторых играх.",											// (empty)
 
 	// "Позволяет делать 8 битные записи VRAM",					// "Allows 8 bit VRAM writes"
-	// "и расширяет шину до 32 бит.",								// "and expands the bus to 32 bit."
+	// "и расширяет шину до 32 бит.",							// "and expands the bus to 32 bit."
 
-	"Enables SD card access for",								// "Enables SD card access for"
-	"Slot-1 cards.",											// "Slot-1 cards."
+	"Разрешить доступ к SD-карте",								// "Enables SD card access for"
+	"для картриджей Slot-1.",									// "Slot-1 cards."
 
-	"Показывать DS/DSi стартовую анимацию",						// "Displays the DS/DSi boot animation"
-	"перед запуском игр.",										// "before launched game."
+	"Показывать стартовый экран",								// "Displays the DS/DSi boot animation"
+	"DS/DSi перед запуском игр.",								// "before launched game."
 
-	"Показывать предупреждение о здоровье и",					// "Displays the Health and Safety"
+	"Показывать текст техники",									// "Displays the Health and Safety"
 	"безопасности снизу экрана.",								// "message on the bottom screen."
 
-	"Активируйте это если Slot-1 карта",						// "Enable this if Slot-1 carts are stuck"
+	"Включите, если картридж Slot-1",							// "Enable this if Slot-1 carts are stuck"
 	"застревает на белом экране.",								// "on white screens."
 
-	"Показывает текст перед запуском игры.",					// "Displays some text before launched game."
-	"",															// (empty)
+	"Показывает текст перед запуском",							// "Displays some text before launched game."
+	"игры.",													// (empty)
 
-	// "Блокировака ARM9 SCFG_EXT позволяет избегать",				// "Locks the ARM9 SCFG_EXT,"
-	// "конфликтов с последними сборками libnds.",					// "avoiding conflict with recent libnds."
+	// "Блокировака ARM9 SCFG_EXT позволяет избегать",			// "Locks the ARM9 SCFG_EXT,"
+	// "конфликтов с последними сборками libnds.",				// "avoiding conflict with recent libnds."
 
-	"Автоматическое обновление nds-bootstrap при старте.",		// "Auto-update nds-bootstrap at launch."
-	"",															// (empty)
+	"Автообновление nds-bootstrap",								// "Auto-update nds-bootstrap at launch."
+	"при старте.",												// (empty)
 
-	"Использовать стабильный или неоффициальный",				// "Change between release and"
-	"Bootstrap файл или наоборот",								// "unofficial bootstrap file."
+	"Исп-ть стабильный/нестабильный",							// "Change between release and"
+	"файл бутстрапа.",											// "unofficial bootstrap file."
 
 	/** Start menu **/
 	// Options
 	"Расположение игр",											// "Game location"
-	"Box-Art: Включить",										// "Box Art: On"
-	"Box-Art: Выключить",										// "Box Art: OFF"
-	"Запустить GBARunner2",										// "Start GBARunner2"
-	"Верхняя граница: Включить",								// "Top border: On"
-	"Верхняя граница: Выключить",								// "Top border: Off"
-	"Отключить донорский ROM",									// "Unset donor rom"
+	"Обложка: Вкл",												// "Box Art: On"
+	"Обложка: Выкл",											// "Box Art: OFF"
+	"Запуск GBARunner2",										// "Start GBARunner2"
+	"Оверлей: Вкл",												// "Top border: On"
+	"Оверлей: Выкл",											// "Top border: Off"
+	"Не исп. ROM-донор",										// "Unset donor rom"
 	"Поиск",													// "Search"
 	// Values
 	"SD карта",													// "SD Card"
@@ -166,13 +166,13 @@ static const char *const lang_RU[STR_MAX] = {
 
 	/** Select menu **/
 	// Options
-	"Скорость ARM9 CPU",										// "ARM9 CPU Speed"
-	"SD access",												// "SD access"
-	"Use set donor ROM",										// "Use set donor ROM"
-	"Выбрать донорский ROM",									// "Set as donor ROM"
+	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
+	"Доступ к SD",												// "SD access"
+	"Исп-ть ROM-донор",											// "Use set donor ROM"
+	"Выбрать ROM-донор",										// "Set as donor ROM"
 	"Выбрать цвет LED",											// "Set LED color"
 	// Values
-	"По умолчанию",												// "Default"
+	"По умол-ию",												// "Default"
 
 	/** Sub-theme **/
 	"Выбрать доп-оформление: Меню DSi",							// "Sub-theme select: DSi Menu"
@@ -182,10 +182,10 @@ static const char *const lang_RU[STR_MAX] = {
 	"Отсутствует доп-оформление для данной темы оформления.",	// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"/: Сохранить и вернуться",								// "A/B: Save and Return"
+	"/: Сохр. и вернуться",									// "A/B: Save and Return"
 	"Влево/Вправо: Выбрать",									// "Left/Right: Pick"
-	"Настройки: GUI",											// "Settings: GUI"
-	"Настройки: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"
+	"Настройки интерфейса",										// "Settings: GUI"
+	"Настройки NTR/TWL",										// "Settings: NTR/TWL-mode"
 
 };
 
