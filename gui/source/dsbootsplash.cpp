@@ -276,8 +276,8 @@ void bootSplash() {
 		// Poll for Slot-1 changes.
 		bool forcePoll = false;
 		bool doSlot1Update = false;
-		if (gamecardIsInserted()) {
-			// Card is inserted.
+		if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+			// Card is inserted, but we don't know its type.
 			// Force an update.
 			forcePoll = true;
 		}
@@ -285,8 +285,8 @@ void bootSplash() {
 		if (s1chg) {
 			// Update Slot-1 if:
 			// - forcePoll is false
-			// - forcePoll is true
-			doSlot1Update = (!forcePoll);
+			// - forcePoll is true, and card is no longer unknown.
+			doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
 		}
 
 		textVtxArrayPos = 0; // Clear the text vertex array
@@ -480,6 +480,7 @@ void bootSplash() {
 				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 			}
 			sf2d_end_frame();
+			sf2d_swapbuffers();
 		}
 		
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
