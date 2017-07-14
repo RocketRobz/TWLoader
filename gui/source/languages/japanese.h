@@ -30,7 +30,7 @@ static const char *const lang_JP[STR_MAX] = {
 	/** Settings: GUI **/
 	"言語",														// "Language"
 	"テーマ",														// "Theme"
-	"セッティングの色",												// "Color"
+	"セッティングの色",													// "Color"
 	"メニューの色",													// "Menu Color"
 	"表示するファイル名",												// "Show filename"
 	"ゲームのカウンター",												// "Game counter"
@@ -51,11 +51,11 @@ static const char *const lang_JP[STR_MAX] = {
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Console output",											// "Console output"
 	"ブートストラップの自動更新",											// "Auto-update bootstrap"
-	"ブートストラップ",												// "Bootstrap"
+	"ブートストラップ",													// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	": ブートストラップを更新する (公式)",								// "X: Update bootstrap (Official release)"
-	": ブートストラップを更新する (民間)",								// "Y: Update bootstrap (Unofficial release)"
+	": ブートストラップを更新する (公式)",									// "X: Update bootstrap (Official release)"
+	": ブートストラップを更新する (民間)",									// "Y: Update bootstrap (Unofficial release)"
 
 	/** Settings: GUI values **/
 
@@ -117,13 +117,13 @@ static const char *const lang_JP[STR_MAX] = {
 	"run ROMs from it.",										// "run ROMs from it."
 
 	"通知設定LEDの虹,"												// "See rainbow colors glowing in"
-																// "the Notification LED."
+	"",															// "the Notification LED."
 
 	"Set to TWL to get rid of lags in some games.",				// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
-	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
-	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
+	// "Allows 8 bit VRAM writes",								// "Allows 8 bit VRAM writes"
+	// "and expands the bus to 32 bit.",						// "and expands the bus to 32 bit."
 
 	"Enables SD card access for",								// "Enables SD card access for"
 	"Slot-1 cards.",											// "Slot-1 cards."

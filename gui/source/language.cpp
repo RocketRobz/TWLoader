@@ -21,7 +21,7 @@
 
 // All languages.
 static const char *const *lang_all[12] = {
-	lang_EN,	// Japanese (English is used for now, as the Japanese text crashes TWLoader)
+	lang_JP,	// Japanese (English is used for now, as the Japanese text crashes TWLoader)
 	lang_EN,	// English
 	lang_FR,	// French
 	lang_DE,	// German
