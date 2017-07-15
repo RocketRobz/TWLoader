@@ -269,9 +269,7 @@ void bootSplash() {
 	while (aptMainLoop()) {
 		// Scan hid shared memory for input events
 		hidScanInput();
-
 		const u32 hDown = hidKeysDown();
-		const u32 hHeld = hidKeysHeld();
 		
 		textVtxArrayPos = 0; // Clear the text vertex array
 		
