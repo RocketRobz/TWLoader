@@ -96,8 +96,8 @@ void bootSplash() {
 		bigotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/bigo.png", SF2D_PLACE_RAM);
 		nintendotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/nintendo.png", SF2D_PLACE_RAM);
 	}
-	sf2d_texture *hstexttex;
-	sf2d_texture *hstouchtex;
+	sf2d_texture *hstexttex = NULL;
+	sf2d_texture *hstouchtex = NULL;
 	if (settings.ui.bootscreen >= 3) {
 		if (settings.ui.language == 0) {
 			hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/inv_HS_JP.png", SF2D_PLACE_RAM);
@@ -640,26 +640,16 @@ void bootSplash() {
 
 	if (logEnabled)	LogFM("BootSplash", "Freeing textures");
 	sf2d_free_texture(ndslogotex);
-	ndslogotex = NULL;
 	sf2d_free_texture(itex);
-	itex = NULL;
 	sf2d_free_texture(topotex);
-	topotex = NULL;
 	sf2d_free_texture(bottomotex);
-	bottomotex = NULL;
 	sf2d_free_texture(bigotex);
-	bigotex = NULL;
 	sf2d_free_texture(nintendotex);
-	nintendotex = NULL;
 	if (settings.ui.language == 0 || settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
 		sf2d_free_texture(hstexttex);
-		hstexttex = NULL;
 		sf2d_free_texture(hstouchtex);
-		hstouchtex = NULL;
 	}
 	sf2d_free_texture(hstex);
-	hstex = NULL;
 	sf2d_free_texture(wipetex);
-	wipetex = NULL;
 	if (logEnabled)	LogFM("BootSplash", "Textures freed up");
 }
