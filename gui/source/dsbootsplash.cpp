@@ -350,8 +350,8 @@ void bootSplash() {
 				else offset3D_temp = -offset3D_nint;
 				sf2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
 			}
-			if (settings.ui.bootscreen == 2 && splashScreenTime > 60*1
-				|| settings.ui.bootscreen == 4 && splashScreenTime > 60*1) {
+			if ((settings.ui.bootscreen == 2 && splashScreenTime > 60*1) ||
+			    (settings.ui.bootscreen == 4 && splashScreenTime > 60*1)) {
 				if (topfb == 1) offset3D_temp = offset3D_i;
 				else offset3D_temp = -offset3D_i;
 				i_alpha += 10;
