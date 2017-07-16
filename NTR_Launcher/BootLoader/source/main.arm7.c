@@ -208,7 +208,7 @@ Written by Darkain, modified by Chishm.
 void arm7_startBinary (void)
 {
 	// Wait until the ARM9 is ready
-	while (arm9_stateFlag != ARM9_READY);
+    while (arm9_stateFlag != ARM9_READY);
 
 	while(REG_VCOUNT!=191);
 	while(REG_VCOUNT==191);
@@ -232,7 +232,7 @@ void arm7_main (void) {
 	int errorCode;
 	
 	// Wait for ARM9 to at least start
-	while (arm9_stateFlag < ARM9_START);
+    while (arm9_stateFlag < ARM9_START);
 
 	debugOutput (ERR_STS_CLR_MEM);
 	

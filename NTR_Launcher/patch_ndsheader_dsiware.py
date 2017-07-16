@@ -113,9 +113,9 @@ fname=args.file.name
 args.file.close()
 
 if not args.read:
-	print "Patching file : "+fname
+	print("Patching file : "+fname)
 else:
-	print "Reading header of file : "+fname
+	print("Reading header of file : "+fname)
 
 #offset of 0x4600 created
 
@@ -203,8 +203,8 @@ SrlHeader = namedtuple('SrlHeader',
 srlHeaderFormat='<12s4s2scbb7s2sbcIIIIIIIIIIIIIIIIIIIHHII8sII56s156s2sH32s'
 srlHeader=SrlHeader._make(unpack_from(srlHeaderFormat, data))
 if args.verbose:
-	print "origin header crc "+hex(srlHeader.headerCrc)
-	print "origin secure crc "+hex(srlHeader.secureAreaCrc)
+	print("origin header crc "+hex(srlHeader.headerCrc))
+	print("origin secure crc "+hex(srlHeader.secureAreaCrc))
 
 #SecureArea CRC compute "CRC-16 (Modbus)"
 file = open(fname, 'rb')
@@ -217,8 +217,8 @@ if args.verbose:
 file.close()
 
 if srlHeader.arm7EntryAddress>0x2400000 and not args.read and args.arm7 is None:
-	print "WARNING: .nds arm7EntryAddress greater than 0x2400000 will not boot as cia"
-	print "you need to recompile or swap the arm7 binary with a precompiled one with --arm7 and --arm7EntryAddress"
+	print("WARNING: .nds arm7EntryAddress greater than 0x2400000 will not boot as cia")
+	print("you need to recompile or swap the arm7 binary with a precompiled one with --arm7 and --arm7EntryAddress")
 
 if "dsi" in args.mode :
 	srlHeaderPatched=srlHeader._replace(
@@ -231,7 +231,7 @@ newHdrCrc=CRC16(modbus_flag=True).calculate(data1[0:0x15E])
 srlHeaderPatched=srlHeaderPatched._replace(headerCrc=newHdrCrc)
 
 if args.verbose:
-	print "new header crc "+hex(newHdrCrc)
+	print("new header crc "+hex(newHdrCrc))
 if not args.read :
 	if args.verbose:
 		pprint(dict(srlHeaderPatched._asdict()))
@@ -311,8 +311,8 @@ if not args.read:
 			arm9isize = getSize(args.arm9i)
 			arm9iRomOffset=srlHeaderPatched.ntrRomSize
 			if args.verbose:
-				print "arm9isize : "+hex(arm9isize)
-				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize)
+				print("arm9isize : "+hex(arm9isize))
+				print("arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize))
 			args.arm9i.close()
 			totaldsisize=arm9isize
 			
@@ -321,8 +321,8 @@ if not args.read:
 			arm7isize = getSize(args.arm7i)
 			arm7iRomOffset=srlHeaderPatched.ntrRomSize+arm9isize
 			if args.verbose:
-				print "arm7isize : "+hex(arm7isize)
-				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize)
+				print("arm7isize : "+hex(arm7isize))
+				print("arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize))
 			args.arm7i.close()
 			totaldsisize=arm9isize+arm7isize
 			
@@ -410,18 +410,18 @@ file.read(arm9FooterAddr)
 data=file.read(12)
 arm9Footer=ARM9Footer._make(unpack_from(ARM9FooterFormat, data))
 if args.verbose:
-	print "footer addr "+hex(arm9FooterAddr)
+	print("footer addr "+hex(arm9FooterAddr))
 if arm9Footer.nitrocode == 0xDEC00621:
 	if args.verbose or args.read:
-		print "ARM9 footer found."
-		print "no patch needed"
-		print "nitrocode "+hex(arm9Footer.nitrocode)
-		print "versionInfo "+hex(arm9Footer.versionInfo)
-		print "reserved "+hex(arm9Footer.reserved)
-		print "\n"
+		print("ARM9 footer found.")
+		print("no patch needed")
+		print("nitrocode "+hex(arm9Footer.nitrocode))
+		print("versionInfo "+hex(arm9Footer.versionInfo))
+		print("reserved "+hex(arm9Footer.reserved))
+		print("\n")
 else:
 	if args.verbose or args.read:
-		print "ARM9 footer not found.\n"
+		print("ARM9 footer not found.\n")
 	arm9FooterPatched=arm9Footer._replace(
 		nitrocode=		0xDEC00621,
 		versionInfo=	0xad8,
@@ -460,4 +460,4 @@ if not args.read:
 			os.remove(fname+".orig.nds")
 		os.rename(fname,fname+".orig.nds")
 		os.rename(fname+".tmp",fname)	
-	print "file patched"
+	print("file patched")
