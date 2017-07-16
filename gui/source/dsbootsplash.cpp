@@ -96,8 +96,8 @@ void bootSplash() {
 		bigotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/bigo.png", SF2D_PLACE_RAM);
 		nintendotex = sfil_load_PNG_file("romfs:/graphics/BootSplash/nintendo.png", SF2D_PLACE_RAM);
 	}
-	sf2d_texture *hstexttex;
-	sf2d_texture *hstouchtex;
+	sf2d_texture *hstexttex = NULL;
+	sf2d_texture *hstouchtex = NULL;
 	if (settings.ui.bootscreen >= 3) {
 		if (settings.ui.language == 0) {
 			hstexttex = sfil_load_PNG_file("romfs:/graphics/BootSplash/inv_HS_JP.png", SF2D_PLACE_RAM);
@@ -269,26 +269,8 @@ void bootSplash() {
 	while (aptMainLoop()) {
 		// Scan hid shared memory for input events
 		hidScanInput();
-
 		const u32 hDown = hidKeysDown();
-		const u32 hHeld = hidKeysHeld();
 		
-		// Poll for Slot-1 changes.
-		bool forcePoll = false;
-		bool doSlot1Update = false;
-		if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
-			// Card is inserted, but we don't know its type.
-			// Force an update.
-			forcePoll = true;
-		}
-		bool s1chg = gamecardPoll(forcePoll);
-		if (s1chg) {
-			// Update Slot-1 if:
-			// - forcePoll is false
-			// - forcePoll is true, and card is no longer unknown.
-			doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
-		}
-
 		textVtxArrayPos = 0; // Clear the text vertex array
 		
 		offset3D_oeffect1 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect1_chng;
@@ -366,8 +348,8 @@ void bootSplash() {
 				else offset3D_temp = -offset3D_nint;
 				sf2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
 			}
-			if (settings.ui.bootscreen == 2 && splashScreenTime > 60*1
-				|| settings.ui.bootscreen == 4 && splashScreenTime > 60*1) {
+			if ((settings.ui.bootscreen == 2 && splashScreenTime > 60*1) ||
+			    (settings.ui.bootscreen == 4 && splashScreenTime > 60*1)) {
 				if (topfb == 1) offset3D_temp = offset3D_i;
 				else offset3D_temp = -offset3D_i;
 				i_alpha += 10;
@@ -656,26 +638,16 @@ void bootSplash() {
 
 	if (logEnabled)	LogFM("BootSplash", "Freeing textures");
 	sf2d_free_texture(ndslogotex);
-	ndslogotex = NULL;
 	sf2d_free_texture(itex);
-	itex = NULL;
 	sf2d_free_texture(topotex);
-	topotex = NULL;
 	sf2d_free_texture(bottomotex);
-	bottomotex = NULL;
 	sf2d_free_texture(bigotex);
-	bigotex = NULL;
 	sf2d_free_texture(nintendotex);
-	nintendotex = NULL;
 	if (settings.ui.language == 0 || settings.ui.language == 6 || settings.ui.language == 7 || settings.ui.language == 11) {
 		sf2d_free_texture(hstexttex);
-		hstexttex = NULL;
 		sf2d_free_texture(hstouchtex);
-		hstouchtex = NULL;
 	}
 	sf2d_free_texture(hstex);
-	hstex = NULL;
 	sf2d_free_texture(wipetex);
-	wipetex = NULL;
 	if (logEnabled)	LogFM("BootSplash", "Textures freed up");
 }
