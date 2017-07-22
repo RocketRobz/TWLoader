@@ -19,35 +19,35 @@ static const char *const lang_FR[STR_MAX] = {
 	"Touchez l'écran tactile pour continuer.",					// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
-	": Retourner au Menu HOME",			    	   // "Return to HOME Menu"
-	"START",                                                   // "START" (used on cartridge indicator)
-	"Pas de cartouche",                                        // "No cartridge"
-	"Cartouche inconnue",                                      // "Unknown Cartridge"
-	"Paramètres",                                              // "Settings"	
-	": Retour",                                              // "B: Back"    
-	": Ajouter jeux",					  // "Y: Add Games"
+	": Retourner au Menu HOME",			    	   				// "Return to HOME Menu"
+	"START",                                                   	// "START" (used on cartridge indicator)
+	"Pas de cartouche",                                        	// "No cartridge"
+	"Cartouche inconnue",                                      	// "Unknown Cartridge"
+	"Paramètres",                                              	// "Settings"	
+	": Retour",                                              	// "B: Back"    
+	": Ajouter jeux",					  						// "Y: Add Games"
 	 
 	/** Settings: GUI **/
-	"Langue",                                                  // "Language"
-	"Thème",                                                   // "Theme"
-	"Couleur",                                                 // "Color"
-	"Menu des couleurs",                                       // "Menu Color"
-	"Afficher le nom du fichier",                              // "Show filename"
-	"Compteur de jeux",                                        // "Game counter"
-	"Image du bas personnalisée",                              // "Custom bottom image"
-	"Mise à jour auto. TWLoader",                              // "Auto-update TWLoader"
-	"Type de fichier TWLoader",				   // "TWLoader filetype"
-	"Mettre à jour TWLoader",				   // "Update TWLoader"
-	"Écran de démarrage DS/DSi",                               // "DS/DSi Boot Screen"
-	"Message de Santé et Sécurité",                            // "Health and Safety message"
-	"Afficher écran de Boot",				   // "Show Boot Screen"
-	"Chemin des ROM",					   // "ROM path"
+	"Langue",                                                  	// "Language"
+	"Thème",                                                   	// "Theme"
+	"Couleur",                                                 	// "Color"
+	"Couleur du menu",                                       	// "Menu Color"
+	"Aff. nom du fichier",                              		// "Show filename"
+	"Compteur de jeux",                                        	// "Game counter"
+	"Image du bas perso.",                              		// "Custom bottom image"
+	"MàJ auto. TWLoader",                              			// "Auto-update TWLoader"
+	"Mode TWLoader",				   							// "TWLoader filetype"
+	"MàJ TWLoader",				   								// "Update TWLoader"
+	"Écran DS/DSi",                               				// "DS/DSi Boot Screen"
+	"Santé et Sécurité",                            			// "Health and Safety message"
+	"Aff. écran de Boot",				   						// "Show Boot Screen"
+	"Chemin des ROM",					   						// "ROM path"
 	 
 	/** Settings: NTR/TWL_mode **/
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
-	"SD card access for Slot-1",								// "SD card access for Slot-1"
+	"Accès carte SD pour Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
 	"Affichage Console",                                        // "Console output"
 	"Mise à jour auto. bootstrap",                        	    // "Auto-update bootstrap"
@@ -85,69 +85,69 @@ static const char *const lang_FR[STR_MAX] = {
 	"Noir",                                                     // "Black"
 
 	/** Settings: GUI descriptions **/
-	"La langue à utiliser pour l'UI,",                          // "The language to use for the UI,"
+	"La langue à utiliser pour l'IU,",                          // "The language to use for the UI,"
 	"incluant le texte des bannières des jeux.",                // "including game banner text."
 	 
 	"Le thème à utiliser dans TWLoader.",                       // "The theme to use in TWLoader."
 	"Appuyez sur START pour les sous-thèmes.",                  // "Press START for sub-themes."
 	 
-	"La couleur de l'arrière plan du haut,",                    // "The color of the top background,"
-	"de la bordure START et du sablier.",            	    // "the START border, and the circling dots."
+	"La couleur de l'arrière-plan du haut,",                    // "The color of the top background,"
+	"de la bordure START et du sablier.",            	    	// "the START border, and the circling dots."
 	 
 	"La couleur de la bordure du haut,",                        // "The color of the top border,"
-	"et de l'arrière plan du bas.",                             // "and the bottom background."
+	"et de l'arrière-plan du bas.",                             // "and the bottom background."
 	 
-	"Afficher le nom du fichier du jeu en",  		    // "Shows game filename at the top of the bubble."
+	"Afficher le nom du fichier du jeu en",  		    		// "Shows game filename at the top of the bubble."
 	"haut dans la bulle.",                                      // (empty)
 	 
 	"Le numéro du jeu sélectionné / listé",              	    // "A number of selected game and listed games"
 	"est affiché sous la bulle de texte.",                      // "is shown below the text bubble."
 	 
-	"Charge une image personnalisée sur",        		    // "Loads a custom bottom screen image"
+	"Charge une image personnalisée sur",        		    	// "Loads a custom bottom screen image"
 	"l'écran du bas dans le menu des jeux.",                    // "for the game menu."
 	 
 	"Télécharger automatiquement le dernier",              	    // "Auto-download the CIA of the latest"
 	"CIA de TWLoader au démarrage.",                            // "TWLoader version at launch."
 	 
-	"Où voulez-vour voir l'écran de",			    // "Where do you want to see the"
-	"démarrage DS/DSi ?",					    // "DS/DSi boot screen?"
+	"Quand voulez-vous voir l'écran de",			    		// "Where do you want to see the"
+	"démarrage DS/DSi ?",					    				// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Sélectionnez un linker à utiliser pour",                   // "Pick a flashcard to use to"
 	"lancer les ROMs.",                                         // "run ROMs from it."
 	 
-	"Afficher un arc-en-ciel clignotant au",  		    // "See rainbow colors glowing in"
+	"Afficher un arc-en-ciel clignotant au",  		    		// "See rainbow colors glowing in"
 	"niveau de la DEL de notification.",                        // "the Notification LED."
 	 
-	"Activer pour se débarrasser des",             		    // "Set to TWL to get rid of lags in some games."
+	"Activer pour se débarrasser des",             		   		// "Set to TWL to get rid of lags in some games."
 	"ralentissements dans certains jeux.",                      // (empty)
 	 
 	// "Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
 	// "et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
 
-	"Enables SD card access for",								// "Enables SD card access for"
+	"Activer l'accès carte SD pour les",						// "Enables SD card access for"
 	"Slot-1 cards.",											// "Slot-1 cards."
 	 
 	"Afficher l'animation de démarrage de la",                  // "Displays the DS/DSi boot animation"
 	"DS/DSi avant le lancement du jeu.",                        // "before launched game."
 	 
 	"Afficher le message de Santé et Sécurité",                 // "Displays the Health and Safety"
-	"sur l'écran du bas.",                            	    // "message on the bottom screen."
+	"sur l'écran du bas.",                            	    	// "message on the bottom screen."
 	 
-	"Activer si les cartouches Slot-1 sont",           	    // "Enable this if Slot-1 carts are stuck"
+	"Activer si les cartouches Slot-1 sont",           	    	// "Enable this if Slot-1 carts are stuck"
 	"bloquées sur des écrans blancs.",                          // "on white screens."
 	 
-	"Aficher du texte avant de lancer un jeu.",                 // "Displays some text before launched game."
+	"Afficher du texte avant de lancer un jeu.",                 // "Displays some text before launched game."
 	"",                                                         // (empty)
 	 
 	// "Verrouille le SCFG_EXT de l'ARM9,",                        // "Locks the ARM9 SCFG_EXT,"
 	// "évitant les conflits avec la récente libnds.",      	    // "avoiding conflict with recent libnds."
 	 
-	"Mise à jour auto. de nds-bootstrap",         		    // "Auto-update nds-bootstrap at launch."
+	"Mise à jour auto. de nds-bootstrap",         		    	// "Auto-update nds-bootstrap at launch."
 	"au démarrage.",                                            // (empty)
 
-	"Changer entre les fichiers de bootstrap",                 // "Pick release, unofficial,"
-	"(release non-officiel, et vieux).",                               // "or old bootstrap."
+	"Sélectionner le fichier de bootstrap",                 	// "Pick release, unofficial,"
+	"(release non-officiel, et vieux).",                        // "or old bootstrap."
 	 
 	/** Start menu **/
 	// Options
@@ -158,7 +158,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Bordure haut: ON",                                         // "Top border: On"
 	"Bordure haut: OFF",                                        // "Top border: Off"
 	"Déselct. donor ROM",                                       // "Unset donor rom"
-	"Recherche",                                                // "Search"
+	"Rechercher…",                                            	// "Search"
 	// Values
 	"Carte SD",                                                 // "SD Card"
 	"Linker",                                                   // "Flashcard"
@@ -166,11 +166,11 @@ static const char *const lang_FR[STR_MAX] = {
 	 
 	/** Select menu **/
 	// Options
-	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
-	"SD access",												// "SD access"
-	"Use set donor ROM",                                		// "Use set donor ROM"
-	"Définir comme donor ROM",                                  // "Set as donor ROM"
-	"Définir la couleur de la DEL",                             // "Set LED color"
+	"Fréq. du CPU ARM9",                                      	// "ARM9 CPU Speed"
+	"Accès SD",													// "SD access"
+	"Utiliser donor ROM",                                		// "Use set donor ROM"
+	"Définir donor ROM",                                  		// "Set as donor ROM"
+	"Couleur de la DEL",                             			// "Set LED color"
 	// Values
 	"Par défaut",                                               // "Default"
 	 
@@ -179,10 +179,10 @@ static const char *const lang_FR[STR_MAX] = {
 	"Sélection sous-thème: R4",                                 // "Sub-theme select: R4"
 	"Sélec. sous-thème: akMenu/Wood",                           // "Sub-theme select: Wood"
 	 
-	"Aucun autre sous-thème pour ce thème.",                    // "No sub-themes exist for this theme."
+	"Aucun sous-thème pour ce thème.",                    		// "No sub-themes exist for this theme."
 	 
 	/** Settings others minor strings **/
-	"/: Sauvegarder and Retourner",                         // "A/B: Save and Return"
+	"/: Sauvegarder and Retourner",                         	// "A/B: Save and Return"
 	"Gauche/Droite: Choisir",                                   // "Left/Right: Pick"
 	"Paramètres: GUI",                                          // "Settings: GUI"
 	"Paramètres: NTR/TWL-mode",                                 // "Settings: NTR/TWL-mode"
