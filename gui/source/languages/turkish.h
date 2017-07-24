@@ -101,13 +101,13 @@ static const char *const lang_TR[STR_MAX] = {
 	"üst tarafında gösterir.",										// "top of the bubble."
 
 	"Seçilen oyun ve sayısı",						// "A number of selected game and listed"
-	"Metin baloncuğunun altında görünür.",					// "games is shown below the text bubble."
+	"metin baloncuğunun altında görünür.",					// "games is shown below the text bubble."
 
 	"DSi Menü teması için",						// "Loads a custom bottom screen image"
 	"özel bir alt ekran görseli yükler.",									// "for the DSi Menu theme."
 
-	"Son sürüme otomatik güncelle",								// "Auto-update to the latest"
-	"Başlangıçtaki TWLoader versiyonu.",								// "TWLoader version at launch."
+	"Açılışta son TWLoader versiyonuna",								// "Auto-update to the latest"
+	"otomatik olarak güncelle",								// "TWLoader version at launch."
 
 	"DS/DSi başlangıç ekranını",								// "Where do you want to see the"
 	"Nerede görmek istersiniz?",										// "DS/DSi boot screen?"
@@ -146,8 +146,8 @@ static const char *const lang_TR[STR_MAX] = {
 	"Açılışta nds-bootstrap'i otomatik güncelleştir.",						// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
 
-	"Resmi sürüm bootstrap,",								// "Pick release, unofficial,"
-	"Resmi olmayan sürüm bootstrap.",										// "or old bootstrap."
+	"Bootstrap sürümü seçin,",								// "Pick release, unofficial,"
+	"Resmi ya da resmi olmayan bootstrap sürümü.",										// "or old bootstrap."
 
 	/** Start menu **/
 	// Options
