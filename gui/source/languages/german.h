@@ -8,12 +8,12 @@ static const char *const lang_DE[STR_MAX] = {
 
 	/** DS/DSi boot screen **/
 	"WARNUNG - GESUNDHEIT UND SICHERHEIT",						// "WARNING - HEALTH AND SAFETY"
-	"BEVOR ZU DU SPIELEN BEGINNST, LIES BITTE DIE",				// "BEFORE PLAYING, READ THE HEALTH"
+	"BEVOR DU ZU SPIELEN BEGINNST, LIES BITTE DIE",				// "BEFORE PLAYING, READ THE HEALTH"
 	"GESUNDHEITS- UND SICHERHEITSHINWEISE",						// "AND SAFETY PRECAUTIONS BOOKLET"
-	"BEZÜGLICH WICHTIGER HINWEISE ZU DEINER",					// "FOR IMPORTANT INFORMATION"
+	"BEZÜGLICH WICHTIGER INFORMATIONEN ZU DEINER",					// "FOR IMPORTANT INFORMATION"
 	"GESUNDHEIT UND SICHERHEIT DURCH.",							// "ABOUT YOUR HEALTH AND SAFETY."
 	"UM EINE EXTRA-KOPIE DES TEXTES FÜR DEINE REGION",			// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"ZU BEKOMMEN, BESUCHE BITE FOLGENDE WEBSEITE:",
+	"ZU BEKOMMEN, BESUCHE BITTE FOLGENDE WEBSEITE:",
 	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthsafety/"
 	
 	"Berühre den Touchscreen, um fortzufahren.",				// "Touch the Touch Screen to continue."
@@ -25,7 +25,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Unbekannte Karte",											// "Unknown Cartridge"
 	"Einstellungen",											// "Settings"
 	": Zurück",												// "B: Back"	
-	": Add Games",												// "Y: Add Games"
+	": Spiele hinzufügen",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Sprache",													// "Language"
@@ -35,27 +35,27 @@ static const char *const lang_DE[STR_MAX] = {
 	"Dateiname anzeigen",										// "Show filename"
 	"Spielzähler",												// "Game counter"
 	"Benutzerdefiniertes unteres Bild",							// "Custom bottom image"
-	"TWLoader automatisch updaten",								// "Auto-update TWLoader"
+	"TWLoader automatisch aktualisieren",								// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"TWLoader aktualisieren",									// "Update TWLoader"
 	"DS/DSi Startbildschirm",									// "DS/DSi Boot Screen"
-	"Gesundheits- und Sicherheitsinfos",						// "Health and Safety message"
-	"Show Boot Screen",											// "Show Boot Screen"
-	"ROM path",													// "ROM path"
+	"Gesundheits- und Sicherheitshinweise",						// "Health and Safety message"
+	"Zeige Startbildschirm",											// "Show Boot Screen"
+	"ROM Pfad",													// "ROM path"
 
 	/** Settings: NTR/TWL_mode **/
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
 	"Regenbogen LED",											// "Rainbow LED"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
-	"SD card access for Slot-1",								// "SD card access for Slot-1"
+	"SD Zugriff für Slot-1",								// "SD card access for Slot-1"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
 	"Konsolenausgabe",											// "Console output"
-	"Bootstrap automatisch updaten",							// "Auto-update bootstrap"
+	"Bootstrap automatisch aktualisieren",							// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	": Bootstrap updaten (Offizielle Version)",				// "X: Update bootstrap (Official release)"
-	": Bootstrap updaten (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
+	": Bootstrap aktualisieren (Offizielle Version)",				// "X: Update bootstrap (Official release)"
+	": Bootstrap aktualisieren (Inoffizielle Version)",				// "Y: Update bootstrap (Unofficial release)"
 
 	/** Settings: GUI values **/
 
@@ -86,7 +86,7 @@ static const char *const lang_DE[STR_MAX] = {
 
 	/** Settings: GUI descriptions **/
 	"Die Sprache der Benutzeroberfläche",						// "The language to use for the UI,"
-	"und der Spielenamen.",										// "including game banner text."
+	"und des Spiel-Banner Texts.",										// "including game banner text."
 
 	"Das benutzte Design für TWLoader.",						// "The theme to use in TWLoader."
 	"Drücke START für Unterdesigns.",							// "Press START for sub-themes."
@@ -95,7 +95,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"der START Umrandung und der kreisenden Punkte.",			// "the START border, and the circling dots."
 
 	"Die Farbe des oberen Randes",								// "The color of the top border,"
-	"und des unteren Hintergrundes.",							// "and the bottom background."
+	"und des unteren Hintergrunds.",							// "and the bottom background."
 
 	"Zeigt den Dateinamen des Spiels oben in der Blase.",		// "Shows game filename at the top of the bubble."
 	"",															// (empty)
@@ -103,14 +103,14 @@ static const char *const lang_DE[STR_MAX] = {
 	"Die Nummer des ausgewählten Spiels und die",				// "A number of selected game and listed games"
 	"Anzahl der Spiele wird unter der Textblase angezeigt.",	// "is shown below the text bubble."
 
-	"Läd ein benutzerdefiniertes Bild für den unteren",			// "Loads a custom bottom screen image"
+	"Lädt ein benutzerdefiniertes Bild für den unteren",			// "Loads a custom bottom screen image"
 	"Bildschirm im Spiele-Menü.",								// "for the game menu."
 
 	"Die neuste TWLoader Version beim Start",					// "Auto-download the CIA of the latest"
 	"automatisch herunterladen.",								// "TWLoader version at launch."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+	"Wo möchtest du den",								// "Where do you want to see the"
+	"DS/DSi Startbildschirm sehen?",										// "DS/DSi boot screen?"
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Wähle die Flashkarte, die du zum",							// "Pick a flashcard to use to"
@@ -125,8 +125,8 @@ static const char *const lang_DE[STR_MAX] = {
 	// "Erlaubt 8 bit VRAM Schreibvorgänge",						// "Allows 8 bit VRAM writes"
 	// "und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
 
-	"Enables SD card access for",								// "Enables SD card access for"
-	"Slot-1 cards.",											// "Slot-1 cards."
+	"Aktiviert SD Zugriff für",								// "Enables SD card access for"
+	"Slot-1 Karten.",											// "Slot-1 cards."
 
 	"Zeigt die DS/DSi Boot-Animation",							// "Displays the DS/DSi boot animation"
 	"vor dem Spielstart an.",									// "before launched game."
@@ -143,7 +143,7 @@ static const char *const lang_DE[STR_MAX] = {
 	// "Stellt den ARM9 SCFG_EXT fest,",							// "Locks the ARM9 SCFG_EXT,"
 	// "vermeidet Konflikt mit aktuellem libnds",					// "avoiding conflict with recent libnds."
 
-	"nds-bootstrap beim Start automatisch updaten.",			// "Auto-update nds-bootstrap at launch."
+	"nds-bootstrap beim Start automatisch aktualisieren.",			// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
 
 	"Wechsele zwischen offizieller",							// "Change between release and"
@@ -167,19 +167,19 @@ static const char *const lang_DE[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"CPU Geschwindigkeit",										// "ARM9 CPU Speed" (Removed ARM9, because it did not fit inside the box)
-	"SD access",												// "SD access"
-	"Use set donor ROM",										// "Use set donor ROM"
+	"SD Zugriff",												// "SD access"
+	"Benutze Donor ROM",										// "Use set donor ROM"
 	"Setze als Donor ROM",										// "Set as donor ROM"
 	"LED Farbe",												// "Set LED color"
 	// Values
-	"Standart",													// "Default"
+	"Standard",													// "Default"
 
 	/** Sub-theme **/
 	"Unterdesignauswahl: DSi Menu",								// "Sub-theme select: DSi Menu"
 	"Unterdesignauswahl: R4",									// "Sub-theme select: R4"
 	"Unterdesignauswahl: akMenu/Wood",							// "Sub-theme select: akMenu/Wood"
 
-	"Für dieses Design existiert kein Unterdesign.",			// "No sub-themes exist for this theme."
+	"Für dieses Design existieren keine Unterdesigns.",			// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
 	"/: Speichern und Zurück",								// "A/B: Save and Return"
