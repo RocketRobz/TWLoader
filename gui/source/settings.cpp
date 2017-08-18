@@ -200,6 +200,15 @@ void settingsUnloadTextures(void)
 	settings_tex_loaded = false;
 }
 
+int twlfaderun = true;
+int oaderfaderun = false;
+int twlfade = true;
+int oaderfade = true;
+int demofade = true;
+int twlfadealpha = 0;
+int oaderfadealpha = 0;
+int demofadealpha = 0;
+
 /**
  * Draw the top settings screen.
  */
@@ -221,8 +230,14 @@ void settingsDrawTopScreen(void)
 		if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
 			if (settings.ui.bootscreen == 2) {
 				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
 			} else if (settings.ui.bootscreen <= 1) {
 				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				if (settings.ui.bootscreen == 1) {
+					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
+				} else {
+					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
+				}
 			} else {
 				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
 			}
@@ -244,6 +259,9 @@ void settingsDrawTopScreen(void)
 			}
 		} else {
 			sf2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			sf2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - settingslogotwltex->width/2, 240/2 - settingslogotwltex->height/2, RGBA8(255,255,255,twlfadealpha));
+			sf2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - settingslogooadertex->width/2, 240/2 - settingslogooadertex->height/2, RGBA8(255,255,255,oaderfadealpha));
+			if(isDemo) sf2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - settingslogodemotex->width/2, 240/2 - settingslogodemotex->height/2, RGBA8(255,255,255,demofadealpha));
 			if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
 				setTextColor(RGBA8(0, 0, 255, 255));
 				renderText_w(offset3D[topfb].disabled+72, 174, 0.60, 0.60, false, TR(STR_SETTINGS_XBUTTON_RELEASE));
@@ -294,6 +312,51 @@ void settingsDrawTopScreen(void)
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
 		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		sf2d_end_frame();
+	}
+	if(demofade) {
+		demofadealpha += 5;
+		if (demofadealpha == 255) {
+			demofade = false;
+		}
+	} else {
+		demofadealpha -= 5;
+		if (demofadealpha == 0) {
+			demofade = true;
+		}
+	}
+	if(twlfaderun) {
+		if(twlfade && twlfadealpha != 254) {
+			twlfadealpha += 2;
+			if (twlfadealpha == 254) {
+				twlfadealpha = 255;
+				twlfaderun = false;
+				twlfade = false;
+				oaderfaderun = true;
+			}
+		} else {
+			twlfadealpha -= 2;
+			if (twlfadealpha == 1) {
+				twlfadealpha = 0;
+				twlfade = true;
+			}
+		}
+	}
+	if(oaderfaderun) {
+		if(oaderfade && oaderfadealpha != 254) {
+			oaderfadealpha += 2;
+			if (oaderfadealpha == 254) {
+				oaderfadealpha = 255;
+				oaderfaderun = false;
+				oaderfade = false;
+				twlfaderun = true;
+			}
+		} else {
+			oaderfadealpha -= 2;
+			if (oaderfadealpha == 1) {
+				oaderfadealpha = 0;
+				oaderfade = true;
+			}
+		}
 	}
 }
 
@@ -384,10 +447,10 @@ void settingsDrawBottomScreen(void)
 
 		// Theme text.
 		static const char *const theme_text[] = {
-			"DSi Menu", "R4", "akMenu/Wood"
+			"DSi Menu", "3DS HOME Menu", "R4", "akMenu/Wood"
 		};
-		if (settings.ui.theme < 0 || settings.ui.theme > 2)
-			settings.ui.theme = 0;
+		if (settings.ui.theme < THEME_DSIMENU || settings.ui.theme > THEME_AKMENU)
+			settings.ui.theme = THEME_DSIMENU;
 		const char *const themevaluetext = theme_text[settings.ui.theme];
 
 		// Color text.
@@ -922,11 +985,11 @@ void settingsDrawBottomScreen(void)
 		renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_LEFTRIGHT_PICK));
 		renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	} else if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
-		if (settings.ui.theme == 0) {
+		if (settings.ui.theme == THEME_DSIMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_DSi);
 			setTextColor(SET_ALPHA(color_data->color, 255));
 			renderText_w(Xpos, 40, 0.55, 0.55, false, TR(STR_SETTINGS_NO_SUB_THEMES));
-		} else if (settings.ui.theme == 1) {
+		} else if (settings.ui.theme == THEME_R4) {
 			title = TR(STR_SETTINGS_SUBTHEME_R4);
 			int Ypos = 30;
 			if (settings.ui.subtheme == 0) {
@@ -1013,7 +1076,7 @@ void settingsDrawBottomScreen(void)
 			}
 			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme12");
 			Ypos += 12;
-		} else if (settings.ui.theme == 2) {
+		} else if (settings.ui.theme == THEME_AKMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
@@ -1150,14 +1213,14 @@ bool settingsMoveCursor(u32 hDown)
 			subscreenmode = SUBSCREEN_MODE_FRONTEND;
 			sfx = sfx_select;
 		}
-		if (settings.ui.theme == 0) {
+		if (settings.ui.theme == THEME_DSIMENU) {
 			settings.ui.subtheme = 0;
-		} else if (settings.ui.theme == 1) {
+		} else if (settings.ui.theme == THEME_R4) {
 			if (settings.ui.subtheme < 0)
 				settings.ui.subtheme = 11;
 			else if (settings.ui.subtheme > 11)
 				settings.ui.subtheme = 0;
-		} else if (settings.ui.theme == 2) {
+		} else if (settings.ui.theme == THEME_AKMENU) {
 			if (settings.ui.subtheme < 0)
 				settings.ui.subtheme = 3;
 			else if (settings.ui.subtheme > 3)
@@ -1478,14 +1541,14 @@ bool settingsMoveCursor(u32 hDown)
 					if (hDown & KEY_A) {
 						settings.ui.subtheme = 0;
 						settings.ui.theme++;
-						if (settings.ui.theme > 2) {
-							settings.ui.theme = 0;
+						if (settings.ui.theme > THEME_AKMENU) {
+							settings.ui.theme = THEME_DSIMENU;
 						}
 					} else if (hDown & KEY_Y) {
 						settings.ui.subtheme = 0;
 						settings.ui.theme--;
-						if (settings.ui.theme < 0) {
-							settings.ui.theme = 2;
+						if (settings.ui.theme < THEME_DSIMENU) {
+							settings.ui.theme = THEME_AKMENU;
 						}
 					}
 					break;

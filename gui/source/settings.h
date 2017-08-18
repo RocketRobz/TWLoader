@@ -111,6 +111,12 @@ typedef struct _Settings_t {
 } Settings_t;
 extern Settings_t settings;
 
+// Couldn't get enums working, so I just used ints.
+extern int THEME_DSIMENU;	// DSi Menu
+extern int THEME_3DSMENU;	// 3DS Menu
+extern int THEME_R4;	// R4
+extern int THEME_AKMENU;	// Wood/akMenu
+
 /**
  * Reset the settings screen's subscreen mode.
  */

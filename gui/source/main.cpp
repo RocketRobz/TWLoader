@@ -73,11 +73,21 @@ static sf2d_texture *dboxtex_iconbox = NULL;
 sf2d_texture *dboxtex_button;
 sf2d_texture *dboxtex_buttonback;
 
-sf2d_texture *settingslogotex;	// TWLoader logo.
+sf2d_texture *twloaderlogotex;	// TWLoader logo.
+sf2d_texture *settingslogotex;	// TWLoader logo in settings screen.
+sf2d_texture *settingslogotwltex;
+sf2d_texture *settingslogooadertex;
+sf2d_texture *settingslogodemotex;
 
 static sf2d_texture *slot1boxarttex = NULL;
 
 std::string	bootstrapPath;
+
+// Couldn't get enums working, so I just used ints.
+int THEME_DSIMENU = 0;	// DSi Menu
+int THEME_3DSMENU = 1;	// 3DS Menu
+int THEME_R4 = 2;	// R4
+int THEME_AKMENU = 3;	// Wood/akMenu
 
 // Current screen mode.
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
@@ -1618,15 +1628,15 @@ int main()
 	sf2d_set_3D(0);
 
 	if(isDemo)
-		settingslogotex = sfil_load_PNG_buffer(logo_demo_png, SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
+		twloaderlogotex = sfil_load_PNG_buffer(logo_demo_png, SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
 	else
-		settingslogotex = sfil_load_PNG_buffer(logo_png, SF2D_PLACE_RAM); // TWLoader logo on top screen
+		twloaderlogotex = sfil_load_PNG_buffer(logo_png, SF2D_PLACE_RAM); // TWLoader logo on top screen
 
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+	sf2d_draw_texture(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
 	sf2d_end_frame();
 	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+	sf2d_draw_texture(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
 	sf2d_end_frame();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 	sf2d_end_frame();
@@ -1743,7 +1753,7 @@ int main()
 		vertext_xPos = 336;
 	}
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	sf2d_draw_texture(settingslogotex, 400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+	sf2d_draw_texture(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
 	setTextColor(RGBA8(255, 255, 255, 255));
 	renderText(vertext_xPos, 222, 0.60, 0.60f, false, settings_vertext);
 	sf2d_end_frame();
@@ -1815,6 +1825,16 @@ int main()
 	batterytex[3] = sfil_load_PNG_file("romfs:/graphics/battery3.png", SF2D_PLACE_RAM);
 	batterytex[4] = sfil_load_PNG_file("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
 	batterytex[5] = sfil_load_PNG_file("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
+
+	if(!isDemo) {
+		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo in settings screen.
+		settingslogotwltex = sfil_load_PNG_file("romfs:/graphics/settings/logo_twl.png", SF2D_PLACE_RAM);
+	} else {
+		settingslogotex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo.png", SF2D_PLACE_RAM); // TWLoader logo in settings screen.
+		settingslogotwltex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo_twl.png", SF2D_PLACE_RAM);
+		settingslogodemotex = sfil_load_PNG_file("romfs:/graphics/settings/logo_demo_demo.png", SF2D_PLACE_RAM);
+	}
+	settingslogooadertex = sfil_load_PNG_file("romfs:/graphics/settings/logo_oader.png", SF2D_PLACE_RAM);
 
 	sf2d_texture *iconstex = NULL;		// Bottom of menu (3 icons)
 	sf2d_texture *sdicontex = sfil_load_PNG_file("romfs:/graphics/wood/sd.png", SF2D_PLACE_RAM);
@@ -2000,7 +2020,7 @@ int main()
 	sf2d_end_frame();
 	sf2d_swapbuffers();
 	
-	if (settings.ui.theme >= 1)
+	if (settings.ui.theme >= THEME_R4)
 		menu_ctrlset = CTRL_SET_MENU;
 	sf2d_set_3D(1);
 
@@ -2010,11 +2030,11 @@ int main()
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
-		if (settings.ui.theme == 0 && aptMainLoop()) fade_whiteToBlack();
+		if (settings.ui.theme == THEME_DSIMENU && aptMainLoop()) fade_whiteToBlack();
 	}
 
 	if (aptMainLoop()) {
-		if (settings.ui.theme >= 1) {
+		if (settings.ui.theme >= THEME_R4) {
 			sf2d_start_frame(GFX_TOP, GFX_LEFT);
 			sf2d_draw_texture(r4loadingtex, 40, 0);
 			sf2d_end_frame();
@@ -2048,7 +2068,7 @@ int main()
 	bool saveOnExit = isTWLNANDInstalled;
 	
 	// Check if the TWLNAND-side title (both parts) is installed.
-	if (!isTWLNANDInstalled && !isDemo || !isTWLNAND2Installed && !isDemo) {
+	if ((!isTWLNANDInstalled && !isDemo) || (!isTWLNAND2Installed && !isDemo)) {
 		if (!isTWLNAND2Installed) {
 			TWLNANDnotfound_msg = 1;
 			if (logEnabled)	LogFM("Main.isTWLNAND2Installed", "TWLNAND side (part 2) not installed");
@@ -2121,7 +2141,7 @@ int main()
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
-				if (settings.ui.theme == 2) {
+				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
@@ -2137,7 +2157,7 @@ int main()
 							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
 							break;
 					}
-				} else if (settings.ui.theme == 1) {
+				} else if (settings.ui.theme == THEME_R4) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
@@ -2198,7 +2218,7 @@ int main()
 				// titleboxXmovepos = (-64)*settings.ui.cursorPosition;
 				// titleboxXmovepos += (64)*settings.ui.pagenum*20;
 				
-				if (settings.ui.theme == 0 && fadealpha == 0) {
+				if (settings.ui.theme == THEME_DSIMENU && fadealpha == 0) {
 					dsiMenuTheme_loadingScreen();
 				}
 				if (!settings.twl.forwarder) {
@@ -2264,7 +2284,7 @@ int main()
 				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
 				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
-				// if (settings.ui.theme == 0 && fadealpha == 0) {
+				// if (settings.ui.theme == THEME_DSIMENU && fadealpha == 0) {
 				// 	dsiMenuTheme_loadingScreen();
 				// }
 				if (!settings.twl.forwarder) {
@@ -2445,7 +2465,7 @@ int main()
 				boxartnum = 0+settings.ui.pagenum*20;
 			}
 			
-			if (settings.ui.theme == 2) {	// akMenu/Wood theme
+			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
 				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
 					sf2d_draw_texture(topbgtex, 40, 0);
@@ -2556,7 +2576,7 @@ int main()
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					sf2d_end_frame();
 				}
-			} else if (settings.ui.theme == 1) {	// R4 theme
+			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
 					sf2d_start_frame(GFX_TOP, GFX_LEFT);	
 					if (menu_ctrlset != CTRL_SET_MENU) {
@@ -2837,7 +2857,7 @@ int main()
 						sf2d_end_frame();
 						sf2d_swapbuffers();
 					}
-					if (settings.ui.theme == 2) {
+					if (settings.ui.theme == THEME_AKMENU) {
 						/** This is better than a glitched screen */
 						sf2d_start_frame(GFX_TOP, GFX_LEFT);
 						sf2d_end_frame();
@@ -2847,7 +2867,7 @@ int main()
 						woodmenu_cursorPosition = 4;
 						if (settings.ui.cursorPosition < 0)
 							settings.ui.cursorPosition = 0;
-					} else if (settings.ui.theme == 1) {
+					} else if (settings.ui.theme == THEME_R4) {
 						/** This is better than a glitched screen */
 						sf2d_start_frame(GFX_TOP, GFX_LEFT);
 						sf2d_end_frame();
@@ -3131,7 +3151,7 @@ int main()
 					settingsUnloadTextures();
 					dotcircletex = sfil_load_PNG_file(color_data->dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
 					startbordertex = sfil_load_PNG_file(color_data->startborderloc, SF2D_PLACE_RAM); // "START" border
-					if (settings.ui.theme == 2) {
+					if (settings.ui.theme == THEME_AKMENU) {
 						switch (settings.ui.subtheme) {
 							case 0:
 							default:
@@ -3147,7 +3167,7 @@ int main()
 								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
 								break;
 						}
-					} else if (settings.ui.theme == 1) {
+					} else if (settings.ui.theme == THEME_R4) {
 						switch (settings.ui.subtheme) {
 							case 0:
 							default:
@@ -3206,7 +3226,7 @@ int main()
 				}
 
 				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				if (settings.ui.theme == 2) {
+				if (settings.ui.theme == THEME_AKMENU) {
 					if (wood_ndsiconscaletimer == 60) {
 						// Scale icon at 30fps
 						if (wood_ndsiconscalelag == 1) {
@@ -3376,7 +3396,7 @@ int main()
 							}
 						}
 					}
-				} else if (settings.ui.theme == 1) {
+				} else if (settings.ui.theme == THEME_R4) {
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						sf2d_draw_texture(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
 						if (r4menu_cursorPosition == 0) {
@@ -3896,7 +3916,7 @@ int main()
 				romselect_layout = 1;
 				updatebotscreen = true;
 			} */
-			if (settings.ui.theme == 2) {
+			if (settings.ui.theme == THEME_AKMENU) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {
 						switch (woodmenu_cursorPosition) {
@@ -4068,7 +4088,7 @@ int main()
 							filenameYmovepos = 0;
 					}
 				}
-			} else if (settings.ui.theme == 1) {
+			} else if (settings.ui.theme == THEME_R4) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {
 						switch (r4menu_cursorPosition) {
@@ -4285,15 +4305,15 @@ int main()
 					if(hDown & KEY_TOUCH){
 						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
 							if (showbubble) menuaction_launch = true;
-						} else if (touch.px < 128 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240
-								|| touch.px <= 25 && touch.py >= 212 && menudbox_Ypos == -240) {
+						} else if ((touch.px < 128 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240)
+								|| (touch.px <= 25 && touch.py >= 212 && menudbox_Ypos == -240)) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveright) {
 								titleboxXmoveleft = true;
 							}
 							// updatebotscreen = true;
-						} else if (touch.px > 192 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240
-								|| touch.px >= 295 && touch.py >= 212 && menudbox_Ypos == -240) {
+						} else if ((touch.px > 192 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240)
+								|| (touch.px >= 295 && touch.py >= 212 && menudbox_Ypos == -240)) {
 							//titleboxXmovepos -= 64;
 							if (!titleboxXmoveleft) {
 								if (settings.ui.cursorPosition == -1) {
@@ -5301,14 +5321,14 @@ int main()
 	sf2d_free_texture(shoulderRtex);
 	if (logEnabled) LogFM("Main", "Shoulder textures freed");
 
-	if (settings.ui.theme == 0) {
+	if (settings.ui.theme == THEME_DSIMENU) {
 		sf2d_free_texture(batterychrgtex);
 		for (int i = 0; i < 6; i++) {
 			sf2d_free_texture(batterytex[i]);
 		}
 		if (logEnabled) LogFM("Main", "DSi Menu battery textures freed");
 	}
-	if (settings.ui.theme == 1) sf2d_free_texture(iconstex);
+	if (settings.ui.theme == THEME_R4) sf2d_free_texture(iconstex);
 	if (colortexloaded) sf2d_free_texture(bottomtex);
 	sf2d_free_texture(sdicontex);
 	sf2d_free_texture(flashcardicontex);
@@ -5323,10 +5343,10 @@ int main()
 	sf2d_free_texture(cartnulltex);
 	sf2d_free_texture(cartntrtex);
 	sf2d_free_texture(carttwltex);
-	if (settings.ui.theme == 0) gamecardClearCache();
+	if (settings.ui.theme == THEME_DSIMENU) gamecardClearCache();
 	sf2d_free_texture(boxfulltex);
 	sf2d_free_texture(boxemptytex);
-	if (colortexloaded && settings.ui.theme == 0) {
+	if (colortexloaded && settings.ui.theme == THEME_DSIMENU) {
 		sf2d_free_texture(dotcircletex);
 		sf2d_free_texture(startbordertex);
 	}
@@ -5350,7 +5370,7 @@ int main()
 	sf2d_free_texture(dboxtex_button);
 	sf2d_free_texture(dboxtex_buttonback);
 	sf2d_free_texture(dialogboxtex);
-	sf2d_free_texture(settingslogotex);
+	sf2d_free_texture(twloaderlogotex);
 
 	// Clear the translations cache.
 	langClear();

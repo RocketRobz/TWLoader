@@ -46,7 +46,11 @@ extern bool fadeout;
 extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
 
 // Settings
-extern sf2d_texture *settingslogotex;	// TWLoader logo.
+extern sf2d_texture *twloaderlogotex;	// TWLoader logo.
+extern sf2d_texture *settingslogotex;	// TWLoader logo in settings screen.
+extern sf2d_texture *settingslogotwltex;
+extern sf2d_texture *settingslogooadertex;
+extern sf2d_texture *settingslogodemotex;
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 extern char settings_vertext[13];
