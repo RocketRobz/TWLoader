@@ -31,6 +31,8 @@ static sf2d_texture *setbatterytex[6] = { };	// Battery levels.
 
 static sf2d_texture *dsboottex = NULL;		// DS boot screen
 static sf2d_texture *dsiboottex = NULL;	// DSi boot screen
+static sf2d_texture *invdsboottex = NULL;		// DS boot screen
+static sf2d_texture *invdsiboottex = NULL;	// DSi boot screen
 static sf2d_texture *dshstex = NULL;		// DS H&S screen
 static sf2d_texture *dsihstex = NULL;		// DSi H&S screen
 static sf2d_texture *disabledtex = NULL;	// Red circle with line
@@ -113,6 +115,8 @@ void settingsLoadTextures(void)
 
 	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
 	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
+	invdsboottex = sfil_load_PNG_file("romfs:/graphics/settings/inv_dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
+	invdsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/inv_dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
 	switch (settings.ui.language) {
 		case 0:
 			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
@@ -183,6 +187,10 @@ void settingsUnloadTextures(void)
 	dsboottex = NULL;
 	sf2d_free_texture(dsiboottex);
 	dsiboottex = NULL;
+	sf2d_free_texture(invdsboottex);
+	invdsboottex = NULL;
+	sf2d_free_texture(invdsiboottex);
+	invdsiboottex = NULL;
 	sf2d_free_texture(dshstex);
 	dshstex = NULL;
 	sf2d_free_texture(dsihstex);
@@ -228,21 +236,36 @@ void settingsDrawTopScreen(void)
 		sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
 		sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
-			if (settings.ui.bootscreen == 2) {
+			if (settings.ui.bootscreen >= 3) {
+				if (settings.ui.bootscreen == 4) {
+					sf2d_draw_texture(invdsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				} else {
+					sf2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				}
+				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
+				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
+			} else if (settings.ui.bootscreen == 2) {
 				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
+				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
 			} else if (settings.ui.bootscreen <= 1) {
 				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				if (settings.ui.bootscreen == 1) {
 					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
+					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
 				} else {
 					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
+					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
 				}
 			} else {
 				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
 			}
 			if (settings.ui.healthsafety == 1) {
-				if (settings.ui.bootscreen == 2) {
+				if (settings.ui.bootscreen >= 3) {
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
+					setTextColor(RGBA8(255, 255, 255, 255));
+					renderText(offset3D[topfb].boxart+162, 152, 0.55, 0.55, false, "  Preview\nunavailable");
+				} else if (settings.ui.bootscreen == 2) {
 					sf2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {
 					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
@@ -250,8 +273,13 @@ void settingsDrawTopScreen(void)
 					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
 				}
 			} else {
-				// Draw a white screen in place of the H&S screen.
-				drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+				if (settings.ui.bootscreen >= 3) {
+					// Draw a black screen in place of the H&S screen.
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
+				} else {
+					// Draw a white screen in place of the H&S screen.
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+				}
 			}
 			if (!settings.ui.showbootscreen) {
 				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
