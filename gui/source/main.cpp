@@ -2091,8 +2091,8 @@ int main()
 
 		textVtxArrayPos = 0; // Clear the text vertex array
 		
-		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -12.0f;
-		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 12.0f;
+		offset3D[0].topbg = CONFIG_3D_SLIDERSTATE * -10.0f;
+		offset3D[1].topbg = CONFIG_3D_SLIDERSTATE * 10.0f;
 		offset3D[0].boxart = CONFIG_3D_SLIDERSTATE * -5.0f;
 		offset3D[1].boxart = CONFIG_3D_SLIDERSTATE * 5.0f;
 		offset3D[0].disabled = CONFIG_3D_SLIDERSTATE * -3.0f;
@@ -2209,8 +2209,11 @@ int main()
 							topbgtex = sfil_load_PNG_file("romfs:/graphics/r4/theme12/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
 							break;
 					}
-				} else
+				} else if (settings.ui.theme == THEME_3DSMENU) {
+					topbgtex = sfil_load_PNG_file("romfs:/graphics/3ds_top.png", SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+				} else {
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+				}
 				settingsUnloadTextures();
 				colortexloaded = true;
 			}
@@ -2660,7 +2663,11 @@ int main()
 				update_battery_level(batterychrgtex, batterytex);
 				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
-					sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
+					if (settings.ui.theme == THEME_3DSMENU) {
+						sf2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
+					} else {
+						sf2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
+					}
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
 							if (loadboxartnum != pagemax_ba) {
@@ -2673,7 +2680,7 @@ int main()
 								if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
 									if (settings.ui.cursorPosition < 2) {
 										sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-										sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+										if (settings.ui.theme != THEME_3DSMENU) sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
 									}
 								}
 								for (boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
@@ -2682,23 +2689,27 @@ int main()
 										// Draw box art
 										sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
 										// Draw box art's reflection
-										sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+										if (settings.ui.theme != THEME_3DSMENU) sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
 										boxartXpos += 144;
 									}
 								}
 								if (applaunchprep) {
 									if (settings.ui.cursorPosition >= 0) {
-										boxartnum = settings.ui.cursorPosition;
-										ChangeBoxArtNo();
-										sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
-										// Draw moving box art
-										sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
-										// Draw moving box art's reflection
-										sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+										if (settings.ui.theme != THEME_3DSMENU) {
+											boxartnum = settings.ui.cursorPosition;
+											ChangeBoxArtNo();
+											sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+											// Draw moving box art
+											sf2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+											// Draw moving box art's reflection
+											sf2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+										}
 									} else if (!settings.twl.forwarder && settings.ui.cursorPosition == -1) {
-										sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
-										sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
-										sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+										if (settings.ui.theme != THEME_3DSMENU) {
+											sf2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+											sf2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
+											sf2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+										}
 									}
 								}
 							}
@@ -2719,20 +2730,24 @@ int main()
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
 							}
 						} else {
-							if (settings.twl.forwarder && settings.ui.pagenum == 0) {
+							// if (settings.twl.forwarder && settings.ui.pagenum == 0) {
 								// int text_width = sftd_get_text_width(font, 12, noromtext1);
 								//int text_width = 0;
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
 								// text_width = sftd_get_text_width(font, 12, noromtext2);
 								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-							}
+							// }
 						}
 					}
-					if (settings.ui.topborder) {
-						sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-						setTextColor(RGBA8(0, 0, 0, 255));
+					if (settings.ui.theme != THEME_3DSMENU) {
+						if (settings.ui.topborder) {
+							sf2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
+							setTextColor(RGBA8(0, 0, 0, 255));
+						} else {
+							setTextColor(RGBA8(255, 255, 255, 255));
+						}
 					} else {
-						setTextColor(RGBA8(255, 255, 255, 255));
+						setTextColor(RGBA8(0, 0, 0, 255));
 					}
 					renderText(318.0f, 1.0f, 0.58f, 0.58f, false, RetTime(false).c_str());
 					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
@@ -3527,14 +3542,21 @@ int main()
 						}
 					}
 				} else {
-					if (settings.ui.custombot == 1)
+					if (settings.ui.custombot == 1) {
 						sf2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
-					else
-						sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
+					} else {
+						if (settings.ui.theme == THEME_3DSMENU) {
+							drawRectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
+						} else {
+							sf2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
+						}
+					}
 
-					sf2d_draw_texture(scrollbartex, 0, 240-28);
-					sf2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-					sf2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+					if (settings.ui.theme != THEME_3DSMENU) {
+						sf2d_draw_texture(scrollbartex, 0, 240-28);
+						sf2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+						sf2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+					}
 					
 					if(!isDemo) {
 						if (!settings.ui.iconsize) {
@@ -3611,12 +3633,14 @@ int main()
 						ndsiconXpos = 144;
 					}
 
-					if (settings.ui.cursorPosition >= 0) sf2d_draw_texture(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
+					if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
+						sf2d_draw_texture(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
+					}
 
 					float bipxPos = 37.0;
 					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
 						if (filenum < pagemax) {
-							sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
+							if (settings.ui.theme != THEME_3DSMENU) sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
 							bipxPos += 12.5;
 							if (settings.ui.iconsize) {
 								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
@@ -3644,7 +3668,7 @@ int main()
 								ndsiconXpos += 64;
 							}
 						} else {
-							sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
+							if (settings.ui.theme != THEME_3DSMENU) sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
 							bipxPos += 12.5;
 							if (settings.ui.iconsize) {
 								sf2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
@@ -3657,7 +3681,9 @@ int main()
 							}
 						}
 					}
-					if (settings.ui.cursorPosition >= 0) sf2d_draw_texture_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
+					if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
+						sf2d_draw_texture_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
+					}
 
 					if (settings.ui.iconsize) {
 						sf2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
