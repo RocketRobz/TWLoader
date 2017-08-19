@@ -1643,7 +1643,7 @@ int main()
 	sf2d_swapbuffers();
 
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-	
+
 	// Initialize the render target
 	/* C3D_RenderTarget* target_topl = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetSetClear(target_topl, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
@@ -1760,7 +1760,7 @@ int main()
 	/** Speed up New 3DS only. **/
 	bool isNew = 0;
 	res = 0; // prev. result
-	if(R_SUCCEEDED(res = APT_CheckNew3DS(&isNew))) {		
+	if(R_SUCCEEDED(res = APT_CheckNew3DS(&isNew))) {
 		if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 	}
 	/** Speedup set up correctly. **/
@@ -1949,11 +1949,11 @@ int main()
 
 	char romsel_counter2sd[16];	// Number of ROMs on the SD card.
 	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
-	if (logEnabled)	LogFMA("Main. ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
 	
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
 	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
-	if (logEnabled)	LogFMA("Main. ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
 	
 	// Download box art
 	if (checkWifiStatus()) {
@@ -1979,10 +1979,12 @@ int main()
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		if (!f_nds_file)
-			continue;		
+			continue;
+		
 		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd) != 0) {
 			if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
-		}		
+		}
+		
 		fclose(f_nds_file);
 	}
 
@@ -3149,8 +3151,13 @@ int main()
 					applaunchon = true;
 				}
 			}
-			fadealpha += 6;
+			if (settings.ui.theme == THEME_3DSMENU) {
+				fadealpha += 14;
+			} else {
+				fadealpha += 6;
+			}
 			if (fadealpha > 255) {
+				showbubble = false;
 				fadealpha = 255;
 			}
 		}
@@ -3704,7 +3711,8 @@ int main()
 										//const int start_width = 0;
 										// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
 										setTextColor(RGBA8(255, 255, 255, 255));
-										renderText_w(136, 180, 0.60, 0.60, false, start_text);
+										if (settings.ui.theme != THEME_3DSMENU)
+											renderText_w(136, 180, 0.60, 0.60, false, start_text);
 									} else {
 										sf2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
 										const wchar_t *start_text = TR(STR_START);
@@ -3712,12 +3720,13 @@ int main()
 										//const int start_width = 0;
 										// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
 										setTextColor(RGBA8(255, 255, 255, 255));
-										renderText_w(140, 173, 0.50, 0.50, false, start_text);
+										if (settings.ui.theme != THEME_3DSMENU)
+											renderText_w(140, 173, 0.50, 0.50, false, start_text);
 									}
 								}
 							}
 						}
-					} else {
+					} else if (settings.ui.theme != THEME_3DSMENU) {
 						if (settings.ui.custombot)
 							sf2d_draw_texture_part(bottomtex, 128, 112, 128, 112, 64, 80);
 						else
@@ -4470,7 +4479,7 @@ int main()
 							// updatebotscreen = true;
 						}
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
-						showbubble = false;
+						if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
 						if (!isDemo || settings.ui.cursorPosition == -2) {
 							bool playlaunchsound = true;
 							if (titleboxXmovetimer == 0) {
