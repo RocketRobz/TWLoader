@@ -24,13 +24,12 @@ void Log(const char *message) {
 	FILE *log;
  
 	if (!LogCreated) {
-		log = fopen(LOG_PATH, "w");
-		LogCreated = true;
-	} else {
-		log = fopen(LOG_PATH, "a");
+		createLog();
 	}
+	
+	log = fopen(LOG_PATH, "a");
 
-	if (log == NULL) {
+	if (!log) {
 		if (LogCreated) {
 			LogCreated = false;
 		}
@@ -45,13 +44,12 @@ void LogFM(const char *from, const char *message) {
 	FILE *log;
 
 	if (!LogCreated) {
-		log = fopen(LOG_PATH, "w");
-		LogCreated = true;
-	} else {
-		log = fopen(LOG_PATH, "a");
+		createLog();
 	}
-
-	if (log == NULL) {
+	
+	log = fopen(LOG_PATH, "a");
+	
+	if (!log) {
 		if (LogCreated) {
 			LogCreated = false;
 		}
@@ -71,13 +69,12 @@ void LogFMA(const char *from, const char *message, const char *additional_info) 
 	FILE *log;
 
 	if (!LogCreated) {
-		log = fopen(LOG_PATH, "w");
-		LogCreated = true;
-	} else {
-		log = fopen(LOG_PATH, "a");
+		createLog();
 	}
+	
+	log = fopen(LOG_PATH, "a");
 
-	if (log == NULL) {
+	if (!log) {
 		if (LogCreated) {
 			LogCreated = false;
 		}

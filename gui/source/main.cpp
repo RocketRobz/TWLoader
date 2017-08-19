@@ -1643,8 +1643,7 @@ int main()
 	sf2d_swapbuffers();
 
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-	if (logEnabled)	LogFM("Main.C3D_Init", "Citro3D inited");
-
+	
 	// Initialize the render target
 	/* C3D_RenderTarget* target_topl = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetSetClear(target_topl, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
@@ -1716,7 +1715,6 @@ int main()
 	
 	if(isNightly){
 		logEnabled = true;
-		if (logEnabled)	createLog();
 		char nightlyhash[16];
 		snprintf(nightlyhash, 16, "%s", NIGHTLY);
 		LogFMA("Welcome to nightly channel!", "Version:", nightlyhash);
@@ -1742,7 +1740,6 @@ int main()
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
 	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
-	if (logEnabled)	LogFM("Main.Directories", "Directories are made, or already made");
 	
 	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	std::string version = settings_vertext;	
@@ -1758,12 +1755,14 @@ int main()
 	renderText(vertext_xPos, 222, 0.60, 0.60f, false, settings_vertext);
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	if (logEnabled)	LogFMA("Main.GUI version", "Successful reading version", settings_vertext);
+	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
 	/** Speed up New 3DS only. **/
 	bool isNew = 0;
-	APT_CheckNew3DS(&isNew);
-	if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
+	res = 0; // prev. result
+	if(R_SUCCEEDED(res = APT_CheckNew3DS(&isNew))) {		
+		if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
+	}
 	/** Speedup set up correctly. **/
 	
 	LoadSettings();	
@@ -1774,7 +1773,7 @@ int main()
 	} else {
 		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
 	}
-	if (logEnabled) LogFMA("Main.bootstrapPath", "Using path:", bootstrapPath.c_str());
+	if (logEnabled) LogFMA("Main.bootstrapPath", "Using bootstrap:", bootstrapPath.c_str());
 	LoadBootstrapConfig();
 
 	// Store bootstrap version
@@ -1791,7 +1790,7 @@ int main()
 	renderText(12, 16, 0.5f, 0.5f, false, "Loading textures...");
 	sf2d_end_frame();
 	sf2d_swapbuffers();
-	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loading");
+	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loading.");
 
 	rectangletex = sfil_load_PNG_file("romfs:/graphics/rectangle.png", SF2D_PLACE_RAM); // Rectangle
 
@@ -1862,7 +1861,7 @@ int main()
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
 
-	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures load successfully");
+	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loaded.");
 
 	dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
@@ -1912,7 +1911,7 @@ int main()
 		sf2d_swapbuffers();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
-		if (logEnabled)	LogFM("Main.dspfirm", "No music file found");
+		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
 	}
 
 	// Load the sound effects if DSP is available.
@@ -1967,7 +1966,6 @@ int main()
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
-	if (logEnabled)	Log("********************************************************\n");
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
 		static const char title[] = "Now checking banner data (SD Card)...";
 		char romsel_counter1[16];
@@ -1981,15 +1979,10 @@ int main()
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(nds_path, "rb");
 		if (!f_nds_file)
-			continue;
-		if (logEnabled)	LogFMA("Main. Banner scanning", "Trying to read banner from file", nds_path);
-		
-		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd) == 0) {
-			if (logEnabled)	LogFM("Main. Banner scanning", "Done!");
-		}else {
-			if (logEnabled)	LogFM("Main. Banner scanning", "Error!");
-		}
-		
+			continue;		
+		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd) != 0) {
+			if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
+		}		
 		fclose(f_nds_file);
 	}
 
@@ -2029,7 +2022,7 @@ int main()
 	
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
-		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
+		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
 		if (settings.ui.theme == THEME_DSIMENU && aptMainLoop()) fade_whiteToBlack();
 	}
 
@@ -2065,22 +2058,22 @@ int main()
 	const bool isTWLNAND2Installed = checkTWLNANDSide2();
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
-	bool saveOnExit = isTWLNANDInstalled;
+	bool saveOnExit = isTWLNANDInstalled && isTWLNAND2Installed;
 	
-	// Check if the TWLNAND-side title (both parts) is installed.
+	// Check if the TWLNAND-side title (both parts) are installed.
 	if ((!isTWLNANDInstalled && !isDemo) || (!isTWLNAND2Installed && !isDemo)) {
 		if (!isTWLNAND2Installed) {
 			TWLNANDnotfound_msg = 1;
-			if (logEnabled)	LogFM("Main.isTWLNAND2Installed", "TWLNAND side (part 2) not installed");
+			if (logEnabled)	LogFM("Main.isTWLNAND2Installed", "TWLNAND side (part 2) not installed.");
 		} else {
 			TWLNANDnotfound_msg = 0;
-			if (logEnabled)	LogFM("Main.isTWLNANDInstalled", "TWLNAND side (part 1) not installed");
+			if (logEnabled)	LogFM("Main.isTWLNANDInstalled", "TWLNAND side (part 1) not installed.");
 		}
 		screenmode = SCREEN_MODE_SETTINGS;
 		settingsResetSubScreenMode();
 	}
 
-	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "aptMainLoop is running");
+	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
 	//while(run) {
 		// Scan hid shared memory for input events
@@ -2300,6 +2293,7 @@ int main()
 								FILE *f_nds_file = fopen(path, "rb");
 								if (!f_nds_file) {
 									// Can't open the NDS file.
+									if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
 									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 									continue;
 								}
@@ -2334,7 +2328,8 @@ int main()
 								FILE *f_nds_file = fopen(path, "rb");
 								if (!f_nds_file) {
 									// Can't open the NDS file.
-										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+									if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 									continue;
 								}
 
@@ -2923,7 +2918,7 @@ int main()
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 				} else if (gbarunnervalue == 1) {
-					if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+					if (logEnabled)	LogFM("Main", "Loading GBARunner.");
 					applaunchon = true;
 				}
 			}

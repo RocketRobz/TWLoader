@@ -748,6 +748,7 @@ void DownloadTWLoaderCIAs(void) {
 		int resNAND = -1;
 		int resNAND_part2 = -1;
 		int resNAND_STG2 = -1;
+		int resGUI_SMDH = -1;
 		struct stat st;
 		if (updateGUI) {
 			if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
@@ -813,9 +814,7 @@ void DownloadTWLoaderCIAs(void) {
 					"Do not turn off the power.\n";
 				renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
 				sf2d_end_frame();
-				sf2d_swapbuffers();
-				
-				int resGUI_SMDH = -1;
+				sf2d_swapbuffers();				
 
 				if (isDemo) {
 					mkdir("sdmc:/3ds/TWLoader_demo", 0777);
@@ -918,6 +917,9 @@ void DownloadTWLoaderCIAs(void) {
 			} else {
 				setTextColor(RGBA8(255, 255, 255, 255));
 			}
+		} 
+		if(resGUI_SMDH == 0) {
+			// TODO (3dsx version update)
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
