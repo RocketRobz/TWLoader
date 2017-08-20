@@ -136,6 +136,8 @@ const char* temptext;
 const char* musicpath = "romfs:/null.wav";
 
 
+sf2d_texture *boxfulltex = NULL;
+
 // Shoulder buttons.
 sf2d_texture *shoulderLtex = NULL;
 sf2d_texture *shoulderRtex = NULL;
@@ -1856,7 +1858,6 @@ int main()
 	cartntrtex = sfil_load_PNG_file("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
 	carttwltex = sfil_load_PNG_file("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
 	cartctrtex = sfil_load_PNG_file("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // CTR cartridge
-	sf2d_texture *boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 	sf2d_texture *boxemptytex = sfil_load_PNG_file("romfs:/graphics/box_empty.png", SF2D_PLACE_RAM); // (DSiWare) empty box on bottom screen
 	sf2d_texture *bracetex = sfil_load_PNG_file("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
 	bubbletex = sfil_load_PNG_file("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
@@ -2206,8 +2207,10 @@ int main()
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
 					topbgtex = sfil_load_PNG_file("romfs:/graphics/3ds_top.png", SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+					boxfulltex = sfil_load_PNG_file("romfs:/graphics/3ds_box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 				} else {
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+					boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 				}
 				settingsUnloadTextures();
 				colortexloaded = true;
@@ -2778,6 +2781,8 @@ int main()
 			if (colortexloaded) {
 				sf2d_free_texture(topbgtex);
 				topbgtex = NULL;
+				sf2d_free_texture(boxfulltex);
+				boxfulltex = NULL;
 				colortexloaded = false;
 			}
 			settingsDrawTopScreen();
@@ -3645,7 +3650,11 @@ int main()
 							if (settings.ui.theme != THEME_3DSMENU) sf2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
 							bipxPos += 12.5;
 							if (settings.ui.iconsize) {
-								sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								if (settings.ui.theme != THEME_3DSMENU) {
+									sf2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								} else {
+									sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108);
+								}
 								titleboxXpos += 80;
 
 								bnriconnum = filenum;
@@ -3653,7 +3662,11 @@ int main()
 									sf2d_draw_texture_scale(dotcircletex,ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
 								} else {
 									ChangeBNRIconNo();
-									sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+									if (settings.ui.theme != THEME_3DSMENU) {
+										sf2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+									} else {
+										sf2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+									}
 								}
 								ndsiconXpos += 80;
 							} else {
