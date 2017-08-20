@@ -3566,14 +3566,24 @@ int main()
 					}
 					
 					if(!isDemo) {
-						if (!settings.ui.iconsize) {
+						if (settings.ui.theme != THEME_3DSMENU) {
+							if (!settings.ui.iconsize) {
+								const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+								// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+								const int home_width = 144+16;
+								const int home_x = (320-home_width)/2;
+								sf2d_draw_texture(homeicontex, home_x, 194); // Draw HOME icon
+								setTextColor(RGBA8(0, 0, 0, 255));
+								renderText_w(home_x+20, 195, 0.50, 0.50, false, home_text);
+							}
+						} else {
 							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
 							// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 							const int home_width = 144+16;
 							const int home_x = (320-home_width)/2;
-							sf2d_draw_texture(homeicontex, home_x, 194); // Draw HOME icon
+							sf2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
 							setTextColor(RGBA8(0, 0, 0, 255));
-							renderText_w(home_x+20, 195, 0.50, 0.50, false, home_text);
+							renderText_w(home_x+20, 221, 0.50, 0.50, false, home_text);
 						}
 					}
 
@@ -3670,7 +3680,11 @@ int main()
 								}
 								ndsiconXpos += 80;
 							} else {
-								sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
+								if (settings.ui.theme != THEME_3DSMENU) {
+									sf2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
+								} else {
+									sf2d_draw_texture_scale(boxfulltex, 5+titleboxXpos+titleboxXmovepos, 119, 0.68, 0.67);
+								}
 								titleboxXpos += 64;
 
 								bnriconnum = filenum;
