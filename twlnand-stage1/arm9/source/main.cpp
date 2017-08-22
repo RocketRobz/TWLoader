@@ -31,6 +31,8 @@
 #include <unistd.h>
 
 #include "nds_loader_arm9.h"
+#include "inifile.h"
+#include "log.h"
 
 using namespace std;
 
@@ -49,6 +51,29 @@ int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
 	if (fatInitDefault()) {
+		/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
+		struct stat logBuf;
+		logEnabled = stat("sd:/_nds/twloader/log", &logBuf) == 0;
+		/* Log configuration file end */
+		
+		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
+		
+		char *p = (char*)PersonalData->name;
+		
+		// text
+		for (int i = 0; i < 10; i++) {
+			if (p[i*2] == 0x00)
+				p[i*2/2] = 0;
+			else
+				p[i*2/2] = p[i*2];
+		}
+		
+		if (logEnabled)	LogFMA("TWL.Main", "Got username", p);
+		
+		twloaderini.SetString("FRONTEND","NAME", p);
+		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
+		if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
+		
 		runNdsFile ("sd:/_nds/twloader/TWLD.twldr", 0, 0);
 
 		// Subscreen as a console
