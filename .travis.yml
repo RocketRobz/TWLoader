@@ -49,7 +49,6 @@ install:
   - sudo cp makerom-linux /usr/bin/makerom
   - pip3 install requests
   - pip3 install gitpython
-  - cd ..  
 script:
   - echo "Starting compilation"
   - echo "Patching Nightly"
