@@ -2207,10 +2207,8 @@ int main()
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
 					topbgtex = sfil_load_PNG_file("romfs:/graphics/3ds_top.png", SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
-					boxfulltex = sfil_load_PNG_file("romfs:/graphics/3ds_box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 				} else {
 					topbgtex = sfil_load_PNG_file(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
-					boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 				}
 				settingsUnloadTextures();
 				colortexloaded = true;
@@ -3241,8 +3239,12 @@ int main()
 								bottomtex = sfil_load_PNG_file("romfs:/graphics/r4/theme12/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
 								break;
 						}
+					} else if (settings.ui.theme == THEME_3DSMENU) {
+						bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
+						boxfulltex = sfil_load_PNG_file("romfs:/graphics/3ds_box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 					} else {
 						bottomtex = sfil_load_PNG_file(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
+						boxfulltex = sfil_load_PNG_file("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
 					}
 					colortexloaded_bot = true;
 				}
