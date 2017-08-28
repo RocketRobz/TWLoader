@@ -465,6 +465,34 @@ static int CreateGameSave(const char *filename) {
 }
 
 /**
+ * Set homebrew version of nds-bootstrap for homebrew ROMs.
+ */
+void SetHomebrewBootstrap() {
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+	
+	if (!memcmp(game_TID, "###", 3)) {
+		fat = "fat:/";
+		bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
+	} else {
+		fat = "sd:/";
+		if (settings.twl.bootstrapfile == 1) {
+			bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
+		} else {
+			bootstrapPath = "sd:/_nds/release-bootstrap.nds";
+		}
+	}
+
+}
+
+/**
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK() {
@@ -836,6 +864,7 @@ static void SaveBootstrapConfig(void)
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
 		if (!settings.twl.launchslot1) {
+			SetHomebrewBootstrap();
 			SetDonorSDK();
 			SetCompatibilityCheck();
 			SetMPUSettings();
@@ -854,13 +883,6 @@ static void SaveBootstrapConfig(void)
 				}
 			}
 		}
-	}
-	if (settings.twl.bootstrapfile == 2) {
-		bootstrapPath = "sd:/_nds/old-bootstrap.nds";
-	} else if (settings.twl.bootstrapfile == 1) {
-		bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
-	} else {
-		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
 	}
 	if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using path:", bootstrapPath.c_str());
 	bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
