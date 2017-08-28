@@ -316,11 +316,7 @@ void settingsDrawTopScreen(void)
 			snprintf(nightlyhash, 16, "%s", NIGHTLY);
 			renderText(272, 222, 0.60, 0.60f, false, nightlyhash);			
 		}
-		if (settings.twl.bootstrapfile == 2) {
-			fat = "fat:/";
-			setTextColor(RGBA8(255, 0, 0, 255));
-			renderText(5, 222, 0.60, 0.60f, false, "Old version");
-		} else if (settings.twl.bootstrapfile == 1) {
+		if (settings.twl.bootstrapfile == 1) {
 			fat = "sd:/";
 			setTextColor(RGBA8(0, 255, 0, 255));
 			renderText(5, 222, 0.60, 0.60f, false, settings_unofficialbootstrapver.c_str());
@@ -1308,13 +1304,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 6:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
-						if (settings.ui.autoupdate > 2) {
+						if (settings.ui.autoupdate > 1) {
 							settings.ui.autoupdate = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.ui.autoupdate--;
 						if (settings.ui.autoupdate < 0) {
-							settings.ui.autoupdate = 2;
+							settings.ui.autoupdate = 1;
 						}
 					}
 					break;
@@ -1938,8 +1934,9 @@ void LoadSettings(void) {
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
 	settings.twl.bootstrapfile = settingsini.GetInt("TWL-MODE", "BOOTSTRAP_FILE", 0);
-	if (settings.twl.bootstrapfile == 2) fat = "fat:/";
-	else fat = "sd:/";
+	if (settings.twl.bootstrapfile > 1) {
+		settings.twl.bootstrapfile = 0;
+	}
 
 	// TODO: Change the default to -1?
 	switch (settingsini.GetInt("TWL-MODE", "DEBUG", 0)) {
