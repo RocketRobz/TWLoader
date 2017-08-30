@@ -2040,64 +2040,64 @@ int main(){
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/gbatemp/upper_screen.jpg"); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/gbatemp/upper_screen.png"); // Top background
 							break;
 						case 1:
 							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/black/upper_screen.png"); // Top background
 							break;
 						case 2:
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/Adv.Evo/upper_screen.jpg"); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/Adv.Evo/upper_screen.png"); // Top background
 							break;
 						case 3:
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/dstwo pink/upper_screen.jpg"); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/dstwo pink/upper_screen.png"); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == THEME_R4) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme01/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme01/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme01/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme01/bckgrd_1.png"); // Top background
 							break;
 						case 1:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme02/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme02/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme02/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme02/bckgrd_1.png"); // Top background
 							break;
 						case 2:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme03/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme03/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme03/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme03/bckgrd_1.png"); // Top background
 							break;
 						case 3:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme04/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme04/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme04/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme04/bckgrd_1.png"); // Top background
 							break;
 						case 4:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme05/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme05/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme05/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme05/bckgrd_1.png"); // Top background
 							break;
 						case 5:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme06/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme06/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme06/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme06/bckgrd_1.png"); // Top background
 							break;
 						case 6:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme07/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme07/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme07/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme07/bckgrd_1.png"); // Top background
 							break;
 						case 7:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme08/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme08/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme08/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme08/bckgrd_1.png"); // Top background
 							break;
 						case 8:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme09/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme09/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme09/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme09/bckgrd_1.png"); // Top background
 							break;
 						case 9:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme10/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme10/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme10/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme10/bckgrd_1.png"); // Top background
 							break;
 						case 10:
-							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme11/logo.jpg"); // Top logo
-							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme11/bckgrd_1.jpg"); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme11/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme11/bckgrd_1.png"); // Top background
 							break;
 						case 11:
 							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme12/logo.png"); // Top logo
@@ -3012,7 +3012,7 @@ int main(){
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/gbatemp/lower_screen.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/gbatemp/lower_screen.png"); // Bottom of menu
 							break;
 						case 1:
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/black/lower_screen.png"); // Bottom of menu
@@ -3021,54 +3021,54 @@ int main(){
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/Adv.Evo/lower_screen.png"); // Bottom of menu
 							break;
 						case 3:
-							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/dstwo pink/lower_screen.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/dstwo pink/lower_screen.png"); // Bottom of menu
 							break;
 					}
 				} else if (settings.ui.theme == THEME_R4) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme01/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme01/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme01/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 1:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme02/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme02/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme02/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 2:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme03/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme03/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme03/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 3:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme04/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme04/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme04/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 4:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme05/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme05/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme05/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 5:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme06/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme06/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme06/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 6:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme07/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme07/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme07/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 7:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme08/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme08/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme08/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 8:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme09/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme09/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme09/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 9:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme10/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme10/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme10/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 10:
-							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme11/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme11/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme11/bckgrd_2.png"); // Bottom of rom select
 							break;
 						case 11:
