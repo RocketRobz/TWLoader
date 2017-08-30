@@ -1552,7 +1552,7 @@ void dsiMenuTheme_loadingScreen() {
 int main(){
 	pp2d_init();
 	pp2d_set_screen_color(TRANSPARENT);
-	gfxSet3D(0); // pp2d doesn't have that method yet
+	pp2d_set_3D(0);
 
 	if(isDemo)
 		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
@@ -1928,7 +1928,7 @@ int main(){
 	
 	if (settings.ui.theme >= THEME_R4)
 		menu_ctrlset = CTRL_SET_MENU;
-	gfxSet3D(1);
+	pp2d_set_3D(1);
 
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
@@ -3792,7 +3792,7 @@ int main(){
 								}
 								break;
 							case 4:
-								gfxSet3D(1);
+								pp2d_set_3D(1);
 								screenmode = SCREEN_MODE_SETTINGS;
 								settingsResetSubScreenMode();
 								break;
@@ -3940,7 +3940,7 @@ int main(){
 							r4menu_cursorPosition = 0;
 						}
 					} else if (hDown & KEY_SELECT) {
-						gfxSet3D(1);
+						pp2d_set_3D(1);
 						screenmode = SCREEN_MODE_SETTINGS;
 						settingsResetSubScreenMode();
 						updatetopscreen = true;
