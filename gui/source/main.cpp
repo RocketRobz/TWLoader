@@ -1458,7 +1458,6 @@ bool checkTWLNANDSide2(void) {
 	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
 
-// Continue from here later.
 void deletemode_internal(RomLocation location, std::string del_rom) {
 	char path[256];
 
@@ -1533,67 +1532,43 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 	}
 }
 
-sf2d_texture *bottomtex = NULL;		// Bottom of menu
-sf2d_texture *scrollbartex = NULL; // Scroll bar on bottom screen
-sf2d_texture *buttonarrowtex = NULL; // Arrow button for scroll bar
-sf2d_texture *bubbletex = NULL; // Text bubble
-
 void dsiMenuTheme_loadingScreen() {
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);	
 	if (settings.ui.custombot == 1)
-		pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+		pp2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 	else
-		pp2d_load_texture_png_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
+		pp2d_draw_texture_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
 
-	pp2d_load_texture_png(scrollbartex, 0, 240-28);
-	pp2d_load_texture_png_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-	pp2d_load_texture_png_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+	pp2d_draw_texture(scrollbartex, 0, 240-28);
+	pp2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+	pp2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
 
-	pp2d_load_texture_png(bubbletex, 0, 0);
-	setTextColor(RGBA8(0, 0, 0, 255));
-	renderText(8, 38, 0.70, 0.70, false, "Loading...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_draw_texture(bubbletex, 0, 0);
+	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
+	pp2d_end_draw();
 }
 
-int main()
-{
-	sf2d_init();
-	sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0x00));
-	sf2d_set_3D(0);
+int main(){
+	pp2d_init();
+	pp2d_set_screen_color(TRANSPARENT);
+	gfxSet3D(0); // pp2d doesn't have that method yet
 
 	if(isDemo)
-		twloaderlogotex = sfil_load_PNG_buffer(logo_demo_png, SF2D_PLACE_RAM); // TWLoader (3DSX demo version) logo on top screen
+		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
 	else
-		twloaderlogotex = sfil_load_PNG_buffer(logo_png, SF2D_PLACE_RAM); // TWLoader logo on top screen
+		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_png, 256, 128); // TWLoader logo on top screen
+	
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);	
+	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
+	pp2d_end_draw();
 
-	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	pp2d_load_texture_png(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
-	sf2d_end_frame();
-	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-	pp2d_load_texture_png(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
-	sf2d_end_frame();
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
-	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-
-	// Initialize the render target
-	/* C3D_RenderTarget* target_topl = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(target_topl, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
-	C3D_RenderTarget* target_topr = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(target_topr, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
-	C3D_RenderTarget* target_bot = C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(target_bot, C3D_CLEAR_ALL, CLEAR_COLOR, 0); */
-
-	printf("System font example\n");
 	Result res = fontEnsureMapped();
 
 	if (R_FAILED(res))
 		printf("fontEnsureMapped: %08lX\n", res);
 
-	sceneInit();
 	aptInit();
 	cfguInit();
 	amInit();
@@ -1674,7 +1649,6 @@ int main()
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
-	//mkdir("sdmc:/_nds/twloader/tmp", 0777);
 	
 	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	std::string version = settings_vertext;	
@@ -1684,12 +1658,13 @@ int main()
 	}else{
 		vertext_xPos = 336;
 	}
-	sf2d_start_frame(GFX_TOP, GFX_LEFT);
-	pp2d_load_texture_png(twloaderlogotex, 400/2 - twloaderlogotex->width/2, 240/2 - twloaderlogotex->height/2);
-	setTextColor(RGBA8(255, 255, 255, 255));
-	renderText(vertext_xPos, 222, 0.60, 0.60f, false, settings_vertext);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);	
+	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
+	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
+	pp2d_end_draw();
+
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
 	/** Speed up New 3DS only. **/
@@ -1720,99 +1695,100 @@ int main()
 	LoadColor();
 	LoadMenuColor();
 	LoadBottomImage();
-
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	renderText(12, 16, 0.5f, 0.5f, false, "Loading textures...");
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
+	pp2d_end_draw();
+	
 	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loading.");
 
-	rectangletex = pp2d_load_texture_png("romfs:/graphics/rectangle.png", SF2D_PLACE_RAM); // Rectangle
+	 pp2d_load_texture_png(rectangletex, "romfs:/graphics/rectangle.png"); // Rectangle
 
 	// Dialog box textures.
-	dialogboxtex = pp2d_load_texture_png("romfs:/graphics/dialogbox.png", SF2D_PLACE_RAM); // Dialog box
-	dboxtex_iconbox = pp2d_load_texture_png("romfs:/graphics/dbox/iconbox.png", SF2D_PLACE_RAM); // Icon box
-	dboxtex_button = pp2d_load_texture_png("romfs:/graphics/dbox/button.png", SF2D_PLACE_RAM); // Icon box
-	dboxtex_buttonback = pp2d_load_texture_png("romfs:/graphics/dbox/button_back.png", SF2D_PLACE_RAM); // Icon box
+	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
+	pp2d_load_texture_png(dboxtex_iconbox, "romfs:/graphics/dbox/iconbox.png"); // Icon box
+	pp2d_load_texture_png(dboxtex_button, "romfs:/graphics/dbox/button.png"); // Icon box
+	pp2d_load_texture_png(dboxtex_buttonback, "romfs:/graphics/dbox/button_back.png"); // Icon box
 
-	sf2d_texture *r4loadingtex = pp2d_load_texture_png("romfs:/graphics/r4/loading.png", SF2D_PLACE_RAM);		// R4 "Loading..." screen
-	sf2d_texture *toplogotex = NULL;		// Top of R4 menu
-	sf2d_texture *toptex = pp2d_load_texture_png("romfs:/graphics/top.png", SF2D_PLACE_RAM); // Top DSi-Menu border
-	sf2d_texture *topbgtex; // Top background, behind the DSi-Menu border
+	pp2d_load_texture_png(r4loadingtex, "romfs:/graphics/r4/loading.png");		// R4 "Loading..." screen
+	toplogotex = NULL; // Top of R4 menu
+	pp2d_load_texture_png(toptex, "romfs:/graphics/top.png"); // Top DSi-Menu border
+	topbgtex = NULL; // Top background, behind the DSi-Menu border
 
 	// Volume slider textures.
-	voltex[0] = pp2d_load_texture_png("romfs:/graphics/volume0.png", SF2D_PLACE_RAM); // Show no volume
-	voltex[1] = pp2d_load_texture_png("romfs:/graphics/volume1.png", SF2D_PLACE_RAM); // Volume low above 0
-	voltex[2] = pp2d_load_texture_png("romfs:/graphics/volume2.png", SF2D_PLACE_RAM); // Volume medium
-	voltex[3] = pp2d_load_texture_png("romfs:/graphics/volume3.png", SF2D_PLACE_RAM); // Hight volume
-	voltex[4] = pp2d_load_texture_png("romfs:/graphics/volume4.png", SF2D_PLACE_RAM); // 100%
-	voltex[5] = pp2d_load_texture_png("romfs:/graphics/volume5.png", SF2D_PLACE_RAM); // No DSP firm found
+	pp2d_load_texture_png(voltex[0], "romfs:/graphics/volume0.png"); // Show no volume
+	pp2d_load_texture_png(voltex[1], "romfs:/graphics/volume1.png"); // Volume low above 0
+	pp2d_load_texture_png(voltex[2], "romfs:/graphics/volume2.png"); // Volume medium
+	pp2d_load_texture_png(voltex[3], "romfs:/graphics/volume3.png"); // Hight volume
+	pp2d_load_texture_png(voltex[4], "romfs:/graphics/volume4.png"); // 100%
+	pp2d_load_texture_png(voltex[5], "romfs:/graphics/volume5.png"); // No DSP firm found
 
-	shoulderLtex = pp2d_load_texture_png("romfs:/graphics/shoulder_L.png", SF2D_PLACE_RAM); // L shoulder
-	shoulderRtex = pp2d_load_texture_png("romfs:/graphics/shoulder_R.png", SF2D_PLACE_RAM); // R shoulder
+	pp2d_load_texture_png(shoulderLtex, "romfs:/graphics/shoulder_L.png"); // L shoulder
+	pp2d_load_texture_png(shoulderRtex, "romfs:/graphics/shoulder_R.png"); // R shoulder
 
 	// Battery level textures.
-	batterychrgtex = pp2d_load_texture_png("romfs:/graphics/battery_charging.png", SF2D_PLACE_RAM);
-	batterytex[0] = pp2d_load_texture_png("romfs:/graphics/battery0.png", SF2D_PLACE_RAM);
-	batterytex[1] = pp2d_load_texture_png("romfs:/graphics/battery1.png", SF2D_PLACE_RAM);
-	batterytex[2] = pp2d_load_texture_png("romfs:/graphics/battery2.png", SF2D_PLACE_RAM);
-	batterytex[3] = pp2d_load_texture_png("romfs:/graphics/battery3.png", SF2D_PLACE_RAM);
-	batterytex[4] = pp2d_load_texture_png("romfs:/graphics/battery4.png", SF2D_PLACE_RAM);
-	batterytex[5] = pp2d_load_texture_png("romfs:/graphics/battery5.png", SF2D_PLACE_RAM);
+	pp2d_load_texture_png(batterychrgtex, "romfs:/graphics/battery_charging.png");
+	pp2d_load_texture_png(batterytex[0], "romfs:/graphics/battery0.png");
+	pp2d_load_texture_png(batterytex[1], "romfs:/graphics/battery1.png");
+	pp2d_load_texture_png(batterytex[2], "romfs:/graphics/battery2.png");
+	pp2d_load_texture_png(batterytex[3], "romfs:/graphics/battery3.png");
+	pp2d_load_texture_png(batterytex[4], "romfs:/graphics/battery4.png");
+	pp2d_load_texture_png(batterytex[5], "romfs:/graphics/battery5.png");
 
 	if(!isDemo) {
-		settingslogotex = pp2d_load_texture_png("romfs:/graphics/settings/logo.png", SF2D_PLACE_RAM); // TWLoader logo in settings screen.
-		settingslogotwltex = pp2d_load_texture_png("romfs:/graphics/settings/logo_twl.png", SF2D_PLACE_RAM);
+		pp2d_load_texture_png(settingslogotex, "romfs:/graphics/settings/logo.png"); // TWLoader logo in settings screen.
+		pp2d_load_texture_png(settingslogotwltex, "romfs:/graphics/settings/logo_twl.png");
 	} else {
-		settingslogotex = pp2d_load_texture_png("romfs:/graphics/settings/logo_demo.png", SF2D_PLACE_RAM); // TWLoader logo in settings screen.
-		settingslogotwltex = pp2d_load_texture_png("romfs:/graphics/settings/logo_demo_twl.png", SF2D_PLACE_RAM);
-		settingslogodemotex = pp2d_load_texture_png("romfs:/graphics/settings/logo_demo_demo.png", SF2D_PLACE_RAM);
+		pp2d_load_texture_png(settingslogotex, "romfs:/graphics/settings/logo_demo.png"); // TWLoader logo in settings screen.
+		pp2d_load_texture_png(settingslogotwltex, "romfs:/graphics/settings/logo_demo_twl.png");
+		pp2d_load_texture_png(settingslogodemotex, "romfs:/graphics/settings/logo_demo_demo.png");
 	}
-	settingslogooadertex = pp2d_load_texture_png("romfs:/graphics/settings/logo_oader.png", SF2D_PLACE_RAM);
+	settingslogooadertex = pp2d_load_texture_png("romfs:/graphics/settings/logo_oader.png");
 
-	sf2d_texture *iconstex = NULL;		// Bottom of menu (3 icons)
-	sf2d_texture *sdicontex = pp2d_load_texture_png("romfs:/graphics/wood/sd.png", SF2D_PLACE_RAM);
-	sf2d_texture *flashcardicontex = pp2d_load_texture_png("romfs:/graphics/wood/flashcard.png", SF2D_PLACE_RAM);
-	sf2d_texture *gbaicontex = pp2d_load_texture_png("romfs:/graphics/wood/gba.png", SF2D_PLACE_RAM);
-	sf2d_texture *smallsettingsicontex = pp2d_load_texture_png("romfs:/graphics/wood/settings.png", SF2D_PLACE_RAM);
-	sf2d_texture *iconnulltex = pp2d_load_texture_png("romfs:/graphics/icon_null.png", SF2D_PLACE_RAM); // Slot-1 cart icon if no cart is present
-	sf2d_texture *homeicontex = pp2d_load_texture_png("romfs:/graphics/homeicon.png", SF2D_PLACE_RAM); // HOME icon
-	sf2d_texture *bottomlogotex = pp2d_load_texture_png("romfs:/graphics/bottom_logo.png", SF2D_PLACE_RAM); // TWLoader logo on bottom screen
-	scrollbartex = pp2d_load_texture_png("romfs:/graphics/scrollbar.png", SF2D_PLACE_RAM); // Scroll bar on bottom screen
-	buttonarrowtex = pp2d_load_texture_png("romfs:/graphics/button_arrow.png", SF2D_PLACE_RAM); // Arrow button for scroll bar
-	sf2d_texture *bipstex = pp2d_load_texture_png("romfs:/graphics/bips.png", SF2D_PLACE_RAM); // Little dots of scroll bar
-	sf2d_texture *scrollwindowtex = pp2d_load_texture_png("romfs:/graphics/scroll_window.png", SF2D_PLACE_RAM); // Window behind dots of scroll bar
-	sf2d_texture *scrollwindowfronttex = pp2d_load_texture_png("romfs:/graphics/scroll_windowfront.png", SF2D_PLACE_RAM); // Front of window for scroll bar
-	sf2d_texture *dotcircletex = NULL;	// Dots forming a circle
-	sf2d_texture *startbordertex = NULL;	// "START" border
-	sf2d_texture *settingsicontex = pp2d_load_texture_png("romfs:/graphics/settingsbox.png", SF2D_PLACE_RAM); // Settings box on bottom screen
-	sf2d_texture *getfcgameboxtex = pp2d_load_texture_png("romfs:/graphics/getfcgamebox.png", SF2D_PLACE_RAM);
-	cartnulltex = pp2d_load_texture_png("romfs:/graphics/cart_null.png", SF2D_PLACE_RAM); // NTR cartridge
-	cartntrtex = pp2d_load_texture_png("romfs:/graphics/cart_ntr.png", SF2D_PLACE_RAM); // NTR cartridge
-	carttwltex = pp2d_load_texture_png("romfs:/graphics/cart_twl.png", SF2D_PLACE_RAM); // TWL cartridge
-	cartctrtex = pp2d_load_texture_png("romfs:/graphics/cart_ctr.png", SF2D_PLACE_RAM); // CTR cartridge
-	sf2d_texture *boxemptytex = pp2d_load_texture_png("romfs:/graphics/box_empty.png", SF2D_PLACE_RAM); // (DSiWare) empty box on bottom screen
-	sf2d_texture *bracetex = pp2d_load_texture_png("romfs:/graphics/brace.png", SF2D_PLACE_RAM); // Brace (C-shaped thingy)
-	bubbletex = pp2d_load_texture_png("romfs:/graphics/bubble.png", SF2D_PLACE_RAM); // Text bubble
+	iconstex = NULL; // Bottom of menu (3 icons)
+	dotcircletex = NULL; // Dots forming a circle
+	startbordertex = NULL; // "START" border
+	pp2d_load_texture_png(sdicontex, "romfs:/graphics/wood/sd.png");
+	pp2d_load_texture_png(flashcardicontex, "romfs:/graphics/wood/flashcard.png");
+	pp2d_load_texture_png(gbaicontex, "romfs:/graphics/wood/gba.png");
+	pp2d_load_texture_png(smallsettingsicontex, "romfs:/graphics/wood/settings.png");
+	pp2d_load_texture_png(iconnulltex, "romfs:/graphics/icon_null.png"); // Slot-1 cart icon if no cart is present
+	pp2d_load_texture_png(homeicontex, "romfs:/graphics/homeicon.png"); // HOME icon
+	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/bottom_logo.png"); // TWLoader logo on bottom screen
+	pp2d_load_texture_png(scrollbartex, "romfs:/graphics/scrollbar.png"); // Scroll bar on bottom screen
+	pp2d_load_texture_png(buttonarrowtex, "romfs:/graphics/button_arrow.png"); // Arrow button for scroll bar
+	pp2d_load_texture_png(bipstex, "romfs:/graphics/bips.png"); // Little dots of scroll bar
+	pp2d_load_texture_png(scrollwindowtex, "romfs:/graphics/scroll_window.png"); // Window behind dots of scroll bar
+	pp2d_load_texture_png(scrollwindowfronttex, "romfs:/graphics/scroll_windowfront.png"); // Front of window for scroll bar
+	pp2d_load_texture_png(settingsicontex, "romfs:/graphics/settingsbox.png"); // Settings box on bottom screen
+	pp2d_load_texture_png(getfcgameboxtex, "romfs:/graphics/getfcgamebox.png");
+	pp2d_load_texture_png(cartnulltex, "romfs:/graphics/cart_null.png"); // NTR cartridge
+	pp2d_load_texture_png(cartntrtex, "romfs:/graphics/cart_ntr.png"); // NTR cartridge
+	pp2d_load_texture_png(carttwltex, "romfs:/graphics/cart_twl.png"); // TWL cartridge
+	pp2d_load_texture_png(cartctrtex, "romfs:/graphics/cart_ctr.png"); // CTR cartridge
+	pp2d_load_texture_png(boxemptytex, "romfs:/graphics/box_empty.png"); // (DSiWare) empty box on bottom screen
+	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
+	pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
 
-	if (logEnabled)	LogFM("Main.sf2d_textures", "Textures loaded.");
+	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
 
 	dspfirmfound = false;
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm found!");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
+		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm not found.\n"
+		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
 			"Dumping DSP...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_end_draw();
 		dumpDsp();
 		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 			ndspInit();
@@ -1820,18 +1796,19 @@ int main()
 		} else {
 			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
 			settings.ui.showbootscreen = 0;
+			
 			for (int i = 0; i < 90; i++) {
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_on(GFX_BOTTOM);
 				if (!isDemo) {
-					renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.\n"
 						"(NTR/TWL mode will still have sound.)");
 				} else {
-					renderText(12, 16, 0.5f, 0.5f, false, "DSP Firm dumping failed.\n"
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.");
 				}
-				sf2d_end_frame();
-				sf2d_swapbuffers();
+				pp2d_end_draw();
 			}
 		}
 	}
@@ -1839,10 +1816,10 @@ int main()
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		renderText(12, 16, 0.5f, 0.5f, false, "Custom music file found!");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
+		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
 		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
@@ -1850,10 +1827,10 @@ int main()
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		renderText(12, 16, 0.5f, 0.5f, false, "Loading .wav files...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
+		pp2d_end_draw();
 		
 		bgm_menu = new sound(musicpath);
 		//bgm_settings = new sound("sdmc:/_nds/twloader/music/settings.wav");
@@ -1865,19 +1842,19 @@ int main()
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_end_draw();
 
 	// Download missing files
 	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 		// Nothing
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
-
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_end_draw();
+	
 	// Scan the ROM directories.
 	scanRomDirectories();
 
@@ -1894,9 +1871,9 @@ int main()
 		downloadBoxArt();
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_end_draw();
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
@@ -1922,9 +1899,9 @@ int main()
 		fclose(f_nds_file);
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_end_draw();
 
 	if (checkWifiStatus()) {
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -1945,13 +1922,13 @@ int main()
 	}
 
 	showdialogbox = false;
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_end_draw();
 	
 	if (settings.ui.theme >= THEME_R4)
 		menu_ctrlset = CTRL_SET_MENU;
-	sf2d_set_3D(1);
+	gfxSet3D(1);
 
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
@@ -1964,25 +1941,16 @@ int main()
 
 	if (aptMainLoop()) {
 		if (settings.ui.theme >= THEME_R4) {
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
-			pp2d_load_texture_png(r4loadingtex, 40, 0);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			pp2d_load_texture_png(r4loadingtex, 40, 0);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_begin_draw(GFX_TOP);
+			pp2d_draw_on(GFX_TOP);			
+			pp2d_draw_texture(r4loadingtex, 40, 0);
+			pp2d_end_draw();
+			
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			sf2d_start_frame(GFX_TOP, GFX_LEFT);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_TOP, GFX_RIGHT);
-			sf2d_end_frame();
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			renderText(12, 16, 0.5f, 0.5f, false, "Loading...");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_draw_on(GFX_BOTTOM);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
+			pp2d_end_draw();
 		}
 	}
 	
@@ -2011,7 +1979,6 @@ int main()
 
 	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
-	//while(run) {
 		// Scan hid shared memory for input events
 		hidScanInput();
 
@@ -2065,9 +2032,8 @@ int main()
 			file_count = matching_files.size();
 		}
 		const int pagemax = std::min((20+settings.ui.pagenum*20), (int)file_count);
-		// const int pagemax_ba = std::min((21+settings.ui.pagenum*20), (int)file_count);
 		int pagemax_ba = 21+settings.ui.pagenum*20;
-
+//Continue from here
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
 				if (settings.ui.theme == THEME_AKMENU) {

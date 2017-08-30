@@ -2,6 +2,7 @@
 #include <3ds.h>
 #include <citro3d.h>
 
+// Textures
 #define RECTANGLETEX 1
 #define DIALOGBOXTEX 2
 #define DBOXTEX_ICONBOX 3
@@ -29,7 +30,36 @@
 #define CARTNTRTEX 25 
 #define CARTTWLTEX 26
 #define CARTCTRTEX 27
+#define BOTTOMTEX 28
+#define SCROLLBARTEX 29
+#define BUTTONARROWTEX 30
+#define BUBBLETEX 31
+#define BOTTOMTEX 32
+#define r4loadingtex 33
+#define toplogotex 34
+#define toptex 35
+#define topbgtex 36
+#define iconstex 37
+#define sdicontex 38
+#define flashcardicontex 39
+#define gbaicontex 40
+#define smallsettingsicontex 41
+#define iconnulltex 42
+#define homeicontex 43
+#define bottomlogotex 44
+#define bipstex 45
+#define scrollwindowtex 46
+#define scrollwindowfronttex 47
+#define dotcircletex 48
+#define startbordertex 49
+#define settingsicontex 50
+#define getfcgameboxtex 51
+#define boxemptytex 52
+#define bracetex 53
 
+// Colors
+#define TRANPSARENT RGBA8(0, 0, 0, 0)
 
 #define BLACK	RGBA8(0, 0, 0, 255)
+#define WHITE	RGBA8(255, 255, 255, 255)
 #define GRAY	RGBA8(127, 127, 127, 255)
