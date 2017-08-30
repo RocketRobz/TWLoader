@@ -775,7 +775,7 @@ static void LoadBoxArt(void) {
 		// NOTE: Only 6 slots for boxart.
 		pp2d_free_texture(boxarttex[idx % 6]);
 		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
-		boxarttex[idx % 6] = pp2d_load_texture_png(path, SF2D_PLACE_RAM); // Box art
+		boxarttex[idx % 6] = pp2d_load_texture_png(path); // Box art
 	}
 }
 
@@ -783,7 +783,7 @@ static void LoadBoxArt_WoodTheme(const int idx) {
 	// Selected boxart is on the current page.
 	pp2d_free_texture(boxarttex[0]);
 	const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
-	boxarttex[0] = pp2d_load_texture_png(path, SF2D_PLACE_RAM); // Box art
+	boxarttex[0] = pp2d_load_texture_png(path); // Box art
 }
 
 /**
@@ -2033,89 +2033,86 @@ int main(){
 		}
 		const int pagemax = std::min((20+settings.ui.pagenum*20), (int)file_count);
 		int pagemax_ba = 21+settings.ui.pagenum*20;
-//Continue from here
+
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
 				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/gbatemp/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/gbatemp/upper_screen.jpg"); // Top background
 							break;
 						case 1:
-							topbgtex = pp2d_load_texture_png("romfs:/graphics/wood/black/upper_screen.png", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/black/upper_screen.png"); // Top background
 							break;
 						case 2:
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/Adv.Evo/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/Adv.Evo/upper_screen.jpg"); // Top background
 							break;
 						case 3:
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/upper_screen.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/wood/dstwo pink/upper_screen.jpg"); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == THEME_R4) {
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme01/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme01/bckgrd_1.jpg"); // Top background
 							break;
 						case 1:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme02/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme02/bckgrd_1.jpg"); // Top background
 							break;
 						case 2:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme03/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme03/bckgrd_1.jpg"); // Top background
 							break;
 						case 3:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme04/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme04/bckgrd_1.jpg"); // Top background
 							break;
 						case 4:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme05/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme05/bckgrd_1.jpg"); // Top background
 							break;
 						case 5:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme06/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme06/bckgrd_1.jpg"); // Top background
 							break;
 						case 6:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme07/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme07/bckgrd_1.jpg"); // Top background
 							break;
 						case 7:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme08/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme08/bckgrd_1.jpg"); // Top background
 							break;
 						case 8:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme09/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme09/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme09/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme09/bckgrd_1.jpg"); // Top background
 							break;
 						case 9:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme10/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme10/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme10/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme10/bckgrd_1.jpg"); // Top background
 							break;
 						case 10:
-							toplogotex = sfil_load_JPEG_file("romfs:/graphics/r4/theme11/logo.jpg", SF2D_PLACE_RAM); // Top logo
-							topbgtex = sfil_load_JPEG_file("romfs:/graphics/r4/theme11/bckgrd_1.jpg", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme11/logo.jpg"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme11/bckgrd_1.jpg"); // Top background
 							break;
 						case 11:
-							toplogotex = pp2d_load_texture_png("romfs:/graphics/r4/theme12/logo.png", SF2D_PLACE_RAM); // Top logo
-							topbgtex = pp2d_load_texture_png("romfs:/graphics/r4/theme12/bckgrd_1.png", SF2D_PLACE_RAM); // Top background
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme12/logo.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme12/bckgrd_1.png"); // Top background
 							break;
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
-					topbgtex = pp2d_load_texture_png("romfs:/graphics/3ds_top.png", SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+					pp2d_load_texture_png(topbgtex, "romfs:/graphics/3ds_top.png"); // Top background, behind the DSi-Menu border
 				} else {
-					topbgtex = pp2d_load_texture_png(color_data->topbgloc, SF2D_PLACE_RAM); // Top background, behind the DSi-Menu border
+					pp2d_load_texture_png(topbgtex, color_data->topbgloc); // Top background, behind the DSi-Menu border
 				}
 				settingsUnloadTextures();
 				colortexloaded = true;
 			}
-			if (!bnricontexloaded && TWLNANDnotfound_msg == 2) {
-				// titleboxXmovepos = (-64)*settings.ui.cursorPosition;
-				// titleboxXmovepos += (64)*settings.ui.pagenum*20;
-				
+			if (!bnricontexloaded && TWLNANDnotfound_msg == 2) {				
 				if (settings.ui.theme == THEME_DSIMENU && fadealpha == 0) {
 					dsiMenuTheme_loadingScreen();
 				}
@@ -2179,12 +2176,7 @@ int main(){
 				bnriconnum = 0+settings.ui.pagenum*20;
 			}			
 			if (!boxarttexloaded && !settings.romselect.toplayout && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
-				// boxartXmovepos = (-18*8)*settings.ui.cursorPosition;
-				// boxartXmovepos += (18*8)*settings.ui.pagenum*20;
 				
-				// if (settings.ui.theme == THEME_DSIMENU && fadealpha == 0) {
-				// 	dsiMenuTheme_loadingScreen();
-				// }
 				if (!settings.twl.forwarder) {
 					char path[256];
 					if(matching_files.size() == 0){
@@ -2366,25 +2358,25 @@ int main(){
 			}
 			
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
-				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);	
-					pp2d_load_texture_png(topbgtex, 40, 0);
+//				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+					pp2d_begin_draw(GFX_TOP);
+					pp2d_draw_on(GFX_TOP);
+					pp2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						if ((woodmenu_cursorPosition == 1) && !isDemo) {
-							setTextColor(RGBA8(255, 255, 255, 255));
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									renderText_w(40+16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 1:
-									renderText_w(40+8, 64, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 2:
-									renderText_w(40+20, 142, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 3:
-									renderText_w(40+8, 126, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 							}
 						}
@@ -2395,33 +2387,32 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+40+14, 62);
+									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+14, 62);
 									break;
 								case 1:
 								case 2:
-									pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
+									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
 									break;
 								case 3:
-									pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+40+164, 38);
+									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+164, 38);
 									break;
 							}
 						}
 					} else {
 						if (settings.twl.forwarder && !isDemo) {
-							setTextColor(RGBA8(255, 255, 255, 255));
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									renderText_w(40+16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 1:
-									renderText_w(40+8, 64, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 2:
-									renderText_w(40+20, 142, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 3:
-									renderText_w(40+8, 126, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_textf(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 							}
 						}
@@ -2436,14 +2427,14 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_load_texture_png(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
+									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
 									break;
 								case 1:
 								case 2:
-									pp2d_load_texture_png(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
+									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
 									break;
 								case 3:
-									pp2d_load_texture_png(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
+									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
 									break;
 							}
 						}
@@ -2451,36 +2442,33 @@ int main(){
 					switch (settings.ui.subtheme) {
 						case 0:
 						default:
-							setTextColor(RGBA8(16, 0, 0, 223));
-							renderText(40+200, 148, 0.82, 0.82, false, RetTime(true).c_str());
-							DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
+							pp2d_draw_text(40+200, 148, 0.82, 0.82, TIME, RetTime(true).c_str());
+							//DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
 							break;
 						case 1:
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(40+184, 8, 1.30, 1.30, false, RetTime(true).c_str());
-							DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
-							DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
+							pp2d_draw_text(40+184, 8, 1.30, 1.30, WHITE, RetTime(true).c_str());
+							//DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
+							//DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
 							break;
 						case 2:
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(40+16, 78, 1.30, 1.30, false, RetTime(true).c_str());
-							DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
-							DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
+							pp2d_draw_text(40+16, 78, 1.30, 1.30, WHITE, RetTime(true).c_str());
+							//DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
+							//DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
 							break;
 						case 3:
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(40+176, 172, 1.30, 1.30, false, RetTime(true).c_str());
+							pp2d_draw_text(40+176, 172, 1.30, 1.30, WHITE, RetTime(true).c_str());
 							break;
 					}
-					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
-					sf2d_end_frame();
-				}
+					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
+					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
+					pp2d_end_draw();
+//				}
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
-					sf2d_start_frame(GFX_TOP, GFX_LEFT);	
+					pp2d_begin_draw(GFX_TOP);
+					pp2d_draw_on(GFX_TOP);
 					if (menu_ctrlset != CTRL_SET_MENU) {
-						pp2d_load_texture_png(topbgtex, 40, 0);
+						pp2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
 						const int file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
 						for (filenum = filenameYmovepos; filenum < file_count; filenum++) {
@@ -2489,7 +2477,7 @@ int main(){
 								if (settings.ui.cursorPosition == filenum) {
 									color = SET_ALPHA(color_data->color, 255);
 								} else {
-									color = RGBA8(255, 255, 255, 255);
+									color = BLACK;
 								}
 
 								// Get the current filename and convert it to wstring.
@@ -2497,46 +2485,40 @@ int main(){
 										? fcfiles.at(filenum).c_str()
 										: files.at(filenum).c_str());
 								wstring wstr = utf8_to_wstring(filename);
-								setTextColor(color);
-								renderText_w(42, filenameYpos, 0.50, 0.50, false, wstr.c_str());
+								pp2d_draw_textf(42, filenameYpos, 0.50, 0.50, color, wstr.c_str());
 
 								filenameYpos += 15;
 							}
 						}
 
-						pp2d_load_texture_png_part(topbgtex, 40, 0, 0, 0, 320, 15);
+						pp2d_draw_texture_part(topbgtex, 40, 0, 0, 0, 320, 15);
 						const char *title = (settings.twl.forwarder
 									? "Games (Flashcard)"
 									: "Games (SD Card)");
-						setTextColor(RGBA8(0, 0, 0, 255));
-						renderText(42, 0, 0.50, 0.50, false, title);
+						pp2d_draw_text(42, 0, 0.50, 0.50, BLACK, title);
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
 						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
-						// if(matching_files.size() == 0){
-							snprintf(romsel_counter2, sizeof(romsel_counter2), "%d", file_count);
-						// }else{
-						// 	snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
-						// }
+						snprintf(romsel_counter2, sizeof(romsel_counter2), "%d", file_count);
 						
 						if (settings.ui.counter) {
 							if (file_count < 100) {
-								renderText(40+276, 0, 0.50, 0.50, false, romsel_counter1);
-								renderText(40+295, 0, 0.50, 0.50, false, "/");
-								renderText(40+300, 0, 0.50, 0.50, false, romsel_counter2);
+								pp2d_draw_text(40+276, 0, 0.50, 0.50, BLACK, romsel_counter1);
+								pp2d_draw_text(40+295, 0, 0.50, 0.50, BLACK, "/");
+								pp2d_draw_text(40+300, 0, 0.50, 0.50, BLACK, romsel_counter2);
 							} else {
-								renderText(40+276, 0, 0.50, 0.50, false, romsel_counter1);
-								renderText(40+303, 0, 0.50, 0.50, false, "/");
-								renderText(40+308, 0, 0.50, 0.50, false, romsel_counter2);
+								pp2d_draw_text(40+276, 0, 0.50, 0.50, BLACK, romsel_counter1);
+								pp2d_draw_text(40+303, 0, 0.50, 0.50, BLACK, "/");
+								pp2d_draw_text(40+308, 0, 0.50, 0.50, BLACK, romsel_counter2);
 							}
 						}
 					} else {
-						pp2d_load_texture_png(toplogotex, 40, 0);
+						pp2d_draw_texture(toplogotex, 40, 0);
 					}
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
-					sf2d_end_frame();
+					pp2d_end_draw();
 					updatetopscreen = false;
 				}
 			} else {	// DSi-Menu theme
@@ -2558,35 +2540,36 @@ int main(){
 				}
 
 				update_battery_level(batterychrgtex, batterytex);
-				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-					sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
+//				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+					pp2d_begin_draw(GFX_TOP);
+					pp2d_draw_on(GFX_TOP);
 					if (settings.ui.theme == THEME_3DSMENU) {
-						pp2d_load_texture_png(topbgtex, offset3D[topfb].topbg-11, 0);
+						pp2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
 					} else {
-						pp2d_load_texture_png_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
+						pp2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
 					}
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
 							if (loadboxartnum != pagemax_ba) {
 								if (fadealpha == 0) {
 									setTextColor(RGBA8(255, 255, 255, 255));
-									renderText(112, 104, 0.50, 0.50, false, "Storing box art paths...");
+									pp2d_draw_text(112, 104, 0.50, 0.50, false, "Storing box art paths...");
 								}
 							} else {
 								boxartXpos = 136;
 								if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
 									if (settings.ui.cursorPosition < 2) {
-										pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-										if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+										pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color)); // Draw box art's reflection
 									}
 								}
 								for (boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
 									if (boxartnum < 9+settings.ui.pagenum*20) {
 										ChangeBoxArtNo();
 										// Draw box art
-										pp2d_load_texture_png(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
+										pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
 										// Draw box art's reflection
-										if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color));
 										boxartXpos += 144;
 									}
 								}
@@ -2595,17 +2578,17 @@ int main(){
 										if (settings.ui.theme != THEME_3DSMENU) {
 											boxartnum = settings.ui.cursorPosition;
 											ChangeBoxArtNo();
-											pp2d_load_texture_png_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+											pp2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
 											// Draw moving box art
-											pp2d_load_texture_png(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+											pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
 											// Draw moving box art's reflection
-											pp2d_load_texture_png_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0));
+											pp2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color));
 										}
 									} else if (!settings.twl.forwarder && settings.ui.cursorPosition == -1) {
 										if (settings.ui.theme != THEME_3DSMENU) {
-											pp2d_load_texture_png_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
-											pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
-											pp2d_load_texture_png_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw moving box art's reflection
+											pp2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+											pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
+											pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color)); // Draw moving box art's reflection
 										}
 									}
 								}
@@ -2616,63 +2599,49 @@ int main(){
 							boxartXpos = 136;
 							if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
 								if (settings.ui.cursorPosition < 2) {
-									pp2d_load_texture_png(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
-									pp2d_load_texture_png_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 0xC0)); // Draw box art's reflection
+									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
+									pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color)); // Draw box art's reflection
 								}
 							} else {
-								// int text_width = sftd_get_text_width(font, 12, noromtext1);
-								//int text_width = 0;
-								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-								// text_width = sftd_get_text_width(font, 12, noromtext2);
-								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
+								// Nothing
 							}
 						} else {
-							// if (settings.twl.forwarder && settings.ui.pagenum == 0) {
-								// int text_width = sftd_get_text_width(font, 12, noromtext1);
-								//int text_width = 0;
-								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 96, RGBA8(255, 255, 255, 255), 12, noromtext1);
-								// text_width = sftd_get_text_width(font, 12, noromtext2);
-								// sftd_draw_textf(font, offset3D[topfb].boxart+((400-text_width)/2), 112, RGBA8(255, 255, 255, 255), 12, noromtext2);
-							// }
+							// Nothing
 						}
 					}
 					if (settings.ui.theme != THEME_3DSMENU) {
 						if (settings.ui.topborder) {
-							pp2d_load_texture_png_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
-							setTextColor(RGBA8(0, 0, 0, 255));
+							pp2d_draw_texture_blend(toptex, 400/2 - toptex->width/2, 240/2 - toptex->height/2, menucolor);
+							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
 						} else {
-							setTextColor(RGBA8(255, 255, 255, 255));
+							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
 						}
 					} else {
-						setTextColor(RGBA8(0, 0, 0, 255));
+						pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
 					}
-					renderText(318.0f, 1.0f, 0.58f, 0.58f, false, RetTime(false).c_str());
-					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
+//					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
 
 					draw_volume_slider(voltex);
-					pp2d_load_texture_png(batteryIcon, 371, 2);
+					pp2d_draw_texture(batteryIcon, 371, 2);
 					if (!settings.ui.name.empty()) {
-						setTextColor(SET_ALPHA(color_data->color, 255));
-						renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
+						pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 					}
-					pp2d_load_texture_png(shoulderLtex, 0, LshoulderYpos);
-					pp2d_load_texture_png(shoulderRtex, 328, RshoulderYpos);
+					pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+					pp2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 					// Draw the "Previous" and "Next" text for X/Y.
 					u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
-							? RGBA8(0, 0, 0, 255)
-							: RGBA8(127, 127, 127, 255);
-					setTextColor(lr_color);
-					renderText(17, LshoulderYpos+4, 0.50, 0.50, false, "Previous");
+							? BLACK
+							: GRAY;
+					pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, lr_color, "Previous");
 
 					lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
-							? RGBA8(0, 0, 0, 255)
-							: RGBA8(127, 127, 127, 255);
-					setTextColor(lr_color);
-					renderText(332, RshoulderYpos+4, 0.50, 0.50, false, "Next");
+							? BLACK
+							: GRAY;
+					pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
 
 					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-					sf2d_end_frame();
-				}
+					pp2d_end_draw();
+//				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			if (colortexloaded) {
@@ -2698,22 +2667,7 @@ int main(){
 		} else {
 			if (RshoulderYpos != 220)
 			{RshoulderYpos -= 1;}
-		}
-		
-		/* if(hHeld & KEY_Y){
-			if (YbuttonYpos != 223)
-			{YbuttonYpos += 1;}
-		} else {
-			if (YbuttonYpos != 220)
-			{YbuttonYpos -= 1;}
-		}
-		if(hHeld & KEY_X){
-			if (XbuttonYpos != 223)
-			{XbuttonYpos += 1;}
-		} else {
-			if (XbuttonYpos != 220)
-			{XbuttonYpos -= 1;}
-		} */
+		}		
 		
 		if (fadein) {
 			showbubble = false;
@@ -2765,28 +2719,13 @@ int main(){
 						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter for FlashCard
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
-					
-						/** This is better than a glitched screen */
-						sf2d_start_frame(GFX_TOP, GFX_LEFT);
-						sf2d_end_frame();
-						sf2d_swapbuffers();
 					}
-					if (settings.ui.theme == THEME_AKMENU) {
-						/** This is better than a glitched screen */
-						sf2d_start_frame(GFX_TOP, GFX_LEFT);
-						sf2d_end_frame();
-						sf2d_swapbuffers();
-						
+					if (settings.ui.theme == THEME_AKMENU) {						
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
 						if (settings.ui.cursorPosition < 0)
 							settings.ui.cursorPosition = 0;
-					} else if (settings.ui.theme == THEME_R4) {
-						/** This is better than a glitched screen */
-						sf2d_start_frame(GFX_TOP, GFX_LEFT);
-						sf2d_end_frame();
-						sf2d_swapbuffers();
-						
+					} else if (settings.ui.theme == THEME_R4) {						
 						menu_ctrlset = CTRL_SET_MENU;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
@@ -3064,119 +3003,423 @@ int main(){
 			}
 		}
 
-		//if (updatebotscreen) {
-			if (screenmode == SCREEN_MODE_ROM_SELECT) {
-				if (!colortexloaded_bot) {
-					settingsUnloadTextures();
-					dotcircletex = pp2d_load_texture_png(color_data->dotcircleloc, SF2D_PLACE_RAM); // Dots forming a circle
-					startbordertex = pp2d_load_texture_png(color_data->startborderloc, SF2D_PLACE_RAM); // "START" border
-					if (settings.ui.theme == THEME_AKMENU) {
-						switch (settings.ui.subtheme) {
-							case 0:
-							default:
-								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/gbatemp/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								break;
-							case 1:
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/wood/black/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
-								break;
-							case 2:
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/wood/Adv.Evo/lower_screen.png", SF2D_PLACE_RAM); // Bottom of menu
-								break;
-							case 3:
-								bottomtex = sfil_load_JPEG_file("romfs:/graphics/wood/dstwo pink/lower_screen.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								break;
-						}
-					} else if (settings.ui.theme == THEME_R4) {
-						switch (settings.ui.subtheme) {
-							case 0:
-							default:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme01/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme01/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 1:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme02/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme02/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 2:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme03/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme03/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 3:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme04/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme04/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 4:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme05/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme05/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 5:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme06/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme06/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 6:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme07/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme07/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 7:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme08/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme08/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 8:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme09/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme09/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 9:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme10/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme10/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 10:
-								iconstex = sfil_load_JPEG_file("romfs:/graphics/r4/theme11/icons.jpg", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme11/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-							case 11:
-								iconstex = pp2d_load_texture_png("romfs:/graphics/r4/theme12/icons.png", SF2D_PLACE_RAM); // Bottom of menu
-								bottomtex = pp2d_load_texture_png("romfs:/graphics/r4/theme12/bckgrd_2.png", SF2D_PLACE_RAM); // Bottom of rom select
-								break;
-						}
-					} else if (settings.ui.theme == THEME_3DSMENU) {
-						bottomtex = pp2d_load_texture_png(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
-						boxfulltex = pp2d_load_texture_png("romfs:/graphics/3ds_box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
-					} else {
-						bottomtex = pp2d_load_texture_png(bottomloc, SF2D_PLACE_RAM); // Bottom of menu
-						boxfulltex = pp2d_load_texture_png("romfs:/graphics/box_full.png", SF2D_PLACE_RAM); // (DSiWare) box on bottom screen
+		if (screenmode == SCREEN_MODE_ROM_SELECT) {
+			if (!colortexloaded_bot) {
+				settingsUnloadTextures();
+				pp2d_load_texture_png(dotcircletex, color_data->dotcircleloc); // Dots forming a circle
+				pp2d_load_texture_png(startbordertex, color_data->startborderloc); // "START" border
+				if (settings.ui.theme == THEME_AKMENU) {
+					switch (settings.ui.subtheme) {
+						case 0:
+						default:
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/gbatemp/lower_screen.jpg"); // Bottom of menu
+							break;
+						case 1:
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/black/lower_screen.png"); // Bottom of menu
+							break;
+						case 2:
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/Adv.Evo/lower_screen.png"); // Bottom of menu
+							break;
+						case 3:
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/wood/dstwo pink/lower_screen.jpg"); // Bottom of menu
+							break;
 					}
-					colortexloaded_bot = true;
+				} else if (settings.ui.theme == THEME_R4) {
+					switch (settings.ui.subtheme) {
+						case 0:
+						default:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme01/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme01/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 1:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme02/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme02/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 2:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme03/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme03/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 3:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme04/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme04/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 4:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme05/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme05/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 5:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme06/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme06/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 6:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme07/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme07/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 7:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme08/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme08/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 8:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme09/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme09/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 9:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme10/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme10/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 10:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme11/icons.jpg"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme11/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 11:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme12/icons.png"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme12/bckgrd_2.png"); // Bottom of rom select
+							break;
+					}
+				} else if (settings.ui.theme == THEME_3DSMENU) {
+					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
+					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/3ds_box_full.png"); // (DSiWare) box on bottom screen
+				} else {
+					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
+					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/box_full.png"); // (DSiWare) box on bottom screen
+				}
+				colortexloaded_bot = true;
+			}
+
+			pp2d_begin_draw(GFX_TOP);
+			pp2d_draw_on(GFX_TOP);
+			if (settings.ui.theme == THEME_AKMENU) {
+				if (wood_ndsiconscaletimer == 60) {
+					// Scale icon at 30fps
+					if (wood_ndsiconscalelag == 1) {
+						if (wood_ndsiconscaledown) {
+							wood_ndsiconscalemovepos -= 1;
+							wood_ndsiconscalesize -= 0.06f;
+							if (wood_ndsiconscalemovepos == 0)
+								wood_ndsiconscaledown = false;
+						} else {
+							wood_ndsiconscalemovepos += 1;
+							wood_ndsiconscalesize += 0.06f;
+							if (wood_ndsiconscalemovepos == 4)
+								wood_ndsiconscaledown = true;
+						}
+						wood_ndsiconscalelag = 0;
+					} else {
+						wood_ndsiconscalelag = 1;
+					}
+				} else {
+					wood_ndsiconscaletimer += 1;
+					wood_ndsiconscalemovepos = 0;
+					wood_ndsiconscalesize = 0.00f;
+					wood_ndsiconscaledown = false;
+				}
+			
+				pp2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+				if (menu_ctrlset == CTRL_SET_MENU) {
+					// Poll for Slot-1 changes.
+					bool forcePoll = false;
+					bool doSlot1Update = false;
+					if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+						// Card is inserted, but we don't know its type.
+						// Force an update.
+						forcePoll = true;
+					}
+					bool s1chg = gamecardPoll(forcePoll);
+					if (s1chg) {
+						// Update Slot-1 if:
+						// - forcePoll is false
+						// - forcePoll is true, and card is no longer unknown.
+						doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+					}
+					if (doSlot1Update) {
+						// Slot-1 card has changed.
+						if (settings.ui.cursorPosition == -1) {
+							// Reload the banner text.
+							bannertextloaded = false;
+						}
+					}
+					size_t *cardicontex = gamecardGetIcon();
+					if (cardicontex = NULL)
+						cardicontex = iconnulltex;
+
+					int Ypos = 26;
+					filenameYpos = 36;
+					if (woodmenu_cursorPosition == 0) {
+						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						if (sdfile_count != 0)
+							pp2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						else
+							pp2d_draw_texture_part_scale_blend(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+					} else {
+						if (sdfile_count != 0)
+							pp2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						else
+							pp2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+					}
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (SD Card)");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (woodmenu_cursorPosition == 1) {
+						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						if (fcfile_count != 0)							
+							pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						else
+							pp2d_draw_texture_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+					} else {
+						if (fcfile_count != 0)
+							pp2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						else
+							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+					}
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (Flashcard)");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (woodmenu_cursorPosition == 2) {
+						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else
+						pp2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Launch Slot-1 card");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (woodmenu_cursorPosition == 3) {
+						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else
+						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Start GBARunner2");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (woodmenu_cursorPosition == 4) {
+						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else
+						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					pp2d_draw_textf(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
+					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
+				} else {
+					int Ypos = 26;
+					filenameYpos = 36;
+					for (filenum = settings.ui.pagenum*20; filenum < pagemax; filenum++) {
+						bnriconnum = filenum;
+						ChangeBNRIconNo();
+						if (settings.ui.cursorPosition == filenum) {
+							drawRectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
+						}
+
+						// Get the current filename and convert it to wstring.
+						const char *filename = (settings.twl.forwarder
+								? fcfiles.at(filenum).c_str()
+								: files.at(filenum).c_str());
+						wstring wstr = utf8_to_wstring(filename);
+						pp2d_draw_textf(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
+
+						if (settings.ui.cursorPosition == filenum)
+							pp2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						else
+							pp2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+						Ypos += 39;
+						filenameYpos += 39;
+					}
+					pp2d_draw_texture_part(bottomtex, 0, 0, 0, 0, 320, 22);
+					pp2d_draw_texture_part(bottomtex, 0, 217, 0, 217, 320, 23);
+					if (settings.twl.forwarder)
+						pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Games (Flashcard)");
+					else
+						pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Games (SD Card)");
+					
+					const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+					
+					char romsel_counter1[16];
+					char romsel_counter2[16];
+					snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
+					snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);					
+					
+					if (settings.ui.counter) {
+						if (file_count < 100) {
+							pp2d_draw_text(276, 2, 0.50, 0.50, WHITE, romsel_counter1);
+							pp2d_draw_text(295, 2, 0.50, 0.50, WHITE, "/");
+							pp2d_draw_text(300, 2, 0.50, 0.50, WHITE, romsel_counter2);
+						} else {
+							pp2d_draw_text(276, 2, 0.50, 0.50, WHITE, romsel_counter1);
+							pp2d_draw_text(303, 2, 0.50, 0.50, WHITE, "/");
+							pp2d_draw_text(308, 2, 0.50, 0.50, WHITE, romsel_counter2);
+						}
+					}
+				}
+			} else if (settings.ui.theme == THEME_R4) {
+				if (menu_ctrlset == CTRL_SET_MENU) {
+					// Continue from here
+					pp2d_load_texture_png(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
+					if (r4menu_cursorPosition == 0) {
+						drawRectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
+						static const char selectiontext[] = "Games";
+						
+						pp2d_draw_text(128, 220, 0.60f, 0.60f, WHITE, selectiontext);
+					} else 	if (r4menu_cursorPosition == 1) {
+						drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
+						static const char selectiontext[] = "Launch Slot-1 card";
+						
+						setTextColor(RGBA8(255, 255, 255, 255));
+						pp2d_draw_text(96, 220, 0.60f, 0.60f, false, selectiontext);
+					} else 	if (r4menu_cursorPosition == 2) {
+						drawRectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
+						static const char selectiontext[] = "Start GBARunner2";
+						
+						setTextColor(RGBA8(255, 255, 255, 255));
+						pp2d_draw_text(96, 220, 0.60f, 0.60f, false, selectiontext);
+					}
+					setTextColor(RGBA8(255, 255, 255, 255));
+					DrawDate(2, 220, 0.60f, 0.60f, false);
+					pp2d_draw_text(274, 220, 0.60f, 0.60f, false, RetTime(true).c_str());
+				} else {
+					pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+					if (settings.twl.forwarder && !isDemo) {
+						setTextColor(RGBA8(0, 0, 0, 255));
+						pp2d_draw_textf(16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
+					}
+					if (!bannertextloaded) {
+						char path[256];
+						bnriconnum = settings.ui.cursorPosition;
+						if (settings.twl.forwarder) {
+							const char *tempfile = fcfiles.at(bnriconnum).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
+						} else {
+							const char *tempfile = files.at(bnriconnum).c_str();
+							snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+						}
+						if (access(path, F_OK) != -1) {
+							LoadBNRIcon_R4Theme(path);
+						} else {
+							LoadBNRIcon_R4Theme(NULL);
+						}
+					}
+					drawRectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
+					pp2d_load_texture_png(dboxtex_iconbox, 47, 31);
+					pp2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
+					
+					if (!bannertextloaded) {
+						char path[256];
+						if (settings.twl.forwarder) {
+							// if(matching_files.size() == 0){
+								if (fcfiles.size() != 0) {
+									romsel_filename = fcfiles.at(settings.ui.cursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+							/* }else{
+								if (matching_files.size() != 0) {
+									romsel_filename = matching_files.at(storedcursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+							} */
+								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+							} else {
+							// if(matching_files.size() == 0){
+								if (files.size() != 0) {
+									romsel_filename = files.at(settings.ui.cursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+								snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+							/* }else {
+								if (matching_files.size() != 0) {
+									romsel_filename = matching_files.at(storedcursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+								snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename); */
+							}
+
+						if (access(path, F_OK) == -1) {
+							// Banner file is not available.
+							strcpy(path, "romfs:/notextbanner");
+						}
+						FILE *f_bnr = fopen(path, "rb");
+						if (f_bnr) {
+							romsel_gameline = grabText(f_bnr, language);
+							fclose(f_bnr);
+						} else {
+							// Unable to open the banner file.
+							romsel_gameline.clear();
+							romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+							romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+						}
+						bannertextloaded = true;
+					}
+					if (settings.ui.cursorPosition >= 0) {
+						int y = 32, dy = 12;
+						// Print the banner text, center-aligned.
+						const size_t banner_lines = std::min(3U, romsel_gameline.size());
+						for (size_t i = 0; i < banner_lines; i++, y += dy) {
+							// const int text_width = sftd_get_wtext_width(font_b, 12, romsel_gameline[i].c_str());
+							const int text_width = 180;
+							setTextColor(RGBA8(0, 0, 0, 255)); // black
+							pp2d_draw_textf(84+(192-text_width)/2, y, 0.55, 0.55, false, romsel_gameline[i].c_str());
+						}
+					}
+				}
+			} else {
+				if (settings.ui.custombot == 1) {
+					pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
+				} else {
+					if (settings.ui.theme == THEME_3DSMENU) {
+						drawRectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
+					} else {
+						pp2d_load_texture_png_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
+					}
 				}
 
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				if (settings.ui.theme == THEME_AKMENU) {
-					if (wood_ndsiconscaletimer == 60) {
-						// Scale icon at 30fps
-						if (wood_ndsiconscalelag == 1) {
-							if (wood_ndsiconscaledown) {
-								wood_ndsiconscalemovepos -= 1;
-								wood_ndsiconscalesize -= 0.06f;
-								if (wood_ndsiconscalemovepos == 0)
-									wood_ndsiconscaledown = false;
-							} else {
-								wood_ndsiconscalemovepos += 1;
-								wood_ndsiconscalesize += 0.06f;
-								if (wood_ndsiconscalemovepos == 4)
-									wood_ndsiconscaledown = true;
-							}
-							wood_ndsiconscalelag = 0;
-						} else {
-							wood_ndsiconscalelag = 1;
+				if (settings.ui.theme != THEME_3DSMENU) {
+					pp2d_load_texture_png(scrollbartex, 0, 240-28);
+					pp2d_load_texture_png_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+					pp2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+				}
+				
+				if(!isDemo) {
+					if (settings.ui.theme != THEME_3DSMENU) {
+						if (!settings.ui.iconsize) {
+							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+							// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+							const int home_width = 144+16;
+							const int home_x = (320-home_width)/2;
+							pp2d_load_texture_png(homeicontex, home_x, 194); // Draw HOME icon
+							setTextColor(RGBA8(0, 0, 0, 255));
+							pp2d_draw_textf(home_x+20, 195, 0.50, 0.50, false, home_text);
 						}
 					} else {
-						wood_ndsiconscaletimer += 1;
-						wood_ndsiconscalemovepos = 0;
-						wood_ndsiconscalesize = 0.00f;
-						wood_ndsiconscaledown = false;
+						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+						// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
+						const int home_width = 144+16;
+						const int home_x = (320-home_width)/2;
+						pp2d_load_texture_png(homeicontex, home_x, 220); // Draw HOME icon
+						setTextColor(RGBA8(0, 0, 0, 255));
+						pp2d_draw_textf(home_x+20, 221, 0.50, 0.50, false, home_text);
 					}
-				
-					pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
-					if (menu_ctrlset == CTRL_SET_MENU) {
+				}
+
+				if (settings.ui.pagenum == 0) {
+					if (settings.ui.iconsize) {
+						pp2d_load_texture_png_scale(bracetex, -74+titleboxXmovepos*1.25, 104, 1.25, 1.25);
+						pp2d_load_texture_png_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+					} else {
+						pp2d_load_texture_png(bracetex, -32+titleboxXmovepos, 112);
+						pp2d_load_texture_png(settingsicontex, setsboxXpos+titleboxXmovepos, 115);
+					}
+
+					if (!settings.twl.forwarder) {
 						// Poll for Slot-1 changes.
 						bool forcePoll = false;
 						bool doSlot1Update = false;
@@ -3199,232 +3442,265 @@ int main(){
 								bannertextloaded = false;
 							}
 						}
+
+						if (settings.ui.iconsize)
+							pp2d_load_texture_png_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+						else
+							pp2d_load_texture_png(carttex(), cartXpos+titleboxXmovepos, 116);
 						sf2d_texture *cardicontex = gamecardGetIcon();
 						if (!cardicontex)
 							cardicontex = iconnulltex;
-
-						int Ypos = 26;
-						filenameYpos = 36;
-						if (woodmenu_cursorPosition == 0) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							if (sdfile_count != 0)
-								pp2d_load_texture_png_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-							else
-								pp2d_load_texture_png_part_scale_blend(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
-						} else {
-							if (sdfile_count != 0)
-								pp2d_load_texture_png_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-							else
-								pp2d_load_texture_png_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
-						}
-						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Games (SD Card)");
-						Ypos += 39;
-						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 1) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							if (fcfile_count != 0)
-								pp2d_load_texture_png_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-							else
-								pp2d_load_texture_png_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
-						} else {
-							if (fcfile_count != 0)
-								pp2d_load_texture_png_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-							else
-								pp2d_load_texture_png_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
-						}
-						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Games (Flashcard)");
-						Ypos += 39;
-						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 2) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							pp2d_load_texture_png_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-						} else
-							pp2d_load_texture_png_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Launch Slot-1 card");
-						Ypos += 39;
-						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 3) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							pp2d_load_texture_png_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-						} else
-							pp2d_load_texture_png_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText(46, filenameYpos, 0.45f, 0.45f, false, "Start GBARunner2");
-						Ypos += 39;
-						filenameYpos += 39;
-						if (woodmenu_cursorPosition == 4) {
-							drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-							pp2d_load_texture_png_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-						} else
-							pp2d_load_texture_png_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-						setTextColor(RGBA8(255, 255, 255, 255)); // white
-						renderText_w(46, filenameYpos, 0.45f, 0.45f, false, TR(STR_SETTINGS_TEXT));						
-						renderText(2, 2, 0.50, 0.50, false, "Menu");
-					} else {
-						int Ypos = 26;
-						filenameYpos = 36;
-						for (filenum = settings.ui.pagenum*20; filenum < pagemax; filenum++) {
-							bnriconnum = filenum;
-							ChangeBNRIconNo();
-							if (settings.ui.cursorPosition == filenum) {
-								drawRectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
-							}
-
-							// Get the current filename and convert it to wstring.
-							const char *filename = (settings.twl.forwarder
-									? fcfiles.at(filenum).c_str()
-									: files.at(filenum).c_str());
-							wstring wstr = utf8_to_wstring(filename);
-							setTextColor(RGBA8(255, 255, 255, 255)); // white
-							renderText_w(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, false, wstr.c_str());
-
-							if (settings.ui.cursorPosition == filenum)
-								pp2d_load_texture_png_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
-							else
-								pp2d_load_texture_png_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
-							Ypos += 39;
-							filenameYpos += 39;
-						}
-						pp2d_load_texture_png_part(bottomtex, 0, 0, 0, 0, 320, 22);
-						pp2d_load_texture_png_part(bottomtex, 0, 217, 0, 217, 320, 23);
-						setTextColor(RGBA8(255, 255, 255, 255));
-						if (settings.twl.forwarder)
-							renderText(2, 2, 0.50, 0.50, false, "Games (Flashcard)");
+						if (settings.ui.iconsize)
+							pp2d_load_texture_png_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
 						else
-							renderText(2, 2, 0.50, 0.50, false, "Games (SD Card)");
-						
-						const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-						
-						char romsel_counter1[16];
-						char romsel_counter2[16];
-						snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
-						// if(matching_files.size() == 0){
-							snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
-						// }else{
-						// 	snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
-						// }
-						
-						if (settings.ui.counter) {
-							if (file_count < 100) {
-								renderText(276, 2, 0.50, 0.50, false, romsel_counter1);
-								renderText(295, 2, 0.50, 0.50, false, "/");
-								renderText(300, 2, 0.50, 0.50, false, romsel_counter2);
+							pp2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+					} else {
+						// Get flash cart games.
+						if (settings.ui.iconsize)
+							pp2d_load_texture_png_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+						else
+							pp2d_load_texture_png(getfcgameboxtex, cartXpos+titleboxXmovepos, 115);
+					}
+				} else {
+					pp2d_load_texture_png(bracetex, 32+cartXpos+titleboxXmovepos, 112);
+				}
+
+				if (settings.ui.iconsize) {
+					titleboxXpos = 120;
+					ndsiconXpos = 140;
+				} else {
+					titleboxXpos = 128;
+					ndsiconXpos = 144;
+				}
+
+				if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
+					pp2d_load_texture_png(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
+				}
+
+				float bipxPos = 37.0;
+				for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
+					if (filenum < pagemax) {
+						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
+						bipxPos += 12.5;
+						if (settings.ui.iconsize) {
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_load_texture_png_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
 							} else {
-								renderText(276, 2, 0.50, 0.50, false, romsel_counter1);
-								renderText(303, 2, 0.50, 0.50, false, "/");
-								renderText(308, 2, 0.50, 0.50, false, romsel_counter2);
+								pp2d_load_texture_png(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108);
+							}
+							titleboxXpos += 80;
+
+							bnriconnum = filenum;
+							if (loadbnriconnum <= filenum) {
+								pp2d_load_texture_png_scale(dotcircletex,ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
+							} else {
+								ChangeBNRIconNo();
+								if (settings.ui.theme != THEME_3DSMENU) {
+									pp2d_load_texture_png_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+								} else {
+									pp2d_load_texture_png_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+								}
+							}
+							ndsiconXpos += 80;
+						} else {
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_load_texture_png(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
+							} else {
+								pp2d_load_texture_png_scale(boxfulltex, 5+titleboxXpos+titleboxXmovepos, 119, 0.68, 0.67);
+							}
+							titleboxXpos += 64;
+
+							bnriconnum = filenum;
+							if (loadbnriconnum <= filenum) {
+								pp2d_load_texture_png_scale(dotcircletex, ndsiconXpos+titleboxXmovepos, 129, 0.40, 0.40);  // Dots moving in circles
+							} else {
+								ChangeBNRIconNo();
+								pp2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+							}
+							ndsiconXpos += 64;
+						}
+					} else {
+						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
+						bipxPos += 12.5;
+						if (settings.ui.iconsize) {
+							pp2d_load_texture_png_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+							titleboxXpos += 80;
+							ndsiconXpos += 80;
+						} else {
+							pp2d_load_texture_png(boxemptytex, titleboxXpos+titleboxXmovepos, 116);
+							titleboxXpos += 64;
+							ndsiconXpos += 64;
+						}
+					}
+				}
+				if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
+					pp2d_load_texture_png_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
+				}
+
+				if (settings.ui.iconsize) {
+					pp2d_load_texture_png_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
+				} else {
+					pp2d_load_texture_png_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 112, -1, 1);
+				}
+				if (!applaunchprep) {
+					if (titleboxXmovetimer == 0) {
+						startbordermovepos = 0;
+						startborderscalesize = 1.0;
+					}
+					if (!settings.twl.forwarder && settings.ui.cursorPosition == -1 && !gamecardIsInserted()) {
+						// Slot-1 selected, but no cartridge is present.
+						// Don't print "START" and the cursor border.
+					} else {
+						if (!isDemo || settings.ui.cursorPosition == -2) {
+							if (showbubble) {
+								// Print "START" and the cursor border.
+								if (settings.ui.iconsize) {
+									pp2d_load_texture_png_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
+									const wchar_t *start_text = TR(STR_START);
+									// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
+									//const int start_width = 0;
+									// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
+									setTextColor(RGBA8(255, 255, 255, 255));
+									if (settings.ui.theme != THEME_3DSMENU)
+										pp2d_draw_textf(136, 180, 0.60, 0.60, false, start_text);
+								} else {
+									pp2d_load_texture_png_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
+									const wchar_t *start_text = TR(STR_START);
+									// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
+									//const int start_width = 0;
+									// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
+									setTextColor(RGBA8(255, 255, 255, 255));
+									if (settings.ui.theme != THEME_3DSMENU)
+										pp2d_draw_textf(140, 173, 0.50, 0.50, false, start_text);
+								}
 							}
 						}
 					}
-				} else if (settings.ui.theme == THEME_R4) {
-					if (menu_ctrlset == CTRL_SET_MENU) {
-						pp2d_load_texture_png(iconstex, 320/2 - iconstex->width/2, 240/2 - iconstex->height/2);
-						if (r4menu_cursorPosition == 0) {
-							drawRectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
-							pp2d_load_texture_png_part(iconstex, 14, 79, 14, 79, 88, 87);
-							static const char selectiontext[] = "Games";
-							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							//const int text_width = 0;
-							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(128, 220, 0.60f, 0.60f, false, selectiontext);
-						} else 	if (r4menu_cursorPosition == 1) {
-							drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
-							pp2d_load_texture_png_part(iconstex, 117, 79, 117, 79, 88, 87);
-							static const char selectiontext[] = "Launch Slot-1 card";
-							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							//const int text_width = 0;
-							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
-						} else 	if (r4menu_cursorPosition == 2) {
-							drawRectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
-							pp2d_load_texture_png_part(iconstex, 219, 79, 219, 79, 88, 87);
-							static const char selectiontext[] = "Start GBARunner2";
-							// const int text_width = sftd_get_text_width(font, 14, selectiontext);
-							//const int text_width = 0;
-							// sftd_draw_textf(font, (320-text_width)/2, 220, RGBA8(255, 255, 255, 255), 14, selectiontext);
-							setTextColor(RGBA8(255, 255, 255, 255));
-							renderText(96, 220, 0.60f, 0.60f, false, selectiontext);
+				} else if (settings.ui.theme != THEME_3DSMENU) {
+					if (settings.ui.custombot)
+						pp2d_draw_texture_part(bottomtex, 128, 112, 128, 112, 64, 80);
+					else
+						pp2d_draw_texture_scale_blend(bottomtex, 128, 112, 128, 112, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
+					if (settings.ui.cursorPosition == -2) {
+						pp2d_load_texture_png(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
+					} else if (settings.ui.cursorPosition == -1) {
+						if (settings.twl.forwarder)
+							pp2d_load_texture_png(getfcgameboxtex, 128, titleboxYmovepos-1);
+						else {
+							// Draw selected Slot-1 game that moves up
+							pp2d_load_texture_png(carttex(), 128, titleboxYmovepos);
+							sf2d_texture *cardicontex = gamecardGetIcon();
+							if (!cardicontex)
+								cardicontex = iconnulltex;
+							pp2d_load_texture_png(cardicontex, 144, ndsiconYmovepos);
 						}
-						setTextColor(RGBA8(255, 255, 255, 255));
-						DrawDate(2, 220, 0.60f, 0.60f, false);
-						renderText(274, 220, 0.60f, 0.60f, false, RetTime(true).c_str());
 					} else {
-						pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
-						if (settings.twl.forwarder && !isDemo) {
-							setTextColor(RGBA8(0, 0, 0, 255));
-							renderText_w(16, 192, 0.65f, 0.65f, false, TR(STR_YBUTTON_ADD_GAMES));
-						}
-						if (!bannertextloaded) {
-							char path[256];
+						pp2d_load_texture_png(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
+						if (!applaunchicon) {
 							bnriconnum = settings.ui.cursorPosition;
-							if (settings.twl.forwarder) {
-								const char *tempfile = fcfiles.at(bnriconnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/flashcard/%s.bin", tempfile);
-							} else {
-								const char *tempfile = files.at(bnriconnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+							ChangeBNRIconNo();
+							bnricontexlaunch = bnricontexnum;
+							applaunchicon = true;
+						}
+						pp2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
+					}
+					pp2d_load_texture_png_rotate(dotcircletex, 160, 148, rad);  // Dots moving in circles
+				}
+				if (showbubble) {
+					pp2d_load_texture_png(bubbletex, 0, 0);
+					// if (dspfirmfound) { sfx_menuselect->play(); }
+					bool drawBannerText = true;
+					if (settings.ui.cursorPosition == -2) {
+						const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
+						// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
+						//const int text_width = 0;
+						setTextColor(RGBA8(0, 0, 0, 255)); // black
+						pp2d_draw_textf(8, 38, 0.70, 0.70, false, curn2text);
+						drawBannerText = false;
+					} else if (settings.ui.cursorPosition == -1) {
+						if (settings.twl.forwarder) {
+							static const char add_games_text[] = "Add Games";
+							// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
+							//const int text_width = 0;
+							setTextColor(RGBA8(0, 0, 0, 255)); // black
+							pp2d_draw_text(8, 38, 0.70, 0.70, false, add_games_text);
+							drawBannerText = false;
+						} else {
+							// Get the text from the Slot 1 cartridge.
+							if (!bannertextloaded) {
+								romsel_gameline = gamecardGetText();
+								const char *productCode = gamecardGetProductCode();
+								if (!romsel_gameline.empty() && productCode) {
+									// Display the product code and revision.
+									// FIXME: Figure out a way to get the revision for CTR cards.
+									char buf[48];
+									if (gamecardGetType() != CARD_TYPE_CTR) {
+										snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
+									} else {
+										snprintf(buf, sizeof(buf), "Slot-1: %s", productCode);
+									}
+									romsel_filename_w = latin1_to_wstring(buf);
+								} else {
+									romsel_filename_w.clear();
+								}
 							}
-							if (access(path, F_OK) != -1) {
-								LoadBNRIcon_R4Theme(path);
-							} else {
-								LoadBNRIcon_R4Theme(NULL);
+
+							if (romsel_gameline.empty()) {
+								const wchar_t *msg;
+								if (gamecardIsInserted()) {
+									// Game card is inserted, but unrecognized.
+									// It may be a blocked flashcard.
+									msg = TR(STR_UNKOWN);
+								} else {
+									// No game card is inserted.
+									msg = TR(STR_NO_CARTRIDGE);
+								}
+								// const int text_width = sftd_get_wtext_width(font_b, 18, msg);
+								//const int text_width = 0;
+								setTextColor(RGBA8(0, 0, 0, 255)); // black
+								pp2d_draw_textf(8, 38, 0.70, 0.70, false, msg);
+								drawBannerText = false;
 							}
 						}
-						drawRectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
-						pp2d_load_texture_png(dboxtex_iconbox, 47, 31);
-						pp2d_load_texture_png_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
-						
+					} else {
 						if (!bannertextloaded) {
 							char path[256];
 							if (settings.twl.forwarder) {
-								// if(matching_files.size() == 0){
+								if(matching_files.size() == 0){
 									if (fcfiles.size() != 0) {
-										romsel_filename = fcfiles.at(settings.ui.cursorPosition).c_str();
+										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-								/* }else{
-									if (matching_files.size() != 0) {
-										romsel_filename = matching_files.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									} else {
-										romsel_filename = " ";
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									}
-								} */
-									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
-								} else {
-								// if(matching_files.size() == 0){
+								}else{
+									romsel_filename = matching_files.at(storedcursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+							} else {
+								if(matching_files.size() == 0){
 									if (files.size() != 0) {
-										romsel_filename = files.at(settings.ui.cursorPosition).c_str();
+										romsel_filename = files.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
 									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
-								/* }else {
-									if (matching_files.size() != 0) {
-										romsel_filename = matching_files.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									} else {
-										romsel_filename = " ";
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									}
-									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename); */
-								}
+								}else {
+									romsel_filename = matching_files.at(storedcursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+								}									
+							}
 
 							if (access(path, F_OK) == -1) {
 								// Banner file is not available.
 								strcpy(path, "romfs:/notextbanner");
 							}
+							bnriconnum = settings.ui.cursorPosition;
 							FILE *f_bnr = fopen(path, "rb");
 							if (f_bnr) {
 								romsel_gameline = grabText(f_bnr, language);
@@ -3437,443 +3713,79 @@ int main(){
 							}
 							bannertextloaded = true;
 						}
-						if (settings.ui.cursorPosition >= 0) {
-							int y = 32, dy = 12;
-							// Print the banner text, center-aligned.
-							const size_t banner_lines = std::min(3U, romsel_gameline.size());
-							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								// const int text_width = sftd_get_wtext_width(font_b, 12, romsel_gameline[i].c_str());
-								const int text_width = 180;
-								setTextColor(RGBA8(0, 0, 0, 255)); // black
-								renderText_w(84+(192-text_width)/2, y, 0.55, 0.55, false, romsel_gameline[i].c_str());
+					}
+
+					if (drawBannerText) {
+						int y, dy;
+						//top dialog = 100px tall
+						if (settings.ui.filename) {
+							setTextColor(RGBA8(127, 127, 127, 255));
+							pp2d_draw_textf(10, 8, 0.50, 0.50, false, romsel_filename_w.c_str());
+							y = (100-(19*romsel_gameline.size()))/2 + 4;
+							//y = 24; dy = 19;
+							dy = 19;
+						} else {
+							y = (100-(22*romsel_gameline.size()))/2;
+							//y = 16; dy = 22;
+							dy = 22;
+						}
+
+						// Print the banner text, center-aligned.
+						const size_t banner_lines = std::min(3U, romsel_gameline.size());
+						for (size_t i = 0; i < banner_lines; i++, y += dy) {
+							// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
+							//const int text_width = 0;
+							// sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
+							setTextColor(RGBA8(0, 0, 0, 255));
+							pp2d_draw_textf(8, y, 0.75, 0.75, false, romsel_gameline[i].c_str());
+						}
+
+						if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {
+							char romsel_counter1[16];
+							snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
+							const char *p_romsel_counter;
+							if (settings.twl.forwarder) {
+								p_romsel_counter = romsel_counter2fc;
+							} else {
+								p_romsel_counter = romsel_counter2sd;
+							}
+							if (file_count < 100) {
+								pp2d_draw_text(8, 96, 0.50, 0.50, false, romsel_counter1);
+								pp2d_draw_text(27, 96, 0.50, 0.50, false, "/");
+								pp2d_draw_text(32, 96, 0.50, 0.50, false, p_romsel_counter);
+							} else {
+								pp2d_draw_text(8, 96, 0.50, 0.50, false, romsel_counter1);
+								pp2d_draw_text(35, 96, 0.50, 0.50, false, "/");
+								pp2d_draw_text(40, 96, 0.50, 0.50, false, p_romsel_counter);
 							}
 						}
 					}
 				} else {
-					if (settings.ui.custombot == 1) {
-						pp2d_load_texture_png(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
-					} else {
-						if (settings.ui.theme == THEME_3DSMENU) {
-							drawRectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
-						} else {
-							pp2d_load_texture_png_blend(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2, menucolor);
-						}
-					}
-
-					if (settings.ui.theme != THEME_3DSMENU) {
-						pp2d_load_texture_png(scrollbartex, 0, 240-28);
-						pp2d_load_texture_png_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-						pp2d_load_texture_png_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
-					}
-					
-					if(!isDemo) {
-						if (settings.ui.theme != THEME_3DSMENU) {
-							if (!settings.ui.iconsize) {
-								const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-								// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-								const int home_width = 144+16;
-								const int home_x = (320-home_width)/2;
-								pp2d_load_texture_png(homeicontex, home_x, 194); // Draw HOME icon
-								setTextColor(RGBA8(0, 0, 0, 255));
-								renderText_w(home_x+20, 195, 0.50, 0.50, false, home_text);
-							}
-						} else {
-							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-							// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
-							const int home_width = 144+16;
-							const int home_x = (320-home_width)/2;
-							pp2d_load_texture_png(homeicontex, home_x, 220); // Draw HOME icon
-							setTextColor(RGBA8(0, 0, 0, 255));
-							renderText_w(home_x+20, 221, 0.50, 0.50, false, home_text);
-						}
-					}
-
-					if (settings.ui.pagenum == 0) {
-						if (settings.ui.iconsize) {
-							pp2d_load_texture_png_scale(bracetex, -74+titleboxXmovepos*1.25, 104, 1.25, 1.25);
-							pp2d_load_texture_png_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
-						} else {
-							pp2d_load_texture_png(bracetex, -32+titleboxXmovepos, 112);
-							pp2d_load_texture_png(settingsicontex, setsboxXpos+titleboxXmovepos, 115);
-						}
-
-						if (!settings.twl.forwarder) {
-							// Poll for Slot-1 changes.
-							bool forcePoll = false;
-							bool doSlot1Update = false;
-							if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
-								// Card is inserted, but we don't know its type.
-								// Force an update.
-								forcePoll = true;
-							}
-							bool s1chg = gamecardPoll(forcePoll);
-							if (s1chg) {
-								// Update Slot-1 if:
-								// - forcePoll is false
-								// - forcePoll is true, and card is no longer unknown.
-								doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
-							}
-							if (doSlot1Update) {
-								// Slot-1 card has changed.
-								if (settings.ui.cursorPosition == -1) {
-									// Reload the banner text.
-									bannertextloaded = false;
-								}
-							}
-
-							if (settings.ui.iconsize)
-								pp2d_load_texture_png_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
-							else
-								pp2d_load_texture_png(carttex(), cartXpos+titleboxXmovepos, 116);
-							sf2d_texture *cardicontex = gamecardGetIcon();
-							if (!cardicontex)
-								cardicontex = iconnulltex;
-							if (settings.ui.iconsize)
-								pp2d_load_texture_png_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-							else
-								pp2d_load_texture_png_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
-						} else {
-							// Get flash cart games.
-							if (settings.ui.iconsize)
-								pp2d_load_texture_png_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
-							else
-								pp2d_load_texture_png(getfcgameboxtex, cartXpos+titleboxXmovepos, 115);
-						}
-					} else {
-						pp2d_load_texture_png(bracetex, 32+cartXpos+titleboxXmovepos, 112);
-					}
-
-					if (settings.ui.iconsize) {
-						titleboxXpos = 120;
-						ndsiconXpos = 140;
-					} else {
-						titleboxXpos = 128;
-						ndsiconXpos = 144;
-					}
-
-					if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
-						pp2d_load_texture_png(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
-					}
-
-					float bipxPos = 37.0;
-					for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
-						if (filenum < pagemax) {
-							if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
-							bipxPos += 12.5;
-							if (settings.ui.iconsize) {
-								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_load_texture_png_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
-								} else {
-									pp2d_load_texture_png(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108);
-								}
-								titleboxXpos += 80;
-
-								bnriconnum = filenum;
-								if (loadbnriconnum <= filenum) {
-									pp2d_load_texture_png_scale(dotcircletex,ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
-								} else {
-									ChangeBNRIconNo();
-									if (settings.ui.theme != THEME_3DSMENU) {
-										pp2d_load_texture_png_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-									} else {
-										pp2d_load_texture_png_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
-									}
-								}
-								ndsiconXpos += 80;
-							} else {
-								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_load_texture_png(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
-								} else {
-									pp2d_load_texture_png_scale(boxfulltex, 5+titleboxXpos+titleboxXmovepos, 119, 0.68, 0.67);
-								}
-								titleboxXpos += 64;
-
-								bnriconnum = filenum;
-								if (loadbnriconnum <= filenum) {
-									pp2d_load_texture_png_scale(dotcircletex, ndsiconXpos+titleboxXmovepos, 129, 0.40, 0.40);  // Dots moving in circles
-								} else {
-									ChangeBNRIconNo();
-									pp2d_load_texture_png_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
-								}
-								ndsiconXpos += 64;
-							}
-						} else {
-							if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
-							bipxPos += 12.5;
-							if (settings.ui.iconsize) {
-								pp2d_load_texture_png_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
-								titleboxXpos += 80;
-								ndsiconXpos += 80;
-							} else {
-								pp2d_load_texture_png(boxemptytex, titleboxXpos+titleboxXmovepos, 116);
-								titleboxXpos += 64;
-								ndsiconXpos += 64;
-							}
-						}
-					}
-					if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
-						pp2d_load_texture_png_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
-					}
-
-					if (settings.ui.iconsize) {
-						pp2d_load_texture_png_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
-					} else {
-						pp2d_load_texture_png_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 112, -1, 1);
-					}
-					if (!applaunchprep) {
-						if (titleboxXmovetimer == 0) {
-							startbordermovepos = 0;
-							startborderscalesize = 1.0;
-						}
-						if (!settings.twl.forwarder && settings.ui.cursorPosition == -1 && !gamecardIsInserted()) {
-							// Slot-1 selected, but no cartridge is present.
-							// Don't print "START" and the cursor border.
-						} else {
-							if (!isDemo || settings.ui.cursorPosition == -2) {
-								if (showbubble) {
-									// Print "START" and the cursor border.
-									if (settings.ui.iconsize) {
-										pp2d_load_texture_png_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
-										const wchar_t *start_text = TR(STR_START);
-										// const int start_width = sftd_get_wtext_width(font_b, 16, start_text);
-										//const int start_width = 0;
-										// sftd_draw_wtext(font_b, (320-start_width)/2, 183, RGBA8(255, 255, 255, 255), 16, start_text);
-										setTextColor(RGBA8(255, 255, 255, 255));
-										if (settings.ui.theme != THEME_3DSMENU)
-											renderText_w(136, 180, 0.60, 0.60, false, start_text);
-									} else {
-										pp2d_load_texture_png_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
-										const wchar_t *start_text = TR(STR_START);
-										// const int start_width = sftd_get_wtext_width(font_b, 12, start_text);
-										//const int start_width = 0;
-										// sftd_draw_wtext(font_b, (320-start_width)/2, 177, RGBA8(255, 255, 255, 255), 12, start_text);
-										setTextColor(RGBA8(255, 255, 255, 255));
-										if (settings.ui.theme != THEME_3DSMENU)
-											renderText_w(140, 173, 0.50, 0.50, false, start_text);
-									}
-								}
-							}
-						}
-					} else if (settings.ui.theme != THEME_3DSMENU) {
-						if (settings.ui.custombot)
-							pp2d_load_texture_png_part(bottomtex, 128, 112, 128, 112, 64, 80);
-						else
-							pp2d_load_texture_png_part_blend(bottomtex, 128, 112, 128, 112, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
-						if (settings.ui.cursorPosition == -2) {
-							pp2d_load_texture_png(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
-						} else if (settings.ui.cursorPosition == -1) {
-							if (settings.twl.forwarder)
-								pp2d_load_texture_png(getfcgameboxtex, 128, titleboxYmovepos-1);
-							else {
-								// Draw selected Slot-1 game that moves up
-								pp2d_load_texture_png(carttex(), 128, titleboxYmovepos);
-								sf2d_texture *cardicontex = gamecardGetIcon();
-								if (!cardicontex)
-									cardicontex = iconnulltex;
-								pp2d_load_texture_png(cardicontex, 144, ndsiconYmovepos);
-							}
-						} else {
-							pp2d_load_texture_png(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
-							if (!applaunchicon) {
-								bnriconnum = settings.ui.cursorPosition;
-								ChangeBNRIconNo();
-								bnricontexlaunch = bnricontexnum;
-								applaunchicon = true;
-							}
-							pp2d_load_texture_png_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
-						}
-						pp2d_load_texture_png_rotate(dotcircletex, 160, 148, rad);  // Dots moving in circles
-					}
-					if (showbubble) {
-						pp2d_load_texture_png(bubbletex, 0, 0);
-						// if (dspfirmfound) { sfx_menuselect->play(); }
-						bool drawBannerText = true;
-						if (settings.ui.cursorPosition == -2) {
-							const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
-							// const int text_width = sftd_get_wtext_width(font_b, 18, curn2text);
-							//const int text_width = 0;
-							setTextColor(RGBA8(0, 0, 0, 255)); // black
-							renderText_w(8, 38, 0.70, 0.70, false, curn2text);
-							drawBannerText = false;
-						} else if (settings.ui.cursorPosition == -1) {
-							if (settings.twl.forwarder) {
-								static const char add_games_text[] = "Add Games";
-								// const int text_width = sftd_get_text_width(font_b, 18, add_games_text);
-								//const int text_width = 0;
-								setTextColor(RGBA8(0, 0, 0, 255)); // black
-								renderText(8, 38, 0.70, 0.70, false, add_games_text);
-								drawBannerText = false;
-							} else {
-								// Get the text from the Slot 1 cartridge.
-								if (!bannertextloaded) {
-									romsel_gameline = gamecardGetText();
-									const char *productCode = gamecardGetProductCode();
-									if (!romsel_gameline.empty() && productCode) {
-										// Display the product code and revision.
-										// FIXME: Figure out a way to get the revision for CTR cards.
-										char buf[48];
-										if (gamecardGetType() != CARD_TYPE_CTR) {
-											snprintf(buf, sizeof(buf), "Slot-1: %s, Rev.%02u", productCode, gamecardGetRevision());
-										} else {
-											snprintf(buf, sizeof(buf), "Slot-1: %s", productCode);
-										}
-										romsel_filename_w = latin1_to_wstring(buf);
-									} else {
-										romsel_filename_w.clear();
-									}
-								}
-
-								if (romsel_gameline.empty()) {
-									const wchar_t *msg;
-									if (gamecardIsInserted()) {
-										// Game card is inserted, but unrecognized.
-										// It may be a blocked flashcard.
-										msg = TR(STR_UNKOWN);
-									} else {
-										// No game card is inserted.
-										msg = TR(STR_NO_CARTRIDGE);
-									}
-									// const int text_width = sftd_get_wtext_width(font_b, 18, msg);
-									//const int text_width = 0;
-									setTextColor(RGBA8(0, 0, 0, 255)); // black
-									renderText_w(8, 38, 0.70, 0.70, false, msg);
-									drawBannerText = false;
-								}
-							}
-						} else {
-							if (!bannertextloaded) {
-								char path[256];
-								if (settings.twl.forwarder) {
-									if(matching_files.size() == 0){
-										if (fcfiles.size() != 0) {
-											romsel_filename = fcfiles.at(storedcursorPosition).c_str();
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										} else {
-											romsel_filename = " ";
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										}
-									}else{
-										romsel_filename = matching_files.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									}
-									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
-								} else {
-									if(matching_files.size() == 0){
-										if (files.size() != 0) {
-											romsel_filename = files.at(storedcursorPosition).c_str();
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										} else {
-											romsel_filename = " ";
-											romsel_filename_w = utf8_to_wstring(romsel_filename);
-										}
-										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
-									}else {
-										romsel_filename = matching_files.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
-									}									
-								}
-
-								if (access(path, F_OK) == -1) {
-									// Banner file is not available.
-									strcpy(path, "romfs:/notextbanner");
-								}
-								bnriconnum = settings.ui.cursorPosition;
-								FILE *f_bnr = fopen(path, "rb");
-								if (f_bnr) {
-									romsel_gameline = grabText(f_bnr, language);
-									fclose(f_bnr);
-								} else {
-									// Unable to open the banner file.
-									romsel_gameline.clear();
-									romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
-									romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
-								}
-								bannertextloaded = true;
-							}
-						}
-
-						if (drawBannerText) {
-							int y, dy;
-							//top dialog = 100px tall
-							if (settings.ui.filename) {
-								setTextColor(RGBA8(127, 127, 127, 255));
-								renderText_w(10, 8, 0.50, 0.50, false, romsel_filename_w.c_str());
-								y = (100-(19*romsel_gameline.size()))/2 + 4;
-								//y = 24; dy = 19;
-								dy = 19;
-							} else {
-								y = (100-(22*romsel_gameline.size()))/2;
-								//y = 16; dy = 22;
-								dy = 22;
-							}
-
-							// Print the banner text, center-aligned.
-							const size_t banner_lines = std::min(3U, romsel_gameline.size());
-							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								// const int text_width = sftd_get_wtext_width(font_b, 16, romsel_gameline[i].c_str());
-								//const int text_width = 0;
-								// sftd_draw_wtext(font_b, (320-text_width)/2, y, RGBA8(0, 0, 0, 255), 16, romsel_gameline[i].c_str());
-								setTextColor(RGBA8(0, 0, 0, 255));
-								renderText_w(8, y, 0.75, 0.75, false, romsel_gameline[i].c_str());
-							}
-
-							if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {
-								char romsel_counter1[16];
-								snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
-								const char *p_romsel_counter;
-								if (settings.twl.forwarder) {
-									p_romsel_counter = romsel_counter2fc;
-								} else {
-									p_romsel_counter = romsel_counter2sd;
-								}
-								if (file_count < 100) {
-									renderText(8, 96, 0.50, 0.50, false, romsel_counter1);
-									renderText(27, 96, 0.50, 0.50, false, "/");
-									renderText(32, 96, 0.50, 0.50, false, p_romsel_counter);
-								} else {
-									renderText(8, 96, 0.50, 0.50, false, romsel_counter1);
-									renderText(35, 96, 0.50, 0.50, false, "/");
-									renderText(40, 96, 0.50, 0.50, false, p_romsel_counter);
-								}
-							}
-						}
-					} else {
-						pp2d_load_texture_png(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
-					}
-					if (menudbox_Ypos != -240) {
-						// Draw the menu dialog box.
-						drawMenuDialogBox();
-					}
-					if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+					pp2d_load_texture_png(bottomlogotex, 320/2 - bottomlogotex->width/2, 40);
 				}
-			} else if (screenmode == SCREEN_MODE_SETTINGS) {
-				if (colortexloaded_bot) {
-					pp2d_free_texture(dotcircletex);
-					dotcircletex = NULL;
-					pp2d_free_texture(startbordertex);
-					startbordertex = NULL;
-					pp2d_free_texture(bottomtex);
-					bottomtex = NULL;
-					colortexloaded_bot = false;
+				if (menudbox_Ypos != -240) {
+					// Draw the menu dialog box.
+					drawMenuDialogBox();
 				}
-				settingsDrawBottomScreen();
 				if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			}
+		} else if (screenmode == SCREEN_MODE_SETTINGS) {
+			if (colortexloaded_bot) {
+				pp2d_free_texture(dotcircletex);
+				dotcircletex = NULL;
+				pp2d_free_texture(startbordertex);
+				startbordertex = NULL;
+				pp2d_free_texture(bottomtex);
+				bottomtex = NULL;
+				colortexloaded_bot = false;
+			}
+			settingsDrawBottomScreen();
+			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		}
 
-		sf2d_end_frame();
-		// }
+		pp2d_end_draw();
 		
-		sf2d_swapbuffers();
-		
-		/* if (titleboxXmovetimer == 0) {
-			updatebotscreen = false;
-		} */
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
-			/* if (filenum == 0) {	// If no ROMs are found
-				romselect_layout = 1;
-				updatebotscreen = true;
-			} */
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					if (hDown & KEY_A) {

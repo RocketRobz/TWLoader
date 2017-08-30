@@ -63,3 +63,5 @@
 #define BLACK	RGBA8(0, 0, 0, 255)
 #define WHITE	RGBA8(255, 255, 255, 255)
 #define GRAY	RGBA8(127, 127, 127, 255)
+
+#define TIME 	RGBA8(16, 0, 0, 223)
