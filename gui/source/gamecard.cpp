@@ -40,7 +40,6 @@ void gamecardClearCache(void)
 	card_product_code[0] = 0;
 	card_revision = 0xFF;
 	card_tid = 0;
-	card_icon = NULL;
 	card_text.clear();
 }
 

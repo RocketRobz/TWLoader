@@ -5,6 +5,8 @@
 #include <string>
 #include <stddef.h>
 
+#include "pp2d/pp2d/pp2d.h"
+
 typedef enum {
 	FORMAT_YDM	= 0,
 	FORMAT_YMD	= 1,
