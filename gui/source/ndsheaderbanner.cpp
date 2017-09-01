@@ -195,7 +195,6 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Invalid banner loaded; not caching.");
-		pp2d_end_draw();
 		return -1;
 	}
 
@@ -205,10 +204,8 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Error writing the banner cache file.");
-		pp2d_end_draw();
 		return -2;
 	}
-	pp2d_end_draw();
 	fwrite(&ndsBanner, 1, bannersize, filetosave);
 	fclose(filetosave);
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);

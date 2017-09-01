@@ -39,19 +39,17 @@ void fade_whiteToBlack() {
 				fade = 255;
 			
 //			for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-				pp2d_start_frame(GFX_TOP);
+				pp2d_draw_on(GFX_TOP);
 				drawRectangle(0, 0, 400, 240, WHITE);
 				drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fade));
 				if (settings.ui.bootscreen == 1) {
 					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
 					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
 				}
-				pp2d_end_draw();
+//				pp2d_end_draw();
 //			}
-			pp2d_start_frame(GFX_BOTTOM);
 			drawRectangle(0, 0, 320, 240, WHITE);
 			drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fade));
-			pp2d_end_draw();
 
 			if (fade == 255) break;
 		}
@@ -238,7 +236,7 @@ void bootSplash() {
 
 	for (int i = 0; i < 75; i++) {
 //		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-			pp2d_start_frame(GFX_TOP);
+			pp2d_draw_on(GFX_TOP);
 			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 			if (settings.ui.bootscreen == 1) {
 				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
@@ -246,10 +244,7 @@ void bootSplash() {
 			}
 //			pp2d_end_draw();
 //		}
-//		pp2d_start_frame(GFX_BOTTOM);
 		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
-		pp2d_end_draw();
-
 	}
 
 	while (aptMainLoop()) {
@@ -309,7 +304,7 @@ void bootSplash() {
 		if (oeffects) oeffectTimer += 1;
 
 //		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-			pp2d_start_frame(GFX_TOP);
+			pp2d_draw_on(GFX_TOP);
 			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 			if (topfb == 1) offset3D_temp = offset3D_ndslogo;
 			else offset3D_temp = -offset3D_ndslogo;
@@ -447,11 +442,10 @@ void bootSplash() {
 				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 			}
-			pp2d_end_draw();
 			
 //		}
 		
-		pp2d_start_frame(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
 		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 
 		switch ((settings.ui.language < 0 || settings.ui.language >= 12)? sys_language : settings.ui.language) {
@@ -576,7 +570,6 @@ void bootSplash() {
 				break;
 		}
 		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, bootSplash_fade));
-		pp2d_end_draw();
 		
 		splashScreenTime += 1;
 		if (splashScreenTime > 60*2) touchtocontinue_show = true;

@@ -24,11 +24,6 @@
 
 #include "ptmu_x.h"
 
-//#include <citrus/app.hpp>
-//#include <citrus/battery.hpp>
-//#include <citrus/core.hpp>
-//#include <citrus/fs.hpp>
-
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -304,7 +299,7 @@ void DialogBoxAppear(int x, int y, const char *text) {
 		} else {
 			movespeed -= 0.2;
 		}
-		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(SETTINGSTEX, 0, 0);
 		}
@@ -334,7 +329,7 @@ void DialogBoxDisappear(int x, int y, const char *text) {
 		textVtxArrayPos = 0; // Clear the text vertex array
 
 		movespeed += 1;
-		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_draw_on(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(SETTINGSTEX, 0, 0);
 		}
@@ -1525,7 +1520,7 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 }
 
 void dsiMenuTheme_loadingScreen() {
-	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
 	if (settings.ui.custombot == 1)
 		pp2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 	else
@@ -1537,7 +1532,6 @@ void dsiMenuTheme_loadingScreen() {
 
 	pp2d_draw_texture(bubbletex, 0, 0);
 	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
-	pp2d_end_draw();
 }
 
 int main(){
@@ -1550,9 +1544,8 @@ int main(){
 	else
 		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_png, 256, 128); // TWLoader logo on top screen
 	
-	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_TOP);
 	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
-	pp2d_end_draw();
 
 	Result res = fontEnsureMapped();
 
@@ -1649,10 +1642,8 @@ int main(){
 		vertext_xPos = 336;
 	}
 	
-	pp2d_begin_draw(GFX_BOTTOM);
 	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
-	pp2d_end_draw();
 
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
@@ -1685,13 +1676,11 @@ int main(){
 	LoadMenuColor();
 	LoadBottomImage();
 	
-	pp2d_begin_draw(GFX_BOTTOM);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
-	pp2d_end_draw();
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
 
-	 pp2d_load_texture_png(rectangletex, "romfs:/graphics/rectangle.png"); // Rectangle
+	pp2d_load_texture_png(rectangletex, "romfs:/graphics/rectangle.png"); // Rectangle
 
 	// Dialog box textures.
 	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
@@ -1700,9 +1689,7 @@ int main(){
 	pp2d_load_texture_png(dboxtex_buttonback, "romfs:/graphics/dbox/button_back.png"); // Icon box
 
 	pp2d_load_texture_png(r4loadingtex, "romfs:/graphics/r4/loading.png");		// R4 "Loading..." screen
-	toplogotex = NULL; // Top of R4 menu
 	pp2d_load_texture_png(toptex, "romfs:/graphics/top.png"); // Top DSi-Menu border
-	topbgtex = NULL; // Top background, behind the DSi-Menu border
 
 	// Volume slider textures.
 	pp2d_load_texture_png(voltex[0], "romfs:/graphics/volume0.png"); // Show no volume
@@ -1734,9 +1721,6 @@ int main(){
 	}
 	settingslogooadertex = pp2d_load_texture_png("romfs:/graphics/settings/logo_oader.png");
 
-	iconstex = NULL; // Bottom of menu (3 icons)
-	dotcircletex = NULL; // Dots forming a circle
-	startbordertex = NULL; // "START" border
 	pp2d_load_texture_png(sdicontex, "romfs:/graphics/wood/sd.png");
 	pp2d_load_texture_png(flashcardicontex, "romfs:/graphics/wood/flashcard.png");
 	pp2d_load_texture_png(gbaicontex, "romfs:/graphics/wood/gba.png");
@@ -1765,16 +1749,12 @@ int main(){
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
-		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
-		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
 			"Dumping DSP...");
-		pp2d_end_draw();
 		dumpDsp();
 		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 			ndspInit();
@@ -1784,7 +1764,6 @@ int main(){
 			settings.ui.showbootscreen = 0;
 			
 			for (int i = 0; i < 90; i++) {
-				pp2d_begin_draw(GFX_BOTTOM);
 				if (!isDemo) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.\n"
@@ -1793,7 +1772,6 @@ int main(){
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.");
 				}
-				pp2d_end_draw();
 			}
 		}
 	}
@@ -1801,9 +1779,7 @@ int main(){
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
-		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
-		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
 		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
@@ -1811,12 +1787,9 @@ int main(){
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
-		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
-		pp2d_end_draw();
 		
 		bgm_menu = new sound(musicpath);
-		//bgm_settings = new sound("sdmc:/_nds/twloader/music/settings.wav");
 		sfx_launch = new sound("romfs:/sounds/launch.wav", 2, false);
 		sfx_select = new sound("romfs:/sounds/select.wav", 2, false);
 		sfx_stop = new sound("romfs:/sounds/stop.wav", 2, false);
@@ -1825,17 +1798,11 @@ int main(){
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
-	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_end_draw();
-
 	// Download missing files
 	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 		// Nothing
 	}
 
-	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_end_draw();
-	
 	// Scan the ROM directories.
 	scanRomDirectories();
 
@@ -1852,9 +1819,6 @@ int main(){
 		downloadBoxArt();
 	}
 
-	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_end_draw();
-
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
 	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
@@ -1864,7 +1828,6 @@ int main(){
 		const char *tempfile = files.at(bnriconnum).c_str();
 
 		wstring tempfile_w = utf8_to_wstring(tempfile);
-		// sftd_draw_wtext(font, 12, 64, RGBA8(0, 0, 0, 255), 12, tempfile_w.c_str());
 
 		char nds_path[256];
 		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
@@ -1878,9 +1841,6 @@ int main(){
 		
 		fclose(f_nds_file);
 	}
-
-	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_end_draw();
 
 	if (checkWifiStatus()) {
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -1901,8 +1861,6 @@ int main(){
 	}
 
 	showdialogbox = false;
-	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_end_draw();
 	
 	if (settings.ui.theme >= THEME_R4)
 		menu_ctrlset = CTRL_SET_MENU;
@@ -1919,14 +1877,10 @@ int main(){
 
 	if (aptMainLoop()) {
 		if (settings.ui.theme >= THEME_R4) {
-			pp2d_begin_draw(GFX_TOP);
 			pp2d_draw_texture(r4loadingtex, 40, 0);
-			pp2d_end_draw();
 			
 		} else {
-			pp2d_begin_draw(GFX_BOTTOM);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
-			pp2d_end_draw();
 		}
 	}
 	
@@ -1955,6 +1909,8 @@ int main(){
 
 	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
+		pp2d_begin_draw(GFX_TOP);
+		
 		// Scan hid shared memory for input events
 		hidScanInput();
 
@@ -2335,7 +2291,7 @@ int main(){
 			
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-					pp2d_begin_draw(GFX_TOP);
+//					pp2d_draw_on(GFX_TOP);
 					pp2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						if ((woodmenu_cursorPosition == 1) && !isDemo) {
@@ -2418,17 +2374,17 @@ int main(){
 						case 0:
 						default:
 							pp2d_draw_text(40+200, 148, 0.82, 0.82, TIME, RetTime(true).c_str());
-							//DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
+							DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
 							break;
 						case 1:
 							pp2d_draw_text(40+184, 8, 1.30, 1.30, WHITE, RetTime(true).c_str());
-							//DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
-							//DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
+							DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
+							DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
 							break;
 						case 2:
 							pp2d_draw_text(40+16, 78, 1.30, 1.30, WHITE, RetTime(true).c_str());
-							//DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
-							//DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
+							DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
+							DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
 							break;
 						case 3:
 							pp2d_draw_text(40+176, 172, 1.30, 1.30, WHITE, RetTime(true).c_str());
@@ -2436,11 +2392,10 @@ int main(){
 					}
 					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
 					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
-					pp2d_end_draw();
+//					pp2d_end_draw();
 //				}
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
-					pp2d_begin_draw(GFX_TOP);
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
@@ -2492,7 +2447,6 @@ int main(){
 					}
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
-					pp2d_end_draw();
 					updatetopscreen = false;
 				}
 			} else {	// DSi-Menu theme
@@ -2515,7 +2469,7 @@ int main(){
 
 				update_battery_level(batterychrgtex, batterytex);
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-					pp2d_begin_draw(GFX_TOP);
+//					pp2d_draw_on(GFX_TOP);
 					if (settings.ui.theme == THEME_3DSMENU) {
 						pp2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
 					} else {
@@ -2525,8 +2479,7 @@ int main(){
 						if (!settings.romselect.toplayout) {
 							if (loadboxartnum != pagemax_ba) {
 								if (fadealpha == 0) {
-									setTextColor(RGBA8(255, 255, 255, 255));
-									pp2d_draw_text(112, 104, 0.50, 0.50, false, "Storing box art paths...");
+									pp2d_draw_text(112, 104, 0.50, 0.50, WHITE, "Storing box art paths...");
 								}
 							} else {
 								boxartXpos = 136;
@@ -2613,7 +2566,7 @@ int main(){
 					pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
 
 					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-					pp2d_end_draw();
+//					pp2d_end_draw();
 //				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {			
@@ -3052,7 +3005,6 @@ int main(){
 				colortexloaded_bot = true;
 			}
 
-			pp2d_begin_draw(GFX_TOP);
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (wood_ndsiconscaletimer == 60) {
 					// Scale icon at 30fps
@@ -3685,8 +3637,6 @@ int main(){
 			settingsDrawBottomScreen();
 			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		}
-
-		pp2d_end_draw();
 		
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (settings.ui.theme == THEME_AKMENU) {
