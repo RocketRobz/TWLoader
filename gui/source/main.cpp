@@ -306,7 +306,6 @@ void DialogBoxAppear(int x, int y, const char *text) {
 			movespeed -= 0.2;
 		}
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(SETTINGSTEX, 0, 0);
 		}
@@ -337,7 +336,6 @@ void DialogBoxDisappear(int x, int y, const char *text) {
 
 		movespeed += 1;
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(SETTINGSTEX, 0, 0);
 		}
@@ -729,7 +727,6 @@ static void LoadBNRIcon(const char *filename) {
 	const int idx = loadbnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
-		pp2d_free_texture(bnricontex[idx]);
 		bnricontex[idx] = NULL;
 
 		if (!filename) {
@@ -751,7 +748,6 @@ static void LoadBNRIcon(const char *filename) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
-	pp2d_free_texture(bnricontex[20]);
 	bnricontex[20] = NULL;
 
 	if (!filename) {
@@ -773,7 +769,6 @@ static void LoadBoxArt(void) {
 	if (idx >= 0 && idx < 21) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
-		pp2d_free_texture(boxarttex[idx % 6]);
 		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
 		boxarttex[idx % 6] = pp2d_load_texture_png(path); // Box art
 	}
@@ -781,7 +776,6 @@ static void LoadBoxArt(void) {
 
 static void LoadBoxArt_WoodTheme(const int idx) {
 	// Selected boxart is on the current page.
-	pp2d_free_texture(boxarttex[0]);
 	const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
 	boxarttex[0] = pp2d_load_texture_png(path); // Box art
 }
@@ -1152,7 +1146,6 @@ static void loadSlot1BoxArt(void)
 	// Replace slot1boxarttex with the new boxart.
 	size_t *OLD_TEX = SLOT1BOXARTTEX;
 	SLOT1BOXARTTEX = NEW_TEX;
-	pp2d_free_texture(OLD_TEX);
 }
 
 /**
@@ -1534,7 +1527,6 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 
 void dsiMenuTheme_loadingScreen() {
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);	
 	if (settings.ui.custombot == 1)
 		pp2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 	else
@@ -1560,7 +1552,6 @@ int main(){
 		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_png, 256, 128); // TWLoader logo on top screen
 	
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);	
 	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
 	pp2d_end_draw();
 
@@ -1660,7 +1651,6 @@ int main(){
 	}
 	
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);	
 	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
 	pp2d_end_draw();
@@ -1697,7 +1687,6 @@ int main(){
 	LoadBottomImage();
 	
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
 	pp2d_end_draw();
 	
@@ -1778,14 +1767,12 @@ int main(){
 		ndspInit();
 		dspfirmfound = true;
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
 		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
 			"Dumping DSP...");
 		pp2d_end_draw();
@@ -1799,7 +1786,6 @@ int main(){
 			
 			for (int i = 0; i < 90; i++) {
 				pp2d_begin_draw(GFX_BOTTOM);
-				pp2d_draw_on(GFX_BOTTOM);
 				if (!isDemo) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.\n"
@@ -1817,7 +1803,6 @@ int main(){
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
 		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
@@ -1828,7 +1813,6 @@ int main(){
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
 		pp2d_begin_draw(GFX_BOTTOM);
-		pp2d_draw_on(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
 		pp2d_end_draw();
 		
@@ -1843,7 +1827,6 @@ int main(){
 	}
 
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_end_draw();
 
 	// Download missing files
@@ -1852,7 +1835,6 @@ int main(){
 	}
 
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_end_draw();
 	
 	// Scan the ROM directories.
@@ -1872,7 +1854,6 @@ int main(){
 	}
 
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_end_draw();
 
 	// Cache banner data for ROMs on the SD card.
@@ -1900,7 +1881,6 @@ int main(){
 	}
 
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_end_draw();
 
 	if (checkWifiStatus()) {
@@ -1923,7 +1903,6 @@ int main(){
 
 	showdialogbox = false;
 	pp2d_begin_draw(GFX_BOTTOM);
-	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_end_draw();
 	
 	if (settings.ui.theme >= THEME_R4)
@@ -1942,13 +1921,11 @@ int main(){
 	if (aptMainLoop()) {
 		if (settings.ui.theme >= THEME_R4) {
 			pp2d_begin_draw(GFX_TOP);
-			pp2d_draw_on(GFX_TOP);			
 			pp2d_draw_texture(r4loadingtex, 40, 0);
 			pp2d_end_draw();
 			
 		} else {
 			pp2d_begin_draw(GFX_BOTTOM);
-			pp2d_draw_on(GFX_BOTTOM);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
 			pp2d_end_draw();
 		}
@@ -2360,7 +2337,6 @@ int main(){
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 					pp2d_begin_draw(GFX_TOP);
-					pp2d_draw_on(GFX_TOP);
 					pp2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						if ((woodmenu_cursorPosition == 1) && !isDemo) {
@@ -2466,7 +2442,6 @@ int main(){
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
 					pp2d_begin_draw(GFX_TOP);
-					pp2d_draw_on(GFX_TOP);
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
@@ -2542,7 +2517,6 @@ int main(){
 				update_battery_level(batterychrgtex, batterytex);
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 					pp2d_begin_draw(GFX_TOP);
-					pp2d_draw_on(GFX_TOP);
 					if (settings.ui.theme == THEME_3DSMENU) {
 						pp2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
 					} else {
@@ -2643,14 +2617,7 @@ int main(){
 					pp2d_end_draw();
 //				}
 			}
-		} else if (screenmode == SCREEN_MODE_SETTINGS) {
-			if (colortexloaded) {
-				pp2d_free_texture(topbgtex);
-				topbgtex = NULL;
-				pp2d_free_texture(boxfulltex);
-				boxfulltex = NULL;
-				colortexloaded = false;
-			}
+		} else if (screenmode == SCREEN_MODE_SETTINGS) {			
 			settingsDrawTopScreen();
 		}
 					
@@ -3087,7 +3054,6 @@ int main(){
 			}
 
 			pp2d_begin_draw(GFX_TOP);
-			pp2d_draw_on(GFX_TOP);
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (wood_ndsiconscaletimer == 60) {
 					// Scale icon at 30fps
@@ -3717,15 +3683,6 @@ int main(){
 				if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
-			if (colortexloaded_bot) {
-				pp2d_free_texture(dotcircletex);
-				dotcircletex = NULL;
-				pp2d_free_texture(startbordertex);
-				startbordertex = NULL;
-				pp2d_free_texture(bottomtex);
-				bottomtex = NULL;
-				colortexloaded_bot = false;
-			}
 			settingsDrawBottomScreen();
 			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		}
@@ -5081,73 +5038,19 @@ int main(){
 	}
 	if (logEnabled) LogFM("Main.saveOnExit", "Settings are saved");
 
-	pp2d_free_texture(rectangletex);
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
 	if (logEnabled) LogFM("Main.settingsUnloadTextures", "Settings textures unloaded");
 
-	if (colortexloaded) pp2d_free_texture(topbgtex);
-	if (logEnabled) LogFM("Main", "topbgtex freed");
-	pp2d_free_texture(toptex);
-	for (int i = 0; i < 6; i++) {
-		pp2d_free_texture(voltex[i]);
-	}
-
-	pp2d_free_texture(shoulderLtex);
-	pp2d_free_texture(shoulderRtex);
-	if (logEnabled) LogFM("Main", "Shoulder textures freed");
-
-	if (settings.ui.theme == THEME_DSIMENU) {
-		pp2d_free_texture(batterychrgtex);
-		for (int i = 0; i < 6; i++) {
-			pp2d_free_texture(batterytex[i]);
-		}
-		if (logEnabled) LogFM("Main", "DSi Menu battery textures freed");
-	}
-	if (settings.ui.theme == THEME_R4) pp2d_free_texture(iconstex);
-	if (colortexloaded) pp2d_free_texture(bottomtex);
-	pp2d_free_texture(sdicontex);
-	pp2d_free_texture(flashcardicontex);
-	pp2d_free_texture(gbaicontex);
-	pp2d_free_texture(smallsettingsicontex);
-	pp2d_free_texture(iconnulltex);
-	pp2d_free_texture(homeicontex);
-	pp2d_free_texture(bottomlogotex);
-	pp2d_free_texture(bubbletex);
-	pp2d_free_texture(settingsicontex);
-	pp2d_free_texture(getfcgameboxtex);
-	pp2d_free_texture(cartnulltex);
-	pp2d_free_texture(cartntrtex);
-	pp2d_free_texture(carttwltex);
 	if (settings.ui.theme == THEME_DSIMENU) gamecardClearCache();
-	pp2d_free_texture(boxfulltex);
-	pp2d_free_texture(boxemptytex);
-	if (colortexloaded && settings.ui.theme == THEME_DSIMENU) {
-		pp2d_free_texture(dotcircletex);
-		pp2d_free_texture(startbordertex);
-	}
 
 	// Free the arrays.
 	if (bnricontexloaded) {
 		for (int i = 0; i < 20; i++) {
-			pp2d_free_texture(bnricontex[i]);
 			free(boxartpath[i]);
 		}
 	}
-	if (boxarttexloaded) {
-		pp2d_free_texture(slot1boxarttex);
-		for (int i = 0; i < 6; i++) {
-			pp2d_free_texture(boxarttex[i]);
-		}
-	}
-
-	// Remaining common textures.
-	pp2d_free_texture(dboxtex_iconbox);
-	pp2d_free_texture(dboxtex_button);
-	pp2d_free_texture(dboxtex_buttonback);
-	pp2d_free_texture(dialogboxtex);
-	pp2d_free_texture(twloaderlogotex);
 
 	// Clear the translations cache.
 	langClear();
