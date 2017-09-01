@@ -56,6 +56,16 @@
 #define getfcgameboxtex 51
 #define boxemptytex 52
 #define bracetex 53
+#define ndslogotex 54
+#define itex 55
+#define topotex 56
+#define bottomotex 57
+#define bigotex 58
+#define nintendotex 59
+#define hstexttex 60
+#define hstouchtex 61
+#define hstex 62
+#define wipetex 63
 
 // Colors
 #define TRANPSARENT RGBA8(0, 0, 0, 0)
@@ -65,3 +75,4 @@
 #define GRAY	RGBA8(127, 127, 127, 255)
 
 #define TIME 	RGBA8(16, 0, 0, 223)
+#define DSSPLASH RGBA8(61, 161, 191, 255)
