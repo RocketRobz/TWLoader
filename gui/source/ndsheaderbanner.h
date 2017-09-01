@@ -32,8 +32,7 @@
 #ifndef NDS_HEADER
 #define NDS_HEADER
 
-#include <sf2d.h>
-#include "citrostuff.h"
+#include "pp2d/pp2d/pp2d.h"
 #include <stdio.h>
 
 #include <string>
@@ -241,13 +240,13 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(const sNDSBanner* ndsBanner);
+size_t* grabIcon(const sNDSBanner* ndsBanner);
 
 /**
  * Get the icon from a cached NDS banner.
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(FILE* binFile);
+size_t* grabIcon(FILE* binFile);
 
 #endif // NDS_HEADER

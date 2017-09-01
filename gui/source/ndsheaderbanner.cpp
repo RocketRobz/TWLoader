@@ -140,17 +140,13 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (!access(bannerpath, F_OK)) {
 		// Banner is already cached.
 		// TODO: If it's 0 bytes, re-cache it?
-		// // sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
-		// sf2d_end_frame();
-		// sf2d_swapbuffers();
 		return 0;
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	setTextColor(RGBA8(255, 255, 255, 255));
-	renderText(12, 16, 0.5f, 0.5f, false, title);
-	renderText(12, 48, 0.5f, 0.5f, false, counter1);
-	renderText(39, 48, 0.5f, 0.5f, false, "/");
-	renderText(44, 16, 0.5f, 0.5f, false, counter2);
+	pp2d_start_frame(GFX_BOTTOM);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
+	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
+	pp2d_draw_text(44, 16, 0.5f, 0.5f, WHITE, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
@@ -166,10 +162,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
@@ -190,10 +183,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
@@ -204,10 +194,8 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Invalid banner loaded; not caching.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Invalid banner loaded; not caching.");
+		pp2d_end_draw();
 		return -1;
 	}
 
@@ -216,12 +204,11 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Error writing the banner cache file.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Error writing the banner cache file.");
+		pp2d_end_draw();
 		return -2;
 	}
+	pp2d_end_draw();
 	fwrite(&ndsBanner, 1, bannersize, filetosave);
 	fclose(filetosave);
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Banner data cached:", bannerpath);
@@ -233,7 +220,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
+size_t* grabIcon(const sNDSBanner* ndsBanner) {
 	// Convert the palette from RGB555 to RGB5A1.
 	// (We need to ensure the MSB is set for all except
 	// color 0, which is transparent.)
@@ -246,7 +233,7 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Un-tile the icon.
-	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8"
+	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8" (deprecated)
 	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
 	static const int w = 64;
 	static const int h = 32;
@@ -269,6 +256,7 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	// Create an RGB5A1 texture directly.
 	// NOTE: sf2d doesn't support this, so we'll do it manually.
 	// Based on sf2d_texture.c.
+	// TODO
 	sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
 
 	// Tile the texture for the GPU.
@@ -299,7 +287,7 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(FILE* binFile) {
+size_t* grabIcon(FILE* binFile) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
 	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
