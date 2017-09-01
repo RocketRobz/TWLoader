@@ -66,6 +66,7 @@
 #define hstouchtex 61
 #define hstex 62
 #define wipetex 63
+#define card_icon 64
 
 // Colors
 #define TRANPSARENT RGBA8(0, 0, 0, 0)

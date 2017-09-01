@@ -2,8 +2,6 @@
 #ifndef TWLOADER_GAMECARD_H
 #define TWLOADER_GAMECARD_H
 
-#include <sf2d.h>
-
 #include <vector>
 #include <string>
 
@@ -74,7 +72,7 @@ u8 gamecardGetRevision(void);
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */
-sf2d_texture *gamecardGetIcon(void);
+size_t *gamecardGetIcon(void);
 
 /**
  * Get the game card's banner text.

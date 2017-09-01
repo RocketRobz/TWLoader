@@ -8,6 +8,7 @@
 #include "smdh.h"
 
 #include <malloc.h>
+#include "graphic.h"
 
 #include <string>
 #include <vector>
@@ -26,7 +27,6 @@ static GameCardType card_type = CARD_TYPE_UNKNOWN;
 static char card_product_code[20] = { };
 static u8 card_revision = 0xFF;
 static u64 card_tid = 0;
-static sf2d_texture *card_icon = NULL;
 static vector<wstring> card_text;
 
 /**
@@ -36,7 +36,6 @@ void gamecardClearCache(void)
 {
 	// NOTE: card_inserted is NOT reset here.
 	twl_gameid.d = 0;
-	sf2d_free_texture(card_icon);
 	card_type = CARD_TYPE_UNKNOWN;
 	card_product_code[0] = 0;
 	card_revision = 0xFF;
@@ -107,7 +106,6 @@ static void gamecardCacheTWL(void)
 	}
 
 	// Store the icon and banner text.
-	sf2d_free_texture(card_icon);
 	card_icon = grabIcon(&ndsBanner);
 	card_text = grabText(&ndsBanner, language);
 }
@@ -363,7 +361,7 @@ u64 gamecardGetTitleID(void)
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */
-sf2d_texture *gamecardGetIcon(void)
+size_t *gamecardGetIcon(void)
 {
 	return card_icon;
 }
