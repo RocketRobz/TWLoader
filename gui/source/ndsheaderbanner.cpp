@@ -7,6 +7,9 @@
 #include <malloc.h>
 #include <unistd.h>
 
+#include "pp2d/pp2d/pp2d.h"
+#include "graphic.h"
+
 #include <string>
 #include <vector>
 using std::string;
@@ -142,7 +145,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// TODO: If it's 0 bytes, re-cache it?
 		return 0;
 	}
-	pp2d_start_frame(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
 	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
@@ -254,28 +257,28 @@ size_t* grabIcon(const sNDSBanner* ndsBanner) {
 	// NOTE: sf2d doesn't support this, so we'll do it manually.
 	// Based on sf2d_texture.c.
 	// TODO
-	sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
+	// sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
 
-	// Tile the texture for the GPU.
-	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
-		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
-		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+	//Tile the texture for the GPU.
+	// const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
+		// GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
+		// GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
 
-	GSPGPU_FlushDataCache(textureData, (w*h)*2);
-	GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
+	// GSPGPU_FlushDataCache(textureData, (w*h)*2);
+	// GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
 
-	C3D_SafeDisplayTransfer(
-		(u32*)textureData,
-		GX_BUFFER_DIM(w, h),
-		(u32*)texture->tex.data,
-		GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
-		flags
-	);
+	// C3D_SafeDisplayTransfer(
+		// (u32*)textureData,
+		// GX_BUFFER_DIM(w, h),
+		// (u32*)texture->tex.data,
+		// GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
+		// flags
+	// );
 
-	gspWaitForPPF();
-	texture->tiled = 1;
+	// gspWaitForPPF();
+	// texture->tiled = 1;
 
-	linearFree(textureData);
+	// linearFree(textureData);
 	return texture;
 }
 

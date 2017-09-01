@@ -34,6 +34,8 @@ const char *twlnand_msg;
 
 static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 
+static bool settings_tex_loaded = false;
+
 // Color settings.
 // Use SET_ALPHA() to replace the alpha value.
 const ColorData *color_data = NULL;

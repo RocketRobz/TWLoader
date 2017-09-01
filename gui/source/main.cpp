@@ -1203,9 +1203,9 @@ static void drawMenuDialogBox(void)
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
-				pp2d_draw_text(72, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
+				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
 			}
-			pp2d_draw_text(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
 		
 		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
@@ -1235,7 +1235,7 @@ static void drawMenuDialogBox(void)
 			pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "Are you sure you want to delete this title?\n" "(Save data will be kept.)");
 		}
 	} else if (menudboxmode == DBOX_MODE_SETTINGS) {
-		pp2d_draw_text(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
+		pp2d_draw_wtext(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
 
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
@@ -1247,9 +1247,9 @@ static void drawMenuDialogBox(void)
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
-				pp2d_draw_textf(72, y+menudbox_Ypos, 0.60, 0.60, GRAY, romsel_gameline[i].c_str());
+				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, GRAY, romsel_gameline[i].c_str());
 			}
-			pp2d_draw_textf(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
 		
 		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
@@ -1292,7 +1292,7 @@ static void drawMenuDialogBox(void)
 				pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
 			} else {
 				// Button is not highlighted. Darken the texture.
-				pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
+				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
 			}
 
 			const wchar_t *title = buttons[i].title;
@@ -1333,14 +1333,14 @@ static void drawMenuDialogBox(void)
 			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
 			int w = 0;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			pp2d_draw_textf(x, y, 0.50, 0.50, BLACK, title);
+			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 			y += 16;
 
 			// Draw the value.
 			if (i < 3) {
 				w = 0;
 				x = ((2 - w) / 2) + buttons[i].x;
-				pp2d_draw_textf(x, y, 0.50, 0.50, GRAY, value_desc);
+				pp2d_draw_wtext(x, y, 0.50, 0.50, GRAY, value_desc);
 			} else if (i == 3) {
 				// Show the RGB value.
 				char rgb_str[32];
@@ -1359,7 +1359,7 @@ static void drawMenuDialogBox(void)
 			}
 		}
 	} else {
-		pp2d_draw_textf(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
+		pp2d_draw_wtext(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
 
 		// UI options.
 		const struct {
@@ -1398,13 +1398,13 @@ static void drawMenuDialogBox(void)
 			if (title) {
 				const int w = 0;
 				const int x = ((2 - w) / 2) + buttons[i].x;
-				pp2d_draw_textf(x, y, 0.50, 0.50, BLACK, title);
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 				y += 16;
 			}
 			if (value_desc) {
 				const int w = 0;
 				const int x = ((2 - w) / 2) + buttons[i].x;
-				pp2d_draw_textf(x, y, 0.50, 0.50, BLACK, value_desc);
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, value_desc);
 			}
 		}
 	}
@@ -2293,16 +2293,16 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_draw_textf(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 1:
-									pp2d_draw_textf(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 2:
-									pp2d_draw_textf(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 3:
-									pp2d_draw_textf(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 							}
 						}
@@ -2329,16 +2329,16 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_draw_textf(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 1:
-									pp2d_draw_textf(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+8, 64, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 2:
-									pp2d_draw_textf(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+20, 142, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 								case 3:
-									pp2d_draw_textf(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+									pp2d_draw_wtext(40+8, 126, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 									break;
 							}
 						}
@@ -2409,7 +2409,7 @@ int main(){
 										? fcfiles.at(filenum).c_str()
 										: files.at(filenum).c_str());
 								wstring wstr = utf8_to_wstring(filename);
-								pp2d_draw_textf(42, filenameYpos, 0.50, 0.50, color, wstr.c_str());
+								pp2d_draw_wtext(42, filenameYpos, 0.50, 0.50, color, wstr.c_str());
 
 								filenameYpos += 15;
 							}
@@ -3107,7 +3107,7 @@ int main(){
 						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-					pp2d_draw_textf(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
+					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
 				} else {
 					int Ypos = 26;
@@ -3124,7 +3124,7 @@ int main(){
 								? fcfiles.at(filenum).c_str()
 								: files.at(filenum).c_str());
 						wstring wstr = utf8_to_wstring(filename);
-						pp2d_draw_textf(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
+						pp2d_draw_wtext(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
 
 						if (settings.ui.cursorPosition == filenum)
 							pp2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
@@ -3186,7 +3186,7 @@ int main(){
 				} else {
 					pp2d_draw_texture(bottomtex, 320/2 - bottomtex->width/2, 240/2 - bottomtex->height/2);
 					if (settings.twl.forwarder && !isDemo) {
-						pp2d_draw_textf(16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
+						pp2d_draw_wtext(16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 					}
 					if (!bannertextloaded) {
 						char path[256];
@@ -3253,7 +3253,7 @@ int main(){
 						const size_t banner_lines = std::min(3U, romsel_gameline.size());
 						for (size_t i = 0; i < banner_lines; i++, y += dy) {
 							const int text_width = 180;
-							pp2d_draw_textf(84+(192-text_width)/2, y, 0.55, 0.55, BLACK, romsel_gameline[i].c_str());
+							pp2d_draw_wtext(84+(192-text_width)/2, y, 0.55, 0.55, BLACK, romsel_gameline[i].c_str());
 						}
 					}
 				}
@@ -3281,14 +3281,14 @@ int main(){
 							const int home_width = 144+16;
 							const int home_x = (320-home_width)/2;
 							pp2d_draw_texture(homeicontex, home_x, 194); // Draw HOME icon
-							pp2d_draw_textf(home_x+20, 195, 0.50, 0.50, BLACK, home_text);
+							pp2d_draw_wtext(home_x+20, 195, 0.50, 0.50, BLACK, home_text);
 						}
 					} else {
 						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
 						const int home_width = 144+16;
 						const int home_x = (320-home_width)/2;
 						pp2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
-						pp2d_draw_textf(home_x+20, 221, 0.50, 0.50, BLACK, home_text);
+						pp2d_draw_wtext(home_x+20, 221, 0.50, 0.50, BLACK, home_text);
 					}
 				}
 
@@ -3440,12 +3440,12 @@ int main(){
 									pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
 									const wchar_t *start_text = TR(STR_START);
 									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_textf(136, 180, 0.60, 0.60, WHITE, start_text);
+										pp2d_draw_wtext(136, 180, 0.60, 0.60, WHITE, start_text);
 								} else {
 									pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
 									const wchar_t *start_text = TR(STR_START);
 									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_textf(140, 173, 0.50, 0.50, WHITE, start_text);
+										pp2d_draw_wtext(140, 173, 0.50, 0.50, WHITE, start_text);
 								}
 							}
 						}
@@ -3485,7 +3485,7 @@ int main(){
 					bool drawBannerText = true;
 					if (settings.ui.cursorPosition == -2) {
 						const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);						
-						pp2d_draw_textf(8, 38, 0.70, 0.70, BLACK, curn2text);
+						pp2d_draw_wtext(8, 38, 0.70, 0.70, BLACK, curn2text);
 						drawBannerText = false;
 					} else if (settings.ui.cursorPosition == -1) {
 						if (settings.twl.forwarder) {
@@ -3522,7 +3522,7 @@ int main(){
 									// No game card is inserted.
 									msg = TR(STR_NO_CARTRIDGE);
 								}
-								pp2d_draw_textf(8, 38, 0.70, 0.70, BLACK, msg);
+								pp2d_draw_wtext(8, 38, 0.70, 0.70, BLACK, msg);
 								drawBannerText = false;
 							}
 						}
@@ -3583,7 +3583,7 @@ int main(){
 						int y, dy;
 						//top dialog = 100px tall
 						if (settings.ui.filename) {
-							pp2d_draw_textf(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+							pp2d_draw_wtext(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 							y = (100-(19*romsel_gameline.size()))/2 + 4;
 							//y = 24; dy = 19;
 							dy = 19;
@@ -3596,7 +3596,7 @@ int main(){
 						// Print the banner text, center-aligned.
 						const size_t banner_lines = std::min(3U, romsel_gameline.size());
 						for (size_t i = 0; i < banner_lines; i++, y += dy) {
-							pp2d_draw_textf(8, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+							pp2d_draw_wtext(8, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
 						}
 
 						if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {

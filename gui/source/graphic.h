@@ -85,7 +85,7 @@
 #define settingstex 75
 
 // Colors
-#define TRANPSARENT RGBA8(0, 0, 0, 0)
+#define TRANSPARENT RGBA8(0, 0, 0, 0)
 
 #define BLACK RGBA8(0, 0, 0, 255)
 #define WHITE RGBA8(255, 255, 255, 255)
