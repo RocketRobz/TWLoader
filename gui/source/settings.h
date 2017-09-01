@@ -3,10 +3,8 @@
 #define TWLOADER_SETTINGS_H
 
 #include <string>
-
-// Textures.
-#include <sf2d.h>
-extern sf2d_texture *settingstex;
+#include "pp2d/pp2d/pp2d.h"
+#include "graphic.h"
 
 /** Settings **/
 
@@ -114,7 +112,7 @@ extern Settings_t settings;
 // Couldn't get enums working, so I just used ints.
 extern int THEME_DSIMENU;	// DSi Menu
 extern int THEME_3DSMENU;	// 3DS Menu
-extern int THEME_R4;	// R4
+extern int THEME_R4;		// R4
 extern int THEME_AKMENU;	// Wood/akMenu
 
 /**

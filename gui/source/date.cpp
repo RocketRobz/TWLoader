@@ -95,7 +95,6 @@ string RetTime(bool donotblink)
  * @param Ypos Y position.
  * @param format Date format.
  * @param color Text color.
- * @param size Text size.
  */
 void DrawDateF(float x, float y, float scaleX, float scaleY, u32 color, DateFormat format)
 {
@@ -112,7 +111,6 @@ void DrawDateF(float x, float y, float scaleX, float scaleY, u32 color, DateForm
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param color Text color.
- * @param size Text size.
  */
 void DrawDate(float x, float y, float scaleX, float scaleY, u32 color)
 {
