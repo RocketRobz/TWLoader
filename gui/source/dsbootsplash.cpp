@@ -19,6 +19,7 @@ using std::vector;
 
 #include <3ds.h>
 #include <3ds/types.h>
+#include "graphic.h"
 #include "pp2d/pp2d/pp2d.h"
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
@@ -32,8 +33,6 @@ void fade_whiteToBlack() {
 	if (settings.ui.bootscreen < 3) {
 		int fade = 0;
 		while (aptMainLoop()) {
-			textVtxArrayPos = 0; // Clear the text vertex array
-
 			fade += 9;
 			if (fade > 255)
 				fade = 255;
@@ -87,7 +86,7 @@ void bootSplash() {
 	}
 	if (settings.ui.bootscreen >= 3) {
 		if (settings.ui.language == 0) {
-			pp2d_load_texture_png(hstexttex"romfs:/graphics/BootSplash/inv_HS_JP.png");
+			pp2d_load_texture_png(hstexttex, "romfs:/graphics/BootSplash/inv_HS_JP.png");
 			pp2d_load_texture_png(hstouchtex, "romfs:/graphics/BootSplash/inv_HStouch_JP.png");
 		} else if (settings.ui.language == 6 || settings.ui.language == 11) {
 			pp2d_load_texture_png(hstexttex, "romfs:/graphics/BootSplash/inv_HS_CH.png");
@@ -250,10 +249,7 @@ void bootSplash() {
 	while (aptMainLoop()) {
 		// Scan hid shared memory for input events
 		hidScanInput();
-		const u32 hDown = hidKeysDown();
-		
-		textVtxArrayPos = 0; // Clear the text vertex array
-		
+		const u32 hDown = hidKeysDown();		
 		offset3D_oeffect1 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect1_chng;
 		offset3D_oeffect2 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect2_chng;
 		offset3D_oeffect3 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect3_chng;
@@ -306,14 +302,14 @@ void bootSplash() {
 //		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 			pp2d_draw_on(GFX_TOP);
 			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
-			if (topfb == 1) offset3D_temp = offset3D_ndslogo;
-			else offset3D_temp = -offset3D_ndslogo;
+//			if (topfb == 1) offset3D_temp = offset3D_ndslogo;
+//			else offset3D_temp = -offset3D_ndslogo;
 			pp2d_draw_texture(ndslogotex, offset3D_temp+logopos+21, 78);
 			pp2d_draw_texture(topotex, offset3D_temp+logopos+179, topoPos);
 			pp2d_draw_texture(bottomotex, offset3D_temp+logopos+179, bottomoPos);
 			if (oeffects) {
-				if (topfb == 1) offset3D_temp = offset3D_oeffect1;
-				else offset3D_temp = -offset3D_oeffect1;
+//				if (topfb == 1) offset3D_temp = offset3D_oeffect1;
+//				else offset3D_temp = -offset3D_oeffect1;
 				pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o1_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
 				pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o2_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
 				offset3D_oeffect1_chng -= 0.04;
@@ -325,22 +321,22 @@ void bootSplash() {
 				if (oeffect1_alpha < 0) oeffect1_alpha = 0;
 			}
 			if (gamecardIsInserted()) {
-				if (topfb == 1) offset3D_temp = offset3D_nint;
-				else offset3D_temp = -offset3D_nint;
+//				if (topfb == 1) offset3D_temp = offset3D_nint;
+//				else offset3D_temp = -offset3D_nint;
 				pp2d_draw_texture(nintendotex, offset3D_temp+40+84, 177);
 			}
 			if ((settings.ui.bootscreen == 2 && splashScreenTime > 60*1) ||
 			    (settings.ui.bootscreen == 4 && splashScreenTime > 60*1)) {
-				if (topfb == 1) offset3D_temp = offset3D_i;
-				else offset3D_temp = -offset3D_i;
+//				if (topfb == 1) offset3D_temp = offset3D_i;
+//				else offset3D_temp = -offset3D_i;
 				i_alpha += 10;
 				if (i_alpha > 255) i_alpha = 255;
 				pp2d_draw_texture_blend(itex, offset3D_temp+logopos+312, 70, RGBA8(255, 255, 255, i_alpha));
 			}
 			if (oeffects) {
 				if (oeffectTimer >= 10) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect2;
-					else offset3D_temp = -offset3D_oeffect2;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect2;
+//					else offset3D_temp = -offset3D_oeffect2;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect2_xPos, oeffect2_yPos, oeffect2_scale, oeffect2_scale, RGBA8(255, 255, 255, oeffect2_alpha));
 					offset3D_oeffect2_chng += 0.03;
 					oeffect2_xPos -= 0.50;
@@ -355,8 +351,8 @@ void bootSplash() {
 					}
 				}
 				if (oeffectTimer >= 13) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect3;
-					else offset3D_temp = -offset3D_oeffect3;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect3;
+//					else offset3D_temp = -offset3D_oeffect3;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect3_xPos, oeffect3_yPos, oeffect3_scale, oeffect3_scale, RGBA8(255, 255, 255, oeffect3_alpha));
 					offset3D_oeffect3_chng += 0.04;
 					oeffect3_xPos -= 0.76;
@@ -371,8 +367,8 @@ void bootSplash() {
 					}
 				}
 				if (oeffectTimer >= 16) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect4;
-					else offset3D_temp = -offset3D_oeffect4;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect4;
+//					else offset3D_temp = -offset3D_oeffect4;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect4_xPos, oeffect4_yPos, oeffect4_scale, oeffect4_scale, RGBA8(255, 255, 255, oeffect4_alpha));
 					offset3D_oeffect4_chng += 0.03;
 					oeffect4_xPos += 0.40;
@@ -387,8 +383,8 @@ void bootSplash() {
 					}
 				}
 				if (oeffectTimer >= 21) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect5;
-					else offset3D_temp = -offset3D_oeffect5;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect5;
+//					else offset3D_temp = -offset3D_oeffect5;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect5_xPos, oeffect5_yPos, oeffect5_scale, oeffect5_scale, RGBA8(255, 255, 255, oeffect5_alpha));
 					offset3D_oeffect5_chng += 0.04;
 					oeffect5_xPos -= 0.31;
@@ -403,8 +399,8 @@ void bootSplash() {
 					}
 				}
 				if (oeffectTimer >= 36) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect6;
-					else offset3D_temp = -offset3D_oeffect6;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect6;
+//					else offset3D_temp = -offset3D_oeffect6;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect6_xPos, oeffect6_yPos, oeffect6_scale, oeffect6_scale, RGBA8(255, 255, 255, oeffect6_alpha));
 					offset3D_oeffect6_chng += 0.05;
 					oeffect6_xPos -= 0.80;
@@ -419,8 +415,8 @@ void bootSplash() {
 					}
 				}
 				if (oeffectTimer >= 53) {
-					if (topfb == 1) offset3D_temp = offset3D_oeffect7;
-					else offset3D_temp = -offset3D_oeffect7;
+//					if (topfb == 1) offset3D_temp = offset3D_oeffect7;
+//					else offset3D_temp = -offset3D_oeffect7;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect7_xPos, oeffect7_yPos, oeffect7_scale, oeffect7_scale, RGBA8(255, 255, 255, oeffect7_alpha));
 					offset3D_oeffect7_chng += 0.04;
 					oeffect7_xPos += 0.48;
@@ -491,7 +487,7 @@ void bootSplash() {
 					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(32, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha, TR(STR_DSSPLASH_TOUCH));
+					pp2d_draw_wtext(32, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 3:

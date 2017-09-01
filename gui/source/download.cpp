@@ -542,8 +542,6 @@ int checkUpdate(void) {
 					bool checkanswer = true;
 
 					while(checkanswer) {
-						textVtxArrayPos = 0; // Clear the text vertex array
-
 						pp2d_draw_on(GFX_BOTTOM);						
 						static const char msg[] =
 							"TWLoader is up-to-date.\n"
@@ -688,8 +686,6 @@ void DownloadTWLoaderCIAs(void) {
 	bool yestoupdate = false;
 	
 	while(checkanswer) {
-		textVtxArrayPos = 0; // Clear the text vertex array
-
 		pp2d_draw_on(GFX_BOTTOM);
 		static const char gui_msg[] =
 			"An update for TWLoader is available.\n"
@@ -880,7 +876,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
 				}
 			}
@@ -889,7 +884,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
 				}
 			}
@@ -911,7 +905,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
@@ -933,7 +926,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
@@ -955,7 +947,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
@@ -977,7 +968,6 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					textVtxArrayPos = 0; // Clear the text vertex array
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
@@ -990,7 +980,6 @@ void DownloadTWLoaderCIAs(void) {
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else for (int i = 0; i < 15; i++) {
-			textVtxArrayPos = 0; // Clear the text vertex array
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
 		}
 	}
@@ -1149,7 +1138,6 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");							
 						}
 					}
@@ -1171,7 +1159,6 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1186,7 +1173,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");				
 						}
 					}
@@ -1201,7 +1187,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1216,7 +1201,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1231,7 +1215,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1246,7 +1229,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1261,7 +1243,6 @@ int DownloadMissingFiles(void) {
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1278,7 +1259,6 @@ int DownloadMissingFiles(void) {
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1295,7 +1275,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1310,7 +1289,6 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							textVtxArrayPos = 0; // Clear the text vertex array
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 						}
 					}
@@ -1842,12 +1820,10 @@ void downloadBoxArt(void)
 				DialogBoxAppear(12, 16, title);
 			}
 			pp2d_draw_on(GFX_BOTTOM);
+			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-				u32 color = BLACK;
-			} else {
-				u32 color = WHITE;
+				color = BLACK;			
 			}
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
 			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
@@ -1942,11 +1918,10 @@ void downloadBoxArt(void)
 				DialogBoxAppear(12, 16, title);
 			}
 			pp2d_draw_on(GFX_BOTTOM);
+			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
-				u32 color = BLACK;
-			} else {
-				u32 color = WHITE;
+				color = BLACK;
 			}
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
 			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
@@ -2017,11 +1992,10 @@ void downloadBoxArt(void)
 			DialogBoxAppear(12, 16, title);
 		}
 		pp2d_draw_on(GFX_BOTTOM);
+		u32 color = WHITE;
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(dialogboxtex, 0, 0);
-			u32 color = BLACK;
-		} else {
-			u32 color = WHITE;
+			color = BLACK;
 		}
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
