@@ -105,7 +105,7 @@ static void gamecardCacheTWL(void)
 	}
 
 	// Store the icon and banner text.
-	card_icon = grabIcon(&ndsBanner);
+	pp2d_load_texture_memory(card_icon, grabIcon(&ndsBanner), 64, 32);
 	card_text = grabText(&ndsBanner, language);
 }
 
@@ -320,10 +320,10 @@ const char *gamecardGetGameID(void)
 }
 
 /**
- * Get the game card's game ID as a u32.
+ * Get the game card's game ID as a std::uint32_t.
  * @return Game ID, or 0 if not a TWL card.
  */
-u32 gamecardGetGameID_u32(void)
+std::uint32_t gamecardGetGameID_u32(void)
 {
 	return twl_gameid.d;
 }
@@ -341,7 +341,7 @@ const char *gamecardGetProductCode(void)
  * Get the game card's revision..
  * @return Game card revision. (0xFF if unknown.)
  */
-u8 gamecardGetRevision(void)
+std::uint8_t gamecardGetRevision(void)
 {
 	return card_revision;
 }
@@ -351,7 +351,7 @@ u8 gamecardGetRevision(void)
  * NOTE: Only applicable to TWL and CTR titles.
  * @return Title ID, or 0 if no card or the card doesn't have a title ID.
  */
-u64 gamecardGetTitleID(void)
+std::uint64_t gamecardGetTitleID(void)
 {
 	return card_tid;
 }
@@ -360,7 +360,7 @@ u64 gamecardGetTitleID(void)
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */
-size_t *gamecardGetIcon(void)
+size_t gamecardGetIcon(void)
 {
 	return card_icon;
 }

@@ -729,7 +729,7 @@ static void LoadBNRIcon(const char *filename) {
 			f_bnr = fopen(filename, "rb");
 		}
 
-		bnricontex[idx] = grabIcon(f_bnr);
+		pp2d_load_texture_memory(bnricontex[idx], grabIcon(f_bnr), 64, 32);
 		fclose(f_bnr);
 	}
 }
@@ -750,7 +750,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		f_bnr = fopen(filename, "rb");
 	}
 
-	bnricontex[20] = grabIcon(f_bnr);
+	pp2d_load_texture_memory(bnricontex[20], grabIcon(f_bnr), 64, 32);
 	fclose(f_bnr);
 }
 
@@ -1716,7 +1716,7 @@ int main(){
 		pp2d_load_texture_png(settingslogotwltex, "romfs:/graphics/settings/logo_demo_twl.png");
 		pp2d_load_texture_png(settingslogodemotex, "romfs:/graphics/settings/logo_demo_demo.png");
 	}
-	settingslogooadertex = pp2d_load_texture_png("romfs:/graphics/settings/logo_oader.png");
+	pp2d_load_texture_png(settingslogooadertex, "romfs:/graphics/settings/logo_oader.png");
 
 	pp2d_load_texture_png(sdicontex, "romfs:/graphics/wood/sd.png");
 	pp2d_load_texture_png(flashcardicontex, "romfs:/graphics/wood/flashcard.png");

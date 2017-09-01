@@ -83,6 +83,7 @@
 #define dsihstex 73
 #define disabledtex 74
 #define settingstex 75
+#define settingslogooadertex 76
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)

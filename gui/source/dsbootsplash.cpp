@@ -122,26 +122,26 @@ void bootSplash() {
 		else
 			sfx_boot = new sound("romfs:/sounds/BootSplash/dsboot.wav", 2, false);
 	}
-	
+/**	
 	bool bootsoundplayed = false;
 
 	bool oeffects = false;
 	int oeffectTimer = 0;
 	
-	float offset3D_oeffect1 = 0.0f;
-	float offset3D_oeffect1_chng = 1.5;
-	float offset3D_oeffect2 = 0.0f;
-	float offset3D_oeffect2_chng = 2.0;
-	float offset3D_oeffect3 = 0.0f;
-	float offset3D_oeffect3_chng = 2.0;
-	float offset3D_oeffect4 = 0.0f;
-	float offset3D_oeffect4_chng = 2.0;
-	float offset3D_oeffect5 = 0.0f;
-	float offset3D_oeffect5_chng = 2.0;
-	float offset3D_oeffect6 = 0.0f;
-	float offset3D_oeffect6_chng = 2.0;
-	float offset3D_oeffect7 = 0.0f;
-	float offset3D_oeffect7_chng = 2.0;
+	// float offset3D_oeffect1 = 0.0f;
+	// float offset3D_oeffect1_chng = 1.5;
+	// float offset3D_oeffect2 = 0.0f;
+	// float offset3D_oeffect2_chng = 2.0;
+	// float offset3D_oeffect3 = 0.0f;
+	// float offset3D_oeffect3_chng = 2.0;
+	// float offset3D_oeffect4 = 0.0f;
+	// float offset3D_oeffect4_chng = 2.0;
+	// float offset3D_oeffect5 = 0.0f;
+	// float offset3D_oeffect5_chng = 2.0;
+	// float offset3D_oeffect6 = 0.0f;
+	// float offset3D_oeffect6_chng = 2.0;
+	// float offset3D_oeffect7 = 0.0f;
+	// float offset3D_oeffect7_chng = 2.0;
 
 	float oeffect1_xPos = 169.0;
 	float oeffect1_o1_yPos = 50.0;
@@ -182,11 +182,11 @@ void bootSplash() {
 	float oeffect6_fadeout = false;
 	float oeffect7_fadeout = false;
 
-	float offset3D_ndslogo = 0.0f;
-	float offset3D_i = 0.0f;
-	float offset3D_nint = 0.0f;
+	// float offset3D_ndslogo = 0.0f;
+	// float offset3D_i = 0.0f;
+	// float offset3D_nint = 0.0f;
 	
-	float offset3D_temp = 0.0f;
+	// float offset3D_temp = 0.0f;
 	
 	int logopos = 40;
 	if (settings.ui.bootscreen == 2 || settings.ui.bootscreen == 4) logopos = 20;		// Move the DS logo to the left to make room for the "i"
@@ -250,17 +250,17 @@ void bootSplash() {
 		// Scan hid shared memory for input events
 		hidScanInput();
 		const u32 hDown = hidKeysDown();		
-		offset3D_oeffect1 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect1_chng;
-		offset3D_oeffect2 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect2_chng;
-		offset3D_oeffect3 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect3_chng;
-		offset3D_oeffect4 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect4_chng;
-		offset3D_oeffect5 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect5_chng;
-		offset3D_oeffect6 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect6_chng;
-		offset3D_oeffect7 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect7_chng;
+		// offset3D_oeffect1 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect1_chng;
+		// offset3D_oeffect2 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect2_chng;
+		// offset3D_oeffect3 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect3_chng;
+		// offset3D_oeffect4 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect4_chng;
+		// offset3D_oeffect5 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect5_chng;
+		// offset3D_oeffect6 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect6_chng;
+		// offset3D_oeffect7 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect7_chng;
 
-		offset3D_ndslogo = CONFIG_3D_SLIDERSTATE * 2.0f;		
-		offset3D_i = CONFIG_3D_SLIDERSTATE * 1.8f;		
-		offset3D_nint = CONFIG_3D_SLIDERSTATE * 3.0f;
+		// offset3D_ndslogo = CONFIG_3D_SLIDERSTATE * 2.0f;		
+		// offset3D_i = CONFIG_3D_SLIDERSTATE * 1.8f;		
+		// offset3D_nint = CONFIG_3D_SLIDERSTATE * 3.0f;
 		
 		if (wipePos < 800) wipePos += 20;
 		if (!fadeout) {
@@ -312,7 +312,7 @@ void bootSplash() {
 //				else offset3D_temp = -offset3D_oeffect1;
 				pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o1_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
 				pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect1_xPos, oeffect1_o2_yPos, oeffect1_scale, oeffect1_scale, RGBA8(255, 255, 255, oeffect1_alpha));
-				offset3D_oeffect1_chng -= 0.04;
+//				offset3D_oeffect1_chng -= 0.04;
 				oeffect1_xPos -= 0.58;
 				oeffect1_o1_yPos -= 0.70;
 				oeffect1_o2_yPos -= 0.12;
@@ -338,7 +338,7 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect2;
 //					else offset3D_temp = -offset3D_oeffect2;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect2_xPos, oeffect2_yPos, oeffect2_scale, oeffect2_scale, RGBA8(255, 255, 255, oeffect2_alpha));
-					offset3D_oeffect2_chng += 0.03;
+//					offset3D_oeffect2_chng += 0.03;
 					oeffect2_xPos -= 0.50;
 					oeffect2_yPos -= 0.65;
 					oeffect2_scale += 0.002;
@@ -354,10 +354,10 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect3;
 //					else offset3D_temp = -offset3D_oeffect3;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect3_xPos, oeffect3_yPos, oeffect3_scale, oeffect3_scale, RGBA8(255, 255, 255, oeffect3_alpha));
-					offset3D_oeffect3_chng += 0.04;
-					oeffect3_xPos -= 0.76;
-					oeffect3_yPos -= 0.43;
-					oeffect3_scale += 0.003;
+					// offset3D_oeffect3_chng += 0.04;
+					// oeffect3_xPos -= 0.76;
+					// oeffect3_yPos -= 0.43;
+					// oeffect3_scale += 0.003;
 					if (oeffect3_fadeout) {
 						oeffect3_alpha -= 3;
 						if (oeffect3_alpha < 0) oeffect3_alpha = 0;
@@ -370,7 +370,7 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect4;
 //					else offset3D_temp = -offset3D_oeffect4;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect4_xPos, oeffect4_yPos, oeffect4_scale, oeffect4_scale, RGBA8(255, 255, 255, oeffect4_alpha));
-					offset3D_oeffect4_chng += 0.03;
+//					offset3D_oeffect4_chng += 0.03;
 					oeffect4_xPos += 0.40;
 					oeffect4_yPos += 0.18;
 					oeffect4_scale += 0.005;
@@ -386,7 +386,7 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect5;
 //					else offset3D_temp = -offset3D_oeffect5;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect5_xPos, oeffect5_yPos, oeffect5_scale, oeffect5_scale, RGBA8(255, 255, 255, oeffect5_alpha));
-					offset3D_oeffect5_chng += 0.04;
+//					offset3D_oeffect5_chng += 0.04;
 					oeffect5_xPos -= 0.31;
 					oeffect5_yPos += 0.47;
 					oeffect5_scale += 0.003;
@@ -402,7 +402,7 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect6;
 //					else offset3D_temp = -offset3D_oeffect6;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect6_xPos, oeffect6_yPos, oeffect6_scale, oeffect6_scale, RGBA8(255, 255, 255, oeffect6_alpha));
-					offset3D_oeffect6_chng += 0.05;
+//					offset3D_oeffect6_chng += 0.05;
 					oeffect6_xPos -= 0.80;
 					oeffect6_yPos += 0.14;
 					oeffect6_scale += 0.003;
@@ -418,7 +418,7 @@ void bootSplash() {
 //					if (topfb == 1) offset3D_temp = offset3D_oeffect7;
 //					else offset3D_temp = -offset3D_oeffect7;
 					pp2d_draw_texture_scale_blend(bigotex, offset3D_temp+logopos+oeffect7_xPos, oeffect7_yPos, oeffect7_scale, oeffect7_scale, RGBA8(255, 255, 255, oeffect7_alpha));
-					offset3D_oeffect7_chng += 0.04;
+//					offset3D_oeffect7_chng += 0.04;
 					oeffect7_xPos += 0.48;
 					oeffect7_yPos -= 0.37;
 					oeffect7_scale += 0.002;
@@ -591,5 +591,6 @@ void bootSplash() {
 	
 	if (logEnabled)	LogFM("BootSplash", "Unloading jingle sound");
 	delete sfx_boot;
-	if (logEnabled)	LogFM("BootSplash", "Unloaded jingle sound");	
+	if (logEnabled)	LogFM("BootSplash", "Unloaded jingle sound");
+**/
 }

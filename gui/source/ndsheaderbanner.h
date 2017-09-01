@@ -240,13 +240,13 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-size_t* grabIcon(const sNDSBanner* ndsBanner);
+void* grabIcon(const sNDSBanner* ndsBanner);
 
 /**
  * Get the icon from a cached NDS banner.
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-size_t* grabIcon(FILE* binFile);
+void* grabIcon(FILE* binFile);
 
 #endif // NDS_HEADER

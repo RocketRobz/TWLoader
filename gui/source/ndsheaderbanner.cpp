@@ -215,12 +215,25 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	return 0;
 }
 
+// From sf2d_texture.c
+unsigned int next_pow2(unsigned int v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v >= 64 ? v : 64;
+}
+
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-size_t* grabIcon(const sNDSBanner* ndsBanner) {
+void* grabIcon(const sNDSBanner* ndsBanner) {
 	// Convert the palette from RGB555 to RGB5A1.
 	// (We need to ensure the MSB is set for all except
 	// color 0, which is transparent.)
@@ -254,32 +267,32 @@ size_t* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Create an RGB5A1 texture directly.
-	// NOTE: sf2d doesn't support this, so we'll do it manually.
 	// Based on sf2d_texture.c.
-	// TODO
-	// sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
 
+	C3D_Tex tex;
+	C3D_TexInit(&tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
+
+	C3D_TexSetWrap(&tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
+	
 	//Tile the texture for the GPU.
-	// const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
-		// GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
-		// GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
+		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
+		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
 
-	// GSPGPU_FlushDataCache(textureData, (w*h)*2);
-	// GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
+	GSPGPU_FlushDataCache(textureData, (w*h)*2);
+	GSPGPU_FlushDataCache(tex.data, tex.size);
 
-	// C3D_SafeDisplayTransfer(
-		// (u32*)textureData,
-		// GX_BUFFER_DIM(w, h),
-		// (u32*)texture->tex.data,
-		// GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
-		// flags
-	// );
+	C3D_SafeDisplayTransfer(
+		(u32*)textureData,
+		GX_BUFFER_DIM(w, h),
+		(u32*)tex.data,
+		GX_BUFFER_DIM(tex.width, tex.height),
+		flags
+	);
 
-	// gspWaitForPPF();
-	// texture->tiled = 1;
+	gspWaitForPPF();
 
-	// linearFree(textureData);
-	return texture;
+	return tex.data;
 }
 
 /**
@@ -287,7 +300,7 @@ size_t* grabIcon(const sNDSBanner* ndsBanner) {
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-size_t* grabIcon(FILE* binFile) {
+void* grabIcon(FILE* binFile) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
 	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
