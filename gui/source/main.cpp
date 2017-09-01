@@ -20,7 +20,6 @@
 #include <sys/types.h>
 
 #include <3ds.h>
-#include <citro3d.h>
 #include "pp2d/pp2d/pp2d.h"
 
 #include "ptmu_x.h"

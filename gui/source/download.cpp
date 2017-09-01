@@ -22,8 +22,8 @@ using std::unordered_set;
 using std::vector;
 
 #include <3ds.h>
-#include <sf2d.h>
-#include "citrostuff.h"
+#include "pp2d/pp2d/pp2d.h"
+
 #include "json/json.h"
 
 const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
@@ -36,7 +36,6 @@ bool updateACE_RPG = false;
 bool updateGBARUNNER_2 = false;
 bool updateLOADCARD_DSTT = false;
 bool updateR4 = false;
-//bool doCleanInstall = true;
 
 std::string gui_url;
 std::string gui_3dsx_url;
@@ -247,17 +246,16 @@ int checkUpdate(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(settingstex, 0, 0);
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		pp2d_draw_texture(settingstex, 0, 0);
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
 	} else {
-		setTextColor(RGBA8(255, 255, 255, 255));
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+
 	}
-	renderText(12, 16, 0.5f, 0.5f, false, title);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+	pp2d_end_draw();
 	
 	u32 responseCode = 0;
 	httpcContext context;	
@@ -411,9 +409,7 @@ int checkUpdate(void) {
 							}
 						}
 					}
-					//LogFM("Nightly URL", nightly_url.c_str());
-					//LogFM("Nightly Commit", nightly_commit.c_str());
-					//LogFM("Nightly ZIP", nightly_zip.c_str());
+
 					free(jsonTextNightly);
 				}
 				 
@@ -532,19 +528,17 @@ int checkUpdate(void) {
 						updateNAND_STG2 = true;
 					}
 				} else {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+					pp2d_begin_draw(GFX_BOTTOM);
 					if (screenmode == SCREEN_MODE_SETTINGS) {
-						sf2d_draw_texture(settingstex, 0, 0);
-						sf2d_draw_texture(dialogboxtex, 0, 0);
+						pp2d_draw_texture(settingstex, 0, 0);
+						pp2d_draw_texture(dialogboxtex, 0, 0);
 					}
+					pp2d_end_draw();
 
 					// Version is lower or same.
 					if (logEnabled)	LogFMA("checkUpdate", "Comparing...", "Are the same or lower");
+					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");
 
-					sf2d_end_frame();
-					sf2d_swapbuffers();
-
-					if (logEnabled)	LogFM("checkUpdate", "TWLoader is up-to-date!");		
 					free(jsonText);
 					httpcCloseContext(&context);
 
@@ -553,14 +547,7 @@ int checkUpdate(void) {
 					while(checkanswer) {
 						textVtxArrayPos = 0; // Clear the text vertex array
 
-						sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-						if (screenmode == SCREEN_MODE_SETTINGS) {
-							sf2d_draw_texture(settingstex, 0, 0);
-							sf2d_draw_texture(dialogboxtex, 0, 0);
-							setTextColor(RGBA8(0, 0, 0, 255));
-						} else {
-							setTextColor(RGBA8(255, 255, 255, 255));
-						}
+						pp2d_begin_draw(GFX_BOTTOM);						
 						static const char msg[] =
 							"TWLoader is up-to-date.\n"
 							"\n"
@@ -575,17 +562,22 @@ int checkUpdate(void) {
 							"\n"
 							"\n"
 							"\n"
-							": OK";					
-						renderText(12, 16, 0.5f, 0.5f, false, msg);
-						sf2d_end_frame();
-						sf2d_swapbuffers();
+							": OK";		
+
+						if (screenmode == SCREEN_MODE_SETTINGS) {
+							pp2d_draw_texture(settingstex, 0, 0);
+							pp2d_draw_texture(dialogboxtex, 0, 0);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+						} else {
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+						}
+						pp2d_end_draw();						
 						
 						hidScanInput();
 
 						const u32 hDown = hidKeysDown();
 						
 						if (hDown & KEY_A) {
-							//doCleanInstall = true;
 							checkanswer = false;	// Exit loop
 							DialogBoxDisappear(12, 16, msg);
 						}
@@ -703,14 +695,7 @@ void DownloadTWLoaderCIAs(void) {
 	while(checkanswer) {
 		textVtxArrayPos = 0; // Clear the text vertex array
 
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(settingstex, 0, 0);
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			setTextColor(RGBA8(0, 0, 0, 255));
-		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
-		}
+		pp2d_begin_draw(GFX_BOTTOM);
 		static const char gui_msg[] =
 			"An update for TWLoader is available.\n"
 			"Do you want to update?\n"
@@ -726,10 +711,15 @@ void DownloadTWLoaderCIAs(void) {
 			"\n"
 			": Yes\n"
 			": No";
-		renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
-
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			pp2d_draw_texture(settingstex, 0, 0);
+			pp2d_draw_texture(dialogboxtex, 0, 0);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, gui_msg);
+		} else {
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
+		}		
+		pp2d_end_draw();
+		
 		hidScanInput();
 
 		const u32 hDown = hidKeysDown();
@@ -752,22 +742,20 @@ void DownloadTWLoaderCIAs(void) {
 		struct stat st;
 		if (updateGUI) {
 			if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				if (screenmode == SCREEN_MODE_SETTINGS) {
-					sf2d_draw_texture(settingstex, 0, 0);
-					sf2d_draw_texture(dialogboxtex, 0, 0);
-					setTextColor(RGBA8(0, 0, 0, 255));
-				} else {
-					setTextColor(RGBA8(255, 255, 255, 255));
-				}
+				pp2d_begin_draw(GFX_BOTTOM);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, CIA)\n"
 					"\n"
 					"Do not turn off the power.\n";
-				renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-				sf2d_end_frame();
-				sf2d_swapbuffers();
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					pp2d_draw_texture(settingstex, 0, 0);
+					pp2d_draw_texture(dialogboxtex, 0, 0);				
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, gui_msg);
+				} else {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
+				}
+				pp2d_end_draw();				
 			
 				if(!isNightly){ 
 					if(stat("sdmc:/cia",&st) == 0){		
@@ -789,32 +777,29 @@ void DownloadTWLoaderCIAs(void) {
 					}
 				}
 				
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
-					sf2d_draw_texture(settingstex, 0, 0);
-					sf2d_draw_texture(dialogboxtex, 0, 0);
-					setTextColor(RGBA8(0, 0, 0, 255));
-				} else {
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_texture(settingstex, 0, 0);
+					pp2d_draw_texture(dialogboxtex, 0, 0);
+					pp2d_end_draw();
 				}
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-				if (screenmode == SCREEN_MODE_SETTINGS) {
-					sf2d_draw_texture(settingstex, 0, 0);
-					sf2d_draw_texture(dialogboxtex, 0, 0);
-					setTextColor(RGBA8(0, 0, 0, 255));
-				} else {
-					setTextColor(RGBA8(255, 255, 255, 255));
-				}
+				pp2d_begin_draw(GFX_BOTTOM);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, 3DSX)\n"
 					"\n"
 					"Do not turn off the power.\n";
-				renderText(12, 16, 0.5f, 0.5f, false, gui_msg);
-				sf2d_end_frame();
-				sf2d_swapbuffers();				
+				if (screenmode == SCREEN_MODE_SETTINGS) {
+					pp2d_draw_texture(settingstex, 0, 0);
+					pp2d_draw_texture(dialogboxtex, 0, 0);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, gui_msg);
+				} else {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
+				}
+				pp2d_end_draw();
+
 
 				if (isDemo) {
 					mkdir("sdmc:/3ds/TWLoader_demo", 0777);
@@ -826,25 +811,24 @@ void DownloadTWLoaderCIAs(void) {
 					resGUI_SMDH = downloadFile(gui_smdh_url.c_str(),"/3ds/TWLoader/TWLoader.smdh", MEDIA_SD_FILE);
 				}
 				
-				sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 				if (screenmode == SCREEN_MODE_SETTINGS) {
-					sf2d_draw_texture(settingstex, 0, 0);
-					sf2d_draw_texture(dialogboxtex, 0, 0);
-					setTextColor(RGBA8(0, 0, 0, 255));
-				} else {
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_texture(settingstex, 0, 0);
+					pp2d_draw_texture(dialogboxtex, 0, 0);
+					pp2d_end_draw();
 				}
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 1))\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand_msg);
+			pp2d_end_draw();
+			
 			// Delete first if installed.
 			if(checkTWLNANDSide()){
 				amInit();
@@ -858,44 +842,42 @@ void DownloadTWLoaderCIAs(void) {
 			}else{		
 				resNAND = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnandstg2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(SD stage of (part 1 of) TWLNAND side)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, twlnandstg2_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnandstg2_msg);
+			pp2d_end_draw();
 
 			resNAND_STG2 = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnand2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 2))\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand2_msg);
+			pp2d_end_draw();
+			
 			// Delete first if installed.
 			if(checkTWLNANDSide2()){
 				amInit();
@@ -909,13 +891,11 @@ void DownloadTWLoaderCIAs(void) {
 			}else{		
 				resNAND_STG2 = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
 			}
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 		} 
 		if(resGUI_SMDH == 0) {
@@ -928,10 +908,9 @@ void DownloadTWLoaderCIAs(void) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Update failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
+					pp2d_end_draw();
 				}
 			}
 		} else if (settings.ui.filetype == 1) {
@@ -940,137 +919,129 @@ void DownloadTWLoaderCIAs(void) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Update failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
+					pp2d_end_draw();
 				}
 			}
 		}
 		if(resGUI == 0 && updateACE_RPG) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest Ace_RPG version...\n"
 				"(ace_rpg.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			pp2d_end_draw();
+			
 			int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest GBARunner2 version...\n"
 				"(GBARunner2.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			pp2d_end_draw();
+			
 			int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest loadcard_dstt version...\n"
 				"(loadcard_dstt.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			pp2d_end_draw();
+			
 			int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
 		}
 		if (resGUI == 0 && updateR4) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest R4 version...\n"
 				"(r4.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			renderText(12, 16, 0.5f, 0.5f, false, msg);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			pp2d_end_draw();
+			
 			int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(settingstex, 0, 0);
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
-			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_end_draw();
 			}
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
 					textVtxArrayPos = 0; // Clear the text vertex array
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
 		}
-		if (resGUI == 0) {			
-			renderText(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+		if (resGUI == 0) {	
+			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
+			pp2d_end_draw();
+			
 			run = false;
 		}
 	} else {
@@ -1078,10 +1049,10 @@ void DownloadTWLoaderCIAs(void) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else for (int i = 0; i < 15; i++) {
 			textVtxArrayPos = 0; // Clear the text vertex array
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-			renderText(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
+			pp2d_end_draw();
+			
 		}
 	}
 }
@@ -1222,17 +1193,14 @@ int DownloadMissingFiles(void) {
 				struct stat st;
 				
 				if (!checkTWLNANDSide()) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
-
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char twlnand_msg[] =
 						"Now installing missing CIA...\n"
 						"(TWLNAND side CIA (part 1))\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, twlnand_msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand_msg);
+					pp2d_end_draw();
 
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
@@ -1244,25 +1212,23 @@ int DownloadMissingFiles(void) {
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (!checkTWLNANDSide2()) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char twlnand2_msg[] =
 						"Now downloading latest TWLoader version...\n"
 						"(TWLNAND side CIA (part 2))\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, twlnand2_msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand2_msg);
+					pp2d_end_draw();
 
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
@@ -1274,222 +1240,204 @@ int DownloadMissingFiles(void) {
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/TWLD.twldr", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char twlnandstg2_msg[] =
 						"Now downloading missing file...\n"
 						"(SD stage of (part 1 of) TWLNAND side)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, twlnandstg2_msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnandstg2_msg);
+					pp2d_end_draw();
 					
 					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/ace_rpg.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(ace_rpg.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/GBARunner2.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(GBARunner2.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/loadcard_dstt.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(loadcard_dstt.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/r4.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(r4.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 					fputs(release_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 					fputs(unofficial_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"(release-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
 				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
-					sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-					setTextColor(RGBA8(255, 255, 255, 255));
+					pp2d_begin_draw(GFX_BOTTOM);
 
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"(unofficial-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					renderText(12, 16, 0.5f, 0.5f, false, msg);
-					sf2d_end_frame();
-					sf2d_swapbuffers();
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							textVtxArrayPos = 0; // Clear the text vertex array
-							sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-							renderText(12, 16, 0.5f, 0.5f, false, "Download failed.");
-							sf2d_end_frame();
-							sf2d_swapbuffers();
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+							
 						}
 					}
 				}
@@ -1508,16 +1456,15 @@ void UpdateBootstrapUnofficial(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
 	} else {
-		setTextColor(RGBA8(255, 255, 255, 255));
-	}
-	renderText(12, 16, 0.5f, 0.5f, false, title);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	}	
+	pp2d_end_draw();
+	
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap.nds");
 	downloadBootstrapVersion(false);
@@ -1536,16 +1483,15 @@ void UpdateBootstrapRelease(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
-		sf2d_draw_texture(dialogboxtex, 0, 0);
-		setTextColor(RGBA8(0, 0, 0, 255));
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
 	} else {
-		setTextColor(RGBA8(255, 255, 255, 255));
-	}
-	renderText(12, 16, 0.5f, 0.5f, false, title);
-	sf2d_end_frame();
-	sf2d_swapbuffers();
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	}	
+	pp2d_end_draw();
+	
 	remove("sdmc:/_nds/twloader/release-bootstrap");
 	remove("sdmc:/_nds/twloader/release-bootstrap.nds");
 	downloadBootstrapVersion(true);
@@ -2027,21 +1973,21 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			pp2d_begin_draw(GFX_BOTTOM);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
 				setTextColor(RGBA8(0, 0, 0, 255));
+				u32 color = BLACK;
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				u32 color = WHITE;
 			}
-			renderText(12, 16, 0.5f, 0.5f, false, title);
-			renderText(12, 32, 0.5f, 0.5f, false, str);
-			renderText(39, 32, 0.5f, 0.5f, false, "/");
-			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
-			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
-			renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
+			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
+			pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
+			pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
+			pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
+			pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
+			pp2d_end_draw();
 			
 			downloadBoxArt_internal(ba_TID, ROM_SD);
 		}
@@ -2127,21 +2073,20 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+			pp2d_begin_draw(GFX_BOTTOM);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
-				sf2d_draw_texture(dialogboxtex, 0, 0);
-				setTextColor(RGBA8(0, 0, 0, 255));
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				u32 color = BLACK;
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				u32 color = WHITE;
 			}
-			renderText(12, 16, 0.5f, 0.5f, false, title);
-			renderText(12, 32, 0.5f, 0.5f, false, str);
-			renderText(39, 32, 0.5f, 0.5f, false, "/");
-			renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
-			renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
-			renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
-			sf2d_end_frame();
-			sf2d_swapbuffers();
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
+			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
+			pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
+			pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
+			pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
+			pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
+			pp2d_end_draw();
 
 			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
 		}
@@ -2203,21 +2148,20 @@ void downloadBoxArt(void)
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxAppear(12, 16, title);
 		}
-		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		pp2d_begin_draw(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
-			sf2d_draw_texture(dialogboxtex, 0, 0);
-			setTextColor(RGBA8(0, 0, 0, 255));
+			pp2d_draw_texture(dialogboxtex, 0, 0);
+			u32 color = BLACK;
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			u32 color = WHITE;
 		}
-		renderText(12, 16, 0.5f, 0.5f, false, title);
-		renderText(12, 32, 0.5f, 0.5f, false, str);
-		renderText(39, 32, 0.5f, 0.5f, false, "/");
-		renderText(44, 32, 0.5f, 0.5f, false, s_boxart_total);
-		renderText(12, 64, 0.5f, 0.5f, false, "Downloading:");
-		renderText(108, 64, 0.5f, 0.5f, false, ba_TID);
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
+		pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
+		pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
+		pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
+		pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
+		pp2d_end_draw();
 
 		downloadBoxArt_internal(ba_TID, ROM_SLOT_1);
 	}
