@@ -719,7 +719,6 @@ static void LoadBNRIcon(const char *filename) {
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
 		bnricontex[idx] = NULL;
-
 		if (!filename) {
 			filename = "romfs:/notextbanner";
 		}
@@ -740,7 +739,6 @@ static void LoadBNRIcon(const char *filename) {
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
 	bnricontex[20] = NULL;
-
 	if (!filename) {
 		filename = "romfs:/notextbanner";
 	}
@@ -768,7 +766,7 @@ static void LoadBoxArt(void) {
 static void LoadBoxArt_WoodTheme(const int idx) {
 	// Selected boxart is on the current page.
 	const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
-	pp2d_load_texture_png(boxarttex[0] , path); // Box art
+	pp2d_load_texture_png(boxarttex[0], path); // Box art
 }
 
 /**
@@ -935,7 +933,7 @@ void draw_volume_slider(size_t *texarray[])
 	u8 volumeLevel = 0;
 	if (!dspfirmfound) {
 		// No DSP Firm.
-		pp2d_draw_texture(texarray[5], 5, 2);
+		pp2d_draw_texture((size_t)texarray[5], 5, 2);
 	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
@@ -949,7 +947,7 @@ void draw_volume_slider(size_t *texarray[])
 		} else if (volumeLevel == 63) {
 			voltex_id = 4;	// 3ds 63, dsi 8  = volume4 texture
 		}
-		pp2d_draw_texture(texarray[voltex_id], 5, 2);
+		pp2d_draw_texture((size_t)texarray[voltex_id], 5, 2);
 	}
 }
 
@@ -1070,7 +1068,7 @@ static void rfhm_callback(APT_HookType hook, void *param)
  * Determine the 3DS cartridge texture to use for Slot-1.
  * @return Cartridge texture.
  */
-static inline size_t *CARTTEX(void)
+static inline size_t *carttex(void)
 {
 	// TODO: 3DS cartridges.
 	switch (gamecardGetType()) {
@@ -1537,12 +1535,12 @@ int main(){
 	pp2d_set_3D(0);
 
 	if(isDemo)
-		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
+		pp2d_load_texture_memory(twloaderlogotex, logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
 	else
-		pp2d_load_texture_memory(TWLOADERLOGOTEX, logo_png, 256, 128); // TWLoader logo on top screen
+		pp2d_load_texture_memory(twloaderlogotex, logo_png, 256, 128); // TWLoader logo on top screen
 	
 	pp2d_begin_draw(GFX_TOP);
-	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
+	pp2d_draw_texture(twloaderlogotex, 144, 112); // 400 - height, 200 - width
 
 	Result res = fontEnsureMapped();
 
@@ -1639,7 +1637,7 @@ int main(){
 		vertext_xPos = 336;
 	}
 	
-	pp2d_draw_texture(TWLOADERLOGOTEX, 144, 112); // 400 - height, 200 - width
+	pp2d_draw_texture(twloaderlogotex, 144, 112); // 400 - height, 200 - width
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
 
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);

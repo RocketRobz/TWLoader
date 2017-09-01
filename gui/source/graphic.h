@@ -17,73 +17,68 @@
 #define bnricontexnum 12 
 #define bnricontexlaunch 13 
 #define boxarttexnum 14 
-//#define bnricontex[21] 15 
-#define bnricontex 15 
-//#define boxarttex[6] 16 
-#define boxarttex 16 
-#define boxfulltex 17 
-#define shoulderltex 18 
-#define shoulderrtex 19 
-//#define voltex[6] 20 
-#define voltex 20 
-#define batteryIcon 21 
-#define batterychrgtex 22 
-#define batterytex 23 
-#define cartnulltex 24 
-#define cartntrtex 25 
-#define carttwltex 26
-#define cartctrtex 27
-#define bottomtex 28
-#define scrollbartex 29
-#define buttonarrowtex 30
-#define bubbletex 31
-#define r4loadingtex 32
-#define toplogotex 33
-#define toptex 34
-#define topbgtex 35
-#define iconstex 36
-#define sdicontex 37
-#define flashcardicontex 38
-#define gbaicontex 39
-#define smallsettingsicontex 40
-#define iconnulltex 41
-#define homeicontex 42
-#define bottomlogotex 43
-#define bipstex 44
-#define scrollwindowtex 45
-#define scrollwindowfronttex 46
-#define dotcircletex 47
-#define startbordertex 48
-#define settingsicontex 49
-#define getfcgameboxtex 50
-#define boxemptytex 51
-#define bracetex 52
-#define ndslogotex 53
-#define itex 54
-#define topotex 55
-#define bottomotex 56
-#define bigotex 57
-#define nintendotex 58
-#define hstexttex 59
-#define hstouchtex 60
-#define hstex 61
-#define wipetex 62
-#define card_icon 63
-#define whomeicontex 64
-//#define setvoltex[6] 65
-#define setvoltex 65
-#define setbatterychrgtex 66
-//#define setbatterytex[6] 67
-#define setbatterytex 67
-#define dsboottex 68
-#define dsiboottex 69
-#define invdsboottex 70
-#define invdsiboottex 71
-#define dshstex 72
-#define dsihstex 73
-#define disabledtex 74
-#define settingstex 75
-#define settingslogooadertex 76
+//static size_t bnricontex[] = {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
+//static size_t boxarttex[] = {36, 37, 38, 39, 40, 41};
+#define boxfulltex 42 
+#define shoulderltex 43 
+#define shoulderrtex 44
+//static size_t voltex[] = {45, 46, 47, 48, 49, 50};
+#define batteryIcon 51 
+#define batterychrgtex 52 
+#define batterytex 53
+#define cartnulltex 54
+#define cartntrtex 55 
+#define carttwltex 56
+#define cartctrtex 57
+#define bottomtex 58
+#define scrollbartex 59
+#define buttonarrowtex 60
+#define bubbletex 61
+#define r4loadingtex 62
+#define toplogotex 63
+#define toptex 64
+#define topbgtex 65
+#define iconstex 66
+#define sdicontex 67
+#define flashcardicontex 68
+#define gbaicontex 69
+#define smallsettingsicontex 70
+#define iconnulltex 71
+#define homeicontex 72
+#define bottomlogotex 73
+#define bipstex 74
+#define scrollwindowtex 75
+#define scrollwindowfronttex 76
+#define dotcircletex 77
+#define startbordertex 78
+#define settingsicontex 79
+#define getfcgameboxtex 80
+#define boxemptytex 81
+#define bracetex 82
+#define ndslogotex 83
+#define itex 84
+#define topotex 85
+#define bottomotex 86
+#define bigotex 87
+#define nintendotex 88
+#define hstexttex 89
+#define hstouchtex 90
+#define hstex 91
+#define wipetex 92
+#define card_icon 93
+#define whomeicontex 94
+//static size_t setvoltex[] = {95, 96, 97, 98, 99, 100};
+#define setbatterychrgtex 101
+//static size_t setbatterytex[] = {102, 103, 104, 105, 106, 107};
+#define dsboottex 108
+#define dsiboottex 109
+#define invdsboottex 110
+#define invdsiboottex 111
+#define dshstex 112
+#define dsihstex 113
+#define disabledtex 114
+#define settingstex 115
+#define settingslogooadertex 116
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)
@@ -92,7 +87,7 @@
 #define WHITE RGBA8(255, 255, 255, 255)
 #define GRAY RGBA8(127, 127, 127, 255)
 #define BLUE RGBA8(0, 0, 255, 255)
-#define GREEN RGBA(0, 255, 0, 255)		
+#define GREEN RGBA8(0, 255, 0, 255)		
 
 #define TIME RGBA8(16, 0, 0, 223)
 #define DSSPLASH RGBA8(61, 161, 191, 255)
