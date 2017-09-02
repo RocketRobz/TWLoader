@@ -166,7 +166,7 @@ void settingsDrawTopScreen(void)
 		settingsLoadTextures();
 	}
 	update_battery_level(setbatterychrgtex, setbatterytex);
-
+/**
 	// Draw twice; once per 3D framebuffer.
 //	for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 //		pp2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
@@ -265,7 +265,8 @@ void settingsDrawTopScreen(void)
 		}
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-	}
+//	}
+**/
 	if(demofade) {
 		demofadealpha += 5;
 		if (demofadealpha == 255) {
@@ -334,7 +335,7 @@ void settingsDrawBottomScreen(void)
 		drawRectangle(i*4, 218, 2, 1, GRAY);
 	
 	if (subscreenmode < 4) {
-		u32 colorssm = WHITE
+		u32 colorssm = WHITE;
 		if (subscreenmode == 0) {
 			colorssm = SET_ALPHA(color_data->color, 255);
 		}

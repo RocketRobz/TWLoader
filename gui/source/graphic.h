@@ -3,82 +3,82 @@
 #include <citro3d.h>
 
 // Textures
-#define rectangletex 1
-#define dialogboxtex 2
-#define dboxtex_iconbox 3
-#define dboxtex_button 4
-#define dboxtex_buttonback 5
-#define twloaderlogotex 6
-#define settingslogotex 7 
-#define settingslogotwltex 8 
-#define settingslogoloadertex 9 
-#define settingslogodemotex 10 
-#define slot1boxarttex 11 
-#define bnricontexnum 12 
-#define bnricontexlaunch 13 
-#define boxarttexnum 14 
-//static size_t bnricontex[] = {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-//static size_t boxarttex[] = {36, 37, 38, 39, 40, 41};
-#define boxfulltex 42 
-#define shoulderltex 43 
-#define shoulderrtex 44
-//static size_t voltex[] = {45, 46, 47, 48, 49, 50};
-#define batteryIcon 51 
-#define batterychrgtex 52 
-#define batterytex 53
-#define cartnulltex 54
-#define cartntrtex 55 
-#define carttwltex 56
-#define cartctrtex 57
-#define bottomtex 58
-#define scrollbartex 59
-#define buttonarrowtex 60
-#define bubbletex 61
-#define r4loadingtex 62
-#define toplogotex 63
-#define toptex 64
-#define topbgtex 65
-#define iconstex 66
-#define sdicontex 67
-#define flashcardicontex 68
-#define gbaicontex 69
-#define smallsettingsicontex 70
-#define iconnulltex 71
-#define homeicontex 72
-#define bottomlogotex 73
-#define bipstex 74
-#define scrollwindowtex 75
-#define scrollwindowfronttex 76
-#define dotcircletex 77
-#define startbordertex 78
-#define settingsicontex 79
-#define getfcgameboxtex 80
-#define boxemptytex 81
-#define bracetex 82
-#define ndslogotex 83
-#define itex 84
-#define topotex 85
-#define bottomotex 86
-#define bigotex 87
-#define nintendotex 88
-#define hstexttex 89
-#define hstouchtex 90
-#define hstex 91
-#define wipetex 92
-#define card_icon 93
-#define whomeicontex 94
-//static size_t setvoltex[] = {95, 96, 97, 98, 99, 100};
-#define setbatterychrgtex 101
-//static size_t setbatterytex[] = {102, 103, 104, 105, 106, 107};
-#define dsboottex 108
-#define dsiboottex 109
-#define invdsboottex 110
-#define invdsiboottex 111
-#define dshstex 112
-#define dsihstex 113
-#define disabledtex 114
-#define settingstex 115
-#define settingslogooadertex 116
+extern size_t rectangletex;
+extern size_t dialogboxtex;
+extern size_t dboxtex_iconbox;
+extern size_t dboxtex_button;
+extern size_t dboxtex_buttonback;
+extern size_t twloaderlogotex;
+extern size_t settingslogotex;
+extern size_t settingslogotwltex; 
+extern size_t settingslogoloadertex; 
+extern size_t settingslogodemotex; 
+extern size_t slot1boxarttex; 
+extern size_t bnricontexnum; 
+extern size_t bnricontexlaunch; 
+extern size_t boxarttexnum; 
+extern size_t bnricontex[21];
+extern size_t boxarttex[6];
+extern size_t boxfulltex; 
+extern size_t shoulderLtex; 
+extern size_t shoulderRtex;
+extern size_t voltex[6];
+extern size_t batteryIcon; 
+extern size_t batterychrgtex; 
+extern size_t batterytex[6];
+extern size_t cartnulltex;
+extern size_t cartntrtex; 
+extern size_t carttwltex;
+extern size_t cartctrtex;
+extern size_t bottomtex ;
+extern size_t scrollbartex;
+extern size_t buttonarrowtex;
+extern size_t bubbletex;
+extern size_t r4loadingtex;
+extern size_t toplogotex;
+extern size_t toptex;
+extern size_t topbgtex;
+extern size_t iconstex;
+extern size_t sdicontex;
+extern size_t flashcardicontex;
+extern size_t gbaicontex;
+extern size_t smallsettingsicontex;
+extern size_t iconnulltex;
+extern size_t homeicontex;
+extern size_t bottomlogotex;
+extern size_t bipstex;
+extern size_t scrollwindowtex;
+extern size_t scrollwindowfronttex;
+extern size_t dotcircletex;
+extern size_t startbordertex;
+extern size_t settingsicontex;
+extern size_t getfcgameboxtex;
+extern size_t boxemptytex;
+extern size_t bracetex;
+extern size_t ndslogotex;
+extern size_t itex;
+extern size_t topotex;
+extern size_t bottomotex;
+extern size_t bigotex;
+extern size_t nintendotex;
+extern size_t hstexttex;
+extern size_t hstouchtex;
+extern size_t hstex;
+extern size_t wipetex;
+extern size_t card_icon;
+extern size_t whomeicontex;
+extern size_t setvoltex[6];
+extern size_t setbatterychrgtex;
+extern size_t setbatterytex[6];
+extern size_t dsboottex;
+extern size_t dsiboottex;
+extern size_t invdsboottex;
+extern size_t invdsiboottex;
+extern size_t dshstex;
+extern size_t dsihstex;
+extern size_t disabledtex;
+extern size_t settingstex;
+extern size_t settingslogooadertex;
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)
@@ -92,6 +92,7 @@
 #define TIME RGBA8(16, 0, 0, 223)
 #define DSSPLASH RGBA8(61, 161, 191, 255)
 
+void initTextures(void);
 void pp2d_draw_texture_scale_blend(size_t id, int x, int y, float scaleX, float scaleY, u32 color);
 void pp2d_draw_texture_part_blend(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, u32 color);
 void pp2d_draw_texture_part_scale(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, float scaleX, float scaleY);
