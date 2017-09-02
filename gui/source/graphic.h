@@ -1,6 +1,7 @@
 #pragma once
 #include <3ds.h>
 #include <citro3d.h>
+#include "pp2d/pp2d/pp2d.h"
 
 // Textures
 extern size_t rectangletex;

@@ -23,6 +23,7 @@ using std::vector;
 
 #include <3ds.h>
 #include "pp2d/pp2d/pp2d.h"
+#include "graphic.h"
 
 #include "json/json.h"
 

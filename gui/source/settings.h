@@ -3,8 +3,8 @@
 #define TWLOADER_SETTINGS_H
 
 #include <string>
-#include "pp2d/pp2d/pp2d.h"
 #include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
 
 /** Settings **/
 
