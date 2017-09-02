@@ -3065,7 +3065,7 @@ int main(){
 						if (sdfile_count != 0)
 							pp2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						else
-							pp2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
 					}
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (SD Card)");
 					Ypos += 39;
@@ -3080,7 +3080,7 @@ int main(){
 						if (fcfile_count != 0)
 							pp2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						else
-							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
 					}
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (Flashcard)");
 					Ypos += 39;
@@ -3453,7 +3453,7 @@ int main(){
 					if (settings.ui.custombot)
 						pp2d_draw_texture_part(bottomtex, 128, 112, 128, 112, 64, 80);
 					else
-						pp2d_draw_texture_part_blend(bottomtex, 128, 112, 128, 112, 64, 80, SET_ALPHA(menucolor, 255));  // Cover selected game/app
+						pp2d_draw_texture_part_blend(bottomtex, 128, 112, 128, 112, 64, 80, (u32) SET_ALPHA(menucolor, 255));  // Cover selected game/app
 					if (settings.ui.cursorPosition == -2) {
 						pp2d_draw_texture(settingsicontex, 128, titleboxYmovepos-1); // Draw settings box that moves up
 					} else if (settings.ui.cursorPosition == -1) {
