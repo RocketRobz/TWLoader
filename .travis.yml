@@ -13,16 +13,6 @@ before_install:
 
 install:
   - sudo perl devkitARMupdate.pl  
-  - wget --no-check-certificate https://codeload.github.com/smealum/ctrulib/zip/master -O /tmp/ctrulib.zip
-  - unzip /tmp/ctrulib.zip
-  - cd ctrulib-master/libctru
-  - make && sudo make install
-  - cd ../..
-  - wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/master -O /tmp/citro3d.zip
-  - unzip /tmp/citro3d.zip
-  - cd citro3d-master
-  - make && sudo make install
-  - cd ..  
   - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
   - sudo cp -R portlibs ${DEVKITPRO}/
