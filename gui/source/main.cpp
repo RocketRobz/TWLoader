@@ -927,12 +927,12 @@ bool dspfirmfound = false;
  * The Dsi has 8 positions for volume and the 3ds has 64
  * Remap volume to simulate the 8 positions
  */
-void draw_volume_slider(size_t *texarray[])
+void draw_volume_slider(size_t texarray[])
 {
 	u8 volumeLevel = 0;
 	if (!dspfirmfound) {
 		// No DSP Firm.
-		pp2d_draw_texture((size_t)texarray[5], 5, 2);
+		pp2d_draw_texture(texarray[5], 5, 2);
 	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
@@ -946,7 +946,7 @@ void draw_volume_slider(size_t *texarray[])
 		} else if (volumeLevel == 63) {
 			voltex_id = 4;	// 3ds 63, dsi 8  = volume4 texture
 		}
-		pp2d_draw_texture((size_t)texarray[voltex_id], 5, 2);
+		pp2d_draw_texture(texarray[voltex_id], 5, 2);
 	}
 }
 
@@ -1532,8 +1532,6 @@ int main(){
 	pp2d_init();
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 	pp2d_set_3D(0);
-	
-	initTextures();
 	
 	if(isDemo)
 		pp2d_load_texture_memory(twloaderlogotex, (void*) logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
