@@ -1527,20 +1527,19 @@ void dsiMenuTheme_loadingScreen() {
 	pp2d_draw_texture(bubbletex, 0, 0);
 	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
 }
-
 int main(){
 	pp2d_init();
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 	pp2d_set_3D(0);
 	
+	pp2d_begin_draw(GFX_TOP);
 	if(isDemo)
 		pp2d_load_texture_memory(twloaderlogotex, (void*) logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
 	else
 		pp2d_load_texture_memory(twloaderlogotex, (void*) logo_png, 256, 128); // TWLoader logo on top screen
 	
-	pp2d_begin_draw(GFX_TOP);
-	pp2d_draw_texture(twloaderlogotex, 144, 112); // 400 - height, 200 - width
-
+	pp2d_draw_texture(twloaderlogotex, 72, 56); // 400/2 - height/2, 240/2 - width/2
+	
 	Result res = fontEnsureMapped();
 
 	if (R_FAILED(res))
@@ -1636,9 +1635,9 @@ int main(){
 		vertext_xPos = 336;
 	}
 	
-	pp2d_draw_texture(twloaderlogotex, 144, 112); // 400 - height, 200 - width
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
-
+	pp2d_end_draw();
+	
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
 	/** Speed up New 3DS only. **/
@@ -1670,6 +1669,7 @@ int main(){
 	LoadMenuColor();
 	LoadBottomImage();
 	
+	pp2d_begin_draw(GFX_BOTTOM);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
@@ -1743,10 +1743,14 @@ int main(){
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
+		pp2d_end_draw();
+		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
+		pp2d_end_draw();
+		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
 			"Dumping DSP...");
 		dumpDsp();
@@ -1759,10 +1763,14 @@ int main(){
 			
 			for (int i = 0; i < 90; i++) {
 				if (!isDemo) {
+					pp2d_end_draw();
+					pp2d_begin_draw(GFX_BOTTOM);
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.\n"
 						"(NTR/TWL mode will still have sound.)");
 				} else {
+					pp2d_end_draw();
+					pp2d_begin_draw(GFX_BOTTOM);
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.");
 				}
@@ -1773,6 +1781,8 @@ int main(){
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
+		pp2d_end_draw();
+		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
@@ -1781,6 +1791,8 @@ int main(){
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
+		pp2d_end_draw();
+		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
 		
 		bgm_menu = new sound(musicpath);
@@ -1869,6 +1881,7 @@ int main(){
 		if (settings.ui.theme == THEME_DSIMENU && aptMainLoop()) fade_whiteToBlack();
 	}
 
+	pp2d_begin_draw(GFX_BOTTOM);
 	if (aptMainLoop()) {
 		if (settings.ui.theme >= THEME_R4) {
 			pp2d_draw_texture(r4loadingtex, 40, 0);
@@ -1903,7 +1916,7 @@ int main(){
 
 	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
-		pp2d_begin_draw(GFX_TOP);
+		pp2d_draw_on(GFX_TOP);
 		
 		// Scan hid shared memory for input events
 		hidScanInput();

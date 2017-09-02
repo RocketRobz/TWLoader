@@ -687,7 +687,7 @@ void DownloadTWLoaderCIAs(void) {
 	bool yestoupdate = false;
 	
 	while(checkanswer) {
-		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM);
 		static const char gui_msg[] =
 			"An update for TWLoader is available.\n"
 			"Do you want to update?\n"
@@ -723,7 +723,7 @@ void DownloadTWLoaderCIAs(void) {
 			checkanswer = false;	// Exit loop
 		}
 	}
-	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_BOTTOM);
 	if(yestoupdate) {
 		int resGUI = -1;
 		int resGUI_3DSX = -1;
@@ -771,8 +771,10 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_texture(settingstex, 0, 0);
 					pp2d_draw_texture(dialogboxtex, 0, 0);
 				}
+				pp2d_end_draw();
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
+				pp2d_begin_draw(GFX_BOTTOM);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, 3DSX)\n"
@@ -800,9 +802,11 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_texture(settingstex, 0, 0);
 					pp2d_draw_texture(dialogboxtex, 0, 0);
 				}
+				pp2d_end_draw();
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 1))\n"
@@ -827,8 +831,10 @@ void DownloadTWLoaderCIAs(void) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
 			}
+			pp2d_end_draw();
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnandstg2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(SD stage of (part 1 of) TWLNAND side)\n"
@@ -841,8 +847,10 @@ void DownloadTWLoaderCIAs(void) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
 			}
+			pp2d_end_draw();
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char twlnand2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 2))\n"
@@ -867,12 +875,14 @@ void DownloadTWLoaderCIAs(void) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
 			}
+			pp2d_end_draw();
 		} 
 		if(resGUI_SMDH == 0) {
 			// TODO (3dsx version update)
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
@@ -880,7 +890,9 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
 				}
 			}
+			pp2d_end_draw();
 		} else if (settings.ui.filetype == 1) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			if(resGUI_3DSX != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
@@ -888,8 +900,10 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
 				}
 			}
+			pp2d_end_draw();
 		}
 		if(resGUI == 0 && updateACE_RPG) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest Ace_RPG version...\n"
 				"(ace_rpg.nds)\n"
@@ -909,8 +923,10 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
+			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest GBARunner2 version...\n"
 				"(GBARunner2.nds)\n"
@@ -930,8 +946,10 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
+			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest loadcard_dstt version...\n"
 				"(loadcard_dstt.nds)\n"
@@ -951,8 +969,10 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
+			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateR4) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			static const char msg[] =
 				"Now downloading latest R4 version...\n"
 				"(r4.nds)\n"
@@ -972,16 +992,21 @@ void DownloadTWLoaderCIAs(void) {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
 				}
 			}
+			pp2d_end_draw();
 		}
-		if (resGUI == 0) {	
+		if (resGUI == 0) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
 			run = false;
+			pp2d_end_draw();
 		}
 	} else {
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else for (int i = 0; i < 15; i++) {
+			pp2d_begin_draw(GFX_BOTTOM);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
+			pp2d_end_draw();
 		}
 	}
 }
@@ -1305,6 +1330,7 @@ int DownloadMissingFiles(void) {
  * Update nds-bootstrap to the latest unofficial build.
  */
 void UpdateBootstrapUnofficial(void) {
+	pp2d_begin_draw(GFX_BOTTOM);
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
@@ -1323,12 +1349,14 @@ void UpdateBootstrapUnofficial(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear(12, 16, "Done!");
 	}
+	pp2d_end_draw();
 }
 
 /**
  * Update nds-bootstrap to the latest release build.
  */
 void UpdateBootstrapRelease(void) {
+	pp2d_begin_draw(GFX_BOTTOM);
 	static const char title[] = "Now updating bootstrap (Release)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
@@ -1347,6 +1375,7 @@ void UpdateBootstrapRelease(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxDisappear(12, 16, "Done!");
 	}
+	pp2d_end_draw();
 }
 
 /**
@@ -1733,7 +1762,8 @@ void downloadSlot1BoxArt(const char* TID)
 void downloadBoxArt(void)
 {
 	char path[256];
-
+	pp2d_end_draw();
+	
 	// First, check if we're missing any boxart on the SD card.
 	unordered_set<u32> boxart_all_tids;	// Title IDs of all ROM files.
 	vector<u32> boxart_dl_tids;	// Title IDs of boxart to download.
@@ -1820,7 +1850,8 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			pp2d_draw_on(GFX_BOTTOM);
+			
+			pp2d_begin_draw(GFX_BOTTOM);
 			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -1918,7 +1949,7 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			pp2d_draw_on(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM);
 			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -1992,7 +2023,7 @@ void downloadBoxArt(void)
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxAppear(12, 16, title);
 		}
-		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM);
 		u32 color = WHITE;
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(dialogboxtex, 0, 0);
