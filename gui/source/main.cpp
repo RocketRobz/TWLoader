@@ -5028,12 +5028,13 @@ int main(){
 	hidExit();
 	srvExit();
 	romfsExit();
-	sdmcExit();
+	aptExit();
 	ptmuxExit();
 	ptmuExit();
 	amExit();
 	cfguExit();
-	aptExit();
 	if (logEnabled) LogFM("Main", "All services are closed and returned to HOME Menu");
+	sdmcExit();
+
 	return 0;
 }
