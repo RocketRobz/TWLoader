@@ -39,7 +39,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"TWLoader filetype",										// "TWLoader filetype"
 	"Update TWLoader",											// "Update TWLoader"
 	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
-	"Health and Safety message",								// "Health and Safety message"
+	"H&S Message",												// "Health and Safety message"
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 

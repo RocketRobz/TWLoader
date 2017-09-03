@@ -2584,13 +2584,16 @@ int main(){
 						if (settings.ui.topborder) {
 							pp2d_draw_texture_blend(toptex, 400/2 - 400/2, 240/2 - 240/2, menucolor);
 							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+							DrawDate(264.0f, 1.0f, 0.58f, 0.58f, BLACK);
 						} else {
 							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
+							DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 						}
 					} else {
 						pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+						DrawDate(264.0f, 1.0f, 0.58f, 0.58f, BLACK);
 					}
-					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
+					
 
 					draw_volume_slider(voltex);
 					pp2d_draw_texture(batteryIcon, 371, 2);
@@ -5070,6 +5073,7 @@ int main(){
 		ndspExit();
 	}
 
+	if (logEnabled) LogFM("Main", "Stoping pp2d...");
 	pp2d_exit();
 	
 	if (logEnabled) LogFM("Main", "All services are closing and returning to HOME Menu");
