@@ -3233,7 +3233,7 @@ int main(){
 						
 						pp2d_draw_text(96, 220, 0.60f, 0.60f, WHITE, selectiontext);
 					}
-//					DrawDate(2, 220, 0.60f, 0.60f, false);
+					DrawDate(2, 220, 0.60f, 0.60f, false);
 					pp2d_draw_text(274, 220, 0.60f, 0.60f, WHITE, RetTime(true).c_str());
 				} else {
 					pp2d_draw_texture(bottomtex, 320/2 - 320/2, 240/2 - 240/2);
