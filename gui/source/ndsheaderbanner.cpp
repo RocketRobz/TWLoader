@@ -228,6 +228,32 @@ unsigned int next_pow2(unsigned int v)
 	return v >= 64 ? v : 64;
 }
 
+typedef struct {
+	C3D_Tex tex;
+	int width;
+	int height;
+} ndsicon;
+
+ndsicon *ndsicon_create_texture(int w, int h)
+{
+	// Based on sf2d_create_texture
+	ndsicon *texture = (ndsicon *) calloc(1, sizeof(*texture));
+	if (!texture) return NULL;
+
+	bool success = false;
+	texture->width = w;
+	texture->height = h;
+	success = C3D_TexInit(&texture->tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
+
+	if (!success) {
+		free(texture);
+		return NULL;
+	}
+
+	C3D_TexSetWrap(&texture->tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
+	return texture;
+}
+
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
@@ -267,12 +293,7 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Create an RGB5A1 texture directly.
-	// Based on sf2d_texture.c.
-
-	C3D_Tex tex;
-	C3D_TexInit(&tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
-
-	C3D_TexSetWrap(&tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
+	ndsicon *texture = ndsicon_create_texture(w,h);
 	
 	//Tile the texture for the GPU.
 	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
@@ -280,19 +301,19 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
 
 	GSPGPU_FlushDataCache(textureData, (w*h)*2);
-	GSPGPU_FlushDataCache(tex.data, tex.size);
+	GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
 
 	C3D_SafeDisplayTransfer(
 		(u32*)textureData,
 		GX_BUFFER_DIM(w, h),
-		(u32*)tex.data,
-		GX_BUFFER_DIM(tex.width, tex.height),
+		(u32*)texture->tex.data,
+		GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
 		flags
 	);
 
 	gspWaitForPPF();
 
-	return tex.data;
+	return texture->tex.data;
 }
 
 /**

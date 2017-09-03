@@ -326,7 +326,7 @@ void DialogBoxDisappear(int x, int y, const char *text) {
 	int movespeed = 1;
 	for (int i = 0; i < 240; i += movespeed) {
 		movespeed += 1;
-		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(settingstex, 0, 0);
 		}
@@ -1514,7 +1514,7 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 }
 
 void dsiMenuTheme_loadingScreen() {
-	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_BOTTOM);
 	if (settings.ui.custombot == 1)
 		pp2d_draw_texture(bottomtex, 320/2 - 320/2, 240/2 - 240/2);
 	else
@@ -1526,6 +1526,7 @@ void dsiMenuTheme_loadingScreen() {
 
 	pp2d_draw_texture(bubbletex, 0, 0);
 	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
+	pp2d_end_draw();
 }
 int main(){
 	pp2d_init();
@@ -1540,6 +1541,7 @@ int main(){
 	
 	pp2d_draw_texture(twloaderlogotex, 72, 56); // 400/2 - height/2, 240/2 - width/2
 	
+	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 	Result res = fontEnsureMapped();
 
 	if (R_FAILED(res))
@@ -1635,6 +1637,7 @@ int main(){
 		vertext_xPos = 336;
 	}
 	
+	pp2d_draw_texture(twloaderlogotex, 72, 56); // 400/2 - height/2, 240/2 - width/2
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
 	pp2d_end_draw();
 	
@@ -1671,6 +1674,7 @@ int main(){
 	
 	pp2d_begin_draw(GFX_BOTTOM);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
+	pp2d_end_draw();
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
 
@@ -1743,17 +1747,17 @@ int main(){
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
-		pp2d_end_draw();
 		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
+		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		pp2d_end_draw();
 		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
 			"Dumping DSP...");
 		dumpDsp();
+		pp2d_end_draw();
 		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 			ndspInit();
 			dspfirmfound = true;
@@ -1762,18 +1766,16 @@ int main(){
 			settings.ui.showbootscreen = 0;
 			
 			for (int i = 0; i < 90; i++) {
+				pp2d_begin_draw(GFX_BOTTOM);
 				if (!isDemo) {
-					pp2d_end_draw();
-					pp2d_begin_draw(GFX_BOTTOM);
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.\n"
 						"(NTR/TWL mode will still have sound.)");
 				} else {
-					pp2d_end_draw();
-					pp2d_begin_draw(GFX_BOTTOM);
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
 						"Running without sound.");
 				}
+				pp2d_end_draw();
 			}
 		}
 	}
@@ -1781,9 +1783,9 @@ int main(){
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
-		pp2d_end_draw();
 		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
+		pp2d_end_draw();
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
 		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
@@ -1791,9 +1793,9 @@ int main(){
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
-		pp2d_end_draw();
 		pp2d_begin_draw(GFX_BOTTOM);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
+		pp2d_end_draw();
 		
 		bgm_menu = new sound(musicpath);
 		sfx_launch = new sound("romfs:/sounds/launch.wav", 2, false);
@@ -1804,11 +1806,15 @@ int main(){
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
+	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	
 	// Download missing files
 	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 		// Nothing
 	}
 
+	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	
 	// Scan the ROM directories.
 	scanRomDirectories();
 
@@ -1824,6 +1830,8 @@ int main(){
 	if (checkWifiStatus()) {
 		downloadBoxArt();
 	}
+	
+	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
@@ -1867,6 +1875,7 @@ int main(){
 	}
 
 	showdialogbox = false;
+	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
 	
 	if (settings.ui.theme >= THEME_R4)
 		menu_ctrlset = CTRL_SET_MENU;
@@ -1881,13 +1890,22 @@ int main(){
 		if (settings.ui.theme == THEME_DSIMENU && aptMainLoop()) fade_whiteToBlack();
 	}
 
-	pp2d_begin_draw(GFX_BOTTOM);
 	if (aptMainLoop()) {
 		if (settings.ui.theme >= THEME_R4) {
+			// Top
+			pp2d_begin_draw(GFX_TOP);
 			pp2d_draw_texture(r4loadingtex, 40, 0);
+			pp2d_end_draw();
 			
+			// Clear bottom
+			pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
 		} else {
+			// Clear Top
+			pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+			
+			// Bottom
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
+			pp2d_end_draw();
 		}
 	}
 	
@@ -1916,7 +1934,7 @@ int main(){
 
 	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
-		pp2d_draw_on(GFX_TOP);
+		pp2d_begin_draw(GFX_TOP);
 		
 		// Scan hid shared memory for input events
 		hidScanInput();
@@ -2295,8 +2313,8 @@ int main(){
 			}
 			
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
-/**				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-//					pp2d_draw_on(GFX_TOP);
+//				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+					pp2d_draw_on(GFX_TOP);
 					pp2d_draw_texture(topbgtex, 40, 0);
 					if (menu_ctrlset == CTRL_SET_MENU) {
 						if ((woodmenu_cursorPosition == 1) && !isDemo) {
@@ -2323,14 +2341,17 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+14, 62);
+//									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+14, 62);
+									pp2d_draw_texture(slot1boxarttex, 0+40+14, 62);
 									break;
 								case 1:
 								case 2:
-									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
+//									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+176, 113);
+									pp2d_draw_texture(slot1boxarttex, 0+40+176, 113);
 									break;
 								case 3:
-									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+164, 38);
+//									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+40+164, 38);
+									pp2d_draw_texture(slot1boxarttex, 0+40+164, 38);
 									break;
 							}
 						}
@@ -2363,14 +2384,17 @@ int main(){
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
+//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
+									pp2d_draw_texture(boxarttexnum, 0+40+14, 62);
 									break;
 								case 1:
 								case 2:
-									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
+//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
+									pp2d_draw_texture(boxarttexnum, 0+40+176, 113);
 									break;
 								case 3:
-									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
+//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
+									pp2d_draw_texture(boxarttexnum, 0+40+164, 38);
 									break;
 							}
 						}
@@ -2398,9 +2422,10 @@ int main(){
 					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
 					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
 //					pp2d_end_draw();
-//				}**/
+//				}
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
+					pp2d_draw_on(GFX_TOP);
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
@@ -2453,6 +2478,7 @@ int main(){
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					updatetopscreen = false;
+//					pp2d_end_draw();
 				}
 			} else {	// DSi-Menu theme
 				if (!settings.twl.forwarder) {
@@ -2474,17 +2500,21 @@ int main(){
 
 				update_battery_level(batterychrgtex, batterytex);
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-//					pp2d_draw_on(GFX_TOP);
-//					if (settings.ui.theme == THEME_3DSMENU) {
+					pp2d_draw_on(GFX_TOP);
+					if (settings.ui.theme == THEME_3DSMENU) {
 //						pp2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
-//					} else {
+						pp2d_draw_texture(topbgtex, 0-11, 0);
+					} else {
 //						pp2d_draw_texture_scale(topbgtex, offset3D[topfb].topbg-12, 0, 1.32, 1);
-//					}
+						pp2d_draw_texture_scale(topbgtex, 0-12, 0, 1.32, 1);
+					}
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
 							if (loadboxartnum != pagemax_ba) {
 								if (fadealpha == 0) {
+									pp2d_draw_on(GFX_BOTTOM);
 									pp2d_draw_text(112, 104, 0.50, 0.50, WHITE, "Storing box art paths...");
+									pp2d_draw_on(GFX_TOP);
 								}
 							} else {
 								boxartXpos = 136;
@@ -2492,6 +2522,8 @@ int main(){
 									if (settings.ui.cursorPosition < 2) {
 //										pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
 //										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
+										pp2d_draw_texture(slot1boxarttex, 0+boxartXpos-144+boxartXmovepos, 240/2 - 115/2); // Draw box art
+										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(slot1boxarttex, 0+boxartXpos-144+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
 									}
 								}
 								for (boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
@@ -2499,8 +2531,10 @@ int main(){
 										ChangeBoxArtNo();
 										// Draw box art
 //										pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - boxarttexnum->height/2);
+										pp2d_draw_texture(boxarttexnum, 0+boxartXpos+boxartXmovepos, 240/2 - 115/2);
 //										// Draw box art's reflection
 //										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255));
+										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_scale_blend(boxarttexnum, 0+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255));
 										boxartXpos += 144;
 									}
 								}
@@ -2510,16 +2544,22 @@ int main(){
 											boxartnum = settings.ui.cursorPosition;
 											ChangeBoxArtNo();
 //											pp2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
+											pp2d_draw_texture_part(topbgtex, 0+136, 63, 0+104, 63, 128, 115*2);
 											// Draw moving box art
 //											pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+136, boxartYmovepos);
+											pp2d_draw_texture(boxarttexnum, 0+136, boxartYmovepos);
 											// Draw moving box art's reflection
 //											pp2d_draw_texture_scale_blend(boxarttexnum, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 255));
+											pp2d_draw_texture_scale_blend(boxarttexnum, 0+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 255));
 										}
 									} else if (!settings.twl.forwarder && settings.ui.cursorPosition == -1) {
 										if (settings.ui.theme != THEME_3DSMENU) {
 //											pp2d_draw_texture_part(topbgtex, offset3D[topfb].boxart+136, 63, offset3D[topfb].boxart+104, 63, 128, 115*2);
 //											pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+136, boxartYmovepos); // Draw moving box art
 //											pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw moving box art's reflection
+											pp2d_draw_texture_part(topbgtex, 0+136, 63, 0+104, 63, 128, 115*2);
+											pp2d_draw_texture(slot1boxarttex, 0+136, boxartYmovepos); // Draw moving box art
+											pp2d_draw_texture_scale_blend(slot1boxarttex, 0+136, boxartreflYmovepos, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw moving box art's reflection
 										}
 									}
 								}
@@ -2532,12 +2572,10 @@ int main(){
 								if (settings.ui.cursorPosition < 2) {
 //									pp2d_draw_texture(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - slot1boxarttex->height/2); // Draw box art
 //									pp2d_draw_texture_scale_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
+									pp2d_draw_texture(slot1boxarttex, 0+boxartXpos+boxartXmovepos, 240/2 - 115/2); // Draw box art
+									pp2d_draw_texture_scale_blend(slot1boxarttex, 0+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
 								}
-							} else {
-								// Nothing
 							}
-						} else {
-							// Nothing
 						}
 					}
 					if (settings.ui.theme != THEME_3DSMENU) {
@@ -2550,7 +2588,7 @@ int main(){
 					} else {
 						pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
 					}
-//					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
+					DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
 
 					draw_volume_slider(voltex);
 					pp2d_draw_texture(batteryIcon, 371, 2);
@@ -3010,6 +3048,7 @@ int main(){
 				colortexloaded_bot = true;
 			}
 
+			pp2d_draw_on(GFX_BOTTOM);
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (wood_ndsiconscaletimer == 60) {
 					// Scale icon at 30fps
@@ -4978,6 +5017,7 @@ int main(){
 			}
 			break;
 		}
+		pp2d_end_draw();
 	}	// aptMainLoop
 
 	// Unregister the "returned from HOME Menu" handler.

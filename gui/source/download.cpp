@@ -1145,16 +1145,16 @@ int DownloadMissingFiles(void) {
 				strNames.clear();
 				
 				struct stat st;
-				pp2d_draw_on(GFX_BOTTOM);
 				
-				if (!checkTWLNANDSide()) {					
+				if (!checkTWLNANDSide()) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char twlnand_msg[] =
 						"Now installing missing CIA...\n"
 						"(TWLNAND side CIA (part 1))\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand_msg);
-
+					pp2d_end_draw();
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
 						// Use root/cia folder instead
@@ -1164,18 +1164,22 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");							
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (!checkTWLNANDSide2()) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char twlnand2_msg[] =
 						"Now downloading latest TWLoader version...\n"
 						"(TWLNAND side CIA (part 2))\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand2_msg);
-
+					pp2d_end_draw();
+					
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
 						// Use root/cia folder instead
@@ -1185,137 +1189,184 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/TWLD.twldr", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char twlnandstg2_msg[] =
 						"Now downloading missing file...\n"
 						"(SD stage of (part 1 of) TWLNAND side)\n"
 						"\n"
 						"Do not turn off the power.\n";
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnandstg2_msg);					
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnandstg2_msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");				
+							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/ace_rpg.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(ace_rpg.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/GBARunner2.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(GBARunner2.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/loadcard_dstt.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(loadcard_dstt.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/r4.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(r4.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 					fputs(release_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 					fputs(unofficial_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"(release-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM);
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"(unofficial-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
 						}
 					}
 				}

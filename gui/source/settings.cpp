@@ -145,7 +145,33 @@ void settingsLoadTextures(void)
  */
 void settingsUnloadTextures(void)
 {
-	// TODO: remove this
+	if (!settings_tex_loaded)
+		return;
+
+	/** Top screen **/
+	for (int i = 0; i < 6; i++) {
+		pp2d_free_texture(setvoltex[i]);
+	}
+	pp2d_free_texture(setbatterychrgtex);
+
+	for (int i = 0; i < 6; i++) {
+		pp2d_free_texture(setbatterytex[i]);
+	}
+
+	pp2d_free_texture(dsboottex);
+	pp2d_free_texture(dsiboottex);
+	pp2d_free_texture(invdsboottex);
+	pp2d_free_texture(invdsiboottex);
+	pp2d_free_texture(dshstex);
+	pp2d_free_texture(dsihstex);
+	pp2d_free_texture(disabledtex);
+
+	/** Bottom screen **/
+	pp2d_free_texture(settingstex);
+	pp2d_free_texture(whomeicontex);
+
+	// All textures unloaded.
+	settings_tex_loaded = false;
 }
 
 int twlfaderun = true;
@@ -166,71 +192,100 @@ void settingsDrawTopScreen(void)
 		settingsLoadTextures();
 	}
 	update_battery_level(setbatterychrgtex, setbatterytex);
-/**
+
 	// Draw twice; once per 3D framebuffer.
 //	for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-//		pp2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
+//		pp2d_begin_draw(GFX_TOP, (gfx3dSide_t)topfb);
 		pp2d_draw_on(GFX_TOP);
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
 			if (settings.ui.bootscreen >= 3) {
 				if (settings.ui.bootscreen == 4) {
-					pp2d_draw_texture(invdsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+//					pp2d_draw_texture(invdsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+					pp2d_draw_texture(invdsiboottex, 0+136, 20); // Draw boot screen
 				} else {
-					pp2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+//					pp2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+					pp2d_draw_texture(invdsboottex, 0+136, 20); // Draw boot screen
 				}
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
+//				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+//				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
+				drawRectangle(0+120, 20, 16, 96, BLACK);
+				drawRectangle(0+264, 20, 16, 96, BLACK);
 			} else if (settings.ui.bootscreen == 2) {
-				pp2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
+//				pp2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+//				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+//				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
+				pp2d_draw_texture(dsiboottex, 0+136, 20); // Draw boot screen
+				drawRectangle(0+120, 20, 16, 96, WHITE);
+				drawRectangle(0+264, 20, 16, 96, WHITE);
 			} else if (settings.ui.bootscreen <= 1) {
-				pp2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+//				pp2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				pp2d_draw_texture(dsboottex, 0+136, 20); // Draw boot screen
 				if (settings.ui.bootscreen == 1) {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
+//					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+//					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
+					drawRectangle(0+120, 20, 16, 96, BLACK);
+					drawRectangle(0+264, 20, 16, 96, BLACK);
 				} else {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
+//					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+//					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
+					drawRectangle(0+120, 20, 16, 96, WHITE);
+					drawRectangle(0+264, 20, 16, 96, WHITE);
 				}
 			} else {
-				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
+//				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, WHITE);
+				drawRectangle(0+136, 20, 128, 96, WHITE);
 			}
 			if (settings.ui.healthsafety == 1) {
 				if (settings.ui.bootscreen >= 3) {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
-					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");
+//					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
+//					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");					
+					drawRectangle(0+136, 124, 128, 96, BLACK);
+					pp2d_draw_text(0+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");
 				} else if (settings.ui.bootscreen == 2) {
-					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+//					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+					pp2d_draw_texture(dsihstex, 0+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {
-					pp2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+//					pp2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+					pp2d_draw_texture(dshstex, 0+136, 124); // Draw H&S screen
 				} else {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+//					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
+					drawRectangle(0+136, 124, 128, 96, WHITE);
 				}
 			} else {
 				if (settings.ui.bootscreen >= 3) {
 					// Draw a black screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
+//					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
+					drawRectangle(0+136, 124, 128, 96, BLACK);
 				} else {
 					// Draw a white screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+//					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
+					drawRectangle(0+136, 124, 128, 96, WHITE);
 				}
 			}
 			if (!settings.ui.showbootscreen) {
-				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
-				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture
+//				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
+//				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture	
+				pp2d_draw_texture(disabledtex,0+136, 20); // Draw disabled texture
+				pp2d_draw_texture(disabledtex, 0+136, 124); // Draw disabled texture
 			}
 		} else {
-			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			pp2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - settingslogotwltex->width/2, 240/2 - settingslogotwltex->height/2, RGBA8(255,255,255,twlfadealpha));
-			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - settingslogooadertex->width/2, 240/2 - settingslogooadertex->height/2, RGBA8(255,255,255,oaderfadealpha));
-			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - settingslogodemotex->width/2, 240/2 - settingslogodemotex->height/2, RGBA8(255,255,255,demofadealpha));
+//			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+//			pp2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - settingslogotwltex->width/2, 240/2 - settingslogotwltex->height/2, RGBA8(255,255,255,twlfadealpha));
+//			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - settingslogooadertex->width/2, 240/2 - settingslogooadertex->height/2, RGBA8(255,255,255,oaderfadealpha));
+//			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+//			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - settingslogodemotex->width/2, 240/2 - settingslogodemotex->height/2, RGBA8(255,255,255,demofadealpha));
+			pp2d_draw_texture_blend(settingslogotwltex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,twlfadealpha));
+			pp2d_draw_texture_blend(settingslogooadertex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));
+			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,demofadealpha));
 			if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-				pp2d_draw_wtext(offset3D[topfb].disabled+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
-				pp2d_draw_wtext(offset3D[topfb].disabled+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+//				pp2d_draw_wtext(offset3D[topfb].disabled+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
+//				pp2d_draw_wtext(offset3D[topfb].disabled+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+				pp2d_draw_wtext(0+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
+				pp2d_draw_wtext(0+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
 			} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
-				pp2d_draw_text(offset3D[topfb].disabled+32, 192, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
+//				pp2d_draw_text(offset3D[topfb].disabled+32, 192, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
+				pp2d_draw_text(0+32, 192, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
 			}
 		}
 
@@ -266,7 +321,7 @@ void settingsDrawTopScreen(void)
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 //	}
-**/
+
 	if(demofade) {
 		demofadealpha += 5;
 		if (demofadealpha == 255) {
@@ -1705,7 +1760,7 @@ void LoadColor(void) {
  */
 void LoadMenuColor(void) {
 	static const u32 menu_colors[] = {
-		(u32)RGBA8(255, 255, 255, 255),		// White
+		(u32)WHITE,		// White
 		(u32)RGBA8(63, 63, 63, 195),		// Black
 		(u32)RGBA8(139, 99, 0, 195),		// Brown
 		(u32)RGBA8(255, 0, 0, 195),			// Red
@@ -1739,11 +1794,13 @@ void LoadBottomImage() {
 	if (settings.ui.custombot == 1) {
 		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
 			bottomloc = "sdmc:/_nds/twloader/bottom.png";
-			if (logEnabled)	LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully");
+			if (logEnabled)	LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully.");
 		} else {
 			bottomloc = "romfs:/graphics/bottom.png";
-			if (logEnabled)	LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully");
+			if (logEnabled)	LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully.");
 		}
+	} else {
+		if (logEnabled) LogFM("LoadBottomImage()", "Using default bottom image. No custom image found.");
 	}
 }
 
