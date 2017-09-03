@@ -109,6 +109,8 @@ const char* Rshouldertext = "";
 int LshoulderYpos = 220;
 int RshoulderYpos = 220;
 
+int text_width = 0;
+
 // Sound effects.
 sound *bgm_menu = NULL;
 //sound *bgm_settings = NULL;
@@ -3156,7 +3158,8 @@ int main(){
 						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
+					text_width = pp2d_get_wtext_width(TR(STR_SETTINGS_TEXT), 0.45, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
 				} else {
 					int Ypos = 26;
@@ -3488,13 +3491,15 @@ int main(){
 								if (settings.ui.iconsize) {
 									pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
 									const wchar_t *start_text = TR(STR_START);
+									text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
 									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_wtext(136, 180, 0.60, 0.60, WHITE, start_text);
+										pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
 								} else {
 									pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
 									const wchar_t *start_text = TR(STR_START);
+									text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
 									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_wtext(140, 173, 0.50, 0.50, WHITE, start_text);
+										pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
 								}
 							}
 						}
@@ -3533,13 +3538,15 @@ int main(){
 					pp2d_draw_texture(bubbletex, 0, 0);
 					bool drawBannerText = true;
 					if (settings.ui.cursorPosition == -2) {
-						const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);						
-						pp2d_draw_wtext(8, 38, 0.70, 0.70, BLACK, curn2text);
+						const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
+						text_width = pp2d_get_wtext_width(curn2text, 0.70, 0.70);
+						pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, curn2text);
 						drawBannerText = false;
 					} else if (settings.ui.cursorPosition == -1) {
 						if (settings.twl.forwarder) {
 							static const char add_games_text[] = "Add Games";
-							pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, add_games_text);
+							text_width = pp2d_get_text_width(add_games_text, 0.70, 0.70);
+							pp2d_draw_text(((320-text_width)/2), 38, 0.70, 0.70, BLACK, add_games_text);
 							drawBannerText = false;
 						} else {
 							// Get the text from the Slot 1 cartridge.
@@ -3571,7 +3578,8 @@ int main(){
 									// No game card is inserted.
 									msg = TR(STR_NO_CARTRIDGE);
 								}
-								pp2d_draw_wtext(8, 38, 0.70, 0.70, BLACK, msg);
+								text_width = pp2d_get_wtext_width(msg, 0.70, 0.70);
+								pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, msg);
 								drawBannerText = false;
 							}
 						}
@@ -5064,6 +5072,8 @@ int main(){
 
 	pp2d_exit();
 	
+	if (logEnabled) LogFM("Main", "All services are closing and returning to HOME Menu");
+
 	acExit();
 	hidExit();
 	srvExit();
@@ -5073,7 +5083,6 @@ int main(){
 	ptmuExit();
 	amExit();
 	cfguExit();
-	if (logEnabled) LogFM("Main", "All services are closed and returned to HOME Menu");
 	sdmcExit();
 
 	return 0;
