@@ -273,8 +273,9 @@ void settingsDrawTopScreen(void)
 //			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
 //			pp2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - settingslogotwltex->width/2, 240/2 - settingslogotwltex->height/2, RGBA8(255,255,255,twlfadealpha));
 //			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - settingslogooadertex->width/2, 240/2 - settingslogooadertex->height/2, RGBA8(255,255,255,oaderfadealpha));
-//			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
+			
 //			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - settingslogodemotex->width/2, 240/2 - settingslogodemotex->height/2, RGBA8(255,255,255,demofadealpha));
+			pp2d_draw_texture(settingslogotex, 0+400/2 - 256/2, 240/2 - 128/2);
 			pp2d_draw_texture_blend(settingslogotwltex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,twlfadealpha));
 			pp2d_draw_texture_blend(settingslogooadertex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));
 			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,demofadealpha));
