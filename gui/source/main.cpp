@@ -3530,7 +3530,7 @@ int main(){
 						}
 						pp2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
 					}
-					pp2d_draw_texture_rotate(dotcircletex, 160, 148, rad);  // Dots moving in circles
+					pp2d_draw_texture_rotate(dotcircletex, 120, 80, rad);  // Dots moving in circles
 				}
 				if (showbubble) {
 					pp2d_draw_texture(bubbletex, 0, 0);
