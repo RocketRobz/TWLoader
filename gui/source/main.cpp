@@ -42,9 +42,6 @@ using std::wstring;
 bool isDemo = COMPILE_3DSX;
 bool isNightly = IS_NIGHTLY;
 
-#include "logo_png.h"
-#include "logo_demo_png.h"
-
 static touchPosition touch;
 
 bool menuaction_nextpage = false;
@@ -1532,18 +1529,11 @@ void dsiMenuTheme_loadingScreen() {
 }
 int main(){
 	pp2d_init();
+	
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 	pp2d_set_3D(0);
 	
-	pp2d_begin_draw(GFX_TOP);
-	if(isDemo)
-		pp2d_load_texture_memory(twloaderlogotex, (void*) logo_demo_png, 256, 128); // TWLoader (3DSX demo version) logo on top screen
-	else
-		pp2d_load_texture_memory(twloaderlogotex, (void*) logo_png, 256, 128); // TWLoader logo on top screen
-	
-	pp2d_draw_texture(twloaderlogotex, 72, 56); // 400/2 - height/2, 240/2 - width/2
-	
-	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+	pp2d_begin_draw(GFX_TOP);		
 	Result res = fontEnsureMapped();
 
 	if (R_FAILED(res))
@@ -1559,7 +1549,13 @@ int main(){
 	srvInit();
 	hidInit();
 	acInit();
-		
+	
+	if(isDemo)
+		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo_demo.png"); // TWLoader (3DSX demo version) logo on top screen
+	else
+		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo.png"); // TWLoader logo on top screen
+	pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	
 	int filenum = 0;
 	bool noromsfound = false;
 	
@@ -1639,7 +1635,6 @@ int main(){
 		vertext_xPos = 336;
 	}
 	
-	pp2d_draw_texture(twloaderlogotex, 72, 56); // 400/2 - height/2, 240/2 - width/2
 	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
 	pp2d_end_draw();
 	
