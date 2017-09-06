@@ -2468,7 +2468,6 @@ int main(){
 					}
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
-					updatetopscreen = false;
 				}
 			} else {	// DSi-Menu theme
 				if (!settings.twl.forwarder) {
