@@ -59,7 +59,7 @@ std::string	bootstrapPath;
 // Couldn't get enums working, so I just used ints.
 int THEME_DSIMENU = 0;	// DSi Menu
 int THEME_3DSMENU = 1;	// 3DS Menu
-int THEME_R4 = 2;	// R4
+int THEME_R4 = 2;		// R4
 int THEME_AKMENU = 3;	// Wood/akMenu
 
 // Current screen mode.
@@ -82,9 +82,9 @@ enum MenuDBox_Mode {
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
 enum Menu_ControlSet {
-	CTRL_SET_MENU = 0,	// Menu (R4 Theme only)
+	CTRL_SET_MENU = 0,		// Menu (R4 Theme only)
 	CTRL_SET_GAMESEL = 1,	// ROM Select
-	CTRL_SET_DBOX = 2,	// Dialog box mode
+	CTRL_SET_DBOX = 2,		// Dialog box mode
 };
 Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
@@ -2469,7 +2469,6 @@ int main(){
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					updatetopscreen = false;
-					pp2d_end_draw();
 				}
 			} else {	// DSi-Menu theme
 				if (!settings.twl.forwarder) {
@@ -2679,7 +2678,7 @@ int main(){
 						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 					}
 					if (settings.ui.theme == THEME_AKMENU) {
-						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);						
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
 						if (settings.ui.cursorPosition < 0)
@@ -2720,6 +2719,8 @@ int main(){
 						LoadBoxArt_WoodTheme(0-settings.ui.pagenum*20);
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
+					colortexloaded = false; // Reload top textures
+					colortexloaded_bot = false; // Reload bottom textures
 				} else if (gbarunnervalue == 1) {
 					if (logEnabled)	LogFM("Main", "Loading GBARunner.");
 					applaunchon = true;
@@ -3701,6 +3702,8 @@ int main(){
 										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										colortexloaded = false; // Reload top textures
+										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
@@ -3717,6 +3720,8 @@ int main(){
 										settings.ui.pagenum = 0;
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										colortexloaded = false; // Reload top textures
+										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
@@ -3913,6 +3918,8 @@ int main(){
 						settings.ui.pagenum = 0;
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+						colortexloaded = false; // Reload top textures
+						colortexloaded_bot = false; // Reload bottom textures
 						boxartpage = 0;
 						loadboxartnum = 0+settings.ui.pagenum*20;
 						loadbnriconnum = 0+settings.ui.pagenum*20;
@@ -4399,6 +4406,8 @@ int main(){
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 									boxarttexloaded = false; // Reload boxarts
 									bnricontexloaded = false; // Reload banner icons
+									colortexloaded = false; // Reload top textures
+									colortexloaded_bot = false; // Reload bottom textures
 									boxartpage = 0;
 									loadboxartnum = 0+settings.ui.pagenum*20;
 									loadbnriconnum = 0+settings.ui.pagenum*20;
@@ -4497,6 +4506,8 @@ int main(){
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", matching_files.size()); // Reload counter
 										boxarttexloaded = false; // Reload boxarts
 										bnricontexloaded = false; // Reload banner icons
+										colortexloaded = false; // Reload top textures
+										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
 										loadboxartnum = 0+settings.ui.pagenum*20;
 										loadbnriconnum = 0+settings.ui.pagenum*20;
@@ -4817,6 +4828,8 @@ int main(){
 						boxartXmovepos = 0; // Move the cursor to 0
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+						colortexloaded = false; // Reload top textures
+						colortexloaded_bot = false; // Reload bottom textures
 						boxartpage = 0;
 						loadboxartnum = 0+settings.ui.pagenum*20;
 						loadbnriconnum = 0+settings.ui.pagenum*20;
