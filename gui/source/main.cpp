@@ -20,8 +20,6 @@
 #include <sys/types.h>
 
 #include <3ds.h>
-#include "graphic.h"
-#include "pp2d/pp2d/pp2d.h"
 
 #include "ptmu_x.h"
 
@@ -297,7 +295,7 @@ void DialogBoxAppear(int x, int y, const char *text) {
 		} else {
 			movespeed -= 0.2;
 		}
-		pp2d_draw_on(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(settingstex, 0, 0);
 		}
@@ -716,7 +714,6 @@ static void LoadBNRIcon(const char *filename) {
 	const int idx = loadbnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected bnriconnum is on the current page.
-		bnricontex[idx] = -1;
 		if (!filename) {
 			filename = "romfs:/notextbanner";
 		}
@@ -736,7 +733,6 @@ static void LoadBNRIcon(const char *filename) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
-	bnricontex[20] = -1;
 	if (!filename) {
 		filename = "romfs:/notextbanner";
 	}
@@ -1109,7 +1105,6 @@ static void loadSlot1BoxArt(void)
 	}
 	prev_gameID_u32 = gameID_u32;
 
-	size_t new_tex = -1;
 	const char *gameID = gamecardGetGameID();
 	if (gameID) {
 		if (checkWifiStatus()) {
@@ -1131,7 +1126,6 @@ static void loadSlot1BoxArt(void)
 	}
 
 	// Replace slot1boxarttex with the new boxart.
-//	size_t old_tex = slot1boxarttex;
 	slot1boxarttex = new_tex;
 }
 
@@ -1534,10 +1528,7 @@ int main(){
 	pp2d_set_3D(0);
 	
 	pp2d_begin_draw(GFX_TOP);		
-	Result res = fontEnsureMapped();
-
-	if (R_FAILED(res))
-		printf("fontEnsureMapped: %08lX\n", res);
+	Result res = 0;
 
 	aptInit();
 	cfguInit();
@@ -1852,6 +1843,8 @@ int main(){
 		
 		fclose(f_nds_file);
 	}
+	
+	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
 
 	if (checkWifiStatus()) {
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -2422,6 +2415,7 @@ int main(){
 //				}
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
 				if (updatetopscreen) {
+//					pp2d_begin_draw(GFX_TOP);
 					pp2d_draw_on(GFX_TOP);
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
@@ -2475,7 +2469,7 @@ int main(){
 					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 					updatetopscreen = false;
-//					pp2d_end_draw();
+					pp2d_end_draw();
 				}
 			} else {	// DSi-Menu theme
 				if (!settings.twl.forwarder) {
@@ -2497,6 +2491,7 @@ int main(){
 
 				update_battery_level(batterychrgtex, batterytex);
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
+//					pp2d_begin_draw(GFX_TOP);
 					pp2d_draw_on(GFX_TOP);
 					if (settings.ui.theme == THEME_3DSMENU) {
 //						pp2d_draw_texture(topbgtex, offset3D[topfb].topbg-11, 0);
@@ -2572,7 +2567,7 @@ int main(){
 									pp2d_draw_texture(slot1boxarttex, 0+boxartXpos+boxartXmovepos, 240/2 - 115/2); // Draw box art
 									pp2d_draw_texture_scale_blend(slot1boxarttex, 0+boxartXpos+boxartXmovepos, 264, 1, -0.75, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
 								}
-							}
+							}							
 						}
 					}
 					if (settings.ui.theme != THEME_3DSMENU) {
@@ -2681,13 +2676,16 @@ int main(){
 						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter for FlashCard
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 					}
-					if (settings.ui.theme == THEME_AKMENU) {						
+					if (settings.ui.theme == THEME_AKMENU) {
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);						
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
 						if (settings.ui.cursorPosition < 0)
 							settings.ui.cursorPosition = 0;
-					} else if (settings.ui.theme == THEME_R4) {						
+					} else if (settings.ui.theme == THEME_R4) {
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 						menu_ctrlset = CTRL_SET_MENU;
 						titleboxXmovepos = 0;
 						boxartXmovepos = 0;
@@ -3216,7 +3214,7 @@ int main(){
 						drawRectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 						pp2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
 						static const char selectiontext[] = "Games";
-						
+
 						pp2d_draw_text(128, 220, 0.60f, 0.60f, WHITE, selectiontext);
 					} else 	if (r4menu_cursorPosition == 1) {
 						drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
@@ -5025,7 +5023,7 @@ int main(){
 		}
 		pp2d_end_draw();
 	}	// aptMainLoop
-
+	
 	// Unregister the "returned from HOME Menu" handler.
 	aptUnhook(&rfhm_cookie);
 	if (logEnabled) LogFM("Main", "returned from HOME Menu handler unregistered");
@@ -5041,6 +5039,7 @@ int main(){
 
 	// Unload settings screen textures.
 	settingsUnloadTextures();
+
 	if (logEnabled) LogFM("Main.settingsUnloadTextures", "Settings textures unloaded");
 
 	if (settings.ui.theme == THEME_DSIMENU) gamecardClearCache();

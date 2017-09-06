@@ -105,4 +105,5 @@ size_t dshstex = 117;
 size_t dsihstex = 118;
 size_t disabledtex = 119;
 size_t settingstex = 120;
-size_t settingslogooadertex = 121;	
+size_t settingslogooadertex = 121;
+size_t new_tex = 122;

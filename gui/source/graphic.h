@@ -81,6 +81,7 @@ extern size_t dsihstex;
 extern size_t disabledtex;
 extern size_t settingstex;
 extern size_t settingslogooadertex;
+extern size_t new_tex;
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)
