@@ -713,6 +713,7 @@ static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = loadbnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
+		pp2d_free_texture(bnricontex[idx]);
 		// Selected bnriconnum is on the current page.
 		if (!filename) {
 			filename = "romfs:/notextbanner";
@@ -733,6 +734,7 @@ static void LoadBNRIcon(const char *filename) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
+	pp2d_free_texture(bnricontex[20]);
 	if (!filename) {
 		filename = "romfs:/notextbanner";
 	}

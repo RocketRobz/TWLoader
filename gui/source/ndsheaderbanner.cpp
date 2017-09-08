@@ -246,6 +246,7 @@ ndsicon *ndsicon_create_texture(int w, int h)
 	success = C3D_TexInit(&texture->tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
 
 	if (!success) {
+		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
 		free(texture);
 		return NULL;
 	}
@@ -312,7 +313,8 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 	);
 
 	gspWaitForPPF();
-
+	linearFree(textureData);
+	
 	return texture->tex.data;
 }
 
