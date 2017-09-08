@@ -5,7 +5,7 @@ sudo: required
 
 python:
     - "2.7"
-    - "3.5"
+    - "3.6"
 before_install:
   - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
   - export DEVKITPRO=/home/travis/devkitPro
