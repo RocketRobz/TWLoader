@@ -429,7 +429,7 @@ void settingsDrawBottomScreen(void)
 	if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, GRAY, Lshouldertext);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		// Language.
@@ -613,8 +613,8 @@ void settingsDrawBottomScreen(void)
 	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, GRAY, Lshouldertext);
-		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, GRAY, Rshouldertext);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		const char *const custombotvaluetext = (settings.ui.custombot ? "On" : "Off");
 		
@@ -803,7 +803,7 @@ void settingsDrawBottomScreen(void)
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
-		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, GRAY, Rshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
