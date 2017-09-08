@@ -312,6 +312,8 @@ void settingsDrawTopScreen(void)
 			fat = "sd:/";
 			// Blue
 			pp2d_draw_text(5, 222, 0.60, 0.60f, BLUE, settings_releasebootstrapver.c_str());
+		} else if (settings.twl.bootstrapfile == 2) {
+			pp2d_draw_text(5, 222, 0.60, 0.60f, RED, "Old version");
 		}
 
 		draw_volume_slider(setvoltex);
