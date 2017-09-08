@@ -30,6 +30,15 @@ void pp2d_draw_texture_part_scale_blend(size_t id, int x, int y, int xbegin, int
 	pp2d_texture_draw();		
 }
 
+void pp2d_draw_texture_rotate_flip_blend(size_t id, int x, int y, float angle, flipType fliptype, u32 color)
+{
+	pp2d_texture_select(id, x, y);
+	pp2d_texture_rotate(angle);
+	pp2d_texture_flip(fliptype);
+	pp2d_texture_blend(color);
+	pp2d_texture_draw();
+}
+
 size_t rectangletex = 1;
 size_t dialogboxtex = 2;
 size_t dboxtex_iconbox = 3;

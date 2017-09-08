@@ -1517,7 +1517,7 @@ void dsiMenuTheme_loadingScreen() {
 
 	pp2d_draw_texture(scrollbartex, 0, 240-28);
 	pp2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-	pp2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+	pp2d_draw_texture_rotate_flip_blend(buttonarrowtex, 320-25, 240-28, 180.0f, VERTICAL, SET_ALPHA(color_data->color, 255));
 
 	pp2d_draw_texture(bubbletex, 0, 0);
 	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
@@ -3321,7 +3321,7 @@ int main(){
 				if (settings.ui.theme != THEME_3DSMENU) {
 					pp2d_draw_texture(scrollbartex, 0, 240-28);
 					pp2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-					pp2d_draw_texture_scale_blend(buttonarrowtex, 320, 240-28, -1.00, 1.00, SET_ALPHA(color_data->color, 255));
+					pp2d_draw_texture_rotate_flip_blend(buttonarrowtex, 320-25, 240-28, 180.0f, VERTICAL, SET_ALPHA(color_data->color, 255));
 				}
 				
 				if(!isDemo) {
