@@ -396,18 +396,26 @@ void settingsDrawBottomScreen(void)
 		u32 colorssm = WHITE;
 		if (subscreenmode == 0) {
 			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
 		pp2d_draw_text(252, 6, 0.50, 0.50, colorssm, "1");
 		if (subscreenmode == 1) {
 			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
 		pp2d_draw_text(268, 6, 0.50, 0.50, colorssm, "2");
 		if (subscreenmode == 2) {
 			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
 		pp2d_draw_text(284, 6, 0.50, 0.50, colorssm, "3");
 		if (subscreenmode == 3) {
 			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
 		pp2d_draw_text(300, 6, 0.50, 0.50, colorssm, "4");
 	}
