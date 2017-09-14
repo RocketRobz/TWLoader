@@ -308,12 +308,10 @@ void settingsDrawTopScreen(void)
 			fat = "sd:/";
 			// Green
 			pp2d_draw_text(5, 222, 0.60, 0.60f, GREEN, settings_unofficialbootstrapver.c_str());
-		} else if (settings.twl.bootstrapfile == 0) {
+		} else {
 			fat = "sd:/";
 			// Blue
 			pp2d_draw_text(5, 222, 0.60, 0.60f, BLUE, settings_releasebootstrapver.c_str());
-		} else if (settings.twl.bootstrapfile == 2) {
-			pp2d_draw_text(5, 222, 0.60, 0.60f, RED, "Old version");
 		}
 
 		draw_volume_slider(setvoltex);
@@ -1251,13 +1249,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 7: // Bootstrap version
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.bootstrapfile++;
-						if (settings.twl.bootstrapfile > 2) {
+						if (settings.twl.bootstrapfile > 1) {
 							settings.twl.bootstrapfile = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.twl.bootstrapfile--;
 						if (settings.twl.bootstrapfile < 0) {
-							settings.twl.bootstrapfile = 2;
+							settings.twl.bootstrapfile = 1;
 						}
 					}
 					break;					
@@ -1922,8 +1920,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("TWL-MODE", "SLOT1_ENABLESD", settings.twl.enablesd);
 	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
 	settingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
-	if (settings.twl.bootstrapfile == 2) fat = "fat:/";
-	else fat = "sd:/";
 
 	// TODO: Change default to 0?
 	switch (settings.twl.console) {
