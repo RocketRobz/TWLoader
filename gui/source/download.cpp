@@ -681,7 +681,7 @@ int checkUpdate(void) {
 /**
  * Download the TWLoader CIAs.
  */
-void DownloadTWLoaderCIAs(void) {	
+void DownloadTWLoaderCIAs(void) {
 
 	bool checkanswer = true;
 	bool yestoupdate = false;
@@ -1825,7 +1825,10 @@ void downloadBoxArt(void)
 	// Check if we're missing any boxart for ROMs on the SD card.
 	for (size_t boxartnum = 0; boxartnum < files.size(); boxartnum++) {
 		// Get the title ID from the ROM image.
+		bool isCia = false;
 		const char *tempfile = files.at(boxartnum).c_str();
+		std::string fn = tempfile;
+		if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 		FILE *f_nds_file = fopen(path, "rb");
 		if (!f_nds_file)
@@ -1833,7 +1836,7 @@ void downloadBoxArt(void)
 		
 		if (logEnabled)	LogFMA("DownloadBoxArt.SD CARD", "Path: ", path);
 		char ba_TID[5];
-		grabTID(f_nds_file, ba_TID);
+		grabTID(f_nds_file, ba_TID, isCia);
 		ba_TID[4] = 0;
 		fclose(f_nds_file);
 

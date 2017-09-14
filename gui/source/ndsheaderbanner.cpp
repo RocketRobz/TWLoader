@@ -33,10 +33,12 @@ static inline u16 BGR555_to_RGB5A1(u16 px16) {
  * Get the title ID.
  * @param ndsFile DS ROM image.
  * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int grabTID(FILE* ndsFile, char *buf) {
-	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+int grabTID(FILE* ndsFile, char *buf, bool isCia) {
+	if(isCia) fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode)+0x3900, SEEK_SET);
+	else fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	size_t read = fread(buf, 1, 4, ndsFile);
 	return !(read == 4);
 }
@@ -133,10 +135,10 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @param setfont Font to use for messages.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2) {
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
@@ -153,14 +155,16 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
-	fseek(ndsFile, 0, SEEK_SET);
+	if(isCia) fseek(ndsFile, 0x3900, SEEK_SET);
+	else fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
 
 	sNDSBanner ndsBanner;
 	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	if(isCia) NDSHeader.bannerOffset += 0x3900;
 	u32 bannersize = 0;
-	if (NDSHeader.bannerOffset != 0x00000000) {
+	if (NDSHeader.bannerOffset != 0x00000000 && NDSHeader.bannerOffset != 0x00003900) {
 		// Read the banner from the NDS file.
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);

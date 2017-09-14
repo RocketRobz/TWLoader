@@ -350,7 +350,7 @@ static int CreateGameSave(const char *filename) {
 	}
 
 	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
@@ -409,7 +409,7 @@ void SetHomebrewBootstrap() {
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
@@ -437,7 +437,7 @@ void SetDonorSDK() {
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
@@ -521,7 +521,7 @@ void SetCompatibilityCheck() {
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
@@ -558,7 +558,7 @@ void SetMPUSettings() {
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
 	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
@@ -1038,6 +1038,81 @@ static int scan_dir_for_files(const char *path, const char *ext, std::vector<std
 	return (int)files.size();
 }
 
+/**
+ * Scan a directory for matching files.
+ * @param path Directory path.
+ * @param ext File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param ext2 File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param files Vector to append files to.
+ * @return Number of files matched. (-1 if the directory could not be opened.)
+ */
+static int scan_dir_for_files2(const char *path, const char *ext, const char *ext2, std::vector<std::string>& files)
+{
+	files.clear();
+
+	//ext
+	DIR *dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *ent;
+	const int extlen = (ext ? strlen(ext) : 0);
+	while ((ent = readdir(dir)) != NULL) {
+		std::string fname = (ent->d_name);
+		if (extlen > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&ent->d_name[lastdotpos], ext) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	//ext2
+	dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *ent2;
+	const int extlen2 = (ext2 ? strlen(ext2) : 0);
+	while ((ent2 = readdir(dir)) != NULL) {
+		std::string fname = (ent2->d_name);
+		if (extlen2 > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen2 > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&ent2->d_name[lastdotpos], ext2) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	// Sort the vector and we're done.
+	std::sort(files.begin(), files.end());
+	return (int)files.size();
+}
+
 // Files
 vector<string> files;
 vector<string> fcfiles;
@@ -1131,6 +1206,8 @@ static void loadSlot1BoxArt(void)
 	slot1boxarttex = new_tex;
 }
 
+//static int gameType[] = 0;
+
 /**
  * Scan the ROM directories.
  */
@@ -1146,8 +1223,8 @@ static void scanRomDirectories(void)
 	// Make sure the directory exists.
 	rmkdir(path, 0777);
 
-	// Scan the ROMs directory for ".nds" files.
-	scan_dir_for_files(path, ".nds", files);
+	// Scan the ROMs directory for ".nds" and ".cia" files.
+	scan_dir_for_files2(path, ".nds", ".cia", files);
 	
 	// Use default directory if none is specified
 	if (settings.ui.fcromfolder.empty()) {
@@ -1474,13 +1551,15 @@ void deletemode_internal(RomLocation location, std::string del_rom) {
 		if (logEnabled)	LogFM("Delete mode", ".bin file deleted");
 	} else if (location == ROM_SD) {
 		if (logEnabled)	LogFM("Delete mode enabled (SD)", del_rom.c_str());
+		bool isCia = false;
+		if(del_rom.substr(del_rom.find_last_of(".") + 1) == "cia") isCia = true;
 		snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), del_rom.c_str());
 		files.erase(files.begin() + settings.ui.cursorPosition);
 		
 		FILE *f_nds_file = fopen(path, "rb");
 		
 		char ba_TID[5];
-		grabTID(f_nds_file, ba_TID);
+		grabTID(f_nds_file, ba_TID, isCia);
 		ba_TID[4] = 0;
 		fclose(f_nds_file);
 		
@@ -1829,7 +1908,10 @@ int main(){
 		static const char title[] = "Now checking banner data (SD Card)...";
 		char romsel_counter1[16];
 		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
+		bool isCia = false;
 		const char *tempfile = files.at(bnriconnum).c_str();
+		std::string fn = tempfile;
+		if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 
 		wstring tempfile_w = utf8_to_wstring(tempfile);
 
@@ -1839,7 +1921,7 @@ int main(){
 		if (!f_nds_file)
 			continue;
 		
-		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd) != 0) {
+		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd, isCia) != 0) {
 			if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
 		}
 		
@@ -2129,7 +2211,10 @@ int main(){
 					if(matching_files.size() == 0){
 						if (loadboxartnum < pagemax_ba) {
 							if (loadboxartnum < (int)files.size()) {
+								bool isCia = false;
 								const char *tempfile = files.at(loadboxartnum).c_str();
+								std::string fn = tempfile;
+								if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 								FILE *f_nds_file = fopen(path, "rb");
 								if (!f_nds_file) {
@@ -2140,7 +2225,7 @@ int main(){
 								}
 
 								char ba_TID[5];
-								grabTID(f_nds_file, ba_TID);
+								grabTID(f_nds_file, ba_TID, isCia);
 								ba_TID[4] = 0;
 								fclose(f_nds_file);
 
@@ -2164,7 +2249,10 @@ int main(){
 					}else{
 						if (loadboxartnum < pagemax_ba) {
 							if (loadboxartnum < (int)matching_files.size()) {
+								bool isCia = false;
 								const char *tempfile = matching_files.at(loadboxartnum).c_str();
+								std::string fn = tempfile;
+								if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
 								FILE *f_nds_file = fopen(path, "rb");
 								if (!f_nds_file) {
@@ -2175,7 +2263,7 @@ int main(){
 								}
 
 								char ba_TID[5];
-								grabTID(f_nds_file, ba_TID);
+								grabTID(f_nds_file, ba_TID, isCia);
 								ba_TID[4] = 0;
 								fclose(f_nds_file);
 

@@ -207,9 +207,10 @@ typedef enum {
  * Get the title ID.
  * @param ndsFile DS ROM image.
  * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int grabTID(FILE* ndsFile, char *buf);
+int grabTID(FILE* ndsFile, char *buf, bool isCia);
 
 /**
  * Get text from an NDS banner.
@@ -231,10 +232,10 @@ std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @param setfont Font to use for messages.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2);
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia);
 
 /**
  * Get the icon from an NDS banner.
