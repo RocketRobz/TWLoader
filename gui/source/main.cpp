@@ -78,6 +78,7 @@ enum MenuDBox_Mode {
 	DBOX_MODE_SETTINGS = 1,	// Game Settings
 	DBOX_MODE_DELETE = 2,	// Delete confirmation
 	DBOX_MODE_DELETED = 3,	// Title deleted message
+	DBOX_MODE_OVERLAYS = 4,	// Overlays included message
 };
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
@@ -1253,7 +1254,47 @@ static void drawMenuDialogBox(void)
 	drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	pp2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	pp2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	if (menudboxmode == DBOX_MODE_DELETED) {
+	if (menudboxmode == DBOX_MODE_OVERLAYS) {
+		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
+		
+		bnriconnum = settings.ui.cursorPosition;
+		ChangeBNRIconNo();
+		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		
+		if (settings.ui.cursorPosition >= 0) {
+			int y = 16, dy = 19;
+			// Print the banner text, center-aligned.
+			const size_t banner_lines = std::min(3U, romsel_gameline.size());
+			for (size_t i = 0; i < banner_lines; i++, y += dy) {
+				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
+			}
+			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+		}
+		
+		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		char romsel_counter1[16];
+		char romsel_counter2[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);		
+		if(matching_files.size() == 0){
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+		}else{
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+		}
+		
+		if (file_count < 100) {
+			pp2d_draw_text(16, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter1);
+			pp2d_draw_text(35, 204+menudbox_Ypos, 0.50, 0.50, BLACK, "/");
+			pp2d_draw_text(40, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
+		} else {
+			pp2d_draw_text(16, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter1);
+			pp2d_draw_text(43, 204+menudbox_Ypos, 0.50, 0.50, BLACK, "/");
+			pp2d_draw_text(48, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
+		}
+		
+		pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "This game cannot be launched,\n" "due to overlays being included.");
+	} else if (menudboxmode == DBOX_MODE_DELETED) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		pp2d_draw_text(64, 112+menudbox_Ypos, 0.50, 0.50, BLACK, "Deleted.");
 	} else if (menudboxmode == DBOX_MODE_DELETE) {
@@ -4287,59 +4328,101 @@ int main(){
 							}
 						}
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
-						if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
-						if (!isDemo || settings.ui.cursorPosition == -2) {
-							bool playlaunchsound = true;
-							if (titleboxXmovetimer == 0) {
-								if(settings.ui.cursorPosition == -2) {
-									titleboxXmovetimer = 1;
-									screenmodeswitch = true;
-									applaunchprep = true;
-								} else if(settings.ui.cursorPosition == -1) {
-									if (!settings.twl.forwarder && !gamecardIsInserted()) {
-										// Slot-1 is selected, but no
-										// cartridge is present.
-										if (!playwrongsounddone) {
-											if (dspfirmfound) {
-												sfx_wrong->stop();
-												sfx_wrong->play();
+						bool isCia = false;
+						bool overlaysIncluded = false;
+						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0) {
+							char path[256];
+							const char *rom_filename;
+							if(matching_files.size() == 0){
+								if (files.size() != 0) {
+									rom_filename = files.at(settings.ui.cursorPosition).c_str();
+								} else {
+									rom_filename = " ";
+								}
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+							} else {
+								rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+							}									
+							std::string fn = rom_filename;
+							if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+							if(isCia) {
+								FILE *f_nds_file = fopen(path, "rb");
+								if (f_nds_file) {
+									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, isCia);
+									fclose(f_nds_file);
+								} else {
+									overlaysIncluded = false;
+								}
+							}
+						} else {
+							overlaysIncluded = false;
+						}
+
+						if(!overlaysIncluded) {
+							if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
+							if (!isDemo || settings.ui.cursorPosition == -2) {
+								bool playlaunchsound = true;
+								if (titleboxXmovetimer == 0) {
+									if(settings.ui.cursorPosition == -2) {
+										titleboxXmovetimer = 1;
+										screenmodeswitch = true;
+										applaunchprep = true;
+									} else if(settings.ui.cursorPosition == -1) {
+										if (!settings.twl.forwarder && !gamecardIsInserted()) {
+											// Slot-1 is selected, but no
+											// cartridge is present.
+											if (!playwrongsounddone) {
+												if (dspfirmfound) {
+													sfx_wrong->stop();
+													sfx_wrong->play();
+												}
+												playwrongsounddone = true;
 											}
-											playwrongsounddone = true;
+											playlaunchsound = false;
+										} else {
+											titleboxXmovetimer = 1;
+											settings.twl.launchslot1 = true;
+											if (settings.twl.forwarder) {
+												keepsdvalue = true;
+												rom = "_nds/twloader.nds";
+											}
+											applaunchprep = true;
 										}
-										playlaunchsound = false;
 									} else {
 										titleboxXmovetimer = 1;
-										settings.twl.launchslot1 = true;
 										if (settings.twl.forwarder) {
-											keepsdvalue = true;
-											rom = "_nds/twloader.nds";
+											settings.twl.launchslot1 = true;
+											if(matching_files.size() == 0){
+												rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+											}else {
+												rom = matching_files.at(settings.ui.cursorPosition).c_str();
+											}
+										} else {
+											settings.twl.launchslot1 = false;
+											if(matching_files.size() == 0){
+												rom = files.at(settings.ui.cursorPosition).c_str();
+											}else {
+												rom = matching_files.at(settings.ui.cursorPosition).c_str();
+											}
+											sav = ReplaceAll(rom, ".nds", ".sav");
 										}
 										applaunchprep = true;
 									}
-								} else {
-									titleboxXmovetimer = 1;
-									if (settings.twl.forwarder) {
-										settings.twl.launchslot1 = true;
-										if(matching_files.size() == 0){
-											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-										}else {
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-									} else {
-										settings.twl.launchslot1 = false;
-										if(matching_files.size() == 0){
-											rom = files.at(settings.ui.cursorPosition).c_str();
-										}else {
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-										sav = ReplaceAll(rom, ".nds", ".sav");
-									}
-									applaunchprep = true;
 								}
-							}
-							if (playlaunchsound && dspfirmfound) {
-								bgm_menu->stop();
-								sfx_launch->play();
+								if (playlaunchsound && dspfirmfound) {
+									bgm_menu->stop();
+									sfx_launch->play();
+								}
+							} else {
+								if (!playwrongsounddone) {
+									if (dspfirmfound) {
+										sfx_wrong->stop();
+										sfx_wrong->play();
+									}
+									playwrongsounddone = true;
+								}
 							}
 						} else {
 							if (!playwrongsounddone) {
@@ -4349,13 +4432,16 @@ int main(){
 								}
 								playwrongsounddone = true;
 							}
+							showdialogbox_menu = true;
+							menu_ctrlset = CTRL_SET_DBOX;
+							menudboxmode = DBOX_MODE_OVERLAYS;
 						}
 					}
 					
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					hidTouchRead(&touch);
 					
-					if (menudboxmode == DBOX_MODE_DELETED) {
+					if (menudboxmode == DBOX_MODE_DELETED || menudboxmode == DBOX_MODE_OVERLAYS) {
 						if (hDown & (KEY_A | KEY_B)) {
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;

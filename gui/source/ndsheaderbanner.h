@@ -229,6 +229,15 @@ std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum)
 std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
 /**
+ * Get overlay sizes from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param isCIA Is the game a CIA?
+ * @return 0 on success; non-zero on error.
+ */
+bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia);
+
+/**
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.

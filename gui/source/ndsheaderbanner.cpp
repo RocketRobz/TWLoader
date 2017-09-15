@@ -132,6 +132,32 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 }
 
 /**
+ * Get overlay sizes from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param isCIA Is the game a CIA?
+ * @return 0 on success; non-zero on error.
+ */
+bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia) {
+	if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "Reading .NDS file:", filename);
+	sNDSHeader NDSHeader;
+	if(isCia) fseek(ndsFile, 0x3900, SEEK_SET);
+	else fseek(ndsFile, 0, SEEK_SET);
+	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
+	if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", ".NDS file read:", filename);
+
+	sNDSBanner ndsBanner;
+	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	if (NDSHeader.arm9overlaySize == 0x00000000 && NDSHeader.arm7overlaySize == 0x00000000) {
+		if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM has no overlays:", filename);
+		return false;
+	} else {
+		if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM has overlays:", filename);
+		return true;
+	}
+}
+
+/**
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
