@@ -179,6 +179,7 @@ std::string settings_releasebootstrapver;
 std::string settings_unofficialbootstrapver;
 
 static bool applaunchprep = false;
+static bool launchCia = false;
 static bool applaunchon = false;
 
 bool showbubble = false;
@@ -1527,6 +1528,9 @@ const u64 TWLNAND_TID = 0x0004800554574C44ULL;
 // TWLoader's NTR Launcher Title ID.
 extern const u64 NTRLAUNCHER_TID;
 const u64 NTRLAUNCHER_TID = 0x0004800554574C31ULL;
+
+// DSi game Title ID.
+u32 DSIGAME_TID[2] = {0x00048004, 0x0};
 
 /**
 * Check if the TWLNAND-side title is installed or not
@@ -4409,6 +4413,7 @@ int main(){
 											sav = ReplaceAll(rom, ".nds", ".sav");
 										}
 										applaunchprep = true;
+										if(isCia) launchCia = true;
 									}
 								}
 								if (playlaunchsound && dspfirmfound) {
@@ -5120,7 +5125,7 @@ int main(){
 			saveOnExit = false;
 			SaveSettings();
 			SetPerGameSettings();
-			SaveBootstrapConfig();
+			if(!launchCia) SaveBootstrapConfig();
 
 			// Prepare for the app launch.
 			u64 tid;
@@ -5135,6 +5140,30 @@ int main(){
 				}
 			} else if (settings.ui.cursorPosition == -1) {
 				tid = NTRLAUNCHER_TID;
+			}
+			
+			if(launchCia) {
+				char path[256];
+				const char *rom_filename;
+				if(matching_files.size() == 0){
+					if (files.size() != 0) {
+						rom_filename = files.at(settings.ui.cursorPosition).c_str();
+					} else {
+						rom_filename = " ";
+					}
+					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+				} else {
+					rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
+					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+				}
+
+				FILE *f_nds_file = fopen(path, "rb");
+				char game_TID[5];
+				grabTID(f_nds_file, game_TID, false);
+				game_TID[4] = 0;
+				fclose(f_nds_file);
+				DSIGAME_TID[1] = (u32)game_TID;
+				tid = (u64)DSIGAME_TID;
 			}
 			
 			FS_MediaType mediaType = MEDIATYPE_NAND;
