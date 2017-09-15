@@ -4352,9 +4352,9 @@ int main(){
 								if (f_nds_file) {
 									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, isCia);
 									fclose(f_nds_file);
-								} else {
-									overlaysIncluded = false;
 								}
+							} else {
+								overlaysIncluded = false;
 							}
 						} else {
 							overlaysIncluded = false;
