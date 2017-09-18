@@ -1819,9 +1819,7 @@ int main(){
 	/** Speedup set up correctly. **/
 	
 	LoadSettings();	
-	if (settings.twl.bootstrapfile == 2) {
-		bootstrapPath = "sd:/_nds/old-bootstrap.nds";
-	} else if (settings.twl.bootstrapfile == 1) {
+	if (settings.twl.bootstrapfile == 1) {
 		bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
 	} else {
 		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
@@ -5215,7 +5213,7 @@ int main(){
 
 				FILE *f_nds_file = fopen(path, "rb");
 				char game_TID[5];
-				grabTID(f_nds_file, game_TID, false);
+				grabTID(f_nds_file, game_TID, true);
 				game_TID[4] = 0;
 				fclose(f_nds_file);
 				DSIGAME_TID[1] = (u32)game_TID;
