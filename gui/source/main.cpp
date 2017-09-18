@@ -281,9 +281,11 @@ bool checkDSiWareInstalled(u64 tid) {
 void TWLoader_cia_manager(bool install, MediaType mediaType, const char* filename)
 {
     if (install) {
+        if (logEnabled) LogFMA("TWLoader_cia_manager", "Installing", filename);
         Handle handle;
         long fileSize;
-        u8 buf;
+        char* buf;        
+
         switch (mediaType) {
             case MEDIA_SD_CIA:
                 AM_QueryAvailableExternalTitleDatabase(NULL);
@@ -292,16 +294,18 @@ void TWLoader_cia_manager(bool install, MediaType mediaType, const char* filenam
             case MEDIA_NAND_CIA:
             default:
                 AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
-                break;
+            break;
         }
         FILE* cia = fopen(filename, "r");
         fseek(cia, 0, SEEK_END);
         fileSize = ftell(cia);
         rewind(cia);
-        fread((void*)buf, 1, fileSize, cia);
-        FSFILE_Write(handle, NULL, 0, (void*)buf, fileSize, 0);
+        buf = (char*)calloc(fileSize, sizeof(char));    
+        fread(buf, sizeof(char), fileSize, cia);
+        FSFILE_Write(handle, NULL, 0, buf, fileSize, 0);
         AM_FinishCiaInstall(handle);
         fclose(cia);
+        free(buf);
     } else {
         // You'll need titleID
         //u64 titleID;
@@ -383,17 +387,19 @@ void DialogBoxDisappear(int x, int y, const char *text) {
  * @param filename Filename.
  */
 static void InstallCIA(const char *filename) {
-	char nds_path[256];
-	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
-	FILE *f_nds_file = fopen(nds_path, "rb");
-	if (!f_nds_file) {
-		DialogBoxAppear(12, 16, "fopen(nds_path) failed, skipping.");
-		DialogBoxDisappear(12, 16, "fopen(nds_path) failed, skipping.");
-	} else {
-		DialogBoxAppear(12, 72, "Installing file...");
-		TWLoader_cia_manager(true, MEDIA_NAND_CIA, nds_path);
-		DialogBoxDisappear(12, 72, "Done!");
-	}
+    char nds_path[256];
+    snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+    FILE *f_nds_file = fopen(nds_path, "rb");
+    if (logEnabled) LogFMA("Install DSiWare", "Installing DSiWare cia...", filename);
+    if (!f_nds_file) {
+        DialogBoxAppear(12, 16, "fopen(nds_path) failed, skipping.");
+        DialogBoxDisappear(12, 16, "fopen(nds_path) failed, skipping.");
+    } else {
+        DialogBoxAppear(12, 72, "Installing file...");
+        TWLoader_cia_manager(true, MEDIA_NAND_CIA, nds_path);
+        DialogBoxDisappear(12, 72, "Done!");
+    }
+    if (logEnabled) LogFMA("Install DSiWare", "Installing DSiWare cia...", "Done!");
 }
 
 /**
@@ -5216,11 +5222,12 @@ int main(){
 
 				FILE *f_nds_file = fopen(path, "rb");
 				char game_TID[5];
-				grabTID(f_nds_file, game_TID, true);
-				game_TID[4] = 0;
-				fclose(f_nds_file);
-				DSIGAME_TID[1] = (u32)game_TID;
-				tid = (u64)DSIGAME_TID;
+                grabTID(f_nds_file, game_TID, true);
+                game_TID[4] = 0;
+                fclose(f_nds_file); 
+                DSIGAME_TID[1] = (u32)game_TID;
+                tid = (u64)DSIGAME_TID;
+                //tid = 0x0004800441534D45LL;
 
 				if (!checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
 			}
