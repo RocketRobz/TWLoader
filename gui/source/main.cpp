@@ -268,6 +268,11 @@ static Result ptmsysmSetInfoLedPattern(const RGBLedPattern* pattern)
     return ipc[1];
 }
 
+bool checkDSiWareInstalled(u64 tid) {
+    AM_TitleEntry entry;
+    return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
+}
+
 /**
  * @brief Manage cia install or uninstall
  * @param install true is install, false to uninstall
@@ -5209,8 +5214,6 @@ int main(){
 					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 				}
 
-				InstallCIA(rom_filename);
-
 				FILE *f_nds_file = fopen(path, "rb");
 				char game_TID[5];
 				grabTID(f_nds_file, game_TID, true);
@@ -5218,6 +5221,8 @@ int main(){
 				fclose(f_nds_file);
 				DSIGAME_TID[1] = (u32)game_TID;
 				tid = (u64)DSIGAME_TID;
+
+				if (checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
 			}
 			
 			FS_MediaType mediaType = MEDIATYPE_NAND;
