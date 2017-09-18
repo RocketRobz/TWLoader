@@ -268,6 +268,43 @@ static Result ptmsysmSetInfoLedPattern(const RGBLedPattern* pattern)
     return ipc[1];
 }
 
+/**
+ * @brief Manage cia install or uninstall
+ * @param install true is install, false to uninstall
+ * @param mediaType, MEDIA_SD_CIA or MEDIA_NAND_CIA
+ */
+void TWLoader_cia_manager(bool install, MediaType mediaType, const char* filename)
+{
+    if (install) {
+        Handle handle;
+        long fileSize;
+        u8 buf;
+        switch (mediaType) {
+            case MEDIA_SD_CIA:
+                AM_QueryAvailableExternalTitleDatabase(NULL);
+                AM_StartCiaInstall(MEDIATYPE_SD, &handle);
+                break;
+            case MEDIA_NAND_CIA:
+            default:
+                AM_StartCiaInstall(MEDIATYPE_NAND, &handle);
+                break;
+        }
+        FILE* cia = fopen(filename, "r");
+        fseek(cia, 0, SEEK_END);
+        fileSize = ftell(cia);
+        rewind(cia);
+        fread((void*)buf, 1, fileSize, cia);
+        FSFILE_Write(handle, NULL, 0, (void*)buf, fileSize, 0);
+        AM_FinishCiaInstall(handle);
+        fclose(cia);
+    } else {
+        // You'll need titleID
+        //u64 titleID;
+        //AM_DeleteTitle(mediaType, titleID);
+        //AM_DeleteTicket(titleID);
+    }    
+}
+
 // New draw rectangle function for use alongside citro.
 void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color)
 {
@@ -334,6 +371,24 @@ void DialogBoxDisappear(int x, int y, const char *text) {
 		pp2d_end_draw();
 	}
 	showdialogbox = false;
+}
+
+/**
+ * Install CIA file.
+ * @param filename Filename.
+ */
+static void InstallCIA(const char *filename) {
+	char nds_path[256];
+	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
+	FILE *f_nds_file = fopen(nds_path, "rb");
+	if (!f_nds_file) {
+		DialogBoxAppear(12, 16, "fopen(nds_path) failed, skipping.");
+		DialogBoxDisappear(12, 16, "fopen(nds_path) failed, skipping.");
+	} else {
+		DialogBoxAppear(12, 72, "Installing file...");
+		TWLoader_cia_manager(true, MEDIA_NAND_CIA, nds_path);
+		DialogBoxDisappear(12, 72, "Done!");
+	}
 }
 
 /**
@@ -417,10 +472,8 @@ void SetHomebrewBootstrap() {
 	fclose(f_nds_file);
 	
 	if (!memcmp(game_TID, "###", 3)) {
-		fat = "fat:/";
 		bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
 	} else {
-		fat = "sd:/";
 		if (settings.twl.bootstrapfile == 1) {
 			bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
 		} else {
@@ -1261,7 +1314,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(iconplaceholdertex, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1307,7 +1360,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(iconplaceholdertex, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1351,7 +1404,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(iconplaceholdertex, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1854,6 +1907,7 @@ int main(){
 	pp2d_load_texture_png(boxemptytex, "romfs:/graphics/box_empty.png"); // (DSiWare) empty box on bottom screen
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
 	pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
+	pp2d_load_texture_png(iconplaceholdertex, "romfs:/graphics/icon_placeholder.png"); // Icon placeholder
 
 	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
 
@@ -3310,9 +3364,9 @@ int main(){
 						pp2d_draw_wtext(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
 
 						if (settings.ui.cursorPosition == filenum)
-							pp2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							pp2d_draw_texture_part_scale(iconplaceholdertex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
-							pp2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							pp2d_draw_texture_part(iconplaceholdertex, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
 						Ypos += 39;
 						filenameYpos += 39;
 					}
@@ -3561,9 +3615,9 @@ int main(){
 							} else {
 								ChangeBNRIconNo();
 								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+									pp2d_draw_texture_part_scale(iconplaceholdertex, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
 								} else {
-									pp2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+									pp2d_draw_texture_part_scale(iconplaceholdertex, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
 								}
 							}
 							ndsiconXpos += 80;
@@ -3580,7 +3634,7 @@ int main(){
 								pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos, 129, 0.40, 0.40);  // Dots moving in circles
 							} else {
 								ChangeBNRIconNo();
-								pp2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+								pp2d_draw_texture_part(iconplaceholdertex, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
 							}
 							ndsiconXpos += 64;
 						}
@@ -3658,7 +3712,7 @@ int main(){
 						if (!applaunchicon) {
 							bnriconnum = settings.ui.cursorPosition;
 							ChangeBNRIconNo();
-							bnricontexlaunch = bnricontexnum;
+							bnricontexlaunch = iconplaceholdertex;
 							applaunchicon = true;
 						}
 						pp2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
@@ -5156,6 +5210,8 @@ int main(){
 					rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
 					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 				}
+
+				InstallCIA(rom_filename);
 
 				FILE *f_nds_file = fopen(path, "rb");
 				char game_TID[5];

@@ -116,3 +116,4 @@ size_t disabledtex = 119;
 size_t settingstex = 120;
 size_t settingslogooadertex = 121;
 size_t new_tex = 122;
+size_t iconplaceholdertex = 123;
