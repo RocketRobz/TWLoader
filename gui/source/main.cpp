@@ -5222,7 +5222,7 @@ int main(){
 				DSIGAME_TID[1] = (u32)game_TID;
 				tid = (u64)DSIGAME_TID;
 
-				if (checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
+				if (!checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
 			}
 			
 			FS_MediaType mediaType = MEDIATYPE_NAND;
