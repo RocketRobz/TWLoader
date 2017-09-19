@@ -1358,7 +1358,7 @@ static void drawMenuDialogBox(void)
 			pp2d_draw_text(48, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
 		}
 		
-		pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "This game cannot be launched,\n" "due to overlays being included.");
+		pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "This DSi-Enhanced game cannot be launched,\n" "due to overlays being included.");
 	} else if (menudboxmode == DBOX_MODE_DELETED) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		pp2d_draw_text(64, 112+menudbox_Ypos, 0.50, 0.50, BLACK, "Deleted.");
