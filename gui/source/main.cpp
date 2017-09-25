@@ -918,6 +918,7 @@ static void LoadPerGameSettings(void)
 	CIniFile gamesettingsini(path);
 	settings.pergame.cpuspeed = gamesettingsini.GetInt("GAME-SETTINGS", "TWL_CLOCK", -1);
 	settings.pergame.usedonor = gamesettingsini.GetInt("GAME-SETTINGS", "USE_ARM7_DONOR", 1);
+	if(settings.pergame.usedonor > 2) settings.pergame.usedonor = 1;
 	settings.pergame.red = gamesettingsini.GetInt("GAME-SETTINGS", "LED_RED", -1);
 	settings.pergame.green = gamesettingsini.GetInt("GAME-SETTINGS", "LED_GREEN", -1);
 	settings.pergame.blue = gamesettingsini.GetInt("GAME-SETTINGS", "LED_BLUE", -1);
@@ -4821,11 +4822,11 @@ int main(){
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Lock ARM9 SCFG_EXT
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Use set donor ROM
 								gamesettings_cursorPosition = 1;
 								settings.pergame.usedonor++;
-								if(settings.pergame.usedonor == 2)
-									settings.pergame.usedonor = -1;
+								if(settings.pergame.usedonor == 3)
+									settings.pergame.usedonor = 0;
 								if (dspfirmfound) {
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
