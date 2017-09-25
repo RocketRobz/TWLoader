@@ -4553,17 +4553,17 @@ int main(){
 								startmenu_cursorPosition -= 2;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch.px >= 23 && touch.px <= 155 && touch.py >= 31 && touch.py <= 65) { // Game location button
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)) { // Game location button
 								startmenu_cursorPosition = 0;
 								menudboxaction_switchloc = true;
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 31 && touch.py <= 65){ // Box art button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)){ // Box art button
 								startmenu_cursorPosition = 1;
 								settings.romselect.toplayout = !settings.romselect.toplayout;
 								if (dspfirmfound) {
 									sfx_switch->stop();	// Prevent freezing
 									sfx_switch->play();
 								}
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 71 && touch.py <= 105){ // Start GBARunner2 button
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Start GBARunner2 button
 								startmenu_cursorPosition = 2;
 								if (!isDemo) {
 									gbarunnervalue = 1;
@@ -4588,17 +4588,17 @@ int main(){
 										playwrongsounddone = true;
 									}
 								}
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 71 && touch.py <= 105){ // Top border button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Top border button
 								startmenu_cursorPosition = 3;
 								settings.ui.topborder = !settings.ui.topborder;
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 111 && touch.py <= 145){ // Unset donor ROM button
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 111) && touch.py <= (menudbox_Ypos + 145)){ // Unset donor ROM button
 								startmenu_cursorPosition = 4;
 								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
 								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 111 && touch.py <= 145){ // Search button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 111) && touch.py <= (menudbox_Ypos + 145)){ // Search button
 								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
 								if(matching_files.size() != 0){
 									matching_files.clear();
@@ -4813,7 +4813,7 @@ int main(){
 								gamesettings_cursorPosition = 1;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch.px >= 23 && touch.px <= 155 && touch.py >= 89 && touch.py <= 123) { // ARM9 CPU Speed
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
 								gamesettings_cursorPosition = 0;
 								settings.pergame.cpuspeed++;
 								if(settings.pergame.cpuspeed == 2)
@@ -4822,7 +4822,7 @@ int main(){
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 129 && touch.py <= 163){ // Use set donor ROM
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
 								gamesettings_cursorPosition = 1;
 								settings.pergame.usedonor++;
 								if(settings.pergame.usedonor == 3)
@@ -4831,7 +4831,7 @@ int main(){
 									sfx_select->stop();	// Prevent freezing
 									sfx_select->play();
 								}
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= 129 && touch.py <= 163){ // Set as donor ROM
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
 								gamesettings_cursorPosition = 2;
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
@@ -4851,7 +4851,7 @@ int main(){
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= 169 && touch.py <= 203){ // Set LED Color
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
 								gamesettings_cursorPosition = 3;								
 
 								RGB[0] = keyboardInputInt("Red color: max is 255");
