@@ -1312,6 +1312,8 @@ static int woodmenu_cursorPosition = 0;
 static int startmenu_cursorPosition = 0;
 static int gamesettings_cursorPosition = 0;
 
+static bool gamesettings_isCia = false;
+
 /**
  * Draw the menu dialog box.
  */
@@ -1448,7 +1450,15 @@ static void drawMenuDialogBox(void)
 			pp2d_draw_text(43, 204+menudbox_Ypos, 0.50, 0.50, BLACK, "/");
 			pp2d_draw_text(48, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
 		}
-		
+
+		std::string std_romsel_filename = romsel_filename;
+		if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "cia") {
+			gamesettings_isCia = true;
+			gamesettings_cursorPosition = 3;
+		} else {
+			gamesettings_isCia = false;
+		}
+
 		const struct {
 			int x;
 			int y;
@@ -1461,77 +1471,110 @@ static void drawMenuDialogBox(void)
 			{161, 129, &settings.pergame.donor, TR(STR_START_SET_DONOR), {L"", L"", L""}},
 			{ 23, 169, NULL, TR(STR_START_SET_LED), {L"", L"", L""}},
 		};
-		
-		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
-			if (gamesettings_cursorPosition == i) {
-				// Button is highlighted.
-				pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
-			} else {
-				// Button is not highlighted. Darken the texture.
-				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
-			}
 
-			const wchar_t *title = buttons[i].title;
-			const wchar_t *value_desc = TR(STR_START_DEFAULT);
-			if (i == 0 || i == 2) {
-				switch (*(buttons[i].value)) {
-					case -1:
-					default:
-						value_desc = TR(STR_START_DEFAULT);
-						break;
-					case 0:
-						value_desc = buttons[i].value_desc[0];
-						break;
-					case 1:
-						value_desc = buttons[i].value_desc[1];
-						break;
-				}
-			} else if (i == 1) {
-				switch (*(buttons[i].value)) {
-					case 0:
-					default:
-						value_desc = buttons[i].value_desc[0];
-						break;
-					case 1:
-						value_desc = buttons[i].value_desc[1];
-						break;
-					case 2:
-						value_desc = buttons[i].value_desc[2];
-						break;
-				}
-			}
+		if(gamesettings_isCia) {
+			pp2d_draw_texture(dboxtex_button, buttons[3].x, menudbox_Ypos+129);
+
+			const wchar_t *title = buttons[3].title;
 
 			// Determine the text height.
 			// NOTE: Button texture size is 132x34.
 			const int h = 32;
 
 			// Draw the title.
-			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+			int y = menudbox_Ypos + 129 + ((34 - h) / 2);
 			int w = 0;
-			int x = ((2 - w) / 2) + buttons[i].x;
+			int x = ((2 - w) / 2) + buttons[3].x;
 			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 			y += 16;
 
 			// Draw the value.
-			if (i < 3) {
-				w = 0;
-				x = ((2 - w) / 2) + buttons[i].x;
-				pp2d_draw_wtext(x, y, 0.50, 0.50, GRAY, value_desc);
-			} else if (i == 3) {
-				// Show the RGB value.
-				char rgb_str[32];
-				snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
-					settings.pergame.red,
-					settings.pergame.green,
-					settings.pergame.blue);
-				w = 0;
-				x = ((2 - w) / 2) + buttons[i].x;
+			// Show the RGB value.
+			char rgb_str[32];
+			snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
+				settings.pergame.red,
+				settings.pergame.green,
+				settings.pergame.blue);
+			w = 0;
+			x = ((2 - w) / 2) + buttons[3].x;
 
-				// Print the RGB value using its color.
-				const u32 color = RGBA8(settings.pergame.red,
-					settings.pergame.green,
-					settings.pergame.blue, 255);
-				pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
+			// Print the RGB value using its color.
+			const u32 color = RGBA8(settings.pergame.red,
+				settings.pergame.green,
+				settings.pergame.blue, 255);
+			pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
+		} else {
+			for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
+				if (gamesettings_cursorPosition == i) {
+					// Button is highlighted.
+					pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
+				} else {
+					// Button is not highlighted. Darken the texture.
+					pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
+				}
+
+				const wchar_t *title = buttons[i].title;
+				const wchar_t *value_desc = TR(STR_START_DEFAULT);
+				if (i == 0 || i == 2) {
+					switch (*(buttons[i].value)) {
+						case -1:
+						default:
+							value_desc = TR(STR_START_DEFAULT);
+							break;
+						case 0:
+							value_desc = buttons[i].value_desc[0];
+							break;
+						case 1:
+							value_desc = buttons[i].value_desc[1];
+							break;
+					}
+				} else if (i == 1) {
+					switch (*(buttons[i].value)) {
+						case 0:
+						default:
+							value_desc = buttons[i].value_desc[0];
+							break;
+						case 1:
+							value_desc = buttons[i].value_desc[1];
+							break;
+						case 2:
+							value_desc = buttons[i].value_desc[2];
+							break;
+					}
+				}
+
+				// Determine the text height.
+				// NOTE: Button texture size is 132x34.
+				const int h = 32;
+
+				// Draw the title.
+				int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+				int w = 0;
+				int x = ((2 - w) / 2) + buttons[i].x;
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+				y += 16;
+
+				// Draw the value.
+				if (i < 3) {
+					w = 0;
+					x = ((2 - w) / 2) + buttons[i].x;
+					pp2d_draw_wtext(x, y, 0.50, 0.50, GRAY, value_desc);
+				} else if (i == 3) {
+					// Show the RGB value.
+					char rgb_str[32];
+					snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
+						settings.pergame.red,
+						settings.pergame.green,
+						settings.pergame.blue);
+					w = 0;
+					x = ((2 - w) / 2) + buttons[i].x;
+
+					// Print the RGB value using its color.
+					const u32 color = RGBA8(settings.pergame.red,
+						settings.pergame.green,
+						settings.pergame.blue, 255);
+					pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
+				}
 			}
 		}
 	} else {
@@ -4813,56 +4856,70 @@ int main(){
 								gamesettings_cursorPosition = 1;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
-								gamesettings_cursorPosition = 0;
-								settings.pergame.cpuspeed++;
-								if(settings.pergame.cpuspeed == 2)
-									settings.pergame.cpuspeed = -1;
-								if (dspfirmfound) {
-									sfx_select->stop();	// Prevent freezing
-									sfx_select->play();
-								}
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
-								gamesettings_cursorPosition = 1;
-								settings.pergame.usedonor++;
-								if(settings.pergame.usedonor == 3)
-									settings.pergame.usedonor = 0;
-								if (dspfirmfound) {
-									sfx_select->stop();	// Prevent freezing
-									sfx_select->play();
-								}
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
-								gamesettings_cursorPosition = 2;
-								if (settings.twl.forwarder) {
-									if(matching_files.size() == 0){
-										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-									} else {
-										rom = matching_files.at(settings.ui.cursorPosition).c_str();
-									}
-								} else {
-									if(matching_files.size() == 0){
-										rom = files.at(settings.ui.cursorPosition).c_str();
-									}else{
-										rom = matching_files.at(settings.ui.cursorPosition).c_str();
-									}
-									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
-									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
-								}
-								showdialogbox_menu = false;
-								menudbox_movespeed = 1;
-								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
-								gamesettings_cursorPosition = 3;								
+							if(gamesettings_isCia) {
+								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set LED Color
+									gamesettings_cursorPosition = 3;								
 
-								RGB[0] = keyboardInputInt("Red color: max is 255");
-								RGB[1] = keyboardInputInt("Green color: max is 255");
-								RGB[2] = keyboardInputInt("Blue color: max is 255");
-								
-								settings.pergame.red = RGB[0];
-								settings.pergame.green = RGB[1];
-								settings.pergame.blue = RGB[2];
-								
-							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
+									RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[1] = keyboardInputInt("Green color: max is 255");
+									RGB[2] = keyboardInputInt("Blue color: max is 255");
+									
+									settings.pergame.red = RGB[0];
+									settings.pergame.green = RGB[1];
+									settings.pergame.blue = RGB[2];
+								}
+							} else {
+								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
+									gamesettings_cursorPosition = 0;
+									settings.pergame.cpuspeed++;
+									if(settings.pergame.cpuspeed == 2)
+										settings.pergame.cpuspeed = -1;
+									if (dspfirmfound) {
+										sfx_select->stop();	// Prevent freezing
+										sfx_select->play();
+									}
+								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
+									gamesettings_cursorPosition = 1;
+									settings.pergame.usedonor++;
+									if(settings.pergame.usedonor == 3)
+										settings.pergame.usedonor = 0;
+									if (dspfirmfound) {
+										sfx_select->stop();	// Prevent freezing
+										sfx_select->play();
+									}
+								}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
+									gamesettings_cursorPosition = 2;
+									if (settings.twl.forwarder) {
+										if(matching_files.size() == 0){
+											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+										} else {
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
+									} else {
+										if(matching_files.size() == 0){
+											rom = files.at(settings.ui.cursorPosition).c_str();
+										}else{
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
+										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									}
+									showdialogbox_menu = false;
+									menudbox_movespeed = 1;
+									menu_ctrlset = CTRL_SET_GAMESEL;
+								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
+									gamesettings_cursorPosition = 3;								
+
+									RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[1] = keyboardInputInt("Green color: max is 255");
+									RGB[2] = keyboardInputInt("Blue color: max is 255");
+									
+									settings.pergame.red = RGB[0];
+									settings.pergame.green = RGB[1];
+									settings.pergame.blue = RGB[2];
+								}
+							}
+							if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
 										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
