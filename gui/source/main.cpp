@@ -3399,8 +3399,7 @@ int main(){
 						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-					text_width = pp2d_get_wtext_width(TR(STR_SETTINGS_TEXT), 0.45, 0.45);
-					pp2d_draw_wtext(((320-text_width)/2), filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
+					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
 				} else {
 					int Ypos = 26;
