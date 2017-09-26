@@ -17,9 +17,9 @@ using std::vector;
 using std::wstring;
 
 /**
- * Convert a color from NDS BGR555 to RGB565.
+ * Convert a color from NDS BGR555 to RGB5A1.
  * @param px16 BGR555 color value.
- * @return RGB565 color.
+ * @return RGB5A1 color.
  */
 static inline u16 BGR555_to_RGB5A1(u16 px16) {
 	// BGR555: xBBBBBGG GGGRRRRR
@@ -280,7 +280,7 @@ ndsicon *ndsicon_create_texture(int w, int h)
 	bool success = false;
 	texture->width = w;
 	texture->height = h;
-	success = C3D_TexInit(&texture->tex, w, h, GPU_RGB565); // RGB565
+	success = C3D_TexInit(&texture->tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
 
 	if (!success) {
 		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
@@ -298,13 +298,13 @@ ndsicon *ndsicon_create_texture(int w, int h)
  * @return Icon texture. (NULL on error)
  */
 void* grabIcon(const sNDSBanner* ndsBanner) {
-	// Convert the palette from BGR555 to RGB565.
+	// Convert the palette from BGR555 to RGB5A1.
 	// (We need to ensure the MSB is set for all except
 	// color 0, which is transparent.)
 	u16 palette[16];
 	palette[0] = 0;	// Color 0 is always transparent.
 	for (int i = 16-1; i > 0; i--) {
-		// Convert from NDS BGR555 to RGB565.
+		// Convert from NDS BGR555 to RGB5A1.
 		// NOTE: The GPU expects byteswapped data.
 		palette[i] = BGR555_to_RGB5A1(ndsBanner->palette[i]);
 	}
