@@ -352,7 +352,7 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 	gspWaitForPPF();
 	linearFree(textureData);
 	
-	return texture;
+	return texture->tex.data;
 }
 
 /**
