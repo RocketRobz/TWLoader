@@ -1640,9 +1640,6 @@ const u64 TWLNAND_TID = 0x0004800554574C44ULL;
 extern const u64 NTRLAUNCHER_TID;
 const u64 NTRLAUNCHER_TID = 0x0004800554574C31ULL;
 
-// DSi game Title ID.
-u32 DSIGAME_TID[2] = {0x00048004, 0x0};
-
 /**
 * Check if the TWLNAND-side title is installed or not
 * Title ID: 0x0004800554574C44ULL
@@ -5299,7 +5296,10 @@ int main(){
 			} else if (settings.ui.cursorPosition == -1) {
 				tid = NTRLAUNCHER_TID;
 			}
-			
+
+			FS_MediaType mediaType = MEDIATYPE_NAND;
+			bool switchToTwl = true;	
+
 			if(launchCia) {
 				char path[256];
 				const char *rom_filename;
@@ -5316,20 +5316,12 @@ int main(){
 				}
 
 				FILE *f_nds_file = fopen(path, "rb");
-				char game_TID[5];
-                grabTID(f_nds_file, game_TID, true);
-                game_TID[4] = 0;
+                tid = grabCIATID(f_nds_file);
                 fclose(f_nds_file); 
-                DSIGAME_TID[1] = (u32)game_TID;
-                tid = (u64)DSIGAME_TID;
-                //tid = 0x0004800441534D45LL;
 
 				if (!checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
 			}
-			
-			FS_MediaType mediaType = MEDIATYPE_NAND;
-			bool switchToTwl = true;	
-			
+
 			if (!settings.twl.forwarder && settings.twl.launchslot1) {
 				// CTR cards should be launched directly.
 				// TODO: TWL cards should also be launched directly,

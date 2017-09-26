@@ -33,7 +33,7 @@ static inline u16 BGR555_to_RGB5A1(u16 px16) {
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.)
  * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
@@ -42,6 +42,20 @@ int grabTID(FILE* ndsFile, char *buf, bool isCia) {
 	else fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	size_t read = fread(buf, 1, 4, ndsFile);
 	return !(read == 4);
+}
+
+/**
+ * Get the title ID.
+ * @param ndsFile DS CIA image.
+ * @param buf Output buffer for title ID.
+ * @return CIA's title ID.
+ */
+u64 grabCIATID(FILE* ndsFile) {
+	char buf[9];
+	fseek(ndsFile, 0x2C1C, SEEK_SET);
+	size_t read = fread(buf, 1, 8, ndsFile);
+	game_TID[8] = 0;
+	return (u64)buf;
 }
 
 /**

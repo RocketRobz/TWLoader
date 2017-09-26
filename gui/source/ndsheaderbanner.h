@@ -206,11 +206,19 @@ typedef enum {
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.)
  * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
 int grabTID(FILE* ndsFile, char *buf, bool isCia);
+
+/**
+ * Get the title ID.
+ * @param ndsFile DS CIA image.
+ * @param buf Output buffer for title ID.
+ * @return CIA's title ID.
+ */
+u64 grabCIATID(FILE* ndsFile);
 
 /**
  * Get text from an NDS banner.
