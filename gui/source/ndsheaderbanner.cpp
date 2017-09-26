@@ -45,20 +45,6 @@ int grabTID(FILE* ndsFile, char *buf, bool isCia) {
 }
 
 /**
- * Get the title ID.
- * @param ndsFile DS CIA image.
- * @param buf Output buffer for title ID.
- * @return CIA's title ID.
- */
-u64 grabCIATID(FILE* ndsFile) {
-	char buf[9];
-	fseek(ndsFile, 0x2C1C, SEEK_SET);
-	size_t read = fread(buf, 1, 8, ndsFile);
-	buf[8] = 0;
-	return (u64)buf;
-}
-
-/**
  * Get text from an NDS banner.
  * @param ndsBanner NDS banner.
  * @param bnrtitlenum Title number. (aka language)

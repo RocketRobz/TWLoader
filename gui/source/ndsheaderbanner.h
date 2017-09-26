@@ -213,14 +213,6 @@ typedef enum {
 int grabTID(FILE* ndsFile, char *buf, bool isCia);
 
 /**
- * Get the title ID.
- * @param ndsFile DS CIA image.
- * @param buf Output buffer for title ID.
- * @return CIA's title ID.
- */
-u64 grabCIATID(FILE* ndsFile);
-
-/**
  * Get text from an NDS banner.
  * @param ndsBanner NDS banner.
  * @param bnrtitlenum Title number. (aka language)

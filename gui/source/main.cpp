@@ -273,6 +273,22 @@ bool checkDSiWareInstalled(u64 tid) {
     return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
 
+u64 getTIDFromCIA(char* path) {
+    AM_TitleEntry titleEntry;
+    Handle handle;
+    u64 res = 0;
+    
+    FS_Path ciaPath = fsMakePath(PATH_ASCII, path);
+	FSUSER_OpenFileDirectly(&handle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), ciaPath, FS_OPEN_READ, 0);
+    AM_GetCiaFileInfo(MEDIATYPE_NAND, &titleEntry, handle);
+    
+    res = titleEntry.titleID;
+    
+    FSFILE_Close(handle);
+    
+    return res;
+}
+
 /**
  * @brief Manage cia install or uninstall
  * @param install true is install, false to uninstall
@@ -5309,16 +5325,13 @@ int main(){
 					} else {
 						rom_filename = " ";
 					}
-					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+					snprintf(path, sizeof(path), "/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 				} else {
 					rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
-					snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+					snprintf(path, sizeof(path), "/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 				}
 
-				FILE *f_nds_file = fopen(path, "rb");
-                tid = grabCIATID(f_nds_file);
-                fclose(f_nds_file); 
-
+                tid = getTIDFromCIA(path);
 				if (!checkDSiWareInstalled(tid)) InstallCIA(rom_filename);
 			}
 
