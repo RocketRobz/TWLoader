@@ -4037,10 +4037,29 @@ int main(){
 							} else {
 								settings.twl.launchslot1 = false;
 								rom = files.at(settings.ui.cursorPosition).c_str();
-								sav = ReplaceAll(rom, ".nds", ".sav");
+								bool isCia = false;
+								bool overlaysIncluded = false;
+								if(settings.ui.cursorPosition >= 0) {
+									char path[256];
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
+									std::string fn = rom;
+									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+									if(isCia) {
+										FILE *f_nds_file = fopen(path, "rb");
+										if (f_nds_file) {
+											overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
+											fclose(f_nds_file);
+										}
+									}
+								}
+
+								if(!overlaysIncluded) {
+									sav = ReplaceAll(rom, ".nds", ".sav");
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
 							}
-							if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-							applaunchon = true;
 						}
 						wood_ndsiconscaletimer = 0;
 					} else if((hDown & KEY_Y) && settings.twl.forwarder && !isDemo){
@@ -4178,10 +4197,29 @@ int main(){
 							} else {
 								settings.twl.launchslot1 = false;
 								rom = files.at(settings.ui.cursorPosition).c_str();
-								sav = ReplaceAll(rom, ".nds", ".sav");
+								bool isCia = false;
+								bool overlaysIncluded = false;
+								if(settings.ui.cursorPosition >= 0) {
+									char path[256];
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
+									std::string fn = rom;
+									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+									if(isCia) {
+										FILE *f_nds_file = fopen(path, "rb");
+										if (f_nds_file) {
+											overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
+											fclose(f_nds_file);
+										}
+									}
+								}
+
+								if(!overlaysIncluded) {
+									sav = ReplaceAll(rom, ".nds", ".sav");
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
 							}
-							if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-							applaunchon = true;
 						}
 					} else if((hDown & KEY_Y) && settings.twl.forwarder && !isDemo){
 						settings.twl.launchslot1 = true;
@@ -4467,11 +4505,7 @@ int main(){
 									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, isCia);
 									fclose(f_nds_file);
 								}
-							} else {
-								overlaysIncluded = false;
 							}
-						} else {
-							overlaysIncluded = false;
 						}
 
 						if(!overlaysIncluded) {
