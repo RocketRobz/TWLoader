@@ -1335,7 +1335,8 @@ static void drawMenuDialogBox(void)
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
-				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
+				const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.60, 0.60);
+				pp2d_draw_wtext(72+(240-text_width)/2, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
 			}
 			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
@@ -1381,7 +1382,8 @@ static void drawMenuDialogBox(void)
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
-				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
+				const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.60, 0.60);
+				pp2d_draw_wtext(72+(240-text_width)/2, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
 			}
 			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
@@ -1425,7 +1427,8 @@ static void drawMenuDialogBox(void)
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
 			for (size_t i = 0; i < banner_lines; i++, y += dy) {
-				pp2d_draw_wtext(72, y+menudbox_Ypos, 0.60, 0.60, GRAY, romsel_gameline[i].c_str());
+				const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.60, 0.60);
+				pp2d_draw_wtext(72+(240-text_width)/2, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
 			}
 			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
@@ -3542,7 +3545,7 @@ int main(){
 						// Print the banner text, center-aligned.
 						const size_t banner_lines = std::min(3U, romsel_gameline.size());
 						for (size_t i = 0; i < banner_lines; i++, y += dy) {
-							const int text_width = 180;
+							const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.55, 0.55);
 							pp2d_draw_wtext(84+(192-text_width)/2, y, 0.55, 0.55, BLACK, romsel_gameline[i].c_str());
 						}
 					}
@@ -3568,14 +3571,14 @@ int main(){
 					if (settings.ui.theme != THEME_3DSMENU) {
 						if (!settings.ui.iconsize) {
 							const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-							const int home_width = 144+16;
+							const int home_width = pp2d_get_wtext_width(home_text, 0.50, 0.50) + 16;
 							const int home_x = (320-home_width)/2;
 							pp2d_draw_texture(homeicontex, home_x, 194); // Draw HOME icon
 							pp2d_draw_wtext(home_x+20, 195, 0.50, 0.50, BLACK, home_text);
 						}
 					} else {
 						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-						const int home_width = 144+16;
+						const int home_width = pp2d_get_wtext_width(home_text, 0.50, 0.50) + 16;
 						const int home_x = (320-home_width)/2;
 						pp2d_draw_texture(homeicontex, home_x, 220); // Draw HOME icon
 						pp2d_draw_wtext(home_x+20, 221, 0.50, 0.50, BLACK, home_text);
@@ -3891,7 +3894,8 @@ int main(){
 						// Print the banner text, center-aligned.
 						const size_t banner_lines = std::min(3U, romsel_gameline.size());
 						for (size_t i = 0; i < banner_lines; i++, y += dy) {
-							pp2d_draw_wtext(8, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+							const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.75, 0.75);
+							pp2d_draw_wtext((320-text_width)/2, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
 						}
 
 						if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {
