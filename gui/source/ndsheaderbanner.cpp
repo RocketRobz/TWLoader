@@ -54,7 +54,7 @@ u64 grabCIATID(FILE* ndsFile) {
 	char buf[9];
 	fseek(ndsFile, 0x2C1C, SEEK_SET);
 	size_t read = fread(buf, 1, 8, ndsFile);
-	game_TID[8] = 0;
+	buf[8] = 0;
 	return (u64)buf;
 }
 
