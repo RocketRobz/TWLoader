@@ -253,6 +253,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 }
 
 // From sf2d_texture.c
+//Grabbed from: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 unsigned int next_pow2(unsigned int v)
 {
 	v--;
@@ -262,7 +263,7 @@ unsigned int next_pow2(unsigned int v)
 	v |= v >> 8;
 	v |= v >> 16;
 	v++;
-	return v >= 64 ? v : 64;
+	return v >= 32 ? v : 32;
 }
 
 typedef struct {
