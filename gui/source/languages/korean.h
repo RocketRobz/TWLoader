@@ -49,6 +49,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"리셋 슬롯-1",													// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"콘솔 출력",													// "Console output"
 	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
 	"부트스트랩",													// "Bootstrap"
@@ -136,6 +137,9 @@ static const char *const lang_KO[STR_MAX] = {
 
 	"Slot-1 carts가 화이트스크린에서 멈추면 ",								// "Enable this if Slot-1 carts are stuck"
 	"이 옵션 설정",													// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"게임구동 전 텍스트 출력",											// "Displays some text before launched game."
 	"",															// (empty)

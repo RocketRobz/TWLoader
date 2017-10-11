@@ -807,6 +807,7 @@ void settingsDrawBottomScreen(void)
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
 		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
+		const char *loadingscreenvaluetext = (settings.twl.loadingscreen ? "On" : "Off");
 
 		const char *autoupdatevaluetext;
 		switch (settings.ui.autoupdate) {
@@ -876,10 +877,10 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), cpuspeedvaluetext);
+			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, SET_ALPHA(color_data->color, 255), cpuspeedvaluetext);
 		} else {
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, cpuspeedvaluetext);
+			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, WHITE, cpuspeedvaluetext);
 		}
 
 		Ypos += 12;
@@ -906,6 +907,17 @@ void settingsDrawBottomScreen(void)
 		
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 5) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), loadingscreenvaluetext);
+		} else {
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, loadingscreenvaluetext);
+		}
+		
+		Ypos += 12;
+		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 6) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_CONSOLE_OUTPUT));
@@ -916,7 +928,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 6) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 7) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
@@ -927,7 +939,7 @@ void settingsDrawBottomScreen(void)
 		}
 
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 7) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 8) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP));
@@ -1220,7 +1232,10 @@ bool settingsMoveCursor(u32 hDown)
 				case 4:	// Reset Slot-1
 					settings.twl.resetslot1 = !settings.twl.resetslot1;
 					break;
-				case 5:	// Console output
+				case 5:	// Bootstrap loading screen
+					settings.twl.loadingscreen = !settings.twl.loadingscreen;
+					break;
+				case 6:	// Console output
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.console++;
 						if (settings.twl.console > 2) {
@@ -1233,7 +1248,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 6:	// Enable or disable autoupdate
+				case 7:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 1) {
@@ -1246,7 +1261,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 7: // Bootstrap version
+				case 8: // Bootstrap version
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.bootstrapfile++;
 						if (settings.twl.bootstrapfile > 1) {
@@ -1261,7 +1276,7 @@ bool settingsMoveCursor(u32 hDown)
 					break;					
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] < 7) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] < 8) {
 			cursor_pos[SUBSCREEN_MODE_NTR_TWL]++;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] > 0) {

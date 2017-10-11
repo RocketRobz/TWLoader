@@ -49,6 +49,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
 	"Доступ SD-карты для Slot-1",								// "SD card access for Slot-1"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Вывод консоли",											// "Console output"
 	"Автообновление бутстрапа",									// "Auto-update bootstrap"
 	"Бутстрап",													// "Bootstrap"
@@ -136,6 +137,9 @@ static const char *const lang_RU[STR_MAX] = {
 
 	"Включите, если картридж Slot-1",							// "Enable this if Slot-1 carts are stuck"
 	"застревает на белом экране.",								// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Показывает текст перед запуском",							// "Displays some text before launched game."
 	"игры.",													// (empty)

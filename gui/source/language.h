@@ -69,6 +69,7 @@ typedef enum _StrID {
 	SRT_SETTINGS_ARM9_CPU_SPEED,								// "ARM9 CPU Speed"
 	STR_SETTINGS_VRAM_BOOST,									// "VRAM boost"
 	STR_SETTINGS_RESET_SLOT_1,									// "Reset Slot-1"
+	STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN,						// "Bootstrap Loading Screen"
 	STR_SETTINGS_CONSOLE_OUTPUT,								// "Console output"
 	STR_SETTINGS_AUTOUPDATE_BOOTSTRAP,							// "Auto-update bootstrap"
 	STR_SETTINGS_BOOTSTRAP,										// "Bootstrap"
@@ -153,6 +154,9 @@ typedef enum _StrID {
 	
 	STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1,					// "Enable this if Slot-1 carts are stuck"
 	STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2,					// "on white screens."
+	
+	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_1,		// "Shows a loading screen before ROM"
+	STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_2,		// "is started in nds-bootstrap."
 	
 	STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1,					// "Displays some text before launched game."
 	STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2,					// (empty)

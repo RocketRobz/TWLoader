@@ -144,7 +144,7 @@ static const char bootstrapini_ndspath[] = "NDS_PATH";
 static const char bootstrapini_savpath[] = "SAV_PATH";
 static const char bootstrapini_bootstrappath[] = "BOOTSTRAP_PATH";
 static const char bootstrapini_arm7donorpath[] = "ARM7_DONOR_PATH";
-static const char bootstrapini_ntrmodeswitch[] = "NTR_MODE_SWITCH";
+static const char bootstrapini_loadingscreen[] = "LOADING_SCREEN";
 static const char bootstrapini_boostcpu[] = "BOOST_CPU";
 static const char bootstrapini_boostvram[] = "BOOST_VRAM";
 static const char bootstrapini_bootsplash[] = "BOOTSPLASH";
@@ -852,6 +852,7 @@ static void LoadBoxArt_WoodTheme(const int idx) {
  */
 static void LoadBootstrapConfig(void)
 {
+	settings.twl.loadingscreen = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_loadingscreen, 1);
 	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1)) {
 		case 1:
 			settings.twl.console = 2;
@@ -897,6 +898,7 @@ static void SaveBootstrapConfig(void)
 	}
 	if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using path:", bootstrapPath.c_str());
 	bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_bootstrappath, bootstrapPath);
+	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_loadingscreen, settings.twl.loadingscreen);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_boostcpu, settings.twl.cpuspeed);
 	bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_lockarm9scfgext, 0);
 	
@@ -5296,7 +5298,7 @@ int main(){
 			saveOnExit = false;
 			SaveSettings();
 			SetPerGameSettings();
-			if(!launchCia) SaveBootstrapConfig();
+			SaveBootstrapConfig();
 
 			// Prepare for the app launch.
 			u64 tid;

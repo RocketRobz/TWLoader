@@ -49,6 +49,7 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"重置 Slot-1",												// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"控制台輸出",													// "Console output"
 	"自動更新 bootstrap",											// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -136,6 +137,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 
 	"如果 Slot-1 卡帶卡在白畫面的話",									// "Enable this if Slot-1 carts are stuck"
 	"請啟動這項.",													// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"顯示遊戲之前顯示一些文本.",										// "Displays some text before launched game."
 	"",															// (empty)

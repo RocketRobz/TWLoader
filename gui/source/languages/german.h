@@ -49,6 +49,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
 	"SD Zugriff für Slot-1",								// "SD card access for Slot-1"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Konsolenausgabe",											// "Console output"
 	"Bootstrap automatisch aktualisieren",							// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -136,6 +137,9 @@ static const char *const lang_DE[STR_MAX] = {
 
 	"Aktivieren, wenn Slot-1 Karten auf",						// "Enable this if Slot-1 carts are stuck"
 	"einem weißen Bildschirm hängen bleiben.",					// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Zeigt etwas Text vor dem Spielstart an.",					// "Displays some text before launched game."
 	"",															// (empty)
