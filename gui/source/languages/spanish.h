@@ -138,8 +138,8 @@ static const char *const lang_ES[STR_MAX] = {
 	"Activa esta opción si los cartuchos se",					// "Enable this if Slot-1 carts are stuck"
 	"congelan en pantalla blanca.",								// "on white screens."
 
-	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
-	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+	"Muestra una pantalla de carga antes de",						// "Shows a loading screen before ROM"
+	"la ROM ser cargada en nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Muestra información de depuración antes",					// "Displays some text before launched game."
 	"de lanzar la ROM.",										// (empty) 
