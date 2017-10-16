@@ -42,8 +42,8 @@ bool consoleOn = false;
 
 int main() {
 
-	bool TWLCLK = true;
-	bool TWLVRAM = false;
+	bool TWLCLK = true;	// false == NTR, true == TWL
+	bool SOUND_FREQ = false;	// false == 32.73 kHz, true == 47.61 kHz
 	bool EnableSD = false;
 	std::string	gamesettingsPath = "";
 
@@ -94,12 +94,26 @@ int main() {
 		}
 
 		if( TWLCLK == false ) {
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("TWL_CLOCK ON\n");		
+			}
 			fifoSendValue32(FIFO_USER_04, 1);
 			// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
 			// setCpuClock(false);
 			REG_SCFG_CLK = 0x80;
 			swiWaitForVBlank();
 		}
+
+		SOUND_FREQ = twloaderini.GetInt("TWL-MODE","SOUND_FREQ",0);
+		if(SOUND_FREQ) {
+			fifoSendValue32(FIFO_MAXMOD, 1);
+			//if (logEnabled)	LogFM("TWL.Main", "Sound/Microphone frequency set to 47.61 kHz");
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("SOUND_FREQ 47.61 kHz\n");		
+			}
+		} //else {
+			//if (logEnabled)	LogFM("TWL.Main", "Sound/Microphone frequency set to 32.73 kHz");
+		//}
 
 		if(twloaderini.GetInt("TWL-MODE","SLOT1_ENABLESD",0) == 1) {
 			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
@@ -151,7 +165,7 @@ int main() {
 	while(1) {
 		if(REG_SCFG_MC == 0x11) { 
 		break; } else {
-			runLaunchEngine (EnableSD, TWLVRAM);
+			runLaunchEngine (EnableSD);
 		}
 	}
 	return 0;

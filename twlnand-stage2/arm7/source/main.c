@@ -92,7 +92,8 @@ void SCFGFifoCheck (void)
 		fifoWaitValue32(FIFO_USER_07);
         if(fifoCheckValue32(FIFO_USER_04)) { REG_SCFG_CLK = 0x0181; }
         if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_ROM = 0x703; }
-		// if(fifoCheckValue32(FIFO_USER_06)) { REG_SCFG_EXT = 0x93A50000; }
+        if(fifoCheckValue32(FIFO_MAXMOD)) { *(u16*)(0x4004700) |= BIT(13); }
+		// if(fifoCheckValue32(FIFO_USER_08)) { REG_SCFG_EXT = 0x93A50000; }
         // fifoSendValue32(FIFO_USER_07, 0);
     // }
 }

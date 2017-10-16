@@ -28,6 +28,7 @@ void fifocheck (void)
 		}
 		if(fifoCheckValue32(FIFO_USER_06)) { /*Do Nothing*/ } else { REG_SCFG_ROM = 0x703; }
 		if(fifoCheckValue32(FIFO_USER_05)) { REG_SCFG_EXT = 0x93A53000; } else { REG_SCFG_EXT = 0x12A03000; }
+		if(fifoCheckValue32(FIFO_MAXMOD)) { *(u16*)(0x4004700) |= BIT(13); }
 
 		irqDisable (IRQ_ALL);
 		*((vu32*)0x027FFE34) = (u32)0x06000000;
