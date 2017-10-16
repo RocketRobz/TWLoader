@@ -43,10 +43,11 @@ static const char *const lang_RU[STR_MAX] = {
 	"Старт. экран",												// "Show Boot Screen"
 	"Путь к ROM-у",												// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
 	"Радуга LED",												// "Rainbow LED"
 	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Доступ SD-карты для Slot-1",								// "SD card access for Slot-1"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"

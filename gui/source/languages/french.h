@@ -43,10 +43,11 @@ static const char *const lang_FR[STR_MAX] = {
 	"Aff. écran de Boot",				   						// "Show Boot Screen"
 	"Chemin des ROM",					   						// "ROM path"
 	 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Accès carte SD pour Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"

@@ -43,10 +43,11 @@ static const char *const lang_JP[STR_MAX] = {
 	"ブートスクリーンの見せる",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"虹LED",														// "Rainbow LED"
 	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"

@@ -43,10 +43,11 @@ static const char *const lang_KO[STR_MAX] = {
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"플래시카드 선택",												// "Flashcard(s) select"
 	"무지개색 LED",													// "Rainbow LED"
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"리셋 슬롯-1",													// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"

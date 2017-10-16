@@ -43,15 +43,16 @@ static const char *const lang_DE[STR_MAX] = {
 	"Zeige Startbildschirm",											// "Show Boot Screen"
 	"ROM Pfad",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
 	"Regenbogen LED",											// "Rainbow LED"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
-	"SD Zugriff für Slot-1",								// "SD card access for Slot-1"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
+	"SD Zugriff für Slot-1",									// "SD card access for Slot-1"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Konsolenausgabe",											// "Console output"
-	"Bootstrap automatisch aktualisieren",							// "Auto-update bootstrap"
+	"Bootstrap automatisch aktualisieren",						// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/

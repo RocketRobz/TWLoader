@@ -43,16 +43,17 @@ static const char *const lang_ES[STR_MAX] = {
 	"Pantalla de arranque",										// "Show Boot Screen"
 	"Rutas",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Seleccionar flashcard",									// "Flashcard(s) select"
 	"LED efecto arcoiris",										// "Rainbow LED"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Acceso SD para Slot-1",									// "SD card access for Slot-1"
 	"Reinicio del Slot-1",										// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Salida de consola",										// "Console output"
 	"Actualización auto. bootstrap",							// "Auto-update bootstrap"
-	"Versión de Bootstrap",												// "Bootstrap"
+	"Versión de Bootstrap",										// "Bootstrap"
 
 	/** Settings: Top Screen **/
 	": Actualizar bootstrap (Versión oficial)",				// "X: Update bootstrap (Official release)"

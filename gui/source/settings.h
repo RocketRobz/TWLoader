@@ -68,6 +68,7 @@ typedef struct _Settings_t {
 	struct {
 		bool rainbowled;
 		bool cpuspeed;	// false == NTR, true == TWL
+		bool soundfreq;	// false == 32.73 kHz, true == 47.61 kHz
 		bool enablesd;
 		bool forwarder;
 

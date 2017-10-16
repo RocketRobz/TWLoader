@@ -805,6 +805,7 @@ void settingsDrawBottomScreen(void)
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
+		const char *soundfreqvaluetext = (settings.twl.soundfreq ? "47.61 kHz" : "32.73 kHz");
 		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
 		const char *loadingscreenvaluetext = (settings.twl.loadingscreen ? "On" : "Off");
@@ -860,7 +861,7 @@ void settingsDrawBottomScreen(void)
 		} else {
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_FLASHCARD_SELECT));
 		}
-		
+
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR] == 1) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
@@ -871,31 +872,42 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_RAINBOW_LED));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, rainbowledvaluetext);
 		}
-		
+
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR] == 2) {
-			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
-			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(SRT_SETTINGS_ARM9_CPU_SPEED));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_ARM9_CPU_SPEED));
 			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, SET_ALPHA(color_data->color, 255), cpuspeedvaluetext);
 		} else {
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_ARM9_CPU_SPEED));
 			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, WHITE, cpuspeedvaluetext);
 		}
 
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR] == 3) {
-			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1));
-			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2));
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_VRAM_BOOST));
-			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), enablesdvaluetext);
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "32.73 kHz: Original quality");
+			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "47.61 kHz: Improved quality");
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), soundfreqvaluetext);
 		} else {
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_VRAM_BOOST));
-			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, enablesdvaluetext);
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, soundfreqvaluetext);
 		}
-		
+
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR] == 4) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ENABLE_SD_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ENABLE_SD_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_ENABLE_SD));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), enablesdvaluetext);
+		} else {
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_ENABLE_SD));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, enablesdvaluetext);
+		}
+
+		Ypos += 12;
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 5) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_RESET_SLOT_1));
@@ -906,7 +918,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR] == 5) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 6) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
@@ -915,9 +927,9 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, loadingscreenvaluetext);
 		}
-		
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR] == 6) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 7) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_CONSOLE_OUTPUT));
@@ -926,9 +938,9 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_CONSOLE_OUTPUT));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, consolevaluetext);
 		}
-		
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR] == 7) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 8) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
@@ -939,7 +951,7 @@ void settingsDrawBottomScreen(void)
 		}
 
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR] == 8) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 9) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP));
@@ -948,7 +960,7 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_BOOTSTRAP));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, bootstrapfilevaluetext);
 		}
-		
+
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		// Flash card options.
 		static const char *const flash_card_options[][6] = {
@@ -1226,16 +1238,19 @@ bool settingsMoveCursor(u32 hDown)
 				case 2:	// CPU speed
 					settings.twl.cpuspeed = !settings.twl.cpuspeed;
 					break;
-				case 3:	// SD card access for Slot-1
+				case 3:	// Sound/Microphone frequency
+					settings.twl.soundfreq = !settings.twl.soundfreq;
+					break;
+				case 4:	// SD card access for Slot-1
 					settings.twl.enablesd = !settings.twl.enablesd;
 					break;
-				case 4:	// Reset Slot-1
+				case 5:	// Reset Slot-1
 					settings.twl.resetslot1 = !settings.twl.resetslot1;
 					break;
-				case 5:	// Bootstrap loading screen
+				case 6:	// Bootstrap loading screen
 					settings.twl.loadingscreen = !settings.twl.loadingscreen;
 					break;
-				case 6:	// Console output
+				case 7:	// Console output
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.console++;
 						if (settings.twl.console > 2) {
@@ -1248,7 +1263,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 7:	// Enable or disable autoupdate
+				case 8:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 1) {
@@ -1261,7 +1276,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 8: // Bootstrap version
+				case 9: // Bootstrap version
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.bootstrapfile++;
 						if (settings.twl.bootstrapfile > 1) {
@@ -1276,7 +1291,7 @@ bool settingsMoveCursor(u32 hDown)
 					break;					
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR] < 8) {
+		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR] < 9) {
 			cursor_pos[SUBSCREEN_MODE_NTR]++;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR] > 0) {
@@ -1874,6 +1889,7 @@ void LoadSettings(void) {
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
+	settings.twl.soundfreq = settingsini.GetInt("TWL-MODE", "SOUND_FREQ", 0);
 	settings.twl.lockarm9scfgext = settingsini.GetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", 0);
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
 	settings.twl.enablesd = settingsini.GetInt("TWL-MODE", "SLOT1_ENABLESD", 0);
@@ -1929,6 +1945,7 @@ void SaveSettings(void) {
 	// TWL settings.
 	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
 	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
+	settingsini.SetInt("TWL-MODE", "SOUND_FREQ", settings.twl.soundfreq);
 	settingsini.SetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", settings.twl.lockarm9scfgext);
 	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
 	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);

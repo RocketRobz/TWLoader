@@ -43,10 +43,11 @@ static const char *const lang_TR[STR_MAX] = {
 	"Başlangıç Ekranını Göster",											// "Show Boot Screen"
 	"ROM dizini",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashkart(ları) seç",										// "Flashcard(s) select"
 	"Gökkuşağı LED",												// "Rainbow LED"
 	"ARM9 CPU Hızı",											// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Slot-1 için SD card erişimi",								// "SD card access for Slot-1"
 	"Slot-1'i sıfırla",												// "Reset Slot-1"
 	"Konsol çıktısı",											// "Console output"

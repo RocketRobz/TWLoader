@@ -43,10 +43,11 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"Show 啟動畫面",												// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"選擇燒錄卡",													// "Flashcard(s) select"
 	"彩虹 LED",													// "Rainbow LED"
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"重置 Slot-1",												// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"

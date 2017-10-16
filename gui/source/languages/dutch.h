@@ -43,10 +43,11 @@ static const char *const lang_NL[STR_MAX] = {
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"Rainbow LED",												// "Rainbow LED"
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",												// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"
