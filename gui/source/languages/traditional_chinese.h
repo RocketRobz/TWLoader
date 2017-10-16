@@ -124,6 +124,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"設定到 TWL 來避免某些遊戲中的拖慢.",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "允許 8 bit VRAM 寫入",										// "Allows 8 bit VRAM writes"
 	// "以及拓展 bus 到 32 bit.",										// "and expands the bus to 32 bit."
 

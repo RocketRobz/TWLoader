@@ -124,6 +124,9 @@ static const char *const lang_KO[STR_MAX] = {
 	"몇몇 게임에서 렉을 없애기 위해 TWL으로 설정",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "8 bit VRAM 쓰기 허용",											// "Allows 8 bit VRAM writes"
 	// "및 버스 크기 32bit으로 확장",										// "and expands the bus to 32 bit."
 

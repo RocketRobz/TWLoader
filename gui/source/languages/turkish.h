@@ -123,6 +123,9 @@ static const char *const lang_TR[STR_MAX] = {
 	"Bazı oyunlarda TWL'nin takılmaları",							// "Set to TWL to get rid of lags"
 	"atlatabilmesi için seçin.",											// "in some games."
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "8 bit VRAM yazmalarına izin verir",									// "Allows 8 bit VRAM writes"
 	// "ve veri yolunu 32 bite çıkarır.",							// "and expands the bus to 32 bit."
 

@@ -63,11 +63,12 @@ typedef enum _StrID {
 	STR_SETTINGS_SHOW_BOOT_SCREEN,								// "Show Boot Screen"
 	STR_SETTINGS_ROM_PATH,										// "ROM path"
 	
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	STR_SETTINGS_FLASHCARD_SELECT,								// "Flashcard(s) select"
 	STR_SETTINGS_RAINBOW_LED,									// "Rainbow LED"
-	SRT_SETTINGS_ARM9_CPU_SPEED,								// "ARM9 CPU Speed"
-	STR_SETTINGS_VRAM_BOOST,									// "VRAM boost"
+	STR_SETTINGS_ARM9_CPU_SPEED,								// "ARM9 CPU Speed"
+	STR_SETTINGS_SOUND_FREQ,									// "Sound/Microphone frequency"
+	STR_SETTINGS_ENABLE_SD,										// "VRAM boost"
 	STR_SETTINGS_RESET_SLOT_1,									// "Reset Slot-1"
 	STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN,						// "Bootstrap Loading Screen"
 	STR_SETTINGS_CONSOLE_OUTPUT,								// "Console output"
@@ -140,11 +141,14 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1,						// "See rainbow colors glowing in"
 	STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2,						// "the Notification LED."
 	
-	SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1,					// "Set to TWL to get rid of lags in some games."
-	SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2,					// (empty)
+	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1,					// "Set to TWL to get rid of lags in some games."
+	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2,					// (empty)
 	
-	STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1,						// "Allows 8 bit VRAM writes"
-	STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2,						// "and expands the bus to 32 bit."
+	STR_SETTINGS_DESCRIPTION_SOUND_FREQ_1,						// "32.73 kHz: Original quality"
+	STR_SETTINGS_DESCRIPTION_SOUND_FREQ_2,						// "47.61 kHz: High quality"
+
+	STR_SETTINGS_DESCRIPTION_ENABLE_SD_1,						// "Allows 8 bit VRAM writes"
+	STR_SETTINGS_DESCRIPTION_ENABLE_SD_2,						// "and expands the bus to 32 bit."
 	
 	STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1,				// "Displays the DS/DSi boot animation"
 	STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2,				// "before launched game."

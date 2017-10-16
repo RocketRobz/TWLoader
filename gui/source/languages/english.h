@@ -13,7 +13,7 @@ static const char *const lang_EN[STR_MAX] = {
 	"FOR IMPORTANT INFORMATION",								// "FOR IMPORTANT INFORMATION"
 	"ABOUT YOUR HEALTH AND SAFETY.",							// "ABOUT YOUR HEALTH AND SAFETY."
 	"TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT",		// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthandsafety/"
+	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthsafety/"
 	"",
 	
 	"Touch the Touch Screen to continue.",						// "Touch the Touch Screen to continue."
@@ -123,6 +123,9 @@ static const char *const lang_EN[STR_MAX] = {
 
 	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
 	"in some games.",											// "in some games."
+
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
 
 	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
 	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."

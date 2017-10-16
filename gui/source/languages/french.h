@@ -124,6 +124,9 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer pour se débarrasser des",             		   		// "Set to TWL to get rid of lags in some games."
 	"ralentissements dans certains jeux.",                      // (empty)
 	 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
 	// "et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
 

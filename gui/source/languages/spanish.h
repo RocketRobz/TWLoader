@@ -47,7 +47,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Seleccionar flashcard",									// "Flashcard(s) select"
 	"LED efecto arcoiris",										// "Rainbow LED"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
-	"Frecuencia de sonido/micrófono",								// "Sound/Microphone frequency"
+	"Frecuencia de sonido/micrófono",							// "Sound/Microphone frequency"
 	"Acceso SD para Slot-1",									// "SD card access for Slot-1"
 	"Reinicio del Slot-1",										// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"
@@ -103,7 +103,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"superior de la burbuja de información.",					// (empty)
 
 	"Muestra el total de ROMs y la posición de",				// "A number of selected game and listed games"
-	"la ROM selecionada.",											// "is shown below the text bubble."
+	"la ROM selecionada.",										// "is shown below the text bubble."
 
 	"Carga una imagen personalizada para la",					// "Loads a custom bottom screen image"
 	"pantalla inferior.",										// "for the game menu."
@@ -123,6 +123,9 @@ static const char *const lang_ES[STR_MAX] = {
 
 	"Elije el modo TWL (DSi) para eliminar el",					// "Set to TWL to get rid of lags in some games."
 	"lag en algunos juegos",									// (empty) 
+
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
 
 	// "Permite escribir en la VRAM 8 bits",					// "Allows 8 bit VRAM writes"
 	// "y expandir el bus de datos a 32 bits.",					// "and expands the bus to 32 bit."

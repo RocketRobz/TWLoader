@@ -124,6 +124,9 @@ static const char *const lang_NL[STR_MAX] = {
 	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
 	"in some games.",											// "in some games."
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
 	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
 

@@ -886,12 +886,14 @@ void settingsDrawBottomScreen(void)
 
 		Ypos += 12;
 		if (cursor_pos[SUBSCREEN_MODE_NTR] == 3) {
-			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "32.73 kHz: Original quality");
-			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "47.61 kHz: Improved quality");
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SOUND_FREQ_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SOUND_FREQ_2));
+			if(language==5) pp2d_draw_wtext(Xpos, Ypos, 0.45, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
+			else pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), soundfreqvaluetext);
 		} else {
-			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
+			if(language==5) pp2d_draw_wtext(Xpos, Ypos, 0.45, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
+			else pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
 			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, soundfreqvaluetext);
 		}
 
