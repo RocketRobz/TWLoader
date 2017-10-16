@@ -47,7 +47,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Seleccionar flashcard",									// "Flashcard(s) select"
 	"LED efecto arcoiris",										// "Rainbow LED"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
-	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
+	"Frecuencia de sonido/micrófono",								// "Sound/Microphone frequency"
 	"Acceso SD para Slot-1",									// "SD card access for Slot-1"
 	"Reinicio del Slot-1",										// "Reset Slot-1"
 	"Bootstrap loading screen",									// "Bootstrap loading screen"
