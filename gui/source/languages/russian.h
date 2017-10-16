@@ -189,7 +189,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"/: Сохр. и вернуться",									// "A/B: Save and Return"
 	"Влево/Вправо: Выбрать",									// "Left/Right: Pick"
 	"Настройки интерфейса",										// "Settings: GUI"
-	"Настройки NTR/TWL",										// "Settings: NTR/TWL-mode"
+	"Настройки NTR",											// "Settings: NTR mode"
 
 };
 

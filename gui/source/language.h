@@ -206,7 +206,7 @@ typedef enum _StrID {
 	STR_SETTINGS_AB_SAVE_RETURN,								// "A/B: Save and Return"
 	STR_SETTINGS_LEFTRIGHT_PICK,								// "Left/Right: Pick"
 	STR_SETTINGS_GUI,											// "Settings: GUI"
-	STR_SETTINGS_NTR_TWL,										// "Settings: NTR/TWL-mode"
+	STR_SETTINGS_NTR,											// "Settings: NTR mode"
 	
 	STR_MAX
 } StrID;

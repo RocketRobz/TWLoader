@@ -189,7 +189,7 @@ static const char *const lang_JP[STR_MAX] = {
 	"/: Save and Return",										// "A/B: Save and Return"
 	"Left/Right: Pick",											// "Left/Right: Pick"
 	"セッティングのGUI:",												// "Settings: GUI"
-	"セッティングのNTR/TWLモード",										// "Settings: NTR/TWL-mode"
+	"セッティングのNTRモード",												// "Settings: NTR mode"
 
 };
 

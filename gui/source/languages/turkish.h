@@ -137,6 +137,9 @@ static const char *const lang_TR[STR_MAX] = {
 	"Eğer Slot-1 kartlar beyaz ekranda",					// "Enable this if Slot-1 carts are stuck"
 	"takılı kalıyorsa bunu etkinleştirin.",										// "on white screens."
 
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+
 	"Oyun başlamadan önce bazı yazılar gösterir.",					// "Displays some text before launched game."
 	"",															// (empty)
 
@@ -185,7 +188,7 @@ static const char *const lang_TR[STR_MAX] = {
 	"/: Kaydet ve Çık",										// "A/B: Save and Return"
 	"Left/Right: Seç",											// "Left/Right: Pick"
 	"Settings: Arayüz",											// "Settings: GUI"
-	"Settings: NTR/TWL-modu",									// "Settings: NTR/TWL-mode"
+	"Settings: NTR modu",									// "Settings: NTR mode"
 
 };
 

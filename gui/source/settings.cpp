@@ -21,7 +21,7 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_FRONTEND = 0,			// Frontend settings (page 1)
 	SUBSCREEN_MODE_FRONTEND2 = 1,			// Frontend settings (page 2)
 	SUBSCREEN_MODE_FRONTEND3 = 2,			// Frontend settings (page 3)
-	SUBSCREEN_MODE_NTR_TWL = 3,				// NTR/TWL-mode settings
+	SUBSCREEN_MODE_NTR = 3,				// NTR mode settings
 	SUBSCREEN_MODE_FLASH_CARD = 4,			// Flash card options
 	SUBSCREEN_MODE_SUB_THEME = 5,			// Sub-theme select
 	SUBSCREEN_MODE_CHANGE_ROM_PATH = 6,		// Sub-menu with rom path location
@@ -279,7 +279,7 @@ void settingsDrawTopScreen(void)
 			pp2d_draw_texture_blend(settingslogotwltex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,twlfadealpha));
 			pp2d_draw_texture_blend(settingslogooadertex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));
 			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, 0+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,demofadealpha));
-			if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
+			if (subscreenmode == SUBSCREEN_MODE_NTR) {
 //				pp2d_draw_wtext(offset3D[topfb].disabled+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
 //				pp2d_draw_wtext(offset3D[topfb].disabled+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
 				pp2d_draw_wtext(0+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
@@ -797,7 +797,7 @@ void settingsDrawBottomScreen(void)
 			// Selected			
 			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to change rom location folder.");
 		}
-	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
+	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
@@ -851,9 +851,9 @@ void settingsDrawBottomScreen(void)
 				break;
 		}
 
-		title = TR(STR_SETTINGS_NTR_TWL);
+		title = TR(STR_SETTINGS_NTR);
 		int Ypos = 40;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 0) {			
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 0) {			
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_FLASHCARD_SELECT));
@@ -862,7 +862,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 1) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 1) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_RAINBOW_LED));
@@ -873,7 +873,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 2) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 2) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(SRT_SETTINGS_ARM9_CPU_SPEED));
@@ -884,7 +884,7 @@ void settingsDrawBottomScreen(void)
 		}
 
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 3) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 3) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_VRAM_BOOST));
@@ -895,7 +895,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 4) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 4) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_RESET_SLOT_1));
@@ -906,7 +906,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 5) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 5) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
@@ -917,7 +917,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 6) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 6) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_CONSOLE_OUTPUT));
@@ -928,7 +928,7 @@ void settingsDrawBottomScreen(void)
 		}
 		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 7) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 7) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
@@ -939,7 +939,7 @@ void settingsDrawBottomScreen(void)
 		}
 
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 8) {
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 8) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
 			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP));
@@ -1204,12 +1204,12 @@ bool settingsMoveCursor(u32 hDown)
 			settings.twl.flashcard++; // Flashcard
 			sfx = sfx_select;
 		} else if (hDown & (KEY_A | KEY_B)) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_select;
 		}
-	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
+	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
-			switch (cursor_pos[SUBSCREEN_MODE_NTR_TWL]) {
+			switch (cursor_pos[SUBSCREEN_MODE_NTR]) {
 				case 0:
 				default:
 					// Top item: Only listen to 'A'.
@@ -1276,11 +1276,11 @@ bool settingsMoveCursor(u32 hDown)
 					break;					
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] < 8) {
-			cursor_pos[SUBSCREEN_MODE_NTR_TWL]++;
+		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR] < 8) {
+			cursor_pos[SUBSCREEN_MODE_NTR]++;
 			sfx = sfx_select;
-		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] > 0) {
-			cursor_pos[SUBSCREEN_MODE_NTR_TWL]--;
+		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR] > 0) {
+			cursor_pos[SUBSCREEN_MODE_NTR]--;
 			sfx = sfx_select;
 		} else if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND3;
@@ -1375,7 +1375,7 @@ bool settingsMoveCursor(u32 hDown)
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
@@ -1388,7 +1388,7 @@ bool settingsMoveCursor(u32 hDown)
 				sfx = sfx_switch;
 			}
 			if (touch.px >= 248 && touch.py >= 220) {
-				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				subscreenmode = SUBSCREEN_MODE_NTR;
 				sfx = sfx_switch;
 			}
 		}
@@ -1581,7 +1581,7 @@ bool settingsMoveCursor(u32 hDown)
 				cursor_pos[0]--;
 			sfx = sfx_select;
 		} else if (hDown & KEY_L) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
@@ -1593,7 +1593,7 @@ bool settingsMoveCursor(u32 hDown)
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch.px <= 72 && touch.py >= 220) {
-				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				subscreenmode = SUBSCREEN_MODE_NTR;
 				sfx = sfx_switch;
 			}
 			if (touch.px >= 248 && touch.py >= 220) {

@@ -189,7 +189,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"/: 저장 후 되돌아가기",											// "A/B: Save and Return"
 	"</>: 선택",													// "Left/Right: Pick"
 	"GUI 설정",													// "Settings: GUI"
-	"NTR/TWL-mode 설정",											// "Settings: NTR/TWL-mode"
+	"NTR mode 설정",												// "Settings: NTR mode"
 
 };
 

@@ -189,7 +189,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"/: Sauvegarder and Retourner",                         	// "A/B: Save and Return"
 	"Gauche/Droite: Choisir",                                   // "Left/Right: Pick"
 	"Paramètres: GUI",                                          // "Settings: GUI"
-	"Paramètres: NTR/TWL-mode",                                 // "Settings: NTR/TWL-mode"
+	"Paramètres: NTR mode",										// "Settings: NTR mode"
  
 };
  
