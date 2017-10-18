@@ -1574,7 +1574,7 @@ bool settingsMoveCursor(u32 hDown)
 		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
-		} else if (hDown & KEY_B) {
+		} else if ((hDown & KEY_B) && !fadein) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
 			sfx = sfx_back;
@@ -1600,7 +1600,7 @@ bool settingsMoveCursor(u32 hDown)
 			if (cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] > 1)
 				cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] = 1;
 			sfx = sfx_select;
-		} else if (hDown & KEY_B) {		
+		} else if (hDown & KEY_B) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND3;
 			sfx = sfx_select;
 		} else if (hDown & KEY_A) {
