@@ -2971,6 +2971,7 @@ int main(){
 				} else if (screenmodeswitch) {
 					screenmode = SCREEN_MODE_SETTINGS;
 					settingsResetSubScreenMode();
+					fadeout = false;
 					fadein = true;
 					screenmodeswitch = false;
 				}
@@ -4746,7 +4747,7 @@ int main(){
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;			
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 151) && touch.py <= (menudbox_Ypos + 185)){ // Settings button
-								startmenu_cursorPosition = 6; // Only this is making sometimes to not show the light texture								
+								startmenu_cursorPosition = 6; // Only this is making sometimes to not show the light texture
 								pp2d_draw_texture(dboxtex_button, 23, menudbox_Ypos + 151); // Light the button to print it always
 								fadeout = true;
 								screenmodeswitch = true;
@@ -4865,6 +4866,9 @@ int main(){
 										bgm_menu->stop();
 										sfx_launch->play();
 									}
+									showdialogbox_menu = false;
+									menudbox_movespeed = 1;
+									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
