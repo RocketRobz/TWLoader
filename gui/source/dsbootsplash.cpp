@@ -47,10 +47,11 @@ void fade_whiteToBlack() {
 					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
 					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
 				}
-//				pp2d_end_draw();
 			}
+			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 			drawRectangle(0, 0, 320, 240, WHITE);
 			drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fade));
+			pp2d_end_draw();
 
 			if (fade == 255) break;
 		}
@@ -236,6 +237,7 @@ void bootSplash() {
 	}
 
 	for (int i = 0; i < 75; i++) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 			pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
 			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
@@ -243,12 +245,15 @@ void bootSplash() {
 				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
 				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 			}
-//			pp2d_end_draw();
 		}
+		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+		pp2d_end_draw();
 	}
 
 	while (aptMainLoop()) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+
 		// Scan hid shared memory for input events
 		hidScanInput();
 		const u32 hDown = hidKeysDown();		
@@ -586,6 +591,8 @@ void bootSplash() {
 				fadeout = true;
 			}
 		}
+		
+		pp2d_end_draw();
 		
 		if (fadeout && bootSplash_fade == 255) break;
 		
