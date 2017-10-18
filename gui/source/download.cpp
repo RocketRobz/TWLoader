@@ -247,7 +247,7 @@ int checkUpdate(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
-	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_draw_texture(settingstex, 0, 0);
 		pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -543,7 +543,7 @@ int checkUpdate(void) {
 					bool checkanswer = true;
 
 					while(checkanswer) {
-						pp2d_draw_on(GFX_BOTTOM);						
+						pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);						
 						static const char msg[] =
 							"TWLoader is up-to-date.\n"
 							"\n"
@@ -687,7 +687,7 @@ void DownloadTWLoaderCIAs(void) {
 	bool yestoupdate = false;
 	
 	while(checkanswer) {
-		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		static const char gui_msg[] =
 			"An update for TWLoader is available.\n"
 			"Do you want to update?\n"
@@ -723,7 +723,7 @@ void DownloadTWLoaderCIAs(void) {
 			checkanswer = false;	// Exit loop
 		}
 	}
-	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	if(yestoupdate) {
 		int resGUI = -1;
 		int resGUI_3DSX = -1;
@@ -774,7 +774,7 @@ void DownloadTWLoaderCIAs(void) {
 				pp2d_end_draw();
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
-				pp2d_begin_draw(GFX_BOTTOM);
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, 3DSX)\n"
@@ -806,7 +806,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char twlnand_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 1))\n"
@@ -834,7 +834,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char twlnandstg2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(SD stage of (part 1 of) TWLNAND side)\n"
@@ -850,7 +850,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char twlnand2_msg[] =
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 2))\n"
@@ -882,7 +882,7 @@ void DownloadTWLoaderCIAs(void) {
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
@@ -892,7 +892,7 @@ void DownloadTWLoaderCIAs(void) {
 			}
 			pp2d_end_draw();
 		} else if (settings.ui.filetype == 1) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			if(resGUI_3DSX != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
@@ -903,7 +903,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if(resGUI == 0 && updateACE_RPG) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char msg[] =
 				"Now downloading latest Ace_RPG version...\n"
 				"(ace_rpg.nds)\n"
@@ -926,7 +926,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char msg[] =
 				"Now downloading latest GBARunner2 version...\n"
 				"(GBARunner2.nds)\n"
@@ -949,7 +949,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char msg[] =
 				"Now downloading latest loadcard_dstt version...\n"
 				"(loadcard_dstt.nds)\n"
@@ -972,7 +972,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateR4) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			static const char msg[] =
 				"Now downloading latest R4 version...\n"
 				"(r4.nds)\n"
@@ -995,7 +995,7 @@ void DownloadTWLoaderCIAs(void) {
 			pp2d_end_draw();
 		}
 		if (resGUI == 0) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
 			run = false;
 			pp2d_end_draw();
@@ -1004,7 +1004,7 @@ void DownloadTWLoaderCIAs(void) {
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else for (int i = 0; i < 15; i++) {
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
 			pp2d_end_draw();
 		}
@@ -1147,7 +1147,7 @@ int DownloadMissingFiles(void) {
 				struct stat st;
 				
 				if (!checkTWLNANDSide()) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char twlnand_msg[] =
 						"Now installing missing CIA...\n"
 						"(TWLNAND side CIA (part 1))\n"
@@ -1164,14 +1164,14 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (!checkTWLNANDSide2()) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char twlnand2_msg[] =
 						"Now downloading latest TWLoader version...\n"
 						"(TWLNAND side CIA (part 2))\n"
@@ -1189,14 +1189,14 @@ int DownloadMissingFiles(void) {
 					}
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/TWLD.twldr", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char twlnandstg2_msg[] =
 						"Now downloading missing file...\n"
 						"(SD stage of (part 1 of) TWLNAND side)\n"
@@ -1208,14 +1208,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/ace_rpg.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(ace_rpg.nds)\n"
@@ -1227,14 +1227,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/GBARunner2.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(GBARunner2.nds)\n"
@@ -1246,14 +1246,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/loadcard_dstt.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(loadcard_dstt.nds)\n"
@@ -1265,14 +1265,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/r4.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading missing file...\n"
 						"(r4.nds)\n"
@@ -1284,14 +1284,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"\n"
@@ -1303,7 +1303,7 @@ int DownloadMissingFiles(void) {
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
@@ -1312,7 +1312,7 @@ int DownloadMissingFiles(void) {
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"\n"
@@ -1324,7 +1324,7 @@ int DownloadMissingFiles(void) {
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
 					if(!ver) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
@@ -1333,7 +1333,7 @@ int DownloadMissingFiles(void) {
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading release-bootstrap...\n"
 						"(release-bootstrap.nds)\n"
@@ -1345,14 +1345,14 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
 					}
 				}
 				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM);
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
 						"Now downloading unofficial-bootstrap...\n"
 						"(unofficial-bootstrap.nds)\n"
@@ -1364,7 +1364,7 @@ int DownloadMissingFiles(void) {
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
-							pp2d_begin_draw(GFX_BOTTOM);
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
 							pp2d_end_draw();
 						}
@@ -1381,7 +1381,7 @@ int DownloadMissingFiles(void) {
  * Update nds-bootstrap to the latest unofficial build.
  */
 void UpdateBootstrapUnofficial(void) {
-	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
@@ -1407,7 +1407,7 @@ void UpdateBootstrapUnofficial(void) {
  * Update nds-bootstrap to the latest release build.
  */
 void UpdateBootstrapRelease(void) {
-	pp2d_begin_draw(GFX_BOTTOM);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	static const char title[] = "Now updating bootstrap (Release)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
@@ -1905,7 +1905,7 @@ void downloadBoxArt(void)
 				DialogBoxAppear(12, 16, title);
 			}
 			
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -2003,7 +2003,7 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			pp2d_begin_draw(GFX_BOTTOM);
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			u32 color = WHITE;
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -2077,7 +2077,7 @@ void downloadBoxArt(void)
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxAppear(12, 16, title);
 		}
-		pp2d_begin_draw(GFX_BOTTOM);
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		u32 color = WHITE;
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			pp2d_draw_texture(dialogboxtex, 0, 0);

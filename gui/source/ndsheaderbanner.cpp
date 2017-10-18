@@ -180,7 +180,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// TODO: If it's 0 bytes, re-cache it?
 		return 0;
 	}
-	pp2d_draw_on(GFX_BOTTOM);
+	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
 	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
