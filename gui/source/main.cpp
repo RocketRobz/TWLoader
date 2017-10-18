@@ -1615,6 +1615,7 @@ static void drawMenuDialogBox(void)
 			{161,  71, &settings.ui.topborder, NULL, {TR(STR_START_TOP_BORDER_OFF), TR(STR_START_TOP_BORDER_ON)}},
 			{ 23, 111, NULL, TR(STR_START_UNSET_DONOR), {NULL, NULL}},
 			{161, 111, NULL, TR(STR_START_SEARCH), {NULL, NULL}},
+			{ 23, 151, NULL, TR(STR_SETTINGS_TEXT), {NULL, NULL}},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -2967,6 +2968,11 @@ int main(){
 				} else if (gbarunnervalue == 1) {
 					if (logEnabled)	LogFM("Main", "Loading GBARunner.");
 					applaunchon = true;
+				} else if (screenmodeswitch) {
+					screenmode = SCREEN_MODE_SETTINGS;
+					settingsResetSubScreenMode();
+					fadein = true;
+					screenmodeswitch = false;
 				}
 			}
 		}
@@ -4612,7 +4618,7 @@ int main(){
 							}
 						} else if (hDown & KEY_RIGHT) {
 							if (startmenu_cursorPosition % 2 != 1 &&
-							    startmenu_cursorPosition != 5)
+							    startmenu_cursorPosition != 6)
 							{
 								// Move right.
 								startmenu_cursorPosition++;
@@ -4623,7 +4629,7 @@ int main(){
 								startmenu_cursorPosition--;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (startmenu_cursorPosition < 4) {
+							if (startmenu_cursorPosition < 5) {
 								startmenu_cursorPosition += 2;
 							}
 	
@@ -4739,6 +4745,18 @@ int main(){
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;			
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 151) && touch.py <= (menudbox_Ypos + 185)){ // Settings button
+								startmenu_cursorPosition = 6; // Only this is making sometimes to not show the light texture								
+								pp2d_draw_texture(dboxtex_button, 23, menudbox_Ypos + 151); // Light the button to print it always
+								fadeout = true;
+								screenmodeswitch = true;
+								if (dspfirmfound) {
+									bgm_menu->stop();
+									sfx_launch->play();
+								}
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;			
 							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
@@ -4840,6 +4858,14 @@ int main(){
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								}
+								case 6:
+									fadeout = true;
+									screenmodeswitch = true;
+									if (dspfirmfound) {
+										bgm_menu->stop();
+										sfx_launch->play();
+									}
+									break;
 							}
 						} else if (hDown & (KEY_B | KEY_START)) {
 							showdialogbox_menu = false;
