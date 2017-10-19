@@ -415,10 +415,12 @@ void settingsDrawBottomScreen(void)
 			"Português",	// Portuguese
 			"Russian",	// Russian (TODO) [Font's characters are too wide]
 			"ZHTW",		// Traditional Chinese (TODO)
+			"Turkish",		// Turkish
+			"Finnish",		// Finnish
 		};
 		// TODO: Cache the conversion?
 		wstring languagevaluetext;
-		if (settings.ui.language >= 0 && settings.ui.language < 12) {
+		if (settings.ui.language >= 0 && settings.ui.language < 14) {
 			languagevaluetext = utf8_to_wstring(language_text[settings.ui.language]);
 		} else {
 			// TODO: Translate?
@@ -1484,13 +1486,13 @@ bool settingsMoveCursor(u32 hDown)
 				default:
 					if (hDown & KEY_A) {
 						settings.ui.language++;
-						if (settings.ui.language > 11) {
+						if (settings.ui.language > 13) {
 							settings.ui.language = -1;
 						}
 					} else if (hDown & KEY_Y) {
 						settings.ui.language--;
 						if (settings.ui.language < -1) {
-							settings.ui.language = 11;
+							settings.ui.language = 13;
 						}
 					}
 					langInit();

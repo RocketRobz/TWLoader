@@ -20,7 +20,7 @@ static const char *const lang_FI[STR_MAX] = {
 	
 	/** GUI **/
 	": Palaa HOME Valikkoon",								    		// "Return to HOME Menu"
-	"KÄYNNISTÄ",															// "START" (used on cartridge indicator)
+	"KÄYNNISTÄ",														// "START" (used on cartridge indicator)
 	"Ei pelikorttia",									     			// "No cartridge"
 	"Tuntemton pelikortti", 											// "Unknown Cartridge"
 	"Asetukset",														// "Settings"
@@ -139,8 +139,8 @@ static const char *const lang_FI[STR_MAX] = {
 	"Näyttää Hyvinvointi ja terveys",									// "Displays the Health and Safety"
 	"viestin alaruudulla.",												// "message on the bottom screen."
 
-	"Ota tämä käyttöön jos Slot-1 pelikortit ovat jumissa",				// "Enable this if Slot-1 carts are stuck"
-	"valkoisella ruudulla.",											// "on white screens."
+	"Ota tämä käyttöön jos Slot-1 pelikortit",							// "Enable this if Slot-1 carts are stuck"
+	"ovat jumissa valkoisella ruudulla.",								// "on white screens."
 
 	"Näyttää latausruudun ennen kuin ROM",								// "Shows a loading screen before ROM"
 	"käynnistyy nds-bootstrapissa.",									// "is started in nds-bootstrap."

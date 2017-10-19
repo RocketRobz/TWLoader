@@ -18,9 +18,11 @@
 #include "languages/portuguese.h"
 #include "languages/korean.h"
 #include "languages/russian.h"
+#include "languages/turkish.h"
+#include "languages/finnish.h"
 
 // All languages.
-static const char *const *lang_all[12] = {
+static const char *const *lang_all[14] = {
 	lang_JP,	// Japanese
 	lang_EN,	// English
 	lang_FR,	// French
@@ -33,6 +35,8 @@ static const char *const *lang_all[12] = {
 	lang_PT,	// Portuguese
 	lang_RU,	// Russian
 	lang_EN,	// Traditional Chinese (TODO)
+	lang_TR,	// Turkish
+	lang_FI,	// Finnish
 };
 
 /** Functions. **/
@@ -60,7 +64,7 @@ void langInit(void)
 	}
 
 	language = settings.ui.language;
-	if (language < 0 || language >= 12) {
+	if (language < 0 || language >= 14) {
 		// Invalid language ID.
 		// Default to the system language setting.
 		language = sys_language;
