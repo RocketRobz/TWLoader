@@ -202,10 +202,10 @@ int cardInit (tNDSHeader* ndsHeader, u32* chipID)
 
 	// Set the KEY2 encryption registers
 	REG_ROMCTRL = 0;
-	CARD_1B0 = cardSeedBytes[ndsHeader->deviceType & 0x07] | (key1data.nnn << 15) | (key1data.mmm << 27) | 0x6000;
-	CARD_1B4 = 0x879b9b05;
-	CARD_1B8 = key1data.mmm >> 5;
-	CARD_1BA = 0x5c;
+	REG_CARD_1B0 = cardSeedBytes[ndsHeader->deviceType & 0x07] | (key1data.nnn << 15) | (key1data.mmm << 27) | 0x6000;
+	REG_CARD_1B4 = 0x879b9b05;
+	REG_CARD_1B8 = key1data.mmm >> 5;
+	REG_CARD_1BA = 0x5c;
 	REG_ROMCTRL = CARD_nRESET | CARD_SEC_SEED | CARD_SEC_EN | CARD_SEC_DAT;
 
 	// Update the DS card flags to suit KEY2 encryption

@@ -35,7 +35,7 @@ void vramcpy (void* dst, const void* src, int len)
 }	
 
 // Basic engine with no cheat related code.
-void runLaunchEngine (bool EnableSD, bool TWLVRAM)
+void runLaunchEngine (bool EnableSD)
 {
 
 	irqDisable(IRQ_ALL);
@@ -53,17 +53,9 @@ void runLaunchEngine (bool EnableSD, bool TWLVRAM)
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
 	
 	if( EnableSD ) {
-		if (TWLVRAM) {
-			REG_SCFG_EXT=0x83002000;
-		} else {
-			REG_SCFG_EXT=0x83000000;
-		}
+		REG_SCFG_EXT=0x83000000;
 	} else {
-		if (TWLVRAM) {
-			REG_SCFG_EXT=0x03002000;
-		} else {
-			REG_SCFG_EXT=0x03000000;
-		}
+		REG_SCFG_EXT=0x03000000;
 	}
 	
 	// Reset into a passme loop

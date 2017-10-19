@@ -2,7 +2,7 @@
 #include "main.h"
 #include "language.h"
 
-#include "citrostuff.h"
+#include "graphic.h"
 
 #include <ctime>
 #include <cstdio>
@@ -72,7 +72,8 @@ string RetTime(bool donotblink)
 	static int chartimer = 0;
 	if (!donotblink) {
 		chartimer++;
-		if (chartimer >= 120*2) {
+//		if (chartimer >= 120*2) {
+		if (chartimer >= 60*2) {	// 60 due to 3d is dissable for now
 			chartimer = 0;
 		}
 	} else {
@@ -80,7 +81,8 @@ string RetTime(bool donotblink)
 	}
 
 	char Tmp[24];
-	if (chartimer >= 120) {
+//	if (chartimer >= 120) {
+	if (chartimer >= 60) {
 		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
 	} else {
 		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
@@ -95,16 +97,14 @@ string RetTime(bool donotblink)
  * @param Ypos Y position.
  * @param format Date format.
  * @param color Text color.
- * @param size Text size.
  */
-void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, DateFormat format)
+void DrawDateF(float x, float y, float scaleX, float scaleY, u32 color, DateFormat format)
 {
 	char date_str[24];
 	GetDate(format, date_str, sizeof(date_str));
 	if (date_str[0] == 0)
 		return;
-	renderText(x, y, scaleX, scaleY, false, date_str);
-	// sftd_draw_text(font, Xpos, Ypos, color, size, date_str);
+	pp2d_draw_text(x, y, scaleX, scaleY, color, date_str);
 }
 
 /**
@@ -113,9 +113,8 @@ void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, Date
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param color Text color.
- * @param size Text size.
  */
-void DrawDate(float x, float y, float scaleX, float scaleY, bool baseline)
+void DrawDate(float x, float y, float scaleX, float scaleY, u32 color)
 {
 	// Date formats.
 	// - Index: Language ID.
@@ -135,5 +134,5 @@ void DrawDate(float x, float y, float scaleX, float scaleY, bool baseline)
 		FORMAT_MD,	// Traditional Chinese
 	};
 
-	DrawDateF(x, y, scaleX, scaleY, baseline, (DateFormat)date_fmt[language]);
+	DrawDateF(x, y, scaleX, scaleY, color, (DateFormat)date_fmt[language]);
 }

@@ -2,3 +2,6 @@
 	path = TWLoader-update
 	url = https://github.com/Jolty95/TWLoader-update.git
 	ignore = dirty
+[submodule "gui/source/pp2d"]
+	path = gui/source/pp2d
+	url = https://github.com/BernardoGiordano/pp2d

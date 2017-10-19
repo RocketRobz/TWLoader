@@ -167,7 +167,7 @@ int sdmmc_cardinserted() {
 }
 
 //---------------------------------------------------------------------------------
-void sdmmc_controller_init() {
+void sdmmc_controller_init(bool force_init) {
 //---------------------------------------------------------------------------------
     deviceSD.isSDHC = 0;
     deviceSD.SDOPT = 0;

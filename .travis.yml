@@ -2,6 +2,7 @@ language: cpp
 os: linux
 dist: trusty
 sudo: required
+group: deprecated-2017Q3
 
 python:
     - "2.7"
@@ -13,34 +14,9 @@ before_install:
 
 install:
   - sudo perl devkitARMupdate.pl  
-  - wget --no-check-certificate https://www.dropbox.com/s/di24n3crhhxevc7/ctrulib-master.zip?dl=1 -O /tmp/ctrulib.zip
-  - unzip /tmp/ctrulib.zip
-  - cd ctrulib-master/libctru
-  - make && sudo make install
-  - cd ../..
-  - wget --no-check-certificate https://www.dropbox.com/s/v2n6pmvh1dd4rzo/citro3d-master.zip?dl=1 -O /tmp/citro3d.zip
-  - unzip /tmp/citro3d.zip
-  - cd citro3d-master
-  - make && sudo make install
-  - cd ..  
   - wget --no-check-certificate https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
   - sudo cp -R portlibs ${DEVKITPRO}/
-  - wget --no-check-certificate https://codeload.github.com/xerpi/sf2dlib/zip/master -O /tmp/sf2dlib.zip
-  - unzip /tmp/sf2dlib.zip
-  - cd sf2dlib-master/libsf2d
-  - make && sudo make install
-  - cd ../..
-  - wget --no-check-certificate https://codeload.github.com/xerpi/sfillib/zip/master -O /tmp/sfillib.zip
-  - unzip /tmp/sfillib.zip
-  - cd sfillib-master/libsfil
-  - make && sudo make install
-  - cd ../..
-  - wget --no-check-certificate https://codeload.github.com/xerpi/sftdlib/zip/master -O /tmp/sftdlib.zip
-  - unzip /tmp/sftdlib.zip
-  - cd sftdlib-master/libsftd
-  - make && sudo make install
-  - cd ../..
   - wget --no-check-certificate  https://raw.githubusercontent.com/libretro/RetroArch/master/ctr/tools/bannertool-linux
   - chmod 777 bannertool-linux
   - sudo cp bannertool-linux /usr/bin/bannertool

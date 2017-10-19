@@ -15,36 +15,13 @@ using std::string;
 using std::wstring;
 
 #include <3ds.h>
-#include <sf2d.h>
-#include "citrostuff.h"
-#include "img/twpng.h"
 #include "keyboard.h"
-
-// Textures.
-
-/** Top screen **/
-static bool settings_tex_loaded = false;
-static sf2d_texture *whomeicontex = NULL;	// HOME icon.
-static sf2d_texture *setvoltex[6] = { };	// Volume levels.
-static sf2d_texture *setbatterychrgtex = NULL;	// Fully charged.
-static sf2d_texture *setbatterytex[6] = { };	// Battery levels.
-
-static sf2d_texture *dsboottex = NULL;		// DS boot screen
-static sf2d_texture *dsiboottex = NULL;	// DSi boot screen
-static sf2d_texture *invdsboottex = NULL;		// DS boot screen
-static sf2d_texture *invdsiboottex = NULL;	// DSi boot screen
-static sf2d_texture *dshstex = NULL;		// DS H&S screen
-static sf2d_texture *dsihstex = NULL;		// DSi H&S screen
-static sf2d_texture *disabledtex = NULL;	// Red circle with line
-
-/** Bottom screen **/
-sf2d_texture *settingstex = NULL;
 
 enum SubScreenMode {
 	SUBSCREEN_MODE_FRONTEND = 0,			// Frontend settings (page 1)
 	SUBSCREEN_MODE_FRONTEND2 = 1,			// Frontend settings (page 2)
 	SUBSCREEN_MODE_FRONTEND3 = 2,			// Frontend settings (page 3)
-	SUBSCREEN_MODE_NTR_TWL = 3,				// NTR/TWL-mode settings
+	SUBSCREEN_MODE_NTR = 3,				// NTR mode settings
 	SUBSCREEN_MODE_FLASH_CARD = 4,			// Flash card options
 	SUBSCREEN_MODE_SUB_THEME = 5,			// Sub-theme select
 	SUBSCREEN_MODE_CHANGE_ROM_PATH = 6,		// Sub-menu with rom path location
@@ -53,10 +30,11 @@ enum SubScreenMode {
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
 /** Settings **/
-
 const char *twlnand_msg;
 
 static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
+
+static bool settings_tex_loaded = false;
 
 // Color settings.
 // Use SET_ALPHA() to replace the alpha value.
@@ -74,7 +52,6 @@ const char* bottomloc = NULL;
 
 // Settings
 Settings_t settings;
-
 
 /**
  * Reset the settings screen's subscreen mode.
@@ -98,66 +75,66 @@ void settingsLoadTextures(void)
 		return;
 
 	/** Top screen **/
-	setvoltex[0] = sfil_load_PNG_file("romfs:/graphics/settings/volume0.png", SF2D_PLACE_RAM); // Show no volume (settings)
-	setvoltex[1] = sfil_load_PNG_file("romfs:/graphics/settings/volume1.png", SF2D_PLACE_RAM); // Volume low above 0 (settings)
-	setvoltex[2] = sfil_load_PNG_file("romfs:/graphics/settings/volume2.png", SF2D_PLACE_RAM); // Volume medium (settings)
-	setvoltex[3] = sfil_load_PNG_file("romfs:/graphics/settings/volume3.png", SF2D_PLACE_RAM); // Hight volume (settings)	
-	setvoltex[4] = sfil_load_PNG_file("romfs:/graphics/settings/volume4.png", SF2D_PLACE_RAM); // 100% (settings)
-	setvoltex[5] = sfil_load_PNG_file("romfs:/graphics/settings/volume5.png", SF2D_PLACE_RAM); // No DSP firm found (settings)
+	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (settings)
+	pp2d_load_texture_png(setvoltex[1], "romfs:/graphics/settings/volume1.png"); // Volume low above 0 (settings)
+	pp2d_load_texture_png(setvoltex[2], "romfs:/graphics/settings/volume2.png"); // Volume medium (settings)
+	pp2d_load_texture_png(setvoltex[3], "romfs:/graphics/settings/volume3.png"); // Hight volume (settings)	
+	pp2d_load_texture_png(setvoltex[4], "romfs:/graphics/settings/volume4.png"); // 100% (settings)
+	pp2d_load_texture_png(setvoltex[5], "romfs:/graphics/settings/volume5.png"); // No DSP firm found (settings)
 
-	setbatterychrgtex = sfil_load_PNG_file("romfs:/graphics/settings/battery_charging.png", SF2D_PLACE_RAM);
-	setbatterytex[0] = sfil_load_PNG_file("romfs:/graphics/settings/battery0.png", SF2D_PLACE_RAM);
-	setbatterytex[1] = sfil_load_PNG_file("romfs:/graphics/settings/battery1.png", SF2D_PLACE_RAM);
-	setbatterytex[2] = sfil_load_PNG_file("romfs:/graphics/settings/battery2.png", SF2D_PLACE_RAM);
-	setbatterytex[3] = sfil_load_PNG_file("romfs:/graphics/settings/battery3.png", SF2D_PLACE_RAM);
-	setbatterytex[4] = sfil_load_PNG_file("romfs:/graphics/settings/battery4.png", SF2D_PLACE_RAM);
-	setbatterytex[5] = sfil_load_PNG_file("romfs:/graphics/settings/battery5.png", SF2D_PLACE_RAM);
+	pp2d_load_texture_png(setbatterychrgtex, "romfs:/graphics/settings/battery_charging.png");
+	pp2d_load_texture_png(setbatterytex[0], "romfs:/graphics/settings/battery0.png");
+	pp2d_load_texture_png(setbatterytex[1], "romfs:/graphics/settings/battery1.png");
+	pp2d_load_texture_png(setbatterytex[2], "romfs:/graphics/settings/battery2.png");
+	pp2d_load_texture_png(setbatterytex[3], "romfs:/graphics/settings/battery3.png");
+	pp2d_load_texture_png(setbatterytex[4], "romfs:/graphics/settings/battery4.png");
+	pp2d_load_texture_png(setbatterytex[5], "romfs:/graphics/settings/battery5.png");
 
-	dsboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
-	dsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
-	invdsboottex = sfil_load_PNG_file("romfs:/graphics/settings/inv_dsboot.png", SF2D_PLACE_RAM); // DS boot screen in settings
-	invdsiboottex = sfil_load_PNG_file("romfs:/graphics/settings/inv_dsiboot.png", SF2D_PLACE_RAM); // DSi boot screen in settings
+	pp2d_load_texture_png(dsboottex, "romfs:/graphics/settings/dsboot.png"); // DS boot screen in settings
+	pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/dsiboot.png"); // DSi boot screen in settings
+	pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_dsboot.png"); // DS boot screen in settings
+	pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_dsiboot.png"); // DSi boot screen in settings
 	switch (settings.ui.language) {
 		case 0:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_JA.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
 			break;
 		case 1:
 		default:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dsihs.png", SF2D_PLACE_RAM); // DSi H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dsihs.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dsihs.png"); // DSi H&S screen in settings
 			break;
 		case 2:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_FR.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_FR.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
 			break;
 		case 3:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_DE.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_DE.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
 			break;
 		case 4:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_IT.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_IT.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
 			break;
 		case 5:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_ES.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
 			break;
 		case 6:
 		case 11:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_CH.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_CH.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
 			break;
 		case 7:
-			dshstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_KO.png", SF2D_PLACE_RAM); // DS H&S screen in settings
-			dsihstex = sfil_load_PNG_file("romfs:/graphics/settings/dshs_KO.png", SF2D_PLACE_RAM); // DS H&S screen in settings
+			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
 			break;
 	}
-	disabledtex = sfil_load_PNG_file("romfs:/graphics/settings/disable.png", SF2D_PLACE_RAM); // Red circle with line
+	pp2d_load_texture_png(disabledtex, "romfs:/graphics/settings/disable.png"); // Red circle with line
 
 	/** Bottom screen **/
-	settingstex = sfil_load_PNG_file("romfs:/graphics/settings/screen.png", SF2D_PLACE_RAM); // Bottom of settings screen
-	whomeicontex = sfil_load_PNG_file("romfs:/graphics/settings/whomeicon.png", SF2D_PLACE_RAM); // HOME icon
+	pp2d_load_texture_png(settingstex, "romfs:/graphics/settings/screen.png"); // Bottom of settings screen
+	pp2d_load_texture_png(whomeicontex, "romfs:/graphics/settings/whomeicon.png"); // HOME icon
 
 	// All textures loaded.
 	settings_tex_loaded = true;
@@ -173,36 +150,25 @@ void settingsUnloadTextures(void)
 
 	/** Top screen **/
 	for (int i = 0; i < 6; i++) {
-		sf2d_free_texture(setvoltex[i]);
-		setvoltex[i] = NULL;
+		pp2d_free_texture(setvoltex[i]);
 	}
-	sf2d_free_texture(setbatterychrgtex);
+	pp2d_free_texture(setbatterychrgtex);
 
 	for (int i = 0; i < 6; i++) {
-		sf2d_free_texture(setbatterytex[i]);
-		setbatterytex[i] = NULL;
+		pp2d_free_texture(setbatterytex[i]);
 	}
 
-	sf2d_free_texture(dsboottex);
-	dsboottex = NULL;
-	sf2d_free_texture(dsiboottex);
-	dsiboottex = NULL;
-	sf2d_free_texture(invdsboottex);
-	invdsboottex = NULL;
-	sf2d_free_texture(invdsiboottex);
-	invdsiboottex = NULL;
-	sf2d_free_texture(dshstex);
-	dshstex = NULL;
-	sf2d_free_texture(dsihstex);
-	dsihstex = NULL;
-	sf2d_free_texture(disabledtex);
-	disabledtex = NULL;
+	pp2d_free_texture(dsboottex);
+	pp2d_free_texture(dsiboottex);
+	pp2d_free_texture(invdsboottex);
+	pp2d_free_texture(invdsiboottex);
+	pp2d_free_texture(dshstex);
+	pp2d_free_texture(dsihstex);
+	pp2d_free_texture(disabledtex);
 
 	/** Bottom screen **/
-	sf2d_free_texture(settingstex);
-	settingstex = NULL;
-	sf2d_free_texture(whomeicontex);
-	whomeicontex = NULL;
+	pp2d_free_texture(settingstex);
+	pp2d_free_texture(whomeicontex);
 
 	// All textures unloaded.
 	settings_tex_loaded = false;
@@ -222,10 +188,6 @@ int demofadealpha = 0;
  */
 void settingsDrawTopScreen(void)
 {
-	/* if (!musicbool) {
-		if (dspfirmfound) { bgm_settings->play(); }
-		musicbool = true;
-	} */
 	if (!settings_tex_loaded) {
 		settingsLoadTextures();
 	}
@@ -233,110 +195,105 @@ void settingsDrawTopScreen(void)
 
 	// Draw twice; once per 3D framebuffer.
 	for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
-		sf2d_start_frame(GFX_TOP, (gfx3dSide_t)topfb);
-		sf2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+//		pp2d_begin_draw(GFX_TOP, (gfx3dSide_t)topfb);
+		pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
 			if (settings.ui.bootscreen >= 3) {
 				if (settings.ui.bootscreen == 4) {
-					sf2d_draw_texture(invdsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+					pp2d_draw_texture(invdsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				} else {
-					sf2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+					pp2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				}
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
+				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
 			} else if (settings.ui.bootscreen == 2) {
-				sf2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
+				pp2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
 			} else if (settings.ui.bootscreen <= 1) {
-				sf2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
+				pp2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				if (settings.ui.bootscreen == 1) {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(0, 0, 0, 255));
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(0, 0, 0, 255));
+					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
 				} else {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, RGBA8(255, 255, 255, 255));
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, RGBA8(255, 255, 255, 255));
+					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
 				}
 			} else {
-				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, RGBA8(255, 255, 255, 255));
+				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, WHITE);
 			}
 			if (settings.ui.healthsafety == 1) {
 				if (settings.ui.bootscreen >= 3) {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
-					setTextColor(RGBA8(255, 255, 255, 255));
-					renderText(offset3D[topfb].boxart+162, 152, 0.55, 0.55, false, "  Preview\nunavailable");
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
+					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");					
 				} else if (settings.ui.bootscreen == 2) {
-					sf2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {
-					sf2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
+					pp2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
 				}
 			} else {
 				if (settings.ui.bootscreen >= 3) {
 					// Draw a black screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(0, 0, 0, 255));
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
 				} else {
 					// Draw a white screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, RGBA8(255, 255, 255, 255));
+					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
 				}
 			}
 			if (!settings.ui.showbootscreen) {
-				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
-				sf2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture
+				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
+				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture	
 			}
 		} else {
-			sf2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - settingslogotex->width/2, 240/2 - settingslogotex->height/2);
-			sf2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - settingslogotwltex->width/2, 240/2 - settingslogotwltex->height/2, RGBA8(255,255,255,twlfadealpha));
-			sf2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - settingslogooadertex->width/2, 240/2 - settingslogooadertex->height/2, RGBA8(255,255,255,oaderfadealpha));
-			if(isDemo) sf2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - settingslogodemotex->width/2, 240/2 - settingslogodemotex->height/2, RGBA8(255,255,255,demofadealpha));
-			if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-				setTextColor(RGBA8(0, 0, 255, 255));
-				renderText_w(offset3D[topfb].disabled+72, 174, 0.60, 0.60, false, TR(STR_SETTINGS_XBUTTON_RELEASE));
-				setTextColor(RGBA8(0, 255, 0, 255));
-				renderText_w(offset3D[topfb].disabled+72, 190, 0.60, 0.60, false, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2);
+			pp2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,twlfadealpha));
+			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));
+
+			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,demofadealpha));
+			if (subscreenmode == SUBSCREEN_MODE_NTR) {
+				pp2d_draw_wtext(offset3D[topfb].disabled+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
+				pp2d_draw_wtext(offset3D[topfb].disabled+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
 			} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
-				setTextColor(RGBA8(255, 255, 255, 255));
-				renderText(offset3D[topfb].disabled+32, 192, 0.55, 0.55, false, "TWLoader will auto-restart if location is changed.");
+				pp2d_draw_text(offset3D[topfb].disabled+32, 192, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
 			}
 		}
 
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(318.0f, 1, 0.58f, 0.58f, false, RetTime(false).c_str());
+		pp2d_draw_text(318.0f, 1, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
 		
 		if(!isNightly){
 			std::string version = settings_vertext;		
 			if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
-				renderText(324, 222, 0.60, 0.60f, false, settings_vertext);
+				pp2d_draw_text(324, 222, 0.60, 0.60f, WHITE, settings_vertext);
 			}else{
-				renderText(336, 222, 0.60, 0.60f, false, settings_vertext);
+				pp2d_draw_text(336, 222, 0.60, 0.60f, WHITE, settings_vertext);
 			}
 		}else{
 			char nightlyhash[16];
 			snprintf(nightlyhash, 16, "%s", NIGHTLY);
-			renderText(272, 222, 0.60, 0.60f, false, nightlyhash);			
+			pp2d_draw_text(272, 222, 0.60, 0.60f, WHITE, nightlyhash);			
 		}
 		if (settings.twl.bootstrapfile == 1) {
 			fat = "sd:/";
-			setTextColor(RGBA8(0, 255, 0, 255));
-			renderText(5, 222, 0.60, 0.60f, false, settings_unofficialbootstrapver.c_str());
-		} else if (settings.twl.bootstrapfile == 0) {
+			// Green
+			pp2d_draw_text(5, 222, 0.60, 0.60f, GREEN, settings_unofficialbootstrapver.c_str());
+		} else {
 			fat = "sd:/";
-			setTextColor(RGBA8(0, 0, 255, 255));
-			renderText(5, 222, 0.60, 0.60f, false, settings_releasebootstrapver.c_str());
+			// Blue
+			pp2d_draw_text(5, 222, 0.60, 0.60f, BLUE, settings_releasebootstrapver.c_str());
 		}
 
 		draw_volume_slider(setvoltex);
-		sf2d_draw_texture(batteryIcon, 371, 2);
+		pp2d_draw_texture(batteryIcon, 371, 2);
 		if (!settings.ui.name.empty()) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
-			renderText(34.0f, 1.0f, 0.58, 0.58f, false, settings.ui.name.c_str());
+			pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
-		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, false);
+		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
-		sf2d_end_frame();
 	}
+
 	if(demofade) {
 		demofadealpha += 5;
 		if (demofadealpha == 255) {
@@ -393,42 +350,43 @@ void settingsDrawBottomScreen(void)
 		settingsLoadTextures();
 	}
 
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	sf2d_draw_texture(settingstex, 0, 0);
+	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_texture(settingstex, 0, 0);
 	drawRectangle(0, 0, 320, 28, RGBA8(0, 0, 0, 31));
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 26, 2, 1, RGBA8(127, 127, 127, 255));
+		drawRectangle(i*4, 26, 2, 1, GRAY);
 	drawRectangle(0, 179, 320, 41, RGBA8(0, 0, 0, 31));
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 180, 2, 1, RGBA8(127, 127, 127, 255));
+		drawRectangle(i*4, 180, 2, 1, GRAY);
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 218, 2, 1, RGBA8(127, 127, 127, 255));
+		drawRectangle(i*4, 218, 2, 1, GRAY);
 	
 	if (subscreenmode < 4) {
+		u32 colorssm = WHITE;
 		if (subscreenmode == 0) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
-		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
-		renderText(252, 6, 0.50, 0.50, false, "1");
+		pp2d_draw_text(252, 6, 0.50, 0.50, colorssm, "1");
 		if (subscreenmode == 1) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
-		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
-		renderText(268, 6, 0.50, 0.50, false, "2");
+		pp2d_draw_text(268, 6, 0.50, 0.50, colorssm, "2");
 		if (subscreenmode == 2) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
-		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
-		renderText(284, 6, 0.50, 0.50, false, "3");
+		pp2d_draw_text(284, 6, 0.50, 0.50, colorssm, "3");
 		if (subscreenmode == 3) {
-			setTextColor(SET_ALPHA(color_data->color, 255));
-		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			colorssm = SET_ALPHA(color_data->color, 255);
+		} else{
+			colorssm = WHITE;
 		}
-		renderText(300, 6, 0.50, 0.50, false, "4");
+		pp2d_draw_text(300, 6, 0.50, 0.50, colorssm, "4");
 	}
 	
 	// X positions.
@@ -438,12 +396,10 @@ void settingsDrawBottomScreen(void)
 	const wchar_t *title = L"";
 
 	if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		setTextColor(RGBA8(127, 127, 127, 255));
-		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
-		setTextColor(RGBA8(0, 0, 0, 255));
-		renderText(252, RshoulderYpos+4, 0.50, 0.50, false, Rshouldertext);
+		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		// Language.
 		static const char *const language_text[] = {
@@ -570,10 +526,10 @@ void settingsDrawBottomScreen(void)
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
 			if (cursor_pos[0] == i) {
 				// Button is highlighted.
-				sf2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
+				pp2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
 			} else {
 				// Button is not highlighted. Darken the texture.
-				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, RGBA8(127, 127, 127, 255));
+				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, GRAY);
 			}
 
 			const wchar_t *title = button_titles[i];
@@ -586,55 +542,48 @@ void settingsDrawBottomScreen(void)
 
 			// Draw the title.
 			int y = buttons[i].y + ((34 - h) / 2);
-			// int w = sftd_get_wtext_width(font, 12, title);
 			int w = 0;
-			// int x = ((132 - w) / 2) + buttons[i].x;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			setTextColor(RGBA8(0, 0, 0, 255));
-			renderText_w(x, y, 0.50, 0.50, false, title);
+			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 			y += 16;
 
 			// Draw the value.
-			// w = sftd_get_wtext_width(font, 12, value_desc);
 			w = 0;
-			// x = ((132 - w) / 2) + buttons[i].x;
 			x = ((2 - w) / 2) + buttons[i].x;
-			if (i == 2) setTextColor(SET_ALPHA(color_data->color, 255));
-			else setTextColor(RGBA8(0, 0, 0, 255));
-			if (i == 0 || i == 2 || i == 3) renderText_w(x, y, 0.50, 0.50, false, value_descw);
-			else renderText(x, y, 0.50, 0.50, false, value_desc);
+			u32 color_ = BLACK;
+			if (i == 2) color_ = SET_ALPHA(color_data->color, 255);
+			if (i == 0 || i == 2 || i == 3) pp2d_draw_wtext(x, y, 0.50, 0.50, color_, value_descw);
+			else pp2d_draw_text(x, y, 0.50, 0.50, color_, value_desc);
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
 		if (cursor_pos[0] == 0) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_LANGUAGE_2));
 		}
 		if (cursor_pos[0] == 1) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_THEME_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_THEME_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_THEME_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_THEME_2));
 		}
 		if (cursor_pos[0] == 2) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COLOR_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COLOR_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_COLOR_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_COLOR_2));
 		}
 		if (cursor_pos[0] == 3) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_MENUCOLOR_2));
 		}
 		if (cursor_pos[0] == 4) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FILENAME_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FILENAME_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FILENAME_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FILENAME_2));
 		}
 		if (cursor_pos[0] == 5) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COUNTER_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_COUNTER_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_COUNTER_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_COUNTER_2));
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
-		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		setTextColor(RGBA8(0, 0, 0, 255));
-		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
-		renderText(252, RshoulderYpos+4, 0.50, 0.50, false, Rshouldertext);
+		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		const char *const custombotvaluetext = (settings.ui.custombot ? "On" : "Off");
 		
@@ -695,10 +644,10 @@ void settingsDrawBottomScreen(void)
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
 			if (cursor_pos[1] == i) {
 				// Button is highlighted.
-				sf2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
+				pp2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
 			} else {
 				// Button is not highlighted. Darken the texture.
-				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, RGBA8(127, 127, 127, 255));
+				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, RGBA8(127, 127, 127, 255));
 			}
 
 			const wchar_t *title = button_titles[i];
@@ -710,51 +659,44 @@ void settingsDrawBottomScreen(void)
 
 			// Draw the title.
 			int y = buttons[i].y + ((34 - h) / 2);
-			// int w = sftd_get_wtext_width(font, 12, title);
 			int w = 0;
-			// int x = ((132 - w) / 2) + buttons[i].x;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			setTextColor(RGBA8(0, 0, 0, 255));
-			renderText_w(x, y, 0.50, 0.50, false, title);
+			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 			y += 16;
 
 			// Draw the value.
-			// w = sftd_get_wtext_width(font, 12, value_desc);
 			w = 0;
-			// x = ((132 - w) / 2) + buttons[i].x;
 			x = ((2 - w) / 2) + buttons[i].x;
-			renderText(x, y, 0.50, 0.50, false, value_desc);
+			pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
 		if (cursor_pos[1] == 0) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CUSTOM_BOTTOM_2));
 		}
 		if (cursor_pos[1] == 1) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_TWLOADER_2));
 		}
 		if (cursor_pos[1] == 2) {
-			renderText(8, 184, 0.60, 0.60f, false, "Select the filetype of TWLoader");
-			renderText(8, 198, 0.60, 0.60f, false, "you're using.");
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Select the filetype of TWLoader");
+			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "you're using.");
 		}
 		if (cursor_pos[1] == 3) {
-			renderText(8, 184, 0.60, 0.60f, false, "Press  to update TWLoader.");
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to update TWLoader.");
 		}
 		if (cursor_pos[1] == 4) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_2));
 		}
 		if (cursor_pos[1] == 5) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND3) {
-		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		setTextColor(RGBA8(0, 0, 0, 255));
-		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
-		renderText(252, RshoulderYpos+4, 0.50, 0.50, false, Rshouldertext);
+		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		const char *showbootscreenvaluetext;
 		switch (settings.ui.showbootscreen) {
@@ -780,10 +722,6 @@ void settingsDrawBottomScreen(void)
 		} buttons[] = {
 			{ 17,  39},
 			{169,  39},
-			// { 17,  87},
-			// {169,  87},
-			// { 17, 135},
-			// {169, 135},
 		};
 		const wchar_t *button_titles[] = {
 			TR(STR_SETTINGS_SHOW_BOOT_SCREEN),
@@ -797,10 +735,10 @@ void settingsDrawBottomScreen(void)
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
 			if (cursor_pos[2] == i) {
 				// Button is highlighted.
-				sf2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
+				pp2d_draw_texture(dboxtex_button, buttons[i].x, buttons[i].y);
 			} else {
 				// Button is not highlighted. Darken the texture.
-				sf2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, RGBA8(127, 127, 127, 255));
+				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, buttons[i].y, RGBA8(127, 127, 127, 255));
 			}
 
 			const wchar_t *title = button_titles[i];
@@ -812,42 +750,36 @@ void settingsDrawBottomScreen(void)
 
 			// Draw the title.
 			int y = buttons[i].y + ((34 - h) / 2);
-			// int w = sftd_get_wtext_width(font, 12, title);
 			int w = 0;
-			// int x = ((132 - w) / 2) + buttons[i].x;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			setTextColor(RGBA8(0, 0, 0, 255));
-			renderText_w(x, y, 0.50, 0.50, false, title);
+			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
 			y += 16;
 
 			// Draw the value.
-			// w = sftd_get_wtext_width(font, 12, value_desc);
 			w = 0;
-			// x = ((132 - w) / 2) + buttons[i].x;
 			x = ((2 - w) / 2) + buttons[i].x;
-			renderText(x, y, 0.50, 0.50, false, value_desc);
+			pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
 		if (cursor_pos[2] == 0) {
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2));
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2));
 		}
 		if (cursor_pos[2] == 1) {
 			// Selected			
-			renderText(8, 184, 0.60, 0.60f, false, "Press  to change rom location folder.");
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to change rom location folder.");
 		}
-	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
-		sf2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		sf2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
-		setTextColor(RGBA8(0, 0, 0, 255));
-		renderText(17, LshoulderYpos+4, 0.50, 0.50, false, Lshouldertext);
-		setTextColor(RGBA8(127, 127, 127, 255));
-		renderText(252, RshoulderYpos+4, 0.50, 0.50, false, Rshouldertext);
+	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
+		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
+		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
 		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
+		const char *soundfreqvaluetext = (settings.twl.soundfreq ? "47.61 kHz" : "32.73 kHz");
 		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
+		const char *loadingscreenvaluetext = (settings.twl.loadingscreen ? "On" : "Off");
 
 		const char *autoupdatevaluetext;
 		switch (settings.ui.autoupdate) {
@@ -891,97 +823,117 @@ void settingsDrawBottomScreen(void)
 				break;
 		}
 
-		// const char *lockarm9scfgextvaluetext = (settings.twl.lockarm9scfgext ? "On" : "Off");
-
-		title = TR(STR_SETTINGS_NTR_TWL);
+		title = TR(STR_SETTINGS_NTR);
 		int Ypos = 40;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 0) {			
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 0) {			
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_FLASHCARD_SELECT));
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_FLASHCARD_SELECT));
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_FLASHCARD_SELECT));
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 1) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 1) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_RAINBOW_LED));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), rainbowledvaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_RAINBOW_LED));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, rainbowledvaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_RAINBOW_LED));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, rainbowledvaluetext);
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 2) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(SRT_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 2) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_ARM9_CPU_SPEED));
+			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, SET_ALPHA(color_data->color, 255), cpuspeedvaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_ARM9_CPU_SPEED));
+			pp2d_draw_text(XposValue, Ypos, 0.45, 0.55, WHITE, cpuspeedvaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(SRT_SETTINGS_ARM9_CPU_SPEED));
-		renderText(XposValue, Ypos, 0.45, 0.55, false, cpuspeedvaluetext);
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 3) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_VRAM_BOOST_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 3) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SOUND_FREQ_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SOUND_FREQ_2));
+			if(language==5) pp2d_draw_wtext(Xpos, Ypos, 0.45, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
+			else pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_SOUND_FREQ));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), soundfreqvaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			if(language==5) pp2d_draw_wtext(Xpos, Ypos, 0.45, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
+			else pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_SOUND_FREQ));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, soundfreqvaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_VRAM_BOOST));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, enablesdvaluetext);
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 4) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 4) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ENABLE_SD_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_ENABLE_SD_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_ENABLE_SD));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), enablesdvaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_ENABLE_SD));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, enablesdvaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_RESET_SLOT_1));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, resetslot1valuetext);
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 5) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 5) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_RESET_SLOT_1_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_RESET_SLOT_1));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), resetslot1valuetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_RESET_SLOT_1));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, resetslot1valuetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_CONSOLE_OUTPUT));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, consolevaluetext);
+		
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 6) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 6) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_LOADING_SCREEN_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), loadingscreenvaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_BOOTSTRAP_LOADING_SCREEN));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, loadingscreenvaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, autoupdatevaluetext);
+
 		Ypos += 12;
-		if (cursor_pos[SUBSCREEN_MODE_NTR_TWL] == 7) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
-			renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
-			setTextColor(SET_ALPHA(color_data->color, 255));
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 7) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_CONSOLE_OUTPUT_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_CONSOLE_OUTPUT));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), consolevaluetext);
 		} else {
-			setTextColor(RGBA8(255, 255, 255, 255));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_CONSOLE_OUTPUT));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, consolevaluetext);
 		}
-		renderText_w(Xpos, Ypos, 0.55, 0.55, false, TR(STR_SETTINGS_BOOTSTRAP));
-		renderText(XposValue, Ypos, 0.55, 0.55, false, bootstrapfilevaluetext);
-		Ypos += 12;		
+
+		Ypos += 12;
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 8) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_AUTOUPDATE_BOOTSTRAP_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), autoupdatevaluetext);
+		} else {
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_AUTOUPDATE_BOOTSTRAP));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, autoupdatevaluetext);
+		}
+
+		Ypos += 12;
+		if (cursor_pos[SUBSCREEN_MODE_NTR] == 9) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_BOOTSTRAP_2));
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_BOOTSTRAP));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), bootstrapfilevaluetext);
+		} else {
+			pp2d_draw_wtext(Xpos, Ypos, 0.55, 0.55, WHITE, TR(STR_SETTINGS_BOOTSTRAP));
+			pp2d_draw_text(XposValue, Ypos, 0.55, 0.55, WHITE, bootstrapfilevaluetext);
+		}
+
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		// Flash card options.
 		static const char *const flash_card_options[][6] = {
@@ -1002,138 +954,128 @@ void settingsDrawBottomScreen(void)
 		title = TR(STR_SETTINGS_FLASHCARD_SELECT);
 		int Ypos = 40;
 		for (int i = 0; i < 6; i++, Ypos += 12) {
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText(Xpos, Ypos, 0.45, 0.45, false, fctext[i]);
+			pp2d_draw_text(Xpos, Ypos, 0.45, 0.45, WHITE, fctext[i]);
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText_w(8, 184, 0.60, 0.60f, false, TR(STR_SETTINGS_LEFTRIGHT_PICK));
-		renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_AB_SAVE_RETURN));
+		pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_LEFTRIGHT_PICK));
+		pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	} else if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
 		if (settings.ui.theme == THEME_DSIMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_DSi);
-			setTextColor(SET_ALPHA(color_data->color, 255));
-			renderText_w(Xpos, 40, 0.55, 0.55, false, TR(STR_SETTINGS_NO_SUB_THEMES));
+			pp2d_draw_wtext(Xpos, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_NO_SUB_THEMES));
 		} else if (settings.ui.theme == THEME_R4) {
 			title = TR(STR_SETTINGS_SUBTHEME_R4);
 			int Ypos = 30;
 			if (settings.ui.subtheme == 0) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme01");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme01");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme01");
+			
 			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme02");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme02");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme02");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 2) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme03");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme03");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme03");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 3) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme04");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme04");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme04");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 4) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme05");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme05");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme05");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 5) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme06");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme06");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme06");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 6) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme07");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme07");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme07");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 7) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme08");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme08");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme08");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 8) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme09");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme09");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme09");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 9) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme10");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme10");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme10");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 10) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme11");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme11");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme11");
+
 			Ypos += 12;
 			if (settings.ui.subtheme == 11) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "theme12");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme12");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "theme12");
-			Ypos += 12;
 		} else if (settings.ui.theme == THEME_AKMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
 			if (settings.ui.subtheme == 0) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "GBATemp");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "GBATemp");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "GBATemp");
+			
 			Ypos += 12;
 			if (settings.ui.subtheme == 1) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "Acekard black");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "Acekard black");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "Acekard black");
 			Ypos += 12;
 			if (settings.ui.subtheme == 2) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "akaio");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "akaio");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "akaio");
 			Ypos += 12;
 			if (settings.ui.subtheme == 3) {
-				setTextColor(SET_ALPHA(color_data->color, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "DSTWO");
 			} else {
-				setTextColor(RGBA8(255, 255, 255, 255));
+				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "DSTWO");
 			}
-			renderText(Xpos, Ypos, 0.55, 0.55, false, "DSTWO");
-			Ypos += 12;
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText_w(8, 198, 0.60, 0.60f, false, TR(STR_SETTINGS_AB_SAVE_RETURN));
+		pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_AB_SAVE_RETURN));
 	}else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
 		title = L"Rom path location";
 	
@@ -1145,41 +1087,32 @@ void settingsDrawBottomScreen(void)
 
 		if (cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] == 0){
 			// Selected SD
-			setTextColor(SET_ALPHA(color_data->color, 255));
-			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
-			renderText(30, 52, 0.55, 0.55, false, printedROMpath);
+			pp2d_draw_text(24, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "SD ROM location:");
+			pp2d_draw_text(30, 52, 0.55, 0.55, SET_ALPHA(color_data->color, 255), printedROMpath);
 			
 			// Unselected Flashcard
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
-			renderText(30, 78, 0.55, 0.55, false, printedFCROMpath);
+			pp2d_draw_text(24, 66, 0.55, 0.55, WHITE, "Flashcard INI location:");
+			pp2d_draw_text(30, 78, 0.55, 0.55, WHITE, printedFCROMpath);
 			
 		}else if (cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] == 1){
 			// Unselected SD
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText(24, 40, 0.55, 0.55, false, "SD ROM location:");
-			renderText(30, 52, 0.55, 0.55, false, printedROMpath);
+			pp2d_draw_text(24, 40, 0.55, 0.55, WHITE, "SD ROM location:");
+			pp2d_draw_text(30, 52, 0.55, 0.55, WHITE, printedROMpath);
 			
 			// Selected Flashcard
-			setTextColor(SET_ALPHA(color_data->color, 255));
-			renderText(24, 66, 0.55, 0.55, false, "Flashcard INI location:");
-			renderText(30, 78, 0.55, 0.55, false, printedFCROMpath);
+			pp2d_draw_text(24, 66, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "Flashcard INI location:");
+			pp2d_draw_text(30, 78, 0.55, 0.55, SET_ALPHA(color_data->color, 255), printedFCROMpath);
 			
-		}
-		
-		setTextColor(RGBA8(255, 255, 255, 255));
-		
-		renderText(8, 184, 0.60, 0.60, false, ": Change path");
-		renderText(8, 198, 0.60, 0.60, false, ": Return");
+		}		
+		pp2d_draw_text(8, 184, 0.60, 0.60, WHITE, ": Change path");
+		pp2d_draw_text(8, 198, 0.60, 0.60, WHITE, ": Return");
 	} else if (subscreenmode == SUBSCREEN_MODE_TWLNAND_NOT_FOUND) {
 		if(!isDemo) {
 			const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
-			// const int home_width = sftd_get_wtext_width(font, 13, home_text) + 16;
 			const int home_width = 144+16;
 			const int home_x = (320-home_width)/2;
-			sf2d_draw_texture(whomeicontex, home_x, 221); // Draw HOME icon
-			setTextColor(RGBA8(255, 255, 255, 255));
-			renderText_w(home_x+20, 222, 0.50, 0.50, false, home_text);
+			pp2d_draw_texture(whomeicontex, home_x, 221); // Draw HOME icon
+			pp2d_draw_wtext(home_x+20, 222, 0.50, 0.50, WHITE, home_text);
 		}
 
 		title = L"An error has occurred.";
@@ -1198,11 +1131,9 @@ void settingsDrawBottomScreen(void)
 				"sd:/_nds/twloader/cias/\n"
 				"TWLoader - TWLNAND side (part 2).cia";
 		}
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(16, 40, 0.4, 0.4, false, twlnand_msg);
+		pp2d_draw_text(16, 40, 0.4, 0.4, WHITE, twlnand_msg);
 	}
-	setTextColor(RGBA8(255, 255, 255, 255));
-	renderText_w(2, 2, 0.75, 0.75, false, title);
+	pp2d_draw_wtext(2, 2, 0.75, 0.75, WHITE, title);
 }
 
 /**
@@ -1253,19 +1184,17 @@ bool settingsMoveCursor(u32 hDown)
 	} else if (subscreenmode == SUBSCREEN_MODE_FLASH_CARD) {
 		if (hDown & KEY_LEFT && settings.twl.flashcard > 0) {
 			settings.twl.flashcard--; // Flashcard
-			// if (settings.twl.flashcard == 2) settings.twl.flashcard = 1;
 			sfx = sfx_select;
 		} else if (hDown & KEY_RIGHT && settings.twl.flashcard < 6) {
 			settings.twl.flashcard++; // Flashcard
-			// if (settings.twl.flashcard == 2) settings.twl.flashcard = 3;
 			sfx = sfx_select;
 		} else if (hDown & (KEY_A | KEY_B)) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_select;
 		}
-	} else if (subscreenmode == SUBSCREEN_MODE_NTR_TWL) {
+	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 		if (hDown & (KEY_A | KEY_LEFT | KEY_RIGHT)) {
-			switch (cursor_pos[SUBSCREEN_MODE_NTR_TWL]) {
+			switch (cursor_pos[SUBSCREEN_MODE_NTR]) {
 				case 0:
 				default:
 					// Top item: Only listen to 'A'.
@@ -1282,13 +1211,19 @@ bool settingsMoveCursor(u32 hDown)
 				case 2:	// CPU speed
 					settings.twl.cpuspeed = !settings.twl.cpuspeed;
 					break;
-				case 3:	// SD card access for Slot-1
+				case 3:	// Sound/Microphone frequency
+					settings.twl.soundfreq = !settings.twl.soundfreq;
+					break;
+				case 4:	// SD card access for Slot-1
 					settings.twl.enablesd = !settings.twl.enablesd;
 					break;
-				case 4:	// Reset Slot-1
+				case 5:	// Reset Slot-1
 					settings.twl.resetslot1 = !settings.twl.resetslot1;
 					break;
-				case 5:	// Console output
+				case 6:	// Bootstrap loading screen
+					settings.twl.loadingscreen = !settings.twl.loadingscreen;
+					break;
+				case 7:	// Console output
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.console++;
 						if (settings.twl.console > 2) {
@@ -1301,7 +1236,7 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 6:	// Enable or disable autoupdate
+				case 8:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
 						if (settings.ui.autoupdate > 1) {
@@ -1314,26 +1249,26 @@ bool settingsMoveCursor(u32 hDown)
 						}
 					}
 					break;
-				case 7: // Bootstrap version
+				case 9: // Bootstrap version
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.bootstrapfile++;
-						if (settings.twl.bootstrapfile > 2) {
+						if (settings.twl.bootstrapfile > 1) {
 							settings.twl.bootstrapfile = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.twl.bootstrapfile--;
 						if (settings.twl.bootstrapfile < 0) {
-							settings.twl.bootstrapfile = 2;
+							settings.twl.bootstrapfile = 1;
 						}
 					}
 					break;					
 			}
 			sfx = sfx_select;
-		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] < 7) {
-			cursor_pos[SUBSCREEN_MODE_NTR_TWL]++;
+		} else if ((hDown & KEY_DOWN) && cursor_pos[SUBSCREEN_MODE_NTR] < 9) {
+			cursor_pos[SUBSCREEN_MODE_NTR]++;
 			sfx = sfx_select;
-		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR_TWL] > 0) {
-			cursor_pos[SUBSCREEN_MODE_NTR_TWL]--;
+		} else if ((hDown & KEY_UP) && cursor_pos[SUBSCREEN_MODE_NTR] > 0) {
+			cursor_pos[SUBSCREEN_MODE_NTR]--;
 			sfx = sfx_select;
 		} else if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND3;
@@ -1368,7 +1303,6 @@ bool settingsMoveCursor(u32 hDown)
 		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
-			//bgm_settings->stop();
 			sfx = sfx_back;
 		}
 		if(hDown & KEY_TOUCH){
@@ -1429,7 +1363,7 @@ bool settingsMoveCursor(u32 hDown)
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
@@ -1442,7 +1376,7 @@ bool settingsMoveCursor(u32 hDown)
 				sfx = sfx_switch;
 			}
 			if (touch.px >= 248 && touch.py >= 220) {
-				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				subscreenmode = SUBSCREEN_MODE_NTR;
 				sfx = sfx_switch;
 			}
 		}
@@ -1635,19 +1569,19 @@ bool settingsMoveCursor(u32 hDown)
 				cursor_pos[0]--;
 			sfx = sfx_select;
 		} else if (hDown & KEY_L) {
-			subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+			subscreenmode = SUBSCREEN_MODE_NTR;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
-		} else if (hDown & KEY_B) {
+		} else if ((hDown & KEY_B) && !fadein) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
 			sfx = sfx_back;
 		}
 		if(hDown & KEY_TOUCH){
 			if (touch.px <= 72 && touch.py >= 220) {
-				subscreenmode = SUBSCREEN_MODE_NTR_TWL;
+				subscreenmode = SUBSCREEN_MODE_NTR;
 				sfx = sfx_switch;
 			}
 			if (touch.px >= 248 && touch.py >= 220) {
@@ -1666,7 +1600,7 @@ bool settingsMoveCursor(u32 hDown)
 			if (cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] > 1)
 				cursor_pos[SUBSCREEN_MODE_CHANGE_ROM_PATH] = 1;
 			sfx = sfx_select;
-		} else if (hDown & KEY_B) {		
+		} else if (hDown & KEY_B) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND3;
 			sfx = sfx_select;
 		} else if (hDown & KEY_A) {
@@ -1838,20 +1772,20 @@ void LoadColor(void) {
  */
 void LoadMenuColor(void) {
 	static const u32 menu_colors[] = {
-		(u32)RGBA8(255, 255, 255, 255),		// White
+		(u32)WHITE,		// White
 		(u32)RGBA8(63, 63, 63, 195),		// Black
 		(u32)RGBA8(139, 99, 0, 195),		// Brown
-		(u32)RGBA8(255, 0, 0, 195),		// Red
+		(u32)RGBA8(255, 0, 0, 195),			// Red
 		(u32)RGBA8(255, 163, 163, 195),		// Pink
 		(u32)RGBA8(255, 127, 0, 223),		// Orange
 		(u32)RGBA8(255, 255, 0, 223),		// Yellow
 		(u32)RGBA8(215, 255, 0, 223),		// Yellow-Green
-		(u32)RGBA8(0, 255, 0, 223),		// Green 1
+		(u32)RGBA8(0, 255, 0, 223),			// Green 1
 		(u32)RGBA8(95, 223, 95, 193),		// Green 2
 		(u32)RGBA8(127, 231, 127, 223),		// Light Green
 		(u32)RGBA8(63, 127, 255, 223),		// Sky Blue
 		(u32)RGBA8(127, 127, 255, 223),		// Light Blue
-		(u32)RGBA8(0, 0, 255, 195),		// Blue
+		(u32)RGBA8(0, 0, 255, 195),			// Blue
 		(u32)RGBA8(127, 0, 255, 195),		// Violet
 		(u32)RGBA8(255, 0, 255, 195),		// Purple
 		(u32)RGBA8(255, 63, 127, 195),		// Fuchsia
@@ -1872,11 +1806,13 @@ void LoadBottomImage() {
 	if (settings.ui.custombot == 1) {
 		if( access( "sdmc:/_nds/twloader/bottom.png", F_OK ) != -1 ) {
 			bottomloc = "sdmc:/_nds/twloader/bottom.png";
-			if (logEnabled)	LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully");
+			if (logEnabled)	LogFM("LoadBottomImage()", "Using custom bottom image. Method load successfully.");
 		} else {
 			bottomloc = "romfs:/graphics/bottom.png";
-			if (logEnabled)	LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully");
+			if (logEnabled)	LogFM("LoadBottomImage()", "Using default bottom image. Method load successfully.");
 		}
+	} else {
+		if (logEnabled) LogFM("LoadBottomImage()", "Using default bottom image. No custom image found.");
 	}
 }
 
@@ -1902,7 +1838,6 @@ void LoadSettings(void) {
 	settings.ui.fcromfolder = settingsini.GetString("FRONTEND", "FCROM_FOLDER", "");
 	RemoveTrailingSlashes(settings.ui.fcromfolder);
 	settings.ui.pagenum = settingsini.GetInt("FRONTEND", "PAGE_NUMBER", 0);
-	// settings.ui.cursorPosition = settingsini.GetInt("FRONTEND", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
@@ -1923,11 +1858,11 @@ void LoadSettings(void) {
 	settings.ui.healthsafety = settingsini.GetInt("FRONTEND", "HEALTH&SAFETY_MSG", 1);
 	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
 	settings.ui.autoupdate_twldr = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
-	// romselect_layout = settingsini.GetInt("FRONTEND", "BOTTOM_LAYOUT", 0);
 
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
+	settings.twl.soundfreq = settingsini.GetInt("TWL-MODE", "SOUND_FREQ", 0);
 	settings.twl.lockarm9scfgext = settingsini.GetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", 0);
 	settings.twl.resetslot1 = settingsini.GetInt("TWL-MODE", "RESET_SLOT1", 0);
 	settings.twl.enablesd = settingsini.GetInt("TWL-MODE", "SLOT1_ENABLESD", 0);
@@ -1962,7 +1897,6 @@ void SaveSettings(void) {
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
-	// settingsini.SetInt("FRONTEND", "CURSOR_POSITION", settings.ui.cursorPosition);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
@@ -1980,19 +1914,17 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "HEALTH&SAFETY_MSG", settings.ui.healthsafety);
 	settingsini.SetInt("FRONTEND", "AUTOUPDATE", settings.ui.autoupdate);
 	settingsini.SetInt("FRONTEND", "AUTODOWNLOAD", settings.ui.autoupdate_twldr);
-	//settingsini.SetInt("FRONTEND", "BOTTOM_LAYOUT", romselect_layout);
 
 	// TWL settings.
 	settingsini.SetInt("TWL-MODE", "RAINBOW_LED", settings.twl.rainbowled);
 	settingsini.SetInt("TWL-MODE", "TWL_CLOCK", settings.twl.cpuspeed);
+	settingsini.SetInt("TWL-MODE", "SOUND_FREQ", settings.twl.soundfreq);
 	settingsini.SetInt("TWL-MODE", "LOCK_ARM9_SCFG_EXT", settings.twl.lockarm9scfgext);
 	settingsini.SetInt("TWL-MODE", "LAUNCH_SLOT1", settings.twl.launchslot1);
 	settingsini.SetInt("TWL-MODE", "RESET_SLOT1", settings.twl.resetslot1);
 	settingsini.SetInt("TWL-MODE", "SLOT1_ENABLESD", settings.twl.enablesd);
 	settingsini.SetInt("TWL-MODE", "SLOT1_KEEPSD", keepsdvalue);
 	settingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
-	if (settings.twl.bootstrapfile == 2) fat = "fat:/";
-	else fat = "sd:/";
 
 	// TODO: Change default to 0?
 	switch (settings.twl.console) {

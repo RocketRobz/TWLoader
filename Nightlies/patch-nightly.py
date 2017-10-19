@@ -12,8 +12,8 @@ with open("gui/Makefile", "w") as f:
     f.write(makefile)
     f.close()
 print("Patching ROMFS...")
-copyfile("Nightlies/romfs/logo.png", "gui/data/logo.png")
-copyfile("Nightlies/romfs/logo_demo.png", "gui/data/logo_demo.png")
+copyfile("Nightlies/romfs/logo.png", "gui/romfs/graphics/logo/logo.png")
+copyfile("Nightlies/romfs/logo_demo.png", "gui/romfs/graphics/logo/logo_demo.png")
 print("Patching Nightly hash...")
 commit_json = requests.get(
     "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/updatenightlies.json").json()

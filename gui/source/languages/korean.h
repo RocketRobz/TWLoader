@@ -43,12 +43,14 @@ static const char *const lang_KO[STR_MAX] = {
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"플래시카드 선택",												// "Flashcard(s) select"
 	"무지개색 LED",													// "Rainbow LED"
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"리셋 슬롯-1",													// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"콘솔 출력",													// "Console output"
 	"부트스트랩 자동 업데이트",											// "Auto-update bootstrap"
 	"부트스트랩",													// "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_KO[STR_MAX] = {
 	"몇몇 게임에서 렉을 없애기 위해 TWL으로 설정",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "8 bit VRAM 쓰기 허용",											// "Allows 8 bit VRAM writes"
 	// "및 버스 크기 32bit으로 확장",										// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_KO[STR_MAX] = {
 
 	"Slot-1 carts가 화이트스크린에서 멈추면 ",								// "Enable this if Slot-1 carts are stuck"
 	"이 옵션 설정",													// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"게임구동 전 텍스트 출력",											// "Displays some text before launched game."
 	"",															// (empty)
@@ -185,7 +193,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"/: 저장 후 되돌아가기",											// "A/B: Save and Return"
 	"</>: 선택",													// "Left/Right: Pick"
 	"GUI 설정",													// "Settings: GUI"
-	"NTR/TWL-mode 설정",											// "Settings: NTR/TWL-mode"
+	"NTR mode 설정",												// "Settings: NTR mode"
 
 };
 

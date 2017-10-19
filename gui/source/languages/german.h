@@ -43,14 +43,16 @@ static const char *const lang_DE[STR_MAX] = {
 	"Zeige Startbildschirm",											// "Show Boot Screen"
 	"ROM Pfad",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
 	"Regenbogen LED",											// "Rainbow LED"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
-	"SD Zugriff für Slot-1",								// "SD card access for Slot-1"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
+	"SD Zugriff für Slot-1",									// "SD card access for Slot-1"
 	"Slot-1 zurücksetzen",										// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Konsolenausgabe",											// "Console output"
-	"Bootstrap automatisch aktualisieren",							// "Auto-update bootstrap"
+	"Bootstrap automatisch aktualisieren",						// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
 
 	/** Settings: Top Screen **/
@@ -122,6 +124,9 @@ static const char *const lang_DE[STR_MAX] = {
 	"Stelle auf TWL, um Lags in",								// "Set to TWL to get rid of lags in some games."
 	"manchen Spielen zu vermeiden.",							// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Erlaubt 8 bit VRAM Schreibvorgänge",						// "Allows 8 bit VRAM writes"
 	// "und erweitert den Bus auf 32 bit.",						// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_DE[STR_MAX] = {
 
 	"Aktivieren, wenn Slot-1 Karten auf",						// "Enable this if Slot-1 carts are stuck"
 	"einem weißen Bildschirm hängen bleiben.",					// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Zeigt etwas Text vor dem Spielstart an.",					// "Displays some text before launched game."
 	"",															// (empty)
@@ -185,7 +193,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"/: Speichern und Zurück",								// "A/B: Save and Return"
 	"Links/Rechts: Auswählen",									// "Left/Right: Pick"
 	"Einstellungen: GUI",										// "Settings: GUI"
-	"Einstellungen: NTR/TWL-Modus",								// "Settings: NTR/TWL-mode"
+	"Einstellungen: NTR Modus",									// "Settings: NTR mode"
 
 };
 

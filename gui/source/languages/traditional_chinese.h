@@ -43,12 +43,14 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"Show 啟動畫面",												// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"選擇燒錄卡",													// "Flashcard(s) select"
 	"彩虹 LED",													// "Rainbow LED"
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"重置 Slot-1",												// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"控制台輸出",													// "Console output"
 	"自動更新 bootstrap",											// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"設定到 TWL 來避免某些遊戲中的拖慢.",								// "Set to TWL to get rid of lags in some games."
 	"",															// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "允許 8 bit VRAM 寫入",										// "Allows 8 bit VRAM writes"
 	// "以及拓展 bus 到 32 bit.",										// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 
 	"如果 Slot-1 卡帶卡在白畫面的話",									// "Enable this if Slot-1 carts are stuck"
 	"請啟動這項.",													// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"顯示遊戲之前顯示一些文本.",										// "Displays some text before launched game."
 	"",															// (empty)
@@ -179,13 +187,13 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"副主題選取: R4",												// "Sub-theme select: R4"
 	"副主題選取: akMenu/Wood",										// "Sub-theme select: Wood"
 
-	"這個主題並無相應的副主題.",										// "No sub-themes exist for this theme."
+	"這個主題並無相應的副主題.",											// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
 	"/: 儲存並返回",												// "A/B: Save and Return"
-	"左/右: 選取",												// "Left/Right: Pick"
+	"左/右: 選取",													// "Left/Right: Pick"
 	"設置: GUI",													// "Settings: GUI"
-	"設置: NTR/TWL-mode",										// "Settings: NTR/TWL-mode"
+	"設置: NTR mode",												// "Settings: NTR mode"
 
 };
 

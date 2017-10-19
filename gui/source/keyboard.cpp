@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string>
 #include <3ds.h>
-#include <stdlib.h>
 
 /**
  * This method show the software original keyboard from the 3ds OS. 

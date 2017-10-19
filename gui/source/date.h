@@ -5,6 +5,9 @@
 #include <string>
 #include <stddef.h>
 
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
+
 typedef enum {
 	FORMAT_YDM	= 0,
 	FORMAT_YMD	= 1,
@@ -40,9 +43,8 @@ std::string RetTime(bool donotblink);
  * @param Ypos Y position.
  * @param format Date format.
  * @param color Text color.
- * @param size Text size.
  */
-void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, DateFormat format);
+void DrawDateF(float x, float y, float scaleX, float scaleY, u32 color, DateFormat format);
 
 /**
  * Draw the month and year using the specified color.
@@ -50,8 +52,7 @@ void DrawDateF(float x, float y, float scaleX, float scaleY, bool baseline, Date
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param color Text color.
- * @param size Text size.
  */
-void DrawDate(float x, float y, float scaleX, float scaleY, bool baseline);
+void DrawDate(float x, float y, float scaleX, float scaleY, u32 color);
 
 #endif // DATE_H

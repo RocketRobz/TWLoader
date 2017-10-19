@@ -43,12 +43,14 @@ static const char *const lang_RU[STR_MAX] = {
 	"Старт. экран",												// "Show Boot Screen"
 	"Путь к ROM-у",												// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
 	"Радуга LED",												// "Rainbow LED"
 	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Доступ SD-карты для Slot-1",								// "SD card access for Slot-1"
 	"Перезагрузить Slot-1",										// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Вывод консоли",											// "Console output"
 	"Автообновление бутстрапа",									// "Auto-update bootstrap"
 	"Бутстрап",													// "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_RU[STR_MAX] = {
 	"Выберите TWL, чтобы убрать лаги в",						// "Set to TWL to get rid of lags in some games."
 	"некоторых играх.",											// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Позволяет делать 8 битные записи VRAM",					// "Allows 8 bit VRAM writes"
 	// "и расширяет шину до 32 бит.",							// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_RU[STR_MAX] = {
 
 	"Включите, если картридж Slot-1",							// "Enable this if Slot-1 carts are stuck"
 	"застревает на белом экране.",								// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Показывает текст перед запуском",							// "Displays some text before launched game."
 	"игры.",													// (empty)
@@ -185,7 +193,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"/: Сохр. и вернуться",									// "A/B: Save and Return"
 	"Влево/Вправо: Выбрать",									// "Left/Right: Pick"
 	"Настройки интерфейса",										// "Settings: GUI"
-	"Настройки NTR/TWL",										// "Settings: NTR/TWL-mode"
+	"Настройки NTR",											// "Settings: NTR mode"
 
 };
 

@@ -43,15 +43,17 @@ static const char *const lang_ES[STR_MAX] = {
 	"Pantalla de arranque",										// "Show Boot Screen"
 	"Rutas",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Seleccionar flashcard",									// "Flashcard(s) select"
 	"LED efecto arcoiris",										// "Rainbow LED"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
+	"Frecuencia de sonido/micrófono",							// "Sound/Microphone frequency"
 	"Acceso SD para Slot-1",									// "SD card access for Slot-1"
 	"Reinicio del Slot-1",										// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Salida de consola",										// "Console output"
 	"Actualización auto. bootstrap",							// "Auto-update bootstrap"
-	"Versión de Bootstrap",												// "Bootstrap"
+	"Versión de Bootstrap",										// "Bootstrap"
 
 	/** Settings: Top Screen **/
 	": Actualizar bootstrap (Versión oficial)",				// "X: Update bootstrap (Official release)"
@@ -101,7 +103,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"superior de la burbuja de información.",					// (empty)
 
 	"Muestra el total de ROMs y la posición de",				// "A number of selected game and listed games"
-	"la ROM selecionada.",											// "is shown below the text bubble."
+	"la ROM selecionada.",										// "is shown below the text bubble."
 
 	"Carga una imagen personalizada para la",					// "Loads a custom bottom screen image"
 	"pantalla inferior.",										// "for the game menu."
@@ -122,6 +124,9 @@ static const char *const lang_ES[STR_MAX] = {
 	"Elije el modo TWL (DSi) para eliminar el",					// "Set to TWL to get rid of lags in some games."
 	"lag en algunos juegos",									// (empty) 
 
+	"32.73 kHz: Calidad original",								// "32.73 kHz: Original quality"
+	"47.61 kHz: Alta calidad",									// "47.61 kHz: High quality"
+
 	// "Permite escribir en la VRAM 8 bits",					// "Allows 8 bit VRAM writes"
 	// "y expandir el bus de datos a 32 bits.",					// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_ES[STR_MAX] = {
 
 	"Activa esta opción si los cartuchos se",					// "Enable this if Slot-1 carts are stuck"
 	"congelan en pantalla blanca.",								// "on white screens."
+
+	"Muestra una pantalla de carga antes de",						// "Shows a loading screen before ROM"
+	"la ROM ser cargada en nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Muestra información de depuración antes",					// "Displays some text before launched game."
 	"de lanzar la ROM.",										// (empty) 
@@ -185,7 +193,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"/: Guardar y volver",									// "A/B: Save and Return"
 	"Izquierda/Derecha: Seleccionar",							// "Left/Right: Pick"
 	"Ajustes: GUI",												// "Settings: GUI"
-	"Ajustes: Modo NTR/TWL",									// "Settings: NTR/TWL-mode"
+	"Ajustes: Modo NTR",										// "Settings: NTR mode"
 
 };
 

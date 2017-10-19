@@ -59,7 +59,7 @@ VERSION_MICRO := 0
 #---------------------------------------------------------------------------------
 TARGET		:=	TWLoader
 BUILD		:=	build
-SOURCES		:=	source source/img source/json
+SOURCES		:=	source/pp2d/pp2d source/json source
 DATA		:=	data
 INCLUDES	:=	include
 ROMFS		:=	romfs
@@ -91,7 +91,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lsfil -lpng -ljpeg -lz -lsf2d -lcitro3d -lctru -lm -lstdc++
+LIBS	:= -lcitro3d -lctru -lm -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -225,12 +225,6 @@ $(OUTPUT).cia	:	$(OUTPUT).elf  $(OUTPUT).smdh
 # you need a rule like this for each extension you use as binary data
 #---------------------------------------------------------------------------------
 %.bin.o	%_bin.h :	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-#---------------------------------------------------------------------------------
-%.jpeg.o %_jpeg.h :	%.jpeg
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)

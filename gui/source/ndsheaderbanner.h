@@ -32,8 +32,8 @@
 #ifndef NDS_HEADER
 #define NDS_HEADER
 
-#include <sf2d.h>
-#include "citrostuff.h"
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
 #include <stdio.h>
 
 #include <string>
@@ -206,10 +206,11 @@ typedef enum {
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.)
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int grabTID(FILE* ndsFile, char *buf);
+int grabTID(FILE* ndsFile, char *buf, bool isCia);
 
 /**
  * Get text from an NDS banner.
@@ -228,26 +229,35 @@ std::vector<std::wstring> grabText(const sNDSBanner* ndsBanner, int bnrtitlenum)
 std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
 
 /**
+ * Get overlay sizes from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param isCIA Is the game a CIA?
+ * @return 0 on success; non-zero on error.
+ */
+bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia);
+
+/**
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @param setfont Font to use for messages.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2);
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia);
 
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(const sNDSBanner* ndsBanner);
+void* grabIcon(const sNDSBanner* ndsBanner);
 
 /**
  * Get the icon from a cached NDS banner.
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(FILE* binFile);
+void* grabIcon(FILE* binFile);
 
 #endif // NDS_HEADER

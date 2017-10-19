@@ -43,12 +43,14 @@ static const char *const lang_NL[STR_MAX] = {
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
 	"Rainbow LED",												// "Rainbow LED"
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",												// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Console output",											// "Console output"
 	"Auto-update bootstrap",									// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_NL[STR_MAX] = {
 	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"
 	"in some games.",											// "in some games."
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Allows 8 bit VRAM writes",									// "Allows 8 bit VRAM writes"
 	// "and expands the bus to 32 bit.",							// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_NL[STR_MAX] = {
 
 	"Enable this if Slot-1 carts are stuck",					// "Enable this if Slot-1 carts are stuck"
 	"on white screens.",										// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Displays some text before launched game.",					// "Displays some text before launched game."
 	"",															// (empty)
@@ -185,7 +193,7 @@ static const char *const lang_NL[STR_MAX] = {
 	"/: Save and Return",										// "A/B: Save and Return"
 	"Left/Right: Pick",											// "Left/Right: Pick"
 	"Settings: GUI",											// "Settings: GUI"
-	"Settings: NTR/TWL-mode",									// "Settings: NTR/TWL-mode"
+	"Settings: NTR mode",										// "Settings: NTR mode"
 
 };
 

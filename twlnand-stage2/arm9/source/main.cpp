@@ -114,8 +114,8 @@ int main(int argc, char **argv) {
 	// REG_SCFG_CLK = 0x80;
 	REG_SCFG_CLK = 0x85;
 
-	bool TWLCLK = true;
-	bool TWLVRAM = false;
+	bool TWLCLK = true;	// false == NTR, true == TWL
+	bool SOUND_FREQ = false;	// false == 32.73 kHz, true == 47.61 kHz
 	int useArm7Donor = 1;
 	bool TriggerExit = false;
 	std::string	gamesettingsPath = "";
@@ -197,6 +197,17 @@ int main(int argc, char **argv) {
 			REG_SCFG_CLK = 0x80;
 			fifoSendValue32(FIFO_USER_04, 1);
 			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
+		}
+		
+		SOUND_FREQ = twloaderini.GetInt("TWL-MODE","SOUND_FREQ",0);
+		if(SOUND_FREQ) {
+			fifoSendValue32(FIFO_MAXMOD, 1);
+			if (logEnabled)	LogFM("TWL.Main", "Sound/Microphone frequency set to 47.61 kHz");
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				printf("SOUND_FREQ 47.61 kHz\n");		
+			}
+		} else {
+			if (logEnabled)	LogFM("TWL.Main", "Sound/Microphone frequency set to 32.73 kHz");
 		}
 
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {

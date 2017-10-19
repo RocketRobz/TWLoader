@@ -3,10 +3,8 @@
 #define TWLOADER_SETTINGS_H
 
 #include <string>
-
-// Textures.
-#include <sf2d.h>
-extern sf2d_texture *settingstex;
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
 
 /** Settings **/
 
@@ -70,6 +68,7 @@ typedef struct _Settings_t {
 	struct {
 		bool rainbowled;
 		bool cpuspeed;	// false == NTR, true == TWL
+		bool soundfreq;	// false == 32.73 kHz, true == 47.61 kHz
 		bool enablesd;
 		bool forwarder;
 
@@ -86,6 +85,7 @@ typedef struct _Settings_t {
 
 		bool launchslot1;
 		bool resetslot1;
+		bool loadingscreen;
 		int console;	// 0 = Off, 1 = On, 2 = On (Debug)
 		bool lockarm9scfgext;
 		
@@ -114,7 +114,7 @@ extern Settings_t settings;
 // Couldn't get enums working, so I just used ints.
 extern int THEME_DSIMENU;	// DSi Menu
 extern int THEME_3DSMENU;	// 3DS Menu
-extern int THEME_R4;	// R4
+extern int THEME_R4;		// R4
 extern int THEME_AKMENU;	// Wood/akMenu
 
 /**

@@ -43,12 +43,14 @@ static const char *const lang_PT[STR_MAX] = {
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Selectionar Flashcard(s)",									// "Flashcard(s) select"
 	"LED Arco-íris",											// "Rainbow LED"
 	"Velocidade do CPU ARM9",									// "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
 	"Reiniciar Slot-1",											// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Console output",											// "Console output"
 	"Actualização automática: Bootstrap",						// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_PT[STR_MAX] = {
 	"Selecionar como TWL para eliminar o",						// "Set to TWL to get rid of lags in some games."
 	"lag em certos jogos.",										// (empty)
 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Permite escritura de 8 bit VRAM",							// "Allows 8 bit VRAM writes"
 	// "e expande o bus para 32 bit.",								// "and expands the bus to 32 bit."
 
@@ -136,6 +141,9 @@ static const char *const lang_PT[STR_MAX] = {
 
 	"Activar isto se os cartuchos no Slot-1 estão",				// "Enable this if Slot-1 carts are stuck"
 	"bloqueados em ecrãs brancos.",								// "on white screens."
+
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Mostra algum texto antes do lançamento do jogo.",			// "Displays some text before launched game."
 	"",															// (empty)
@@ -185,7 +193,7 @@ static const char *const lang_PT[STR_MAX] = {
 	"/: Guardar e Voltar",									// "A/B: Save and Return"
 	"Esquerda/Direita: Escolher",								// "Left/Right: Pick"
 	"Definições: GUI",											// "Settings: GUI"
-	"Definições: Modo NTR/TWL",									// "Settings: NTR/TWL-mode"
+	"Definições: Modo NTR",										// "Settings: NTR mode"
 
 };
 

@@ -1,12 +1,13 @@
 #ifndef TWLOADER_MAIN_H
 #define TWLOADER_MAIN_H
 
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
+
 // Variables exported from main.cpp.
 #include "sound.h"
 
 #include <3ds/types.h>
-#include <sf2d.h>
-
 #include <string>
 #include <vector>
 
@@ -18,26 +19,20 @@ extern bool isNightly;
 extern std::string fat;
 
 // Dialog box
-extern sf2d_texture *dialogboxtex; // Dialog box
-extern sf2d_texture *dboxtex_button;
-extern sf2d_texture *dboxtex_buttonback;
 extern void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color);
 extern void DialogBoxAppear(int x, int y, const char *text);
 extern void DialogBoxDisappear(int x, int y, const char *text);
 extern bool showdialogbox;
 
 // Shoulder button images.
-extern sf2d_texture *shoulderLtex;
-extern sf2d_texture *shoulderRtex;
 extern const char* Lshouldertext;
 extern const char* Rshouldertext;
 extern int LshoulderYpos;
 extern int RshoulderYpos;
 
 // Status bar functions.
-extern sf2d_texture *batteryIcon;	// Current battery level icon.
-void draw_volume_slider(sf2d_texture *texarray[]);
-void update_battery_level(sf2d_texture *texchrg, sf2d_texture *texarray[]);
+void draw_volume_slider(size_t texarray[]);
+void update_battery_level(size_t texchrg, size_t texarray[]);
 
 // Screen effects.
 extern int fadealpha;
@@ -46,11 +41,6 @@ extern bool fadeout;
 extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
 
 // Settings
-extern sf2d_texture *twloaderlogotex;	// TWLoader logo.
-extern sf2d_texture *settingslogotex;	// TWLoader logo in settings screen.
-extern sf2d_texture *settingslogotwltex;
-extern sf2d_texture *settingslogooadertex;
-extern sf2d_texture *settingslogodemotex;
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
 extern char settings_vertext[13];

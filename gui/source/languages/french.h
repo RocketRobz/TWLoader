@@ -43,12 +43,14 @@ static const char *const lang_FR[STR_MAX] = {
 	"Aff. écran de Boot",				   						// "Show Boot Screen"
 	"Chemin des ROM",					   						// "ROM path"
 	 
-	/** Settings: NTR/TWL_mode **/
+	/** Settings: NTR_mode **/
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
+	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Accès carte SD pour Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Affichage Console",                                        // "Console output"
 	"Mise à jour auto. bootstrap",                        	    // "Auto-update bootstrap"
 	"Bootstrap",                                                // "Bootstrap"
@@ -122,6 +124,9 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer pour se débarrasser des",             		   		// "Set to TWL to get rid of lags in some games."
 	"ralentissements dans certains jeux.",                      // (empty)
 	 
+	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
+	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+
 	// "Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
 	// "et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
 
@@ -137,6 +142,9 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer si les cartouches Slot-1 sont",           	    	// "Enable this if Slot-1 carts are stuck"
 	"bloquées sur des écrans blancs.",                          // "on white screens."
 	 
+	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
+	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+
 	"Afficher du texte avant de lancer un jeu.",                 // "Displays some text before launched game."
 	"",                                                         // (empty)
 	 
@@ -185,7 +193,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"/: Sauvegarder and Retourner",                         	// "A/B: Save and Return"
 	"Gauche/Droite: Choisir",                                   // "Left/Right: Pick"
 	"Paramètres: GUI",                                          // "Settings: GUI"
-	"Paramètres: NTR/TWL-mode",                                 // "Settings: NTR/TWL-mode"
+	"Paramètres: NTR mode",										// "Settings: NTR mode"
  
 };
  

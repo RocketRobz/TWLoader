@@ -2,10 +2,10 @@
 #ifndef TWLOADER_GAMECARD_H
 #define TWLOADER_GAMECARD_H
 
-#include <sf2d.h>
-
 #include <vector>
 #include <string>
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
 
 /**
  * Poll for a game card change.
@@ -46,10 +46,10 @@ GameCardType gamecardGetType(void);
 const char *gamecardGetGameID(void);
 
 /**
- * Get the game card's game ID as a u32.
+ * Get the game card's game ID as a std::uint32_t.
  * @return Game ID, or 0 if not a TWL card.
  */
-u32 gamecardGetGameID_u32(void);
+std::uint32_t gamecardGetGameID_u32(void);
 
 /**
  * Get the game card's product code.
@@ -62,19 +62,19 @@ const char *gamecardGetProductCode(void);
  * NOTE: Only applicable to TWL and CTR titles.
  * @return Title ID, or 0 if no card or the card doesn't have a title ID.
  */
-u64 gamecardGetTitleID(void);
+std::uint64_t gamecardGetTitleID(void);
 
 /**
  * Get the game card's revision..
  * @return Game card revision. (0xFF if unknown.)
  */
-u8 gamecardGetRevision(void);
+std::uint8_t gamecardGetRevision(void);
 
 /**
  * Get the game card's icon.
  * @return Game card icon, or NULL if not a TWL card.
  */
-sf2d_texture *gamecardGetIcon(void);
+size_t gamecardGetIcon(void);
 
 /**
  * Get the game card's banner text.

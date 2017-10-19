@@ -1,6 +1,9 @@
 #ifndef DOWNLOAD_H
 #define DOWNLOAD_H
 
+#include "graphic.h"
+#include "pp2d/pp2d/pp2d.h"
+
 /**
  * Check Wi-Fi status.
  * @return True if Wi-Fi is connected; false if not.

@@ -7,6 +7,9 @@
 #include <malloc.h>
 #include <unistd.h>
 
+#include "pp2d/pp2d/pp2d.h"
+#include "graphic.h"
+
 #include <string>
 #include <vector>
 using std::string;
@@ -20,6 +23,7 @@ using std::wstring;
  */
 static inline u16 BGR555_to_RGB5A1(u16 px16) {
 	// BGR555: xBBBBBGG GGGRRRRR
+	// RGB565: RRRRRGGG GGGBBBBB
 	// RGB5A1: RRRRRGGG GGBBBBBA
 	return   (px16 << 11) |	1 |		// Red (and alpha)
 		((px16 <<  1) & 0x07C0) |	// Green
@@ -29,11 +33,13 @@ static inline u16 BGR555_to_RGB5A1(u16 px16) {
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.)
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int grabTID(FILE* ndsFile, char *buf) {
-	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+int grabTID(FILE* ndsFile, char *buf, bool isCia) {
+	if(isCia) fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode)+0x3900, SEEK_SET);
+	else fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	size_t read = fread(buf, 1, 4, ndsFile);
 	return !(read == 4);
 }
@@ -127,49 +133,76 @@ vector<wstring> grabText(FILE* binFile, int bnrtitlenum) {
 }
 
 /**
+ * Get overlay sizes from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @param isCIA Is the game a CIA?
+ * @return 0 on success; non-zero on error.
+ */
+bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia) {
+	if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "Reading .NDS file:", filename);
+	sNDSHeader NDSHeader;
+	if(isCia) fseek(ndsFile, 0x3900, SEEK_SET);
+	else fseek(ndsFile, 0, SEEK_SET);
+	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
+	if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", ".NDS file read:", filename);
+
+	sNDSBanner ndsBanner;
+	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	if (NDSHeader.unitCode == 0x02) {
+		if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM is DSi-Enhanced. proceeding:", filename);
+		if (NDSHeader.arm9overlaySize == 0x00000000 && NDSHeader.arm7overlaySize == 0x00000000) {
+			if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM has no overlays:", filename);
+			return false;
+		} else {
+			if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM has overlays:", filename);
+			return true;
+		}
+	} else {
+		if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM is DSi-Exclusive/DSiWare. skipping:", filename);
+		return false;
+	}
+}
+
+/**
  * Cache the banner from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @param setfont Font to use for messages.
+ * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2) {
+int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
 	if (!access(bannerpath, F_OK)) {
 		// Banner is already cached.
 		// TODO: If it's 0 bytes, re-cache it?
-		// // sftd_draw_textf(setfont, 12, 32, RGBA8(0, 0, 0, 255), 12, "Banner data already exists.");
-		// sf2d_end_frame();
-		// sf2d_swapbuffers();
 		return 0;
 	}
-	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-	setTextColor(RGBA8(255, 255, 255, 255));
-	renderText(12, 16, 0.5f, 0.5f, false, title);
-	renderText(12, 48, 0.5f, 0.5f, false, counter1);
-	renderText(39, 48, 0.5f, 0.5f, false, "/");
-	renderText(44, 16, 0.5f, 0.5f, false, counter2);
+	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
+	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
+	pp2d_draw_text(44, 16, 0.5f, 0.5f, WHITE, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
-	fseek(ndsFile, 0, SEEK_SET);
+	if(isCia) fseek(ndsFile, 0x3900, SEEK_SET);
+	else fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", ".NDS file read:", filename);
 
 	sNDSBanner ndsBanner;
 	memset(&ndsBanner, 0, sizeof(ndsBanner));
+	if(isCia) NDSHeader.bannerOffset += 0x3900;
 	u32 bannersize = 0;
-	if (NDSHeader.bannerOffset != 0x00000000) {
+	if (NDSHeader.bannerOffset != 0x00000000 && NDSHeader.bannerOffset != 0x00003900) {
 		// Read the banner from the NDS file.
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
@@ -190,10 +223,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Now caching banner data (SD Card)...");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
@@ -204,10 +234,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Invalid banner loaded; not caching.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Invalid banner loaded; not caching.");
 		return -1;
 	}
 
@@ -216,10 +243,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
-		setTextColor(RGBA8(255, 255, 255, 255));
-		renderText(12, 32, 0.5f, 0.5f, false, "Error writing the banner cache file.");
-		sf2d_end_frame();
-		sf2d_swapbuffers();
+		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Error writing the banner cache file.");
 		return -2;
 	}
 	fwrite(&ndsBanner, 1, bannersize, filetosave);
@@ -228,13 +252,54 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	return 0;
 }
 
+// From sf2d_texture.c
+//Grabbed from: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+unsigned int next_pow2(unsigned int v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v >= 32 ? v : 32;
+}
+
+typedef struct {
+	C3D_Tex tex;
+	int width;
+	int height;
+} ndsicon;
+
+ndsicon *ndsicon_create_texture(int w, int h)
+{
+	// Based on sf2d_create_texture
+	ndsicon *texture = (ndsicon *) calloc(1, sizeof(*texture));
+	if (!texture) return NULL;
+
+	bool success = false;
+	texture->width = w;
+	texture->height = h;
+	success = C3D_TexInit(&texture->tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
+
+	if (!success) {
+		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
+		free(texture);
+		return NULL;
+	}
+
+	C3D_TexSetWrap(&texture->tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
+	return texture;
+}
+
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
-	// Convert the palette from RGB555 to RGB5A1.
+void* grabIcon(const sNDSBanner* ndsBanner) {
+	// Convert the palette from BGR555 to RGB5A1.
 	// (We need to ensure the MSB is set for all except
 	// color 0, which is transparent.)
 	u16 palette[16];
@@ -246,7 +311,7 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Un-tile the icon.
-	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8"
+	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8" (deprecated)
 	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
 	static const int w = 64;
 	static const int h = 32;
@@ -267,11 +332,9 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	}
 
 	// Create an RGB5A1 texture directly.
-	// NOTE: sf2d doesn't support this, so we'll do it manually.
-	// Based on sf2d_texture.c.
-	sf2d_texture *texture = sf2d_create_texture(w, h, TEXFMT_RGB5A1, SF2D_PLACE_RAM);
-
-	// Tile the texture for the GPU.
+	ndsicon *texture = ndsicon_create_texture(w,h);
+	
+	//Tile the texture for the GPU.
 	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
 		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
 		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
@@ -288,10 +351,9 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
 	);
 
 	gspWaitForPPF();
-	texture->tiled = 1;
-
 	linearFree(textureData);
-	return texture;
+	
+	return texture->tex.data;
 }
 
 /**
@@ -299,7 +361,7 @@ sf2d_texture* grabIcon(const sNDSBanner* ndsBanner) {
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-sf2d_texture* grabIcon(FILE* binFile) {
+void* grabIcon(FILE* binFile) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
 	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);

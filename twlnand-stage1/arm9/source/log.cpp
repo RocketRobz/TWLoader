@@ -3,7 +3,7 @@
 
 bool LogCreated = true;	// It's already done by the GUI
 
-int createLog(void) {
+void createLog(void) {
 	if (!LogCreated){
 		FILE* log = fopen(LOG_PATH, "w");
 		LogCreated = true;
