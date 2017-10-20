@@ -14,7 +14,7 @@ static const char *const lang_FI[STR_MAX] = {
 	"LIITTYVIEN ASIOIDEN KANNALTA",										// "ABOUT YOUR HEALTH AND SAFETY."
 	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA,",					// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
 	"MENE NETTISIVULLE",
-	"www.nintendo.fi/healthsafety/",									// "www.nintendo.com/healthsafety/"
+	"www.nintendo.com/healthsafety/",									// "www.nintendo.com/healthsafety/"
 	
 	"Kosketa ruutua jatkaaksesi.",			        					// "Touch the Touch Screen to continue."
 	
