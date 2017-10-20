@@ -1,4 +1,4 @@
-﻿	#ifndef FINNISH_H
+﻿#ifndef FINNISH_H
 #define FINNISH_H
 
 #include <3ds/types.h>
