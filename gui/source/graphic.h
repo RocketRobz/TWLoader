@@ -2,7 +2,7 @@
 #define GRAPHIC_H
 
 #include <3ds.h>
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 
 // Textures
 extern size_t rectangletex;

@@ -2,7 +2,7 @@
 #define TWLOADER_MAIN_H
 
 #include "graphic.h"
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 
 // Variables exported from main.cpp.
 #include "sound.h"

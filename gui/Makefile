@@ -59,7 +59,7 @@ VERSION_MICRO := 0
 #---------------------------------------------------------------------------------
 TARGET		:=	TWLoader
 BUILD		:=	build
-SOURCES		:=	source/pp2d/pp2d source/json source
+SOURCES		:=	source/pp2d source/json source
 DATA		:=	data
 INCLUDES	:=	include
 ROMFS		:=	romfs
