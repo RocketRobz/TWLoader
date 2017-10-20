@@ -221,6 +221,8 @@ void bootSplash() {
 	
 	int splashScreenTime = 0;
 	
+	int text_width = 0;
+	
 	int bg_col;
 	int text_col;
 	
@@ -451,13 +453,15 @@ void bootSplash() {
 		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 
-		switch ((settings.ui.language < 0 || settings.ui.language >= 12)? sys_language : settings.ui.language) {
+		switch ((settings.ui.language < 0 || settings.ui.language >= 14)? sys_language : settings.ui.language) {
 			case 0:
 			// Japanese
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 55, 14);
 					pp2d_draw_texture(hstexttex, 0, 0);
-					pp2d_draw_text(64, 176, 0.55, 0.55, DSSPLASH, "www.nintendo.co.jp/anzen/");
+					const char* text_url = "www.nintendo.co.jp/anzen/";
+					text_width = pp2d_get_text_width(text_url, 0.55, 0.55);
+					pp2d_draw_text(((320-text_width)/2), 176, 0.55, 0.55, DSSPLASH, text_url);
 				}
 				if (touchtocontinue_show) {
 					pp2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
@@ -469,32 +473,46 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
 					pp2d_draw_wtext(34, 19, 0.65, 0.65, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
-					pp2d_draw_wtext(29, 56, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
-					pp2d_draw_wtext(29, 80, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
-					pp2d_draw_wtext(47, 104, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
-					pp2d_draw_wtext(35, 128, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					pp2d_draw_wtext(16, 160, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 56, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 80, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS3), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 104, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 128, 0.55, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 160, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS6));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(32, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 2:
 			// French
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
-					pp2d_draw_wtext(34, 19, 0.62, 0.62, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
-					pp2d_draw_wtext(56, 56, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
-					pp2d_draw_wtext(32, 79, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
-					pp2d_draw_wtext(25, 102, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
-					pp2d_draw_wtext(37, 126, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					pp2d_draw_wtext(72, 143, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					pp2d_draw_wtext(52, 160, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 56, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 79, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS3), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 102, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 126, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 143, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 160, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS7), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(32, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 3:
@@ -502,16 +520,24 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
 					pp2d_draw_wtext(35, 21, 0.50, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
-					pp2d_draw_wtext(32, 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
-					pp2d_draw_wtext(44, 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
-					pp2d_draw_wtext(42, 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
-					pp2d_draw_wtext(58, 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					pp2d_draw_wtext(28, 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					pp2d_draw_wtext(32, 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1),0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(14, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 4:
@@ -519,16 +545,24 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
 					pp2d_draw_wtext(34, 19, 0.60, 0.60, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
-					pp2d_draw_wtext(22, 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
-					pp2d_draw_wtext(30, 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
-					pp2d_draw_wtext(24, 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
-					pp2d_draw_wtext(70, 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					pp2d_draw_wtext(21, 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					pp2d_draw_wtext(49, 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS3), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(34, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 5:
@@ -536,16 +570,24 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
 					pp2d_draw_wtext(34, 21, 0.50, 0.55, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
-					pp2d_draw_wtext(22, 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
-					pp2d_draw_wtext(15, 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
-					pp2d_draw_wtext(24, 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
-					pp2d_draw_wtext(78, 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					pp2d_draw_wtext(18, 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					pp2d_draw_wtext(60, 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					pp2d_draw_wtext(50, 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 55, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 75, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS3), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.40, 0.40);
+					pp2d_draw_wtext(((320-text_width)/2), 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5), 0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.38, 0.45);
+					pp2d_draw_wtext(((320-text_width)/2), 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS7), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
-					pp2d_draw_wtext(34, touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 			case 6:
@@ -554,7 +596,9 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 49, 12);
 					pp2d_draw_texture(hstexttex, 0, 0);
-					pp2d_draw_text(81, 166, 0.55, 0.55, DSSPLASH, "www.iQue.com/service/");
+					const char* text_url = "www.iQue.com/service/";
+					text_width = pp2d_get_text_width(text_url, 0.55, 0.55);
+					pp2d_draw_text(((320-text_width)/2), 166, 0.55, 0.55, DSSPLASH, text_url);
 				}
 				if (touchtocontinue_show) {
 					pp2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
@@ -565,10 +609,37 @@ void bootSplash() {
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 29, 10);
 					pp2d_draw_texture(hstexttex, 0, 0);
-					pp2d_draw_text(66, 176, 0.55, 0.55, DSSPLASH, "www.nintendocaution.co.kr");
+					const char* text_url = "www.nintendocaution.co.kr";
+					text_width = pp2d_get_text_width(text_url, 0.55, 0.55);
+					pp2d_draw_text(((320-text_width)/2), 176, 0.55, 0.55, DSSPLASH, text_url);
 				}
 				if (touchtocontinue_show) {
 					pp2d_draw_texture_blend(hstouchtex, 0, touchtocontinue_yPos, RGBA8(255, 255, 255, touchtocontinue_alpha));
+				}
+				break;
+			case 13:
+			// Turkish
+				if (settings.ui.healthsafety) {
+					pp2d_draw_texture(hstex, 12, 16);
+					pp2d_draw_wtext(34, 19, 0.50, 0.65, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 54, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 75, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS2));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS3), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 96, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.45, 0.47);
+					pp2d_draw_wtext(((320-text_width)/2), 117, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 140, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.38, 0.50);
+					pp2d_draw_wtext(((320-text_width)/2), 160, 0.38, 0.50, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS7), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
+				}
+				if (touchtocontinue_show) {
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_TOUCH), 0.55, 0.55);
+					pp2d_draw_wtext(((320-text_width)/2), touchtocontinue_yPos, 0.55, 0.55, RGBA8(text_col, text_col, text_col, touchtocontinue_alpha), TR(STR_DSSPLASH_TOUCH));
 				}
 				break;
 		}

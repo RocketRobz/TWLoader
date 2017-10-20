@@ -12,15 +12,15 @@ static const char *const lang_FI[STR_MAX] = {
 	"JA TURVALLISUUS VAROTOIMI VIHKO",						    		// "AND SAFETY PRECAUTIONS BOOKLET"
 	"HYVINVOINTIIN JA TERVEYTEEN",										// "FOR IMPORTANT INFORMATION"
 	"LIITTYVIEN ASIOIDEN KANNALTA",										// "ABOUT YOUR HEALTH AND SAFETY."
-	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA, MENE NETTISIVULLE",	// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"www.nintendo.fi/healthsafety/",									// "www.nintendo.com/healthsafety/"
-	"",
+	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA,",					// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"MENE NETTISIVULLE",
+	"www.nintendo.fi",									// "www.nintendo.com/healthsafety/"
 	
 	"Kosketa ruutua jatkaaksesi.",			        					// "Touch the Touch Screen to continue."
 	
 	/** GUI **/
 	": Palaa HOME Valikkoon",								    		// "Return to HOME Menu"
-	"KÄYNNISTÄ",															// "START" (used on cartridge indicator)
+	"KÄYNNISTÄ",														// "START" (used on cartridge indicator)
 	"Ei pelikorttia",									     			// "No cartridge"
 	"Tuntemton pelikortti", 											// "Unknown Cartridge"
 	"Asetukset",														// "Settings"
@@ -90,8 +90,8 @@ static const char *const lang_FI[STR_MAX] = {
 	"Kieli jota käytetään käyttöliittymässä,",							// "The language to use for the UI,"
 	"mukaan lukien pelien kuvien teksissä.",							// "including game banner text."
 
-	"Teema jota käytetään TWLoaderissa.",								// "The theme to use in TWLoader."
-	"Paina START päästäksesi ali-teemavalikkoon.",						// "Press START for sub-themes."
+	"Teema jota käytetään TWLoaderissa. Paina",							// "The theme to use in TWLoader."
+	"START päästäksesi ali-teemavalikkoon.",							// "Press START for sub-themes."
 
 	"Ylätaustan väri,",													// "The color of the top background,"
 	"START reunus, ja pyörivät pisteet.",								// "the START border, and the circling dots."
@@ -139,8 +139,8 @@ static const char *const lang_FI[STR_MAX] = {
 	"Näyttää Hyvinvointi ja terveys",									// "Displays the Health and Safety"
 	"viestin alaruudulla.",												// "message on the bottom screen."
 
-	"Ota tämä käyttöön jos Slot-1 pelikortit ovat jumissa",				// "Enable this if Slot-1 carts are stuck"
-	"valkoisella ruudulla.",											// "on white screens."
+	"Ota tämä käyttöön jos Slot-1 pelikortit",							// "Enable this if Slot-1 carts are stuck"
+	"ovat jumissa valkoisella ruudulla.",								// "on white screens."
 
 	"Näyttää latausruudun ennen kuin ROM",								// "Shows a loading screen before ROM"
 	"käynnistyy nds-bootstrapissa.",									// "is started in nds-bootstrap."
