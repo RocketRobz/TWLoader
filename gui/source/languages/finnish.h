@@ -12,9 +12,9 @@ static const char *const lang_FI[STR_MAX] = {
 	"JA TURVALLISUUS VAROTOIMI VIHKO",						    		// "AND SAFETY PRECAUTIONS BOOKLET"
 	"HYVINVOINTIIN JA TERVEYTEEN",										// "FOR IMPORTANT INFORMATION"
 	"LIITTYVIEN ASIOIDEN KANNALTA",										// "ABOUT YOUR HEALTH AND SAFETY."
-	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA, MENE NETTISIVULLE",	// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
-	"www.nintendo.fi/healthsafety/",									// "www.nintendo.com/healthsafety/"
-	"",
+	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA,",					// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
+	"MENE NETTISIVULLE",
+	"www.nintendo.fi",									// "www.nintendo.com/healthsafety/"
 	
 	"Kosketa ruutua jatkaaksesi.",			        					// "Touch the Touch Screen to continue."
 	
