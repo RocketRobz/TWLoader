@@ -1,4 +1,4 @@
-﻿#ifndef FINNISH_H
+﻿	#ifndef FINNISH_H
 #define FINNISH_H
 
 #include <3ds/types.h>
@@ -14,7 +14,7 @@ static const char *const lang_FI[STR_MAX] = {
 	"LIITTYVIEN ASIOIDEN KANNALTA",										// "ABOUT YOUR HEALTH AND SAFETY."
 	"SAADAKSESI EKSTRA KOPION OMAN ALUEEN VIHKOSTA,",					// "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
 	"MENE NETTISIVULLE",
-	"www.nintendo.fi",									// "www.nintendo.com/healthsafety/"
+	"www.nintendo.fi",													// "www.nintendo.com/healthsafety/"
 	
 	"Kosketa ruutua jatkaaksesi.",			        					// "Touch the Touch Screen to continue."
 	
@@ -35,7 +35,7 @@ static const char *const lang_FI[STR_MAX] = {
 	"Näytä tiedostonimi",		     									// "Show filename"
 	"Peli laskuri",														// "Game counter"
 	"Mukautettu alaruudun kuva",										// "Custom bottom image"
-	"Auto-pivitä TWLoader",												// "Auto-update TWLoader"
+	"Auto-päivitä TWLoader",											// "Auto-update TWLoader"
 	"TWLoader tiedostotyyppi",											// "TWLoader filetype"
 	"Päivitä TWLoader",													// "Update TWLoader"
 	"DS/DSi Alku Ruutu",												// "DS/DSi Boot Screen"
@@ -46,7 +46,7 @@ static const char *const lang_FI[STR_MAX] = {
 	/** Settings: NTR_mode **/
 	"Flashkortin valinta",												// "Flashcard(s) select"
 	"Sateenkaari LED",													// "Rainbow LED"
-	"ARM9 prosessorin nopeus",											// "ARM9 CPU Speed"
+	"ARM9 CPU nopeus",													// "ARM9 CPU Speed"
 	"Ääni/Mikrofooni taajuus",						    				// "Sound/Microphone frequency"
 	"SD-kortti lupa Slot-1:delle",										// "SD card access for Slot-1"
 	"Nollaa Slot-1",													// "Reset Slot-1"
@@ -155,45 +155,45 @@ static const char *const lang_FI[STR_MAX] = {
 	"",																	// (empty)
 
 	"Valitse julkaistu, epävirallinen,",								// "Pick release, unofficial,"
-	"tai vanha bootstrap.",										// "or old bootstrap."
+	"tai vanha bootstrap.",												// "or old bootstrap."
 
 	/** Start menu **/
 	// Options
-	"Pelien sijainti",											// "Game location"
-	"Pelilaatikoiden kuvat: Päällä",												// "Box Art: On"
-	"Pelilaatikoiden kuvat: Ei päällä",												// "Box Art: OFF"
-	"Käynnistä GBARunner2",											// "Start GBARunner2"
-	"Yläreunus: Päällä",											// "Top border: On"
-	"Yläreunus: Ei päällä",											// "Top border: Off"
-	"Poista lähjoittaja ROMin valinta",							// "Unset donor rom"
-	"Etsi",															// "Search"
+	"Pelien sijainti",													// "Game location"
+	"Boxi kuvat: On",													// "Box Art: On"
+	"Boxi kuvat: Off",													// "Box Art: OFF"
+	"Suorita GBARunner2",												// "Start GBARunner2"
+	"Yläreunus: On",													// "Top border: On"
+	"Yläreunus: Off",													// "Top border: Off"
+	"Lopeta ROMin lahjoitus",											// "Unset donor rom"
+	"Etsi",																// "Search"
 	// Values
-	"SD-kortti",													// "SD Card"
-	"Flashkortti",													// "Flashcard"
-	"Käytä näppäimistöä ROMien löytämiseen",						// "Use the keyboard to find roms"
+	"SD-kortti",														// "SD Card"
+	"Flashkortti",														// "Flashcard"
+	"Käytä näppäimistöä ROMien löytämiseen",							// "Use the keyboard to find roms"
 
 	/** Select menu **/
 	// Options
-	"ARM9 prosessorin nopeus",										// "ARM9 CPU Speed"
-	"SD-kortti lupa",												// "SD access"
-	"Käyt valittua laahjoittaja ROMia",								// "Use set donor ROM"
-	"Tee lahjoittaja ROMiksi",										// "Set as donor ROM"
-	"Valitse LEDin väri",											// "Set LED color"
+	"ARM9 CPU nopeus",													// "ARM9 CPU Speed"
+	"SD-kortti lupa",													// "SD access"
+	"Käytä luovuttaja ROMia",											// "Use set donor ROM"
+	"Tee luovuttaja ROMiksi",											// "Set as donor ROM"
+	"Valitse LEDin väri",												// "Set LED color"
 	// Values
-	"Oletusarvo",													// "Default"
+	"Oletusarvo",														// "Default"
 
 	/** Sub-theme **/
-	"Ali-teeman valinta: DSi Valikko",								// "Sub-theme select: DSi Menu"
-	"Ali-teeman valinta: R4",										// "Sub-theme select: R4"
-	"Ali-teeman valinta: akMenu/Wood",								// "Sub-theme select: Wood"
+	"Ali-teeman valinta: DSi Valikko",									// "Sub-theme select: DSi Menu"
+	"Ali-teeman valinta: R4",											// "Sub-theme select: R4"
+	"Ali-teeman valinta: akMenu/Wood",									// "Sub-theme select: Wood"
 
-	"Tälle teemalle ei ole ali-teemoja.",						// "No sub-themes exist for this theme."
+	"Tällä teemalla ei ole ali-teemoja.",								// "No sub-themes exist for this theme."
 
 	/** Settings others minor strings **/
-	"/: Tallenna ja poistu",										// "A/B: Save and Return"
-	"Vasen/Oikea: Valitse",											// "Left/Right: Pick"
+	"/: Tallenna ja poistu",											// "A/B: Save and Return"
+	"Vasen/Oikea: Valitse",												// "Left/Right: Pick"
 	"Asetukset: Käyttöliittymä",											// "Settings: GUI"
-	"Asetukset: NTR-tila",										// "Settings: NTR mode"
+	"Asetukset: NTR-tila",												// "Settings: NTR mode"
 
 };
 
