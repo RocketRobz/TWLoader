@@ -7,7 +7,7 @@
 #include <malloc.h>
 #include <unistd.h>
 
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 #include "graphic.h"
 
 #include <string>

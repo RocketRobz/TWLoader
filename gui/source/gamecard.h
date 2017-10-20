@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include "graphic.h"
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 
 /**
  * Poll for a game card change.

@@ -4,7 +4,7 @@
 
 #include <string>
 #include "graphic.h"
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 
 /** Settings **/
 

@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 #include "graphic.h"
-#include "pp2d/pp2d/pp2d.h"
+#include "pp2d/pp2d.h"
 
 typedef enum {
 	FORMAT_YDM	= 0,
