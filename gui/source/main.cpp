@@ -3737,15 +3737,21 @@ int main(){
 								if (settings.ui.iconsize) {
 									pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
 									const wchar_t *start_text = TR(STR_START);
-									text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
-									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
+									if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.50, 0.60);
+									else text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
+									if (settings.ui.theme != THEME_3DSMENU) {
+										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 180, 0.50, 0.60, WHITE, start_text);
+										else pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
+									}
 								} else {
 									pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
 									const wchar_t *start_text = TR(STR_START);
-									text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
-									if (settings.ui.theme != THEME_3DSMENU)
-										pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
+									if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.40, 0.50);
+									else text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
+									if (settings.ui.theme != THEME_3DSMENU) {
+										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 173, 0.40, 0.50, WHITE, start_text);
+										else pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
+									}
 								}
 							}
 						}

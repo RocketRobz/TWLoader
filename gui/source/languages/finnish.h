@@ -90,8 +90,8 @@ static const char *const lang_FI[STR_MAX] = {
 	"Kieli jota käytetään käyttöliittymässä,",							// "The language to use for the UI,"
 	"mukaan lukien pelien kuvien teksissä.",							// "including game banner text."
 
-	"Teema jota käytetään TWLoaderissa.",								// "The theme to use in TWLoader."
-	"Paina START päästäksesi ali-teemavalikkoon.",						// "Press START for sub-themes."
+	"Teema jota käytetään TWLoaderissa. Paina",							// "The theme to use in TWLoader."
+	"START päästäksesi ali-teemavalikkoon.",							// "Press START for sub-themes."
 
 	"Ylätaustan väri,",													// "The color of the top background,"
 	"START reunus, ja pyörivät pisteet.",								// "the START border, and the circling dots."
