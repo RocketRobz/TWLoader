@@ -1392,13 +1392,22 @@ void UpdateBootstrapUnofficial(void) {
 	} else {
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 	}
-	remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+	// Download first .nds file
 	remove("sdmc:/_nds/twloader/unofficial-bootstrap.nds");
-	downloadBootstrapVersion(false);
-	checkBootstrapVersion();
-	downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
-	if (screenmode == SCREEN_MODE_SETTINGS) {
-		DialogBoxDisappear(12, 16, "Done!");
+	int result = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
+	
+	// Then, download version string
+	if(result == 0) {
+		remove("sdmc:/_nds/twloader/unofficial-bootstrap");
+		downloadBootstrapVersion(false);
+		checkBootstrapVersion();
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, "Done!");
+		}
+	} else {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, "An error ocurred! Check log for details.");
+		}
 	}
 	pp2d_end_draw();
 }
@@ -1418,13 +1427,22 @@ void UpdateBootstrapRelease(void) {
 	} else {
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 	}
-	remove("sdmc:/_nds/twloader/release-bootstrap");
+	// Download first .nds file
 	remove("sdmc:/_nds/twloader/release-bootstrap.nds");
-	downloadBootstrapVersion(true);
-	checkBootstrapVersion();
-	downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
-	if (screenmode == SCREEN_MODE_SETTINGS) {
-		DialogBoxDisappear(12, 16, "Done!");
+	int result = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
+
+	// Then, download version string
+	if(result == 0) {
+		remove("sdmc:/_nds/twloader/release-bootstrap");
+		downloadBootstrapVersion(true);
+		checkBootstrapVersion();
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, "Done!");
+		}
+	} else {
+		if (screenmode == SCREEN_MODE_SETTINGS) {
+			DialogBoxDisappear(12, 16, "An error ocurred! Check log for details.");
+		}
 	}
 	pp2d_end_draw();
 }
