@@ -56,12 +56,6 @@ int equals;
 
 std::string	bootstrapPath;
 
-// Couldn't get enums working, so I just used ints.
-int THEME_DSIMENU = 0;	// DSi Menu
-int THEME_3DSMENU = 1;	// 3DS Menu
-int THEME_R4 = 2;		// R4
-int THEME_AKMENU = 3;	// Wood/akMenu
-
 // Current screen mode.
 ScreenMode screenmode = SCREEN_MODE_ROM_SELECT;
 

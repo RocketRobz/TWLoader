@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+// Theme numbers
+#define THEME_DSIMENU 0	// DSi Menu
+#define THEME_3DSMENU 1	// 3DS Menu
+#define THEME_R4 2		// R4
+#define THEME_AKMENU 3	// Wood/akMenu
+
+
 extern bool isDemo;	// Is the program running as demo version?
 extern bool run;	// Set to false to exit to the Home Menu.
 extern bool isNightly;

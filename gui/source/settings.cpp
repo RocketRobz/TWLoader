@@ -32,7 +32,9 @@ static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 /** Settings **/
 const char *twlnand_msg;
 
+const char* srldrsettingsinipath = "sdmc:/_nds/srloader/settings.ini";
 static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
+static CIniFile srldrsettingsini(srldrsettingsinipath);
 
 static bool settings_tex_loaded = false;
 
@@ -1895,6 +1897,9 @@ void LoadSettings(void) {
  * Save settings.
  */
 void SaveSettings(void) {
+	bool srldrsettingsFound = false;
+	if (!access(srldrsettingsinipath, F_OK)) srldrsettingsFound = true;
+
 	// UI settings.
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
@@ -1946,4 +1951,18 @@ void SaveSettings(void) {
 	settingsini.SetInt("TWL-MODE", "FLASHCARD", settings.twl.flashcard);
 	settingsini.SetInt("TWL-MODE", "GBARUNNER", gbarunnervalue);
 	settingsini.SaveIniFile("sdmc:/_nds/twloader/settings.ini");
+
+	if(srldrsettingsFound) {
+		// Save some settings to SRLoader as well.
+		CIniFile srldrsettingsini( srldrsettingsinipath );
+
+		srldrsettingsini.SetInt("SRLOADER", "IS_3DS", 1);
+		srldrsettingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
+		if(settings.ui.theme <= THEME_3DSMENU) {
+			srldrsettingsini.SetInt("SRLOADER", "THEME", 0);
+		} else {
+			srldrsettingsini.SetInt("SRLOADER", "THEME", 1);
+		}
+		srldrsettingsini.SaveIniFile(srldrsettingsinipath);
+	}
 }
