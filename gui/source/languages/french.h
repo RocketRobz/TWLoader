@@ -24,8 +24,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Pas de cartouche",                                        	// "No cartridge"
 	"Cartouche inconnue",                                      	// "Unknown Cartridge"
 	"Paramètres",                                              	// "Settings"	
-	": Retour",                                              	// "B: Back"    
-	": Ajouter jeux",					  						// "Y: Add Games"
+	":Retour",                                              	// "B: Back"    
+	":Ajouter jeux",					  						// "Y: Add Games"
 	 
 	/** Settings: GUI **/
 	"Langue",                                                  	// "Language"
@@ -50,7 +50,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Accès carte SD pour Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
-	"Bootstrap loading screen",									// "Bootstrap loading screen"
+	"Écran de bootstrap",									// "Bootstrap loading screen"
 	"Affichage Console",                                        // "Console output"
 	"Mise à jour auto. bootstrap",                        	    // "Auto-update bootstrap"
 	"Bootstrap",                                                // "Bootstrap"
@@ -87,7 +87,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Noir",                                                     // "Black"
 
 	/** Settings: GUI descriptions **/
-	"La langue à utiliser pour l'IU,",                          // "The language to use for the UI,"
+	"La langue à utiliser pour l'interface,",                          // "The language to use for the UI,"
 	"incluant le texte des bannières des jeux.",                // "including game banner text."
 	 
 	"Le thème à utiliser dans TWLoader.",                       // "The theme to use in TWLoader."
@@ -124,8 +124,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer pour se débarrasser des",             		   		// "Set to TWL to get rid of lags in some games."
 	"ralentissements dans certains jeux.",                      // (empty)
 	 
-	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
-	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+	"32.73 kHz: Qualité d'origine",								// "32.73 kHz: Original quality"
+	"47.61 kHz: Haute qualité",									// "47.61 kHz: High quality"
 
 	// "Permettre l'écriture VRAM 8 bit",                          // "Allows 8 bit VRAM writes"
 	// "et étendre le bus à 32 bit.",                              // "and expands the bus to 32 bit."
@@ -142,8 +142,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Activer si les cartouches Slot-1 sont",           	    	// "Enable this if Slot-1 carts are stuck"
 	"bloquées sur des écrans blancs.",                          // "on white screens."
 	 
-	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
-	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+	"Afficher l'écran de chargement avant",						// "Shows a loading screen before ROM"
+	"démarrage de la ROM dans nds-bootstrap.",								// "is started in nds-bootstrap."
 
 	"Afficher du texte avant de lancer un jeu.",                 // "Displays some text before launched game."
 	"",                                                         // (empty)
@@ -154,8 +154,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Mise à jour auto. de nds-bootstrap",         		    	// "Auto-update nds-bootstrap at launch."
 	"au démarrage.",                                            // (empty)
 
-	"Sélectionner le fichier de bootstrap",                 	// "Pick release, unofficial,"
-	"(release non-officiel, et vieux).",                        // "or old bootstrap."
+	"Choisir le fichier de bootstrap",                 	// "Pick release, unofficial,"
+	"(Release, Unofficial ou Old).",                        // "or old bootstrap."
 	 
 	/** Start menu **/
 	// Options
@@ -170,7 +170,7 @@ static const char *const lang_FR[STR_MAX] = {
 	// Values
 	"Carte SD",                                                 // "SD Card"
 	"Linker",                                                   // "Flashcard"
-	"Utilisez le clavier pour rechercher des roms",             // "Use the keyboard to find roms"
+	"Utilisez le clavier pour rechercher des ROMs",             // "Use the keyboard to find roms"
 	 
 	/** Select menu **/
 	// Options
