@@ -17,20 +17,6 @@ using std::vector;
 using std::wstring;
 
 /**
- * Convert a color from NDS BGR555 to RGB5A1.
- * @param px16 BGR555 color value.
- * @return RGB5A1 color.
- */
-static inline u16 BGR555_to_RGB5A1(u16 px16) {
-	// BGR555: xBBBBBGG GGGRRRRR
-	// RGB565: RRRRRGGG GGGBBBBB
-	// RGB5A1: RRRRRGGG GGBBBBBA
-	return   (px16 << 11) |	1 |		// Red (and alpha)
-		((px16 <<  1) & 0x07C0) |	// Green
-		((px16 >>  9) & 0x003E);	// Blue
-}
-
-/**
  * Get the title ID.
  * @param ndsFile DS ROM image.
  * @param buf Output buffer for title ID. (Must be at least 4 characters.)
@@ -299,35 +285,27 @@ ndsicon *ndsicon_create_texture(int w, int h)
  * @return Icon texture. (NULL on error)
  */
 void* grabIcon(const sNDSBanner* ndsBanner) {
-	// Convert the palette from BGR555 to RGB5A1.
-	// (We need to ensure the MSB is set for all except
-	// color 0, which is transparent.)
-	u16 palette[16];
-	palette[0] = 0;	// Color 0 is always transparent.
-	for (int i = 16-1; i > 0; i--) {
-		// Convert from NDS BGR555 to RGB5A1.
-		// NOTE: The GPU expects byteswapped data.
-		palette[i] = BGR555_to_RGB5A1(ndsBanner->palette[i]);
-	}
-
 	// Un-tile the icon.
 	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8" (deprecated)
 	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
 	static const int w = 64;
 	static const int h = 32;
-	u16 *textureData = (u16*)linearAlloc(w*h*sizeof(u16));
-	const u8 *offset = ndsBanner->icon;
-	for (int y = 0; y < 32; y += 8) {
-		for (int x = 0; x < 32; x += 8) {
-			for (int y2 = 0; y2 < 8; y2++) {
-				u16 *texptr = &textureData[x + ((y + y2) * 64)];
-				for (int x2 = 0; x2 < 8; x2 += 2) {
-					texptr[0] = palette[*offset & 0x0F];
-					texptr[1] = palette[*offset >> 4];
-					offset++;
-					texptr += 2;
-				}
-			}
+	u8 icon[32 * 32 * 2];
+	for(u32 x = 0; x < 32; x++) {
+		for(u32 y = 0; y < 32; y++) {
+			u32 srcPos = (((y >> 3) * 4 + (x >> 3)) * 8 + (y & 7)) * 4 + ((x & 7) >> 1);
+			u32 srcShift = (x & 1) * 4;
+			u16 srcPx = ndsBanner->palette[(ndsBanner->icon[srcPos] >> srcShift) & 0xF];
+
+			u8 r = (u8) (srcPx & 0x1F);
+			u8 g = (u8) ((srcPx >> 5) & 0x1F);
+			u8 b = (u8) ((srcPx >> 10) & 0x1F);
+
+			u16 reversedPx = (u16) ((r << 11) | (g << 6) | (b << 1) | 1);
+
+			u32 dstPos = (y * 32 + x) * 2;
+			icon[dstPos + 0] = (u8) (reversedPx & 0xFF);
+			icon[dstPos + 1] = (u8) ((reversedPx >> 8) & 0xFF);
 		}
 	}
 
@@ -339,11 +317,11 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
 		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
 
-	GSPGPU_FlushDataCache(textureData, (w*h)*2);
+	GSPGPU_FlushDataCache(icon, (w*h)*2);
 	GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
 
 	C3D_SafeDisplayTransfer(
-		(u32*)textureData,
+		(u32*)icon,
 		GX_BUFFER_DIM(w, h),
 		(u32*)texture->tex.data,
 		GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
@@ -351,7 +329,7 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 	);
 
 	gspWaitForPPF();
-	linearFree(textureData);
+	linearFree(icon);
 	
 	return texture->tex.data;
 }
