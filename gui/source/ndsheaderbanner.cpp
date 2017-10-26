@@ -16,6 +16,22 @@ using std::string;
 using std::vector;
 using std::wstring;
 
+GX_TRANSFER_FORMAT gpuToGxFormat[13] = {
+        GX_TRANSFER_FMT_RGBA8,
+        GX_TRANSFER_FMT_RGB8,
+        GX_TRANSFER_FMT_RGB5A1,
+        GX_TRANSFER_FMT_RGB565,
+        GX_TRANSFER_FMT_RGBA4,
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8, // Unsupported
+        GX_TRANSFER_FMT_RGBA8  // Unsupported
+};
+
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
@@ -238,18 +254,19 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	return 0;
 }
 
-// From sf2d_texture.c
+// From FBI core/screen.c
 //Grabbed from: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-unsigned int next_pow2(unsigned int v)
+unsigned int next_pow2(u32 i)
 {
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-	v++;
-	return v >= 32 ? v : 32;
+    i--;
+    i |= i >> 1;
+    i |= i >> 2;
+    i |= i >> 4;
+    i |= i >> 8;
+    i |= i >> 16;
+    i++;
+
+    return i;
 }
 
 typedef struct {
@@ -257,27 +274,6 @@ typedef struct {
 	int width;
 	int height;
 } ndsicon;
-
-ndsicon *ndsicon_create_texture(int w, int h)
-{
-	// Based on sf2d_create_texture
-	ndsicon *texture = (ndsicon *) calloc(1, sizeof(*texture));
-	if (!texture) return NULL;
-
-	bool success = false;
-	texture->width = w;
-	texture->height = h;
-	success = C3D_TexInit(&texture->tex, next_pow2(w), next_pow2(h), GPU_RGBA5551); // RGB5A1
-
-	if (!success) {
-		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
-		free(texture);
-		return NULL;
-	}
-
-	C3D_TexSetWrap(&texture->tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
-	return texture;
-}
 
 /**
  * Get the icon from an NDS banner.
@@ -288,8 +284,8 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 	// Un-tile the icon.
 	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8" (deprecated)
 	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
-	static const int w = 64;
-	static const int h = 32;
+	static const int width = 32;
+	static const int height = 32;
 	u8 icon[32 * 32 * 2];
 	for(u32 x = 0; x < 32; x++) {
 		for(u32 y = 0; y < 32; y++) {
@@ -309,29 +305,55 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 		}
 	}
 
-	// Create an RGB5A1 texture directly.
-	ndsicon *texture = ndsicon_create_texture(w,h);
+	// Based on sf2d_create_texture
+	ndsicon *texture = (ndsicon *) calloc(1, sizeof(*texture));
+	if (!texture) return NULL;
+
+	bool success = false;
+
+    u32 pow2Width = next_pow2(width);
+
+    if(pow2Width < 64) {
+        pow2Width = 64;
+    }
+
+    u32 pow2Height = next_pow2(height);
+    if(pow2Height < 64) {
+        pow2Height = 64;
+    }
+
+    u32 pixelSize = sizeof(icon) / width / height;
+
+    u8* pow2Tex = (u8*)linearAlloc(pow2Width * pow2Height * pixelSize);
+
+    memset(pow2Tex, 0, pow2Width * pow2Height * pixelSize);
+
+    for(u32 x = 0; x < width; x++) {
+        for(u32 y = 0; y < height; y++) {
+            u32 dataPos = (y * width + x) * pixelSize;
+            u32 pow2TexPos = (y * pow2Width + x) * pixelSize;
+
+            for(u32 i = 0; i < pixelSize; i++) {
+                pow2Tex[pow2TexPos + i] = ((u8*) icon)[dataPos + i];
+            }
+        }
+    }
+
+	success = C3D_TexInit(&texture->tex, (int) pow2Width, (int) pow2Height, GPU_RGBA5551); // RGB5A1
+	if (!success) {
+		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
+		free(texture);
+		return NULL;
+	}
+
+    GSPGPU_FlushDataCache(pow2Tex, pow2Width * pow2Height * 4);
+
+    C3D_SafeDisplayTransfer((u32*) pow2Tex, GX_BUFFER_DIM(pow2Width, pow2Height), (u32*) texture->tex.data, GX_BUFFER_DIM(pow2Width, pow2Height), GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_OUT_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+    gspWaitForPPF();
+
+    linearFree(pow2Tex);
 	
-	//Tile the texture for the GPU.
-	const u32 flags = (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) |
-		GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
-		GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
-
-	GSPGPU_FlushDataCache(icon, (w*h)*2);
-	GSPGPU_FlushDataCache(texture->tex.data, texture->tex.size);
-
-	C3D_SafeDisplayTransfer(
-		(u32*)icon,
-		GX_BUFFER_DIM(w, h),
-		(u32*)texture->tex.data,
-		GX_BUFFER_DIM(texture->tex.width, texture->tex.height),
-		flags
-	);
-
-	gspWaitForPPF();
-	linearFree(icon);
-	
-	return texture->tex.data;
+	return pow2Tex;
 }
 
 /**
