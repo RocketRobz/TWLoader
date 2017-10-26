@@ -207,42 +207,42 @@ void settingsDrawTopScreen(void)
 				} else {
 					pp2d_draw_texture(invdsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				}
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
+				pp2d_draw_rectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+				pp2d_draw_rectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
 			} else if (settings.ui.bootscreen == 2) {
 				pp2d_draw_texture(dsiboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
-				drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
-				drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
+				pp2d_draw_rectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+				pp2d_draw_rectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
 			} else if (settings.ui.bootscreen <= 1) {
 				pp2d_draw_texture(dsboottex, offset3D[topfb].boxart+136, 20); // Draw boot screen
 				if (settings.ui.bootscreen == 1) {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+120, 20, 16, 96, BLACK);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+264, 20, 16, 96, BLACK);
 				} else {
-					drawRectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
-					drawRectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+120, 20, 16, 96, WHITE);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+264, 20, 16, 96, WHITE);
 				}
 			} else {
-				drawRectangle(offset3D[topfb].boxart+136, 20, 128, 96, WHITE);
+				pp2d_draw_rectangle(offset3D[topfb].boxart+136, 20, 128, 96, WHITE);
 			}
 			if (settings.ui.healthsafety == 1) {
 				if (settings.ui.bootscreen >= 3) {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
 					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");					
 				} else if (settings.ui.bootscreen == 2) {
 					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {
 					pp2d_draw_texture(dshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else {
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
 				}
 			} else {
 				if (settings.ui.bootscreen >= 3) {
 					// Draw a black screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
 				} else {
 					// Draw a white screen in place of the H&S screen.
-					drawRectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, WHITE);
 				}
 			}
 			if (!settings.ui.showbootscreen) {
@@ -293,7 +293,7 @@ void settingsDrawTopScreen(void)
 			pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 		}
 		DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
-		if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+		if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 	}
 
 	if(demofade) {
@@ -354,14 +354,14 @@ void settingsDrawBottomScreen(void)
 
 	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_texture(settingstex, 0, 0);
-	drawRectangle(0, 0, 320, 28, RGBA8(0, 0, 0, 31));
+	pp2d_draw_rectangle(0, 0, 320, 28, RGBA8(0, 0, 0, 31));
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 26, 2, 1, GRAY);
-	drawRectangle(0, 179, 320, 41, RGBA8(0, 0, 0, 31));
+		pp2d_draw_rectangle(i*4, 26, 2, 1, GRAY);
+	pp2d_draw_rectangle(0, 179, 320, 41, RGBA8(0, 0, 0, 31));
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 180, 2, 1, GRAY);
+		pp2d_draw_rectangle(i*4, 180, 2, 1, GRAY);
 	for (int i = 0; i < 80; i++)
-		drawRectangle(i*4, 218, 2, 1, GRAY);
+		pp2d_draw_rectangle(i*4, 218, 2, 1, GRAY);
 	
 	if (subscreenmode < 4) {
 		u32 colorssm = WHITE;

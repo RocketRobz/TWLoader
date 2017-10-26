@@ -324,12 +324,6 @@ void TWLoader_cia_manager(bool install, MediaType mediaType, const char* filenam
     }    
 }
 
-// New draw rectangle function for use alongside citro.
-void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color)
-{
-	pp2d_draw_texture_scale_blend(rectangletex, x, y, scaleX, scaleY, color);
-}
-
 static string dialog_text;
 
 /**
@@ -1331,7 +1325,7 @@ static bool gamesettings_isCia = false;
  */
 static void drawMenuDialogBox(void)
 {
-	drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
+	pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	pp2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	pp2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
 	if (menudboxmode == DBOX_MODE_OVERLAYS) {
@@ -1905,13 +1899,13 @@ int main(){
 	LoadMenuColor();
 	LoadBottomImage();
 	
+	pp2d_set_texture_filter(GPU_LINEAR, GPU_NEAREST);
+
 	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
 	pp2d_end_draw();
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
-
-	pp2d_load_texture_png(rectangletex, "romfs:/graphics/rectangle.png"); // Rectangle
 
 	// Dialog box textures.
 	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
@@ -2664,8 +2658,8 @@ int main(){
 							pp2d_draw_text(40+176, 172, 1.30, 1.30, WHITE, RetTime(true).c_str());
 							break;
 					}
-					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
-					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
+					pp2d_draw_rectangle(0, 0, 40, 240, BLACK); // Left black bar
+					pp2d_draw_rectangle(360, 0, 40, 240, BLACK); // Right black bar
 //					pp2d_end_draw();
 //				}
 			} else if (settings.ui.theme == THEME_R4) {	// R4 theme
@@ -2721,8 +2715,8 @@ int main(){
 					} else {
 						pp2d_draw_texture(toplogotex, 40, 0);
 					}
-					drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-					drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+					pp2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+					pp2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 				}
 			} else {	// DSi-Menu theme
 				if (!settings.twl.forwarder) {
@@ -2840,7 +2834,7 @@ int main(){
 							: GRAY;
 					pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
 
-					if (fadealpha > 0) drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+					if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 //					pp2d_end_draw();
 				}
 			}
@@ -3349,7 +3343,7 @@ int main(){
 					int Ypos = 26;
 					filenameYpos = 36;
 					if (woodmenu_cursorPosition == 0) {
-						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						if (sdfile_count != 0)
 							pp2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
@@ -3364,7 +3358,7 @@ int main(){
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 1) {
-						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						if (fcfile_count != 0)							
 							pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
@@ -3379,7 +3373,7 @@ int main(){
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 2) {
-						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -3387,7 +3381,7 @@ int main(){
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 3) {
-						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -3395,7 +3389,7 @@ int main(){
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 4) {
-						drawRectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
@@ -3408,7 +3402,7 @@ int main(){
 						bnriconnum = filenum;
 						ChangeBNRIconNo();
 						if (settings.ui.cursorPosition == filenum) {
-							drawRectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
+							pp2d_draw_rectangle(0, Ypos-4+filenameYmovepos*39, 320, 40, SET_ALPHA(color_data->color, 127));
 						}
 
 						// Get the current filename and convert it to wstring.
@@ -3455,19 +3449,19 @@ int main(){
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					pp2d_draw_texture(iconstex, 320/2 - 320/2, 240/2 - 240/2);
 					if (r4menu_cursorPosition == 0) {
-						drawRectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_rectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 						pp2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
 						static const char selectiontext[] = "Games";
 
 						pp2d_draw_text(128, 220, 0.60f, 0.60f, WHITE, selectiontext);
 					} else 	if (r4menu_cursorPosition == 1) {
-						drawRectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_rectangle(115, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 						pp2d_draw_texture_part(iconstex, 117, 79, 117, 79, 88, 87);
 						static const char selectiontext[] = "Launch Slot-1 card";
 						
 						pp2d_draw_text(96, 220, 0.60f, 0.60f, WHITE, selectiontext);
 					} else 	if (r4menu_cursorPosition == 2) {
-						drawRectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
+						pp2d_draw_rectangle(217, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 						pp2d_draw_texture_part(iconstex, 219, 79, 219, 79, 88, 87);
 						static const char selectiontext[] = "Start GBARunner2";
 						
@@ -3496,7 +3490,7 @@ int main(){
 							LoadBNRIcon_R4Theme(NULL);
 						}
 					}
-					drawRectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
+					pp2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 					pp2d_draw_texture(dboxtex_iconbox, 47, 31);
 					pp2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
 					
@@ -3554,7 +3548,7 @@ int main(){
 					pp2d_draw_texture(bottomtex, 320/2 - 320/2, 240/2 - 240/2);
 				} else {
 					if (settings.ui.theme == THEME_3DSMENU) {
-						drawRectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
+						pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
 					} else {
 						pp2d_draw_texture_blend(bottomtex, 320/2 - 320/2, 240/2 - 240/2, menucolor);
 					}
@@ -3930,11 +3924,11 @@ int main(){
 					// Draw the menu dialog box.
 					drawMenuDialogBox();
 				}
-				if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+				if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			settingsDrawBottomScreen();
-			if (fadealpha > 0) drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+			if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		}
 		
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {

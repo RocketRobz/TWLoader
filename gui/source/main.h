@@ -26,7 +26,6 @@ extern bool isNightly;
 extern std::string fat;
 
 // Dialog box
-extern void drawRectangle(int x, int y, int scaleX, int scaleY, u32 color);
 extern void DialogBoxAppear(int x, int y, const char *text);
 extern void DialogBoxDisappear(int x, int y, const char *text);
 extern bool showdialogbox;

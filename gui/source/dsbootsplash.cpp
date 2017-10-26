@@ -41,16 +41,16 @@ void fade_whiteToBlack() {
 			
 			for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 				pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
-				drawRectangle(0, 0, 400, 240, WHITE);
-				drawRectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fade));
+				pp2d_draw_rectangle(0, 0, 400, 240, WHITE);
+				pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fade));
 				if (settings.ui.bootscreen == 1) {
-					drawRectangle(0, 0, 40, 240, BLACK); // Left black bar
-					drawRectangle(360, 0, 40, 240, BLACK); // Right black bar
+					pp2d_draw_rectangle(0, 0, 40, 240, BLACK); // Left black bar
+					pp2d_draw_rectangle(360, 0, 40, 240, BLACK); // Right black bar
 				}
 			}
 			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
-			drawRectangle(0, 0, 320, 240, WHITE);
-			drawRectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fade));
+			pp2d_draw_rectangle(0, 0, 320, 240, WHITE);
+			pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fade));
 			pp2d_end_draw();
 
 			if (fade == 255) break;
@@ -242,14 +242,14 @@ void bootSplash() {
 		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 			pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
-			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+			pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 			if (settings.ui.bootscreen == 1) {
-				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+				pp2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				pp2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 			}
 		}
 		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
-		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 		pp2d_end_draw();
 	}
 
@@ -310,7 +310,7 @@ void bootSplash() {
 
 		for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 			pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
-			drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+			pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 			if (topfb == 1) offset3D_temp = offset3D_ndslogo;
 			else offset3D_temp = -offset3D_ndslogo;
 			pp2d_draw_texture(ndslogotex, offset3D_temp+logopos+21, 78);
@@ -441,17 +441,17 @@ void bootSplash() {
 				}
 			}
 			pp2d_draw_texture(wipetex, wipePos-320, 0);
-			drawRectangle(wipePos, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
-			if (fadeout) drawRectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, bootSplash_fade));
+			pp2d_draw_rectangle(wipePos, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+			if (fadeout) pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(bg_col, bg_col, bg_col, bootSplash_fade));
 			if (settings.ui.bootscreen == 1) {
-				drawRectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
-				drawRectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
+				pp2d_draw_rectangle(0, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Left black bar
+				pp2d_draw_rectangle(360, 0, 40, 240, RGBA8(0, 0, 0, 255)); // Right black bar
 			}
 			
 		}
 		
 		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
-		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
+		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 
 		switch ((settings.ui.language < 0 || settings.ui.language >= 14)? sys_language : settings.ui.language) {
 			case 0:
@@ -643,7 +643,7 @@ void bootSplash() {
 				}
 				break;
 		}
-		drawRectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, bootSplash_fade));
+		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, bootSplash_fade));
 		
 		splashScreenTime += 1;
 		if (splashScreenTime > 60*2) touchtocontinue_show = true;
