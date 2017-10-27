@@ -269,11 +269,11 @@ unsigned int next_pow2(u32 i)
     return i;
 }
 
-typedef struct {
-	C3D_Tex tex;
-	int width;
-	int height;
-} ndsicon;
+static struct {
+    C3D_Tex tex;
+    u32 width;
+    u32 height;
+} texture;
 
 /**
  * Get the icon from an NDS banner.
@@ -281,9 +281,6 @@ typedef struct {
  * @return Icon texture. (NULL on error)
  */
 void* grabIcon(const sNDSBanner* ndsBanner) {
-	// Un-tile the icon.
-	// NOTE: Allocating 64x32, because the "sf2d_create_texture_mem_RGBA8" (deprecated)
-	// function hates small sizes like 32x32 (TWLoader freezes if that size is used).
 	static const int width = 32;
 	static const int height = 32;
 	u8 icon[32 * 32 * 2];
@@ -305,26 +302,23 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 		}
 	}
 
-	// Based on sf2d_create_texture
-	ndsicon *texture = (ndsicon *) calloc(1, sizeof(*texture));
-	if (!texture) return NULL;
-
-	bool success = false;
-
-    u32 pow2Width = next_pow2(width);
-
+	u32 pow2Width = next_pow2(width);
     if(pow2Width < 64) {
         pow2Width = 64;
     }
 
-    u32 pow2Height = next_pow2(height);
-    if(pow2Height < 64) {
+	u32 pow2Height = next_pow2(height);
+	if(pow2Height < 64) {
         pow2Height = 64;
     }
 
-    u32 pixelSize = sizeof(icon) / width / height;
+	u32 pixelSize = sizeof(icon) / width / height;
 
-    u8* pow2Tex = (u8*)linearAlloc(pow2Width * pow2Height * pixelSize);
+    u16* pow2Tex = (u16*)linearAlloc(pow2Width * pow2Height * pixelSize);
+    if(pow2Tex == NULL) {
+		if (logEnabled) LogFM("NDS banner icon", "Error allocating texture buffer!");
+		return NULL;
+    }
 
     memset(pow2Tex, 0, pow2Width * pow2Height * pixelSize);
 
@@ -339,16 +333,21 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
         }
     }
 
-	success = C3D_TexInit(&texture->tex, (int) pow2Width, (int) pow2Height, GPU_RGBA5551); // RGB5A1
-	if (!success) {
+    texture.width = width;
+    texture.height = height;
+
+	if(!C3D_TexInit(&texture.tex, (int) pow2Width, (int) pow2Height, GPU_RGBA5551)) { // RGB5A1
 		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
-		free(texture);
 		return NULL;
 	}
 
-    GSPGPU_FlushDataCache(pow2Tex, pow2Width * pow2Height * 4);
+    Result flushRes = GSPGPU_FlushDataCache(pow2Tex, pow2Width * pow2Height * 4);
+    if(R_FAILED(flushRes)) {
+		if (logEnabled) LogFM("NDS banner icon", "Error flushing texture buffer!");
+        return NULL;
+	}
 
-    C3D_SafeDisplayTransfer((u32*) pow2Tex, GX_BUFFER_DIM(pow2Width, pow2Height), (u32*) texture->tex.data, GX_BUFFER_DIM(pow2Width, pow2Height), GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_OUT_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+    C3D_SafeDisplayTransfer((u32*) pow2Tex, GX_BUFFER_DIM(pow2Width, pow2Height), (u32*) texture.tex.data, GX_BUFFER_DIM(pow2Width, pow2Height), GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_OUT_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
     gspWaitForPPF();
 
     linearFree(pow2Tex);
