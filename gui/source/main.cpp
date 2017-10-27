@@ -794,7 +794,7 @@ static void LoadBNRIcon(const char *filename) {
 			f_bnr = fopen(filename, "rb");
 		}
 
-		pp2d_load_texture_memory(bnricontex[idx], grabIcon(f_bnr), 64, 32);
+		pp2d_load_texture_memory(bnricontex[idx], grabIcon(f_bnr), 32, 32);
 		fclose(f_bnr);
 	}
 }
@@ -814,7 +814,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		f_bnr = fopen(filename, "rb");
 	}
 
-	pp2d_load_texture_memory(bnricontex[20], grabIcon(f_bnr), 64, 32);
+	pp2d_load_texture_memory(bnricontex[20], grabIcon(f_bnr), 32, 32);
 	fclose(f_bnr);
 }
 
