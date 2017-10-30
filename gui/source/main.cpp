@@ -829,10 +829,12 @@ static void LoadBoxArt(void) {
 	}
 }
 
-static void LoadBoxArt_WoodTheme(const int idx) {
+static void LoadBoxArt_WoodTheme(void) {
+	// Get the boxartnum relative to the current page.
+	const int idx = boxartnum - (settings.ui.pagenum * 20);
 	// Selected boxart is on the current page.
-	const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
-	pp2d_load_texture_png(boxarttex[0], path); // Box art
+	const char *path = (boxartpath[boxartnum] ? boxartpath[boxartnum] : "romfs:/graphics/blank_128x115.png");
+	pp2d_load_texture_png(boxarttex[21], path); // Box art
 }
 
 /**
@@ -2110,9 +2112,12 @@ int main(){
 	showdialogbox = false;
 	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
 	
-	if (settings.ui.theme >= THEME_R4)
+	if (settings.ui.theme >= THEME_R4) {
 		menu_ctrlset = CTRL_SET_MENU;
-	pp2d_set_3D(1);
+		pp2d_set_3D(0);
+	} else {
+		pp2d_set_3D(1);
+	}
 
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
@@ -2613,27 +2618,26 @@ int main(){
 							}
 						}
 						if (!settings.romselect.toplayout) {
+							boxartnum = settings.ui.cursorPosition-settings.ui.pagenum*20;
 							if (!bannertextloaded) {
-								LoadBoxArt_WoodTheme(settings.ui.cursorPosition-settings.ui.pagenum*20);
+								LoadBoxArt_WoodTheme();
 								bannertextloaded = true;
 							}
-							boxartnum = 0;
-							ChangeBoxArtNo();
 							// Draw box art
 							switch (settings.ui.subtheme) {
 								case 0:
 								default:
-//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+14, 62);
-									pp2d_draw_texture(boxarttexnum, 0+40+14, 62);
+//									pp2d_draw_texture(boxarttex[21], offset3D[topfb].boxart+40+14, 62);
+									pp2d_draw_texture(boxarttex[21], 0+40+14, 62);
 									break;
 								case 1:
 								case 2:
-//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+176, 113);
-									pp2d_draw_texture(boxarttexnum, 0+40+176, 113);
+//									pp2d_draw_texture(boxarttex[21], offset3D[topfb].boxart+40+176, 113);
+									pp2d_draw_texture(boxarttex[21], 0+40+176, 113);
 									break;
 								case 3:
-//									pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+40+164, 38);
-									pp2d_draw_texture(boxarttexnum, 0+40+164, 38);
+//									pp2d_draw_texture(boxarttex[21], offset3D[topfb].boxart+40+164, 38);
+									pp2d_draw_texture(boxarttex[21], 0+40+164, 38);
 									break;
 							}
 						}
@@ -2910,12 +2914,14 @@ int main(){
 						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 					}
 					if (settings.ui.theme == THEME_AKMENU) {
+						pp2d_set_3D(0);
 						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 						menu_ctrlset = CTRL_SET_MENU;
 						woodmenu_cursorPosition = 4;
 						if (settings.ui.cursorPosition < 0)
 							settings.ui.cursorPosition = 0;
 					} else if (settings.ui.theme == THEME_R4) {
+						pp2d_set_3D(0);
 						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 						menu_ctrlset = CTRL_SET_MENU;
 						titleboxXmovepos = 0;
@@ -2923,7 +2929,7 @@ int main(){
 						if (settings.ui.cursorPosition < 0)
 							settings.ui.cursorPosition = 0;
 					} else {
-						settings.ui.pagenum = 0; // Go to page 0
+						pp2d_set_3D(1);
 						titleboxXmovepos = 0;
 						settings.ui.cursorPosition = 0 + settings.ui.pagenum * 20; // This is to reset cursor position after switching from R4 theme.
 						if (settings.twl.forwarder) {
@@ -2947,8 +2953,8 @@ int main(){
 						}							
 						storedcursorPosition = settings.ui.cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						boxartXmovepos = 0;
-						// Reload 1st box art
-						LoadBoxArt_WoodTheme(0-settings.ui.pagenum*20);
+						loadboxartnum = settings.ui.pagenum*20;
+						boxarttexloaded = false;
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 					colortexloaded = false; // Reload top textures
@@ -3337,8 +3343,11 @@ int main(){
 						}
 					}
 					size_t cardicontex = gamecardGetIcon();
-					if (cardicontex != card_icon)
+					if (!gamecardIsInserted()) {
 						cardicontex = iconnulltex;
+					} else if (gamecardGetType() == CARD_TYPE_UNKNOWN || gamecardGetType() == CARD_TYPE_CTR) {
+						cardicontex = iconnulltex;
+					}
 
 					int Ypos = 26;
 					filenameYpos = 36;
@@ -3616,8 +3625,11 @@ int main(){
 						else
 							pp2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 116);
 						size_t cardicontex = gamecardGetIcon();
-						if (cardicontex != card_icon)
+						if (!gamecardIsInserted()) {
 							cardicontex = iconnulltex;
+						} else if (gamecardGetType() == CARD_TYPE_UNKNOWN || gamecardGetType() == CARD_TYPE_CTR) {
+							cardicontex = iconnulltex;
+						}
 						if (settings.ui.iconsize)
 							pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
 						else
