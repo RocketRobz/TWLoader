@@ -105,7 +105,7 @@ static void gamecardCacheTWL(void)
 	}
 
 	// Store the icon and banner text.
-	pp2d_load_texture_memory(card_icon, grabIcon(&ndsBanner), 64, 32);
+	pp2d_load_texture_memory_RGBA5551(card_icon, grabIcon(&ndsBanner), 64, 64);
 	card_text = grabText(&ndsBanner, language);
 }
 

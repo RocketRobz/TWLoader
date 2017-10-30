@@ -268,27 +268,6 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	return 0;
 }
 
-// From FBI core/screen.c
-//Grabbed from: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-unsigned int next_pow2(u32 i)
-{
-    i--;
-    i |= i >> 1;
-    i |= i >> 2;
-    i |= i >> 4;
-    i |= i >> 8;
-    i |= i >> 16;
-    i++;
-
-    return i;
-}
-
-static struct {
-    C3D_Tex tex;
-    u32 width;
-    u32 height;
-} texture;
-
 /**
  * Get the icon from an NDS banner.
  * @param binFile NDS banner.
@@ -315,69 +294,30 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 			u32 srcShift = (x & 1) * 4;
 			u16 srcPx = palette[(ndsBanner->icon[srcPos] >> srcShift) & 0xF];
 
-			u8 r = (u8) (srcPx & 0x1F);
-			u8 g = (u8) ((srcPx >> 5) & 0x1F);
-			u8 b = (u8) ((srcPx >> 10) & 0x1F);
-
-			u16 reversedPx = (u16) ((r << 11) | (g << 6) | (b << 1) | 1);
-
 			u32 dstPos = (y * 32 + x) * 2;
-			icon[dstPos + 0] = (u8) (reversedPx & 0xFF);
-			icon[dstPos + 1] = (u8) ((reversedPx >> 8) & 0xFF);
+			icon[dstPos + 0] = (u8) (srcPx & 0xFF);
+			icon[dstPos + 1] = (u8) ((srcPx >> 8) & 0xFF);
 		}
 	}
 
-	u32 pow2Width = next_pow2(width);
-    if(pow2Width < 64) {
-        pow2Width = 64;
-    }
+    u32 pixelSize = sizeof(icon) / width / height;
 
-	u32 pow2Height = next_pow2(height);
-	if(pow2Height < 64) {
-        pow2Height = 64;
-    }
+    u8* textureData = (u8*)linearAlloc(64 * 64 * pixelSize);
 
-	u32 pixelSize = sizeof(icon) / width / height;
-
-    u16* pow2Tex = (u16*)linearAlloc(pow2Width * pow2Height * pixelSize);
-    if(pow2Tex == NULL) {
-		if (logEnabled) LogFM("NDS banner icon", "Error allocating texture buffer!");
-		return NULL;
-    }
-
-    memset(pow2Tex, 0, pow2Width * pow2Height * pixelSize);
+    memset(textureData, 0, 64 * 64 * pixelSize);
 
     for(u32 x = 0; x < width; x++) {
         for(u32 y = 0; y < height; y++) {
             u32 dataPos = (y * width + x) * pixelSize;
-            u32 pow2TexPos = (y * pow2Width + x) * pixelSize;
+            u32 texPos = (y * 64 + x) * pixelSize;
 
             for(u32 i = 0; i < pixelSize; i++) {
-                pow2Tex[pow2TexPos + i] = ((u8*) icon)[dataPos + i];
+                textureData[texPos + i] = ((u8*) icon)[dataPos + i];
             }
         }
     }
 
-    texture.width = width;
-    texture.height = height;
-
-	if(!C3D_TexInit(&texture.tex, (int) pow2Width, (int) pow2Height, GPU_RGBA5551)) { // RGB5A1
-		if (logEnabled) LogFM("NDS banner icon", "Error creating texture!");
-		return NULL;
-	}
-
-    Result flushRes = GSPGPU_FlushDataCache(pow2Tex, pow2Width * pow2Height * 4);
-    if(R_FAILED(flushRes)) {
-		if (logEnabled) LogFM("NDS banner icon", "Error flushing texture buffer!");
-        return NULL;
-	}
-
-    C3D_SafeDisplayTransfer((u32*) pow2Tex, GX_BUFFER_DIM(pow2Width, pow2Height), (u32*) texture.tex.data, GX_BUFFER_DIM(pow2Width, pow2Height), GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_OUT_FORMAT((u32) gpuToGxFormat[GPU_RGBA5551]) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
-    gspWaitForPPF();
-
-    linearFree(pow2Tex);
-	
-	return pow2Tex;
+	return textureData;
 }
 
 /**

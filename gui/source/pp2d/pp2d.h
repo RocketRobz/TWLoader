@@ -375,6 +375,15 @@ void pp2d_free_texture(size_t id);
 void pp2d_load_texture_memory(size_t id, void* buf, u32 width, u32 height);
 
 /**
+ * @brief Loads a texture from a a buffer in memory
+ * @param id of the texture 
+ * @param buf buffer where the texture is stored
+ * @param width of the texture
+ * @param height of the texture
+ */
+void pp2d_load_texture_memory_RGBA5551(size_t id, void* buf, u32 width, u32 height);
+
+/**
  * @brief Loads a texture from a png file
  * @param id of the texture 
  * @param path where the png file is located 
