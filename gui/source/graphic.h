@@ -20,7 +20,7 @@ extern size_t bnricontexnum;
 extern size_t bnricontexlaunch; 
 extern size_t boxarttexnum; 
 extern size_t bnricontex[21];
-extern size_t boxarttex[6];
+extern size_t boxarttex[7];
 extern size_t boxfulltex; 
 extern size_t shoulderLtex; 
 extern size_t shoulderRtex;
