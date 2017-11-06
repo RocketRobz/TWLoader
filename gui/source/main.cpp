@@ -746,6 +746,7 @@ static void ChangeBNRIconNo(void) {
 		// Selected banner icon is on the current page.
 		bnricontexnum = bnricontex[idx];
 	}
+	if (settings.twl.romtype == 1) bnricontexnum = gbctex;
 }
 
 static void ChangeBoxArtNo(void) {
@@ -1186,9 +1187,115 @@ static int scan_dir_for_files2(const char *path, const char *ext, const char *ex
 	return (int)files.size();
 }
 
+/**
+ * Scan a directory for matching files.
+ * @param path Directory path.
+ * @param ext File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param ext2 File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param ext3 File extension, case-insensitive. (If nullptr, matches all files.)
+ * @param files Vector to append files to.
+ * @return Number of files matched. (-1 if the directory could not be opened.)
+ */
+static int scan_dir_for_files3(const char *path, const char *ext, const char *ext2, const char *ext3, std::vector<std::string>& files)
+{
+	files.clear();
+
+	//ext
+	DIR *dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *ent;
+	const int extlen = (ext ? strlen(ext) : 0);
+	while ((ent = readdir(dir)) != NULL) {
+		std::string fname = (ent->d_name);
+		if (extlen > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&ent->d_name[lastdotpos], ext) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	//ext2
+	dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *ent2;
+	const int extlen2 = (ext2 ? strlen(ext2) : 0);
+	while ((ent2 = readdir(dir)) != NULL) {
+		std::string fname = (ent2->d_name);
+		if (extlen2 > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen2 > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&ent2->d_name[lastdotpos], ext2) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	//ext3
+	dir = opendir(path);
+	if (!dir) {
+		// Unable to open the directory.
+		return -1;
+	}
+
+	struct dirent *ent3;
+	const int extlen3 = (ext3 ? strlen(ext3) : 0);
+	while ((ent3 = readdir(dir)) != NULL) {
+		std::string fname = (ent3->d_name);
+		if (extlen3 > 0) {
+			// Check the file extension. (TODO needs verification)
+			size_t lastdotpos = fname.find_last_of('.');
+			if (lastdotpos == string::npos || lastdotpos + extlen3 > fname.size()) {
+				// Invalid file extension.
+				continue;
+			}
+			if (strcasecmp(&ent3->d_name[lastdotpos], ext3) != 0) {
+				// Incorrect file extension.
+				continue;
+			}
+		}
+
+		// Append the file.
+		files.push_back(fname);
+	}
+	closedir(dir);
+
+	// Sort the vector and we're done.
+	std::sort(files.begin(), files.end());
+	return (int)files.size();
+}
+
 // Files
 vector<string> files;
 vector<string> fcfiles;
+vector<string> gbfiles;
 
 // Vector with found roms
 vector<string> matching_files;
@@ -1309,6 +1416,17 @@ static void scanRomDirectories(void)
 
 	// Scan the flashcard directory for configuration files.
 	scan_dir_for_files(path, ".ini", fcfiles);
+
+	// Use default directory if none is specified
+	if (settings.ui.gbromfolder.empty()) {
+		settings.ui.gbromfolder = "roms/gb";
+	}
+	snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.gbromfolder.c_str());
+	// Make sure the directory exists.
+	rmkdir(path, 0777);
+
+	// Scan the GB ROMs directory for ".gb", ".gbc", and ".sgb" files.
+	scan_dir_for_files3(path, ".gb", ".gbc", ".sgb", gbfiles);
 }
 
 // Cursor position.
@@ -1967,7 +2085,7 @@ int main(){
 	pp2d_load_texture_png(boxemptytex, "romfs:/graphics/box_empty.png"); // (DSiWare) empty box on bottom screen
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
 	pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
-	pp2d_load_texture_png(iconplaceholdertex, "romfs:/graphics/icon_placeholder.png"); // Icon placeholder
+	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
 
 	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
 
@@ -2053,6 +2171,10 @@ int main(){
 	char romsel_counter2fc[16];	// Number of ROMs on the flash card.
 	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
+	
+	char romsel_counter2gb[16];	// Number of GB ROMs on the SD card.
+	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
 	
 	// Download box art
 	if (checkWifiStatus()) {
@@ -2215,9 +2337,15 @@ int main(){
 		if (storedcursorPosition < 0)
 			storedcursorPosition = 0;
 
-		size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		size_t file_count = 0;
+		if (settings.twl.romtype == 0) {
+			file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		} else {
+			file_count = (gbfiles.size());
+		}
 		size_t sdfile_count = (files.size());
 		size_t fcfile_count = (fcfiles.size());
+		size_t gbfile_count = (gbfiles.size());
 
 		if(matching_files.size() != 0) {
 			file_count = matching_files.size();
@@ -2671,7 +2799,11 @@ int main(){
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
 						filenameYpos = 15;
-						const int file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						if (settings.twl.romtype == 0) {
+							file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+						} else {
+							file_count = (gbfiles.size());
+						}
 						for (filenum = filenameYmovepos; filenum < file_count; filenum++) {
 							if (filenum < 15+filenameYmovepos) {
 								u32 color;
@@ -2682,9 +2814,14 @@ int main(){
 								}
 
 								// Get the current filename and convert it to wstring.
-								const char *filename = (settings.twl.forwarder
-										? fcfiles.at(filenum).c_str()
-										: files.at(filenum).c_str());
+								const char *filename = "";
+								if (settings.twl.romtype == 0) {
+									filename = (settings.twl.forwarder
+											? fcfiles.at(filenum).c_str()
+											: files.at(filenum).c_str());
+								} else {
+									filename = (gbfiles.at(filenum).c_str());
+								}
 								wstring wstr = utf8_to_wstring(filename);
 								pp2d_draw_wtext(42, filenameYpos, 0.50, 0.50, color, wstr.c_str());
 
@@ -2907,6 +3044,7 @@ int main(){
 						matching_files.clear(); // Clear filter
 						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
 						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter for FlashCard
+						snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size()); // Reload counter for GB ROMs
 						boxarttexloaded = false; // Reload boxarts
 						bnricontexloaded = false; // Reload banner icons
 						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
@@ -3836,24 +3974,57 @@ int main(){
 					} else {
 						if (!bannertextloaded) {
 							char path[256];
-							if (settings.twl.forwarder) {
-								if(matching_files.size() == 0){
-									if (fcfiles.size() != 0) {
-										romsel_filename = fcfiles.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									} else {
-										romsel_filename = " ";
+							if (settings.twl.romtype == 0) {
+								if (settings.twl.forwarder) {
+									if(matching_files.size() == 0){
+										if (fcfiles.size() != 0) {
+											romsel_filename = fcfiles.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
+									}else{
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									}
-								}else{
-									romsel_filename = matching_files.at(storedcursorPosition).c_str();
-									romsel_filename_w = utf8_to_wstring(romsel_filename);
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+								} else {
+									if(matching_files.size() == 0){
+										if (files.size() != 0) {
+											romsel_filename = files.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
+										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+									}else {
+										romsel_filename = matching_files.at(storedcursorPosition).c_str();
+										romsel_filename_w = utf8_to_wstring(romsel_filename);
+										snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
+									}									
 								}
-								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
+
+								if (access(path, F_OK) == -1) {
+									// Banner file is not available.
+									strcpy(path, "romfs:/notextbanner");
+								}
+								bnriconnum = settings.ui.cursorPosition;
+								FILE *f_bnr = fopen(path, "rb");
+								if (f_bnr) {
+									romsel_gameline = grabText(f_bnr, language);
+									fclose(f_bnr);
+								} else {
+									// Unable to open the banner file.
+									romsel_gameline.clear();
+									romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+									romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+								}
 							} else {
 								if(matching_files.size() == 0){
-									if (files.size() != 0) {
-										romsel_filename = files.at(storedcursorPosition).c_str();
+									if (gbfiles.size() != 0) {
+										romsel_filename = gbfiles.at(storedcursorPosition).c_str();
 										romsel_filename_w = utf8_to_wstring(romsel_filename);
 									} else {
 										romsel_filename = " ";
@@ -3866,22 +4037,6 @@ int main(){
 									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 								}									
 							}
-
-							if (access(path, F_OK) == -1) {
-								// Banner file is not available.
-								strcpy(path, "romfs:/notextbanner");
-							}
-							bnriconnum = settings.ui.cursorPosition;
-							FILE *f_bnr = fopen(path, "rb");
-							if (f_bnr) {
-								romsel_gameline = grabText(f_bnr, language);
-								fclose(f_bnr);
-							} else {
-								// Unable to open the banner file.
-								romsel_gameline.clear();
-								romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
-								romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
-							}
 							bannertextloaded = true;
 						}
 					}
@@ -3889,32 +4044,40 @@ int main(){
 					if (drawBannerText) {
 						int y, dy;
 						//top dialog = 100px tall
-						if (settings.ui.filename) {
-							pp2d_draw_wtext(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
-							y = (100-(19*romsel_gameline.size()))/2 + 4;
-							//y = 24; dy = 19;
-							dy = 19;
+						if (settings.twl.romtype == 1) {
+							pp2d_draw_wtext(10, 40, 0.75, 0.75, BLACK, romsel_filename_w.c_str());
 						} else {
-							y = (100-(22*romsel_gameline.size()))/2;
-							//y = 16; dy = 22;
-							dy = 22;
-						}
+							if (settings.ui.filename) {
+								pp2d_draw_wtext(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+								y = (100-(19*romsel_gameline.size()))/2 + 4;
+								//y = 24; dy = 19;
+								dy = 19;
+							} else {
+								y = (100-(22*romsel_gameline.size()))/2;
+								//y = 16; dy = 22;
+								dy = 22;
+							}
 
-						// Print the banner text, center-aligned.
-						const size_t banner_lines = std::min(3U, romsel_gameline.size());
-						for (size_t i = 0; i < banner_lines; i++, y += dy) {
-							const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.75, 0.75);
-							pp2d_draw_wtext((320-text_width)/2, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+							// Print the banner text, center-aligned.
+							const size_t banner_lines = std::min(3U, romsel_gameline.size());
+							for (size_t i = 0; i < banner_lines; i++, y += dy) {
+								const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.75, 0.75);
+								pp2d_draw_wtext((320-text_width)/2, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+							}
 						}
 
 						if (settings.ui.cursorPosition >= 0 && settings.ui.counter) {
 							char romsel_counter1[16];
 							snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 							const char *p_romsel_counter;
-							if (settings.twl.forwarder) {
-								p_romsel_counter = romsel_counter2fc;
+							if (settings.twl.romtype == 1) {
+								p_romsel_counter = romsel_counter2gb;
 							} else {
-								p_romsel_counter = romsel_counter2sd;
+								if (settings.twl.forwarder) {
+									p_romsel_counter = romsel_counter2fc;
+								} else {
+									p_romsel_counter = romsel_counter2sd;
+								}
 							}
 							if (file_count < 100) {
 								pp2d_draw_text(8, 96, 0.50, 0.50, BLACK, romsel_counter1);

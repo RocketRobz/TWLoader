@@ -43,7 +43,8 @@ typedef struct _Settings_t {
 		std::string name;
 		std::string romfolder;
 		std::string fcromfolder;
-    
+ 		std::string gbromfolder;
+
 		int pagenum;
 		int cursorPosition;
 		int language;	// Language. (0-11; other for system)
@@ -70,6 +71,12 @@ typedef struct _Settings_t {
 		bool cpuspeed;	// false == NTR, true == TWL
 		bool soundfreq;	// false == 32.73 kHz, true == 47.61 kHz
 		bool enablesd;
+		int romtype;
+		/* ROM type value
+			0: .nds
+			1: .gb/.gbc/.sgb
+		*/
+
 		bool forwarder;
 
 		int flashcard;
