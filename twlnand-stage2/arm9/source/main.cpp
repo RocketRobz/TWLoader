@@ -116,9 +116,11 @@ int main(int argc, char **argv) {
 
 	bool TWLCLK = true;	// false == NTR, true == TWL
 	bool SOUND_FREQ = false;	// false == 32.73 kHz, true == 47.61 kHz
+	int romtype = 0;
 	int useArm7Donor = 1;
 	bool TriggerExit = false;
-	std::string	gamesettingsPath = "";
+	std::string gamesettingsPath = "";
+	std::string homebrew_arg = "";
 
 	bool consoleOn = false;
 
@@ -138,9 +140,9 @@ int main(int argc, char **argv) {
 		// if(twloaderini.GetInt("TWL-MODE","USE_SYSLANG",0) == 0) {
 		// 	PersonalData->language = twloaderini.GetInt("TWL-MODE", "LANGUAGE", 0);
 		// }
-		
+
 		char *p = (char*)PersonalData->name;
-		
+
 		// text
 		for (int i = 0; i < 10; i++) {
 			if (p[i*2] == 0x00)
@@ -148,55 +150,65 @@ int main(int argc, char **argv) {
 			else
 				p[i*2/2] = p[i*2];
 		}
-		
+
 		if (logEnabled)	LogFMA("TWL.Main", "Got username", p);
 		
 		twloaderini.SetString("FRONTEND","NAME", p);
 		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
 		if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
-		
+
+		romtype = twloaderini.GetInt( "TWL-MODE", "ROM_TYPE", 0);
+
 		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
-		
-		if(!access(gamesettingsPath.c_str(), F_OK)) {
-			CIniFile gamesettingsini( gamesettingsPath );
-			if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
-				if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
-			} else {
-				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 0) {
-					TWLCLK = false;
-					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 0);
+
+		if(romtype==0) {
+			if(!access(gamesettingsPath.c_str(), F_OK)) {
+				CIniFile gamesettingsini( gamesettingsPath );
+				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
+					if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
 				} else {
-					bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
+					if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == 0) {
+						TWLCLK = false;
+						bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 0);
+					} else {
+						bootstrapini.SetInt("NDS-BOOTSTRAP","BOOST_CPU", 1);
+					}
 				}
-			}
-			useArm7Donor = gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",1);
-			if(useArm7Donor == 2) {
-				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 2);
-			} else if(useArm7Donor == 1) {
-				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
+				useArm7Donor = gamesettingsini.GetInt("GAME-SETTINGS","USE_ARM7_DONOR",1);
+				if(useArm7Donor == 2) {
+					bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 2);
+				} else if(useArm7Donor == 1) {
+					bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
+				} else {
+					bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 0);
+				}
+				bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 			} else {
-				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 0);
+				TWLCLK = twloaderini.GetInt("TWL-MODE","TWL_CLOCK", 0);
+				bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
+				bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 			}
-			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		} else {
-			if(twloaderini.GetInt("TWL-MODE","TWL_CLOCK",0) == 0) { TWLCLK = false; }
-			bootstrapini.SetInt("NDS-BOOTSTRAP","USE_ARM7_DONOR", 1);
-			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+			homebrew_arg = twloaderini.GetString( "TWL-MODE", "HOMEBREW_ARG", "");
+
+			TWLCLK = twloaderini.GetInt("TWL-MODE","TWL_CLOCK", 0);
 		}
 		
 		if(twloaderini.GetInt("TWL-MODE","DEBUG",0) != -1) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(TWLCLK) {
-			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
-			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-				printf("TWL_CLOCK ON\n");		
+		if(romtype==0) {
+			if(TWLCLK) {
+				if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
+				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+					printf("TWL_CLOCK ON\n");		
+				}
+			} else {
+				REG_SCFG_CLK = 0x80;
+				fifoSendValue32(FIFO_USER_04, 1);
+				if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
 			}
-		} else {
-			REG_SCFG_CLK = 0x80;
-			fifoSendValue32(FIFO_USER_04, 1);
-			if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 67mhz(NTR)");
 		}
 		
 		SOUND_FREQ = twloaderini.GetInt("TWL-MODE","SOUND_FREQ",0);
@@ -217,6 +229,35 @@ int main(int argc, char **argv) {
 				printf("Please insert a cartridge...\n");
 				do { swiWaitForVBlank(); } 
 				while (REG_SCFG_MC == 0x11);
+			}
+		}
+		
+		if(romtype==1) {
+			// Tell Arm7 to apply changes.
+			fifoSendValue32(FIFO_USER_07, 1);
+
+			if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1)
+				doPause();
+
+			for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
+
+			vector<char*> argarray;
+
+			char gbROMpath[256];
+			snprintf (gbROMpath, sizeof(gbROMpath), "/%s", homebrew_arg.c_str());
+			argarray.push_back(gbROMpath);
+			argarray.at(0) = "sd:/_nds/twloader/emulators/gameyob.nds";
+			int err = runNdsFile ("sd:/_nds/twloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+			iprintf("Start failed. Error %i\n", err);
+
+			iprintf ("GameYob not found.\n");		
+			iprintf ("\n");		
+			iprintf ("Press B to return to\n");		
+			iprintf ("HOME Menu.\n");
+
+			while (1) {
+				scanKeys();
+				if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_06, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
 			}
 		}
 		
@@ -292,10 +333,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	vector<string> extensionList;
-	extensionList.push_back(".nds");
-	extensionList.push_back(".argv");
-
 	while(1) {
 
 		if(TriggerExit) { 
@@ -307,12 +344,12 @@ int main(int argc, char **argv) {
 		filename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 		// filename = ReplaceAll( filename, "fat:/", "sd:/");
 		runFile(filename);
-		
+
 		// Subscreen as a console
 		videoSetModeSub(MODE_0_2D);
 		vramSetBankH(VRAM_H_SUB_BG);
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
-		
+
 		iprintf ("bootstrap not found.\n");		
 		iprintf ("\n");		
 		iprintf ("Press B to return to\n");		

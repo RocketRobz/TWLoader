@@ -189,6 +189,8 @@ static vector<wstring> romsel_gameline;	// from banner
 static const char* rom = "";		// Selected ROM image.
 std::string sav;		// Associated save file.
 
+std::string homebrew_arg = "";
+
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string sdmc = "sdmc:/";
 std::string fat = "sd:/";
@@ -865,7 +867,7 @@ static void SaveBootstrapConfig(void)
 {
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
-		if (!settings.twl.launchslot1) {
+		if (!settings.twl.launchslot1 && settings.twl.romtype == 0) {
 			SetHomebrewBootstrap();
 			SetDonorSDK();
 			SetCompatibilityCheck();
@@ -914,9 +916,16 @@ static void SaveBootstrapConfig(void)
 static void LoadPerGameSettings(void)
 {
 	std::string inifilename;
-	if (!settings.twl.forwarder)
-		inifilename = ReplaceAll(rom, ".nds", ".ini");
-	else {
+	if (!settings.twl.forwarder) {
+		if (settings.twl.romtype == 0) {
+			inifilename = ReplaceAll(rom, ".nds", ".ini");
+			inifilename = ReplaceAll(rom, ".cia", ".ini");
+		} else {
+			inifilename = ReplaceAll(rom, ".gb", ".ini");
+			inifilename = ReplaceAll(rom, ".gbc", ".ini");
+			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		}
+	} else {
 		char path[256];
 		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
 		inifilename = path;
@@ -949,9 +958,16 @@ static void LoadPerGameSettings(void)
 static void SavePerGameSettings(void)
 {
 	std::string inifilename;
-	if (!settings.twl.forwarder)
-		inifilename = ReplaceAll(rom, ".nds", ".ini");
-	else {
+	if (!settings.twl.forwarder) {
+		if (settings.twl.romtype == 0) {
+			inifilename = ReplaceAll(rom, ".nds", ".ini");
+			inifilename = ReplaceAll(rom, ".cia", ".ini");
+		} else {
+			inifilename = ReplaceAll(rom, ".gb", ".ini");
+			inifilename = ReplaceAll(rom, ".gbc", ".ini");
+			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		}
+	} else {
 		char path[256];
 		snprintf(path, sizeof(path), "%s/%s", "flashcard", rom);
 		inifilename = path;
@@ -975,7 +991,14 @@ static void SetPerGameSettings(void)
 {
 	std::string inifilename = "sd:/_nds/twloader/gamesettings/null";
 	if (!settings.twl.launchslot1) {
-		inifilename = ReplaceAll(rom, ".nds", ".ini");
+		if (settings.twl.romtype == 0) {
+			inifilename = ReplaceAll(rom, ".nds", ".ini");
+			inifilename = ReplaceAll(rom, ".cia", ".ini");
+		} else {
+			inifilename = ReplaceAll(rom, ".gb", ".ini");
+			inifilename = ReplaceAll(rom, ".gbc", ".ini");
+			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		}
 		char path[256];
 		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings", inifilename.c_str());
 		inifilename = path;
@@ -4587,10 +4610,18 @@ int main(){
 								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
 						} else {
-							if(matching_files.size() == 0){
-								rom = files.at(settings.ui.cursorPosition).c_str();
+							if (settings.twl.romtype == 0) {
+								if(matching_files.size() == 0){
+									rom = files.at(settings.ui.cursorPosition).c_str();
+								} else {
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
 							} else {
-								rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								if(matching_files.size() == 0){
+									rom = gbfiles.at(settings.ui.cursorPosition).c_str();
+								} else {
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
 							}
 						}
 						
@@ -4686,10 +4717,18 @@ int main(){
 										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								} else {
-									if(matching_files.size() == 0){
-										rom = files.at(settings.ui.cursorPosition).c_str();
+									if (settings.twl.romtype == 0) {
+										if(matching_files.size() == 0){
+											rom = files.at(settings.ui.cursorPosition).c_str();
+										} else {
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
 									} else {
-										rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										if(matching_files.size() == 0){
+											rom = gbfiles.at(settings.ui.cursorPosition).c_str();
+										} else {
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
 									}
 								}
 								LoadPerGameSettings();
@@ -4748,7 +4787,7 @@ int main(){
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
 						bool isCia = false;
 						bool overlaysIncluded = false;
-						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0) {
+						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0 && settings.twl.romtype == 0) {
 							char path[256];
 							const char *rom_filename;
 							if(matching_files.size() == 0){
@@ -4815,12 +4854,20 @@ int main(){
 											}
 										} else {
 											settings.twl.launchslot1 = false;
-											if(matching_files.size() == 0){
-												rom = files.at(settings.ui.cursorPosition).c_str();
-											}else {
-												rom = matching_files.at(settings.ui.cursorPosition).c_str();
+											if (settings.twl.romtype == 0) {
+												if(matching_files.size() == 0){
+													rom = files.at(settings.ui.cursorPosition).c_str();
+												}else {
+													rom = matching_files.at(settings.ui.cursorPosition).c_str();
+												}
+												sav = ReplaceAll(rom, ".nds", ".sav");
+											} else {
+												if(matching_files.size() == 0){
+													homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
+												}else {
+													homebrew_arg = (settings.ui.gbromfolder)+"/"+(matching_files.at(settings.ui.cursorPosition).c_str());
+												}
 											}
-											sav = ReplaceAll(rom, ".nds", ".sav");
 										}
 										applaunchprep = true;
 										if(isCia) launchCia = true;
@@ -5633,15 +5680,23 @@ int main(){
 				// cycling as long as no event causes it to change.)
 				if (usepergamesettings) {
 					if (settings.ui.cursorPosition >= 0 && gbarunnervalue == 0) {
-						if (settings.twl.forwarder) {
-							if(matching_files.size() == 0){
-								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-							}else{
-								rom = matching_files.at(settings.ui.cursorPosition).c_str();
+						if (settings.twl.romtype == 0) {
+							if (settings.twl.forwarder) {
+								if(matching_files.size() == 0){
+									rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+								}else{
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
+							} else {
+								if(matching_files.size() == 0){
+									rom = files.at(settings.ui.cursorPosition).c_str();
+								} else {
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
 							}
 						} else {
 							if(matching_files.size() == 0){
-								rom = files.at(settings.ui.cursorPosition).c_str();
+								rom = gbfiles.at(settings.ui.cursorPosition).c_str();
 							} else {
 								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
@@ -5660,7 +5715,7 @@ int main(){
 				}
 			}
 
-			if (settings.ui.showbootscreen == 2) {
+			if (settings.ui.showbootscreen == 2 && settings.twl.romtype == 0 && gbarunnervalue == 0) {
 				bootSplash();
 				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
 				if(aptMainLoop()) fade_whiteToBlack();
