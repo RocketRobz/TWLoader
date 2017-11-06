@@ -200,6 +200,7 @@ static const char bnriconfolder[] = "sdmc:/_nds/twloader/bnricons";
 static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
 static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
 static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
+static const char gbboxartfolder[] = "sdmc:/_nds/twloader/boxart/gb";
 static const char slot1boxartfolder[] = "sdmc:/_nds/twloader/boxart/slot1";
 // End
 	
@@ -1547,6 +1548,19 @@ static void drawMenuDialogBox(void)
 		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
+			if (settings.twl.romtype == 1) {
+				romsel_gameline.clear();
+				romsel_gameline.push_back(latin1_to_wstring(""));
+				std::string std_romsel_filename = romsel_filename;
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb") {
+					romsel_gameline.push_back(latin1_to_wstring("GameBoy ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+					romsel_gameline.push_back(latin1_to_wstring("GameBoy Color ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb") {
+					romsel_gameline.push_back(latin1_to_wstring("Super GameBoy ROM"));
+				}
+			}
+
 			int y = 16, dy = 19;
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
@@ -1556,8 +1570,13 @@ static void drawMenuDialogBox(void)
 			}
 			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 		}
-		
-		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		size_t file_count = 0;
+		if (settings.twl.romtype == 1) {
+			file_count = (gbfiles.size());
+		} else {
+			file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		}
 
 		char romsel_counter1[16];
 		char romsel_counter2[16];
@@ -1579,7 +1598,11 @@ static void drawMenuDialogBox(void)
 		}
 
 		std::string std_romsel_filename = romsel_filename;
-		if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "cia") {
+		if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "cia")
+		|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+		|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
+		|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb"))
+		{
 			gamesettings_isCia = true;
 			gamesettings_cursorPosition = 3;
 		} else {
@@ -2431,62 +2454,74 @@ int main(){
 				settingsUnloadTextures();
 				colortexloaded = true;
 			}
-			if (!bnricontexloaded && TWLNANDnotfound_msg == 2) {				
+			if (!bnricontexloaded && TWLNANDnotfound_msg == 2) {
 				if (settings.ui.theme == THEME_DSIMENU && fadealpha == 0) {
 					dsiMenuTheme_loadingScreen();
 				}
-				if (!settings.twl.forwarder) {
-					char path[256];
-					if(matching_files.size() == 0){
-						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-							if (loadbnriconnum < (int)files.size()) {
-								const char *tempfile = files.at(loadbnriconnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-								LoadBNRIcon(path);
-							} else {
-								LoadBNRIcon(NULL);
+				if (settings.twl.romtype == 0) {
+					if (!settings.twl.forwarder) {
+						char path[256];
+						if(matching_files.size() == 0){
+							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)files.size()) {
+									const char *tempfile = files.at(loadbnriconnum).c_str();
+									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+									LoadBNRIcon(path);
+								} else {
+									LoadBNRIcon(NULL);
+								}
+							}
+						}else{
+							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)matching_files.size()) {
+									const char *tempfile = matching_files.at(loadbnriconnum).c_str();
+									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
+									LoadBNRIcon(path);
+								} else {
+									LoadBNRIcon(NULL);
+								}
 							}
 						}
-					}else{
-						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-							if (loadbnriconnum < (int)matching_files.size()) {
-								const char *tempfile = matching_files.at(loadbnriconnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-								LoadBNRIcon(path);
-							} else {
-								LoadBNRIcon(NULL);
+					} else {
+						char path[256];
+						if(matching_files.size() == 0){
+							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)fcfiles.size()) {
+									const char *tempfile = fcfiles.at(loadbnriconnum).c_str();
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
+									if (access(path, F_OK) != -1) {
+										LoadBNRIcon(path);
+									} else {
+										LoadBNRIcon(NULL);
+									}
+								} else {
+									LoadBNRIcon(NULL);
+								}
+							}
+						}else{
+							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)matching_files.size()) {
+									const char *tempfile = matching_files.at(loadbnriconnum).c_str();
+									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
+									if (access(path, F_OK) != -1) {
+										LoadBNRIcon(path);
+									} else {
+										LoadBNRIcon(NULL);
+									}
+								} else {
+									LoadBNRIcon(NULL);
+								}
 							}
 						}
 					}
 				} else {
-					char path[256];
 					if(matching_files.size() == 0){
 						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-							if (loadbnriconnum < (int)fcfiles.size()) {
-								const char *tempfile = fcfiles.at(loadbnriconnum).c_str();
-								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
-								if (access(path, F_OK) != -1) {
-									LoadBNRIcon(path);
-								} else {
-									LoadBNRIcon(NULL);
-								}
-							} else {
-								LoadBNRIcon(NULL);
-							}
+							LoadBNRIcon(NULL);
 						}
 					}else{
 						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-							if (loadbnriconnum < (int)matching_files.size()) {
-								const char *tempfile = matching_files.at(loadbnriconnum).c_str();
-								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
-								if (access(path, F_OK) != -1) {
-									LoadBNRIcon(path);
-								} else {
-									LoadBNRIcon(NULL);
-								}
-							} else {
-								LoadBNRIcon(NULL);
-							}
+							LoadBNRIcon(NULL);
 						}
 					}
 				}
@@ -2496,82 +2531,177 @@ int main(){
 			}			
 			if (!boxarttexloaded && !settings.romselect.toplayout && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
 				
-				if (!settings.twl.forwarder) {
-					char path[256];
-					if(matching_files.size() == 0){
-						if (loadboxartnum < pagemax_ba) {
-							if (loadboxartnum < (int)files.size()) {
-								bool isCia = false;
-								const char *tempfile = files.at(loadboxartnum).c_str();
-								std::string fn = tempfile;
-								if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
-								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
-								FILE *f_nds_file = fopen(path, "rb");
-								if (!f_nds_file) {
-									// Can't open the NDS file.
-									if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-									continue;
-								}
+				if (settings.twl.romtype == 0) {
+					if (!settings.twl.forwarder) {
+						char path[256];
+						if(matching_files.size() == 0){
+							if (loadboxartnum < pagemax_ba) {
+								if (loadboxartnum < (int)files.size()) {
+									bool isCia = false;
+									const char *tempfile = files.at(loadboxartnum).c_str();
+									std::string fn = tempfile;
+									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+									FILE *f_nds_file = fopen(path, "rb");
+									if (!f_nds_file) {
+										// Can't open the NDS file.
+										if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										continue;
+									}
 
-								char ba_TID[5];
-								grabTID(f_nds_file, ba_TID, isCia);
-								ba_TID[4] = 0;
-								fclose(f_nds_file);
+									char ba_TID[5];
+									grabTID(f_nds_file, ba_TID, isCia);
+									ba_TID[4] = 0;
+									fclose(f_nds_file);
 
-								// example: SuperMario64DS.nds.png
-								snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
-								if (access(path, F_OK ) != -1 ) {
-									StoreBoxArtPath(path);
-								} else {
-									// example: ASME.png
-									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-									if (access(path, F_OK) != -1) {
+									// example: SuperMario64DS.nds.png
+									snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
+									if (access(path, F_OK ) != -1 ) {
 										StoreBoxArtPath(path);
 									} else {
-										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										// example: ASME.png
+										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+										if (access(path, F_OK) != -1) {
+											StoreBoxArtPath(path);
+										} else {
+											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										}
 									}
+								} else {
+									StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 								}
-							} else {
-								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+							}
+						}else{
+							if (loadboxartnum < pagemax_ba) {
+								if (loadboxartnum < (int)matching_files.size()) {
+									bool isCia = false;
+									const char *tempfile = matching_files.at(loadboxartnum).c_str();
+									std::string fn = tempfile;
+									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+									FILE *f_nds_file = fopen(path, "rb");
+									if (!f_nds_file) {
+										// Can't open the NDS file.
+										if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										continue;
+									}
+
+									char ba_TID[5];
+									grabTID(f_nds_file, ba_TID, isCia);
+									ba_TID[4] = 0;
+									fclose(f_nds_file);
+
+									// example: SuperMario64DS.nds.png
+									snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
+									if (access(path, F_OK ) != -1 ) {
+										StoreBoxArtPath(path);
+									} else {
+										// example: ASME.png
+										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+										if (access(path, F_OK) != -1) {
+											StoreBoxArtPath(path);
+										} else {
+											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										}
+									}
+								} else {
+									StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+								}
 							}
 						}
-					}else{
-						if (loadboxartnum < pagemax_ba) {
-							if (loadboxartnum < (int)matching_files.size()) {
-								bool isCia = false;
-								const char *tempfile = matching_files.at(loadboxartnum).c_str();
-								std::string fn = tempfile;
-								if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
-								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
-								FILE *f_nds_file = fopen(path, "rb");
-								if (!f_nds_file) {
-									// Can't open the NDS file.
-									if(logEnabled) LogFMA("main.loadBoxArts", "Error opening nds file", path);
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-									continue;
-								}
+					} else {
+						char path[256];
+						if(matching_files.size() == 0){
+							if (loadboxartnum < pagemax_ba) {
+								if (loadboxartnum < (int)fcfiles.size()) {
+									const char *tempfile = fcfiles.at(loadboxartnum).c_str();
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
 
-								char ba_TID[5];
-								grabTID(f_nds_file, ba_TID, isCia);
-								ba_TID[4] = 0;
-								fclose(f_nds_file);
+									CIniFile setfcrompathini( path );
+									std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+									if (ba_TIDini.size() < 4) {
+										// TID is too short.
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										continue;
+									}
 
-								// example: SuperMario64DS.nds.png
-								snprintf(path, sizeof(path), "%s/%s.png", boxartfolder, tempfile);
-								if (access(path, F_OK ) != -1 ) {
-									StoreBoxArtPath(path);
-								} else {
-									// example: ASME.png
-									snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-									if (access(path, F_OK) != -1) {
+									char ba_TID[5];
+									strcpy(ba_TID, ba_TIDini.c_str());
+									ba_TID[4] = 0;
+
+									// example: SuperMario64DS.nds.png
+									snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
+									if (access(path, F_OK ) != -1 ) {
 										StoreBoxArtPath(path);
 									} else {
-										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										// example: ASME.png
+										// check first if boxart exist on fcboxartfolder by TID
+										memset(path, 0, sizeof(path));
+										snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+										if (access(path, F_OK ) != -1 ) {
+											StoreBoxArtPath(path);
+										} else {
+											// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
+											// maybe on boxart (sd) folder?
+											memset(path, 0, sizeof(path));
+											snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+											if (access(path, F_OK) != -1) {
+												StoreBoxArtPath(path);
+											} else {
+												StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+											}
+										}
 									}
+								} else {
+									StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
 								}
-							} else {
-								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+							}
+						}else{
+							if (loadboxartnum < pagemax_ba) {
+								if (loadboxartnum < (int)matching_files.size()) {
+									const char *tempfile = matching_files.at(loadboxartnum).c_str();
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
+
+									CIniFile setfcrompathini( path );
+									std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
+									if (ba_TIDini.size() < 4) {
+										// TID is too short.
+										StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+										continue;
+									}
+
+									char ba_TID[5];
+									strcpy(ba_TID, ba_TIDini.c_str());
+									ba_TID[4] = 0;
+
+									// example: SuperMario64DS.nds.png
+									snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
+									if (access(path, F_OK ) != -1 ) {
+										StoreBoxArtPath(path);
+									} else {
+										// example: ASME.png
+										// check first if boxart exist on fcboxartfolder by TID
+										memset(path, 0, sizeof(path)); 
+										snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
+										if (access(path, F_OK ) != -1 ) {
+											StoreBoxArtPath(path);
+										} else {
+											// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
+											// maybe on boxart (sd) folder?
+											memset(path, 0, sizeof(path));
+											snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
+											if (access(path, F_OK) != -1) {
+												StoreBoxArtPath(path);
+											} else {
+												StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+											}
+										}
+									}
+								} else {
+									StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+								}
 							}
 						}
 					}
@@ -2579,44 +2709,16 @@ int main(){
 					char path[256];
 					if(matching_files.size() == 0){
 						if (loadboxartnum < pagemax_ba) {
-							if (loadboxartnum < (int)fcfiles.size()) {
-								const char *tempfile = fcfiles.at(loadboxartnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
+							if (loadboxartnum < (int)gbfiles.size()) {
+								const char *tempfile = gbfiles.at(loadboxartnum).c_str();
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.gbromfolder.c_str(), tempfile);
 
-								CIniFile setfcrompathini( path );
-								std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
-								if (ba_TIDini.size() < 4) {
-									// TID is too short.
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-									continue;
-								}
-
-								char ba_TID[5];
-								strcpy(ba_TID, ba_TIDini.c_str());
-								ba_TID[4] = 0;
-
-								// example: SuperMario64DS.nds.png
-								snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
+								// example: SuperMarioLand.gb.png
+								snprintf(path, sizeof(path), "%s/%s.png", gbboxartfolder, tempfile);
 								if (access(path, F_OK ) != -1 ) {
 									StoreBoxArtPath(path);
 								} else {
-									// example: ASME.png
-									// check first if boxart exist on fcboxartfolder by TID
-									memset(path, 0, sizeof(path));
-									snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
-									if (access(path, F_OK ) != -1 ) {
-										StoreBoxArtPath(path);
-									} else {
-										// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
-										// maybe on boxart (sd) folder?
-										memset(path, 0, sizeof(path));
-										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-										if (access(path, F_OK) != -1) {
-											StoreBoxArtPath(path);
-										} else {
-											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-										}
-									}
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 								}
 							} else {
 								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
@@ -2626,42 +2728,14 @@ int main(){
 						if (loadboxartnum < pagemax_ba) {
 							if (loadboxartnum < (int)matching_files.size()) {
 								const char *tempfile = matching_files.at(loadboxartnum).c_str();
-								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.fcromfolder.c_str(), tempfile);
+								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.gbromfolder.c_str(), tempfile);
 
-								CIniFile setfcrompathini( path );
-								std::string ba_TIDini = setfcrompathini.GetString(fcrompathini_flashcardrom, fcrompathini_tid, "");
-								if (ba_TIDini.size() < 4) {
-									// TID is too short.
-									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-									continue;
-								}
-
-								char ba_TID[5];
-								strcpy(ba_TID, ba_TIDini.c_str());
-								ba_TID[4] = 0;
-
-								// example: SuperMario64DS.nds.png
-								snprintf(path, sizeof(path), "%s/%s.png", fcboxartfolder, tempfile);
+								// example: SuperMarioLand.gb.png
+								snprintf(path, sizeof(path), "%s/%s.png", gbboxartfolder, tempfile);
 								if (access(path, F_OK ) != -1 ) {
 									StoreBoxArtPath(path);
 								} else {
-									// example: ASME.png
-									// check first if boxart exist on fcboxartfolder by TID
-									memset(path, 0, sizeof(path)); 
-									snprintf(path, sizeof(path), "%s/%.4s.png", fcboxartfolder, ba_TID);
-									if (access(path, F_OK ) != -1 ) {
-										StoreBoxArtPath(path);
-									} else {
-										// Boxart doesn't exist in fxboxartfolder neither by name nor by TID
-										// maybe on boxart (sd) folder?
-										memset(path, 0, sizeof(path));
-										snprintf(path, sizeof(path), "%s/%.4s.png", boxartfolder, ba_TID);
-										if (access(path, F_OK) != -1) {
-											StoreBoxArtPath(path);
-										} else {
-											StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
-										}
-									}
+									StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
 								}
 							} else {
 								StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
@@ -2804,7 +2878,7 @@ int main(){
 						} else {
 							file_count = (gbfiles.size());
 						}
-						for (filenum = filenameYmovepos; filenum < file_count; filenum++) {
+						for (filenum = filenameYmovepos; filenum < (int)file_count; filenum++) {
 							if (filenum < 15+filenameYmovepos) {
 								u32 color;
 								if (settings.ui.cursorPosition == filenum) {
@@ -3619,7 +3693,7 @@ int main(){
 					if (settings.twl.forwarder && !isDemo) {
 						pp2d_draw_wtext(16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 					}
-					if (!bannertextloaded) {
+					if (!bannertextloaded && settings.twl.romtype == 0) {
 						char path[256];
 						bnriconnum = settings.ui.cursorPosition;
 						if (settings.twl.forwarder) {
@@ -3637,44 +3711,63 @@ int main(){
 					}
 					pp2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 					pp2d_draw_texture(dboxtex_iconbox, 47, 31);
-					pp2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
+					if (settings.twl.romtype == 1) {
+						pp2d_draw_texture_part(gbctex, 52, 36, bnriconframenum*32, 0, 32, 32);
+					} else {
+						pp2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
+					}
 					
 					if (!bannertextloaded) {
-						char path[256];
-						if (settings.twl.forwarder) {
-							if (fcfiles.size() != 0) {
-								romsel_filename = fcfiles.at(settings.ui.cursorPosition).c_str();
-								romsel_filename_w = utf8_to_wstring(romsel_filename);
+						if (settings.twl.romtype == 0) {
+							char path[256];
+							if (settings.twl.forwarder) {
+								if (fcfiles.size() != 0) {
+									romsel_filename = fcfiles.at(settings.ui.cursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+							
+								snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
 							} else {
-								romsel_filename = " ";
-								romsel_filename_w = utf8_to_wstring(romsel_filename);
+								if (files.size() != 0) {
+									romsel_filename = files.at(settings.ui.cursorPosition).c_str();
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								} else {
+									romsel_filename = " ";
+									romsel_filename_w = utf8_to_wstring(romsel_filename);
+								}
+								snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);						
 							}
-						
-							snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, romsel_filename);
-						} else {
-							if (files.size() != 0) {
-								romsel_filename = files.at(settings.ui.cursorPosition).c_str();
-								romsel_filename_w = utf8_to_wstring(romsel_filename);
-							} else {
-								romsel_filename = " ";
-								romsel_filename_w = utf8_to_wstring(romsel_filename);
-							}
-							snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);						
-						}
 
-						if (access(path, F_OK) == -1) {
-							// Banner file is not available.
-							strcpy(path, "romfs:/notextbanner");
-						}
-						FILE *f_bnr = fopen(path, "rb");
-						if (f_bnr) {
-							romsel_gameline = grabText(f_bnr, language);
-							fclose(f_bnr);
+							if (access(path, F_OK) == -1) {
+								// Banner file is not available.
+								strcpy(path, "romfs:/notextbanner");
+							}
+							FILE *f_bnr = fopen(path, "rb");
+							if (f_bnr) {
+								romsel_gameline = grabText(f_bnr, language);
+								fclose(f_bnr);
+							} else {
+								// Unable to open the banner file.
+								romsel_gameline.clear();
+								romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
+								romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+							}
 						} else {
-							// Unable to open the banner file.
+							romsel_filename = gbfiles.at(settings.ui.cursorPosition).c_str();
+
 							romsel_gameline.clear();
-							romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
-							romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
+							romsel_gameline.push_back(latin1_to_wstring(""));
+							std::string std_romsel_filename = romsel_filename;
+							if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb") {
+								romsel_gameline.push_back(latin1_to_wstring("GameBoy ROM"));
+							} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+								romsel_gameline.push_back(latin1_to_wstring("GameBoy Color ROM"));
+							} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb") {
+								romsel_gameline.push_back(latin1_to_wstring("Super GameBoy ROM"));
+							}
 						}
 						bannertextloaded = true;
 					}

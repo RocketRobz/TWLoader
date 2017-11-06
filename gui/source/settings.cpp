@@ -1948,6 +1948,7 @@ void SaveSettings(void) {
 			break;
 	}
 
+	settingsini.SetInt("TWL-MODE", "ROM_TYPE", settings.twl.romtype);
 	settingsini.SetInt("TWL-MODE", "FORWARDER", settings.twl.forwarder);
 	settingsini.SetInt("TWL-MODE", "FLASHCARD", settings.twl.flashcard);
 	settingsini.SetInt("TWL-MODE", "GBARUNNER", gbarunnervalue);
