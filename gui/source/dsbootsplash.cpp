@@ -237,6 +237,8 @@ void bootSplash() {
 	} else {
 		text_col = 0;
 	}
+	
+	pp2d_set_3D(1);
 
 	for (int i = 0; i < 75; i++) {
 		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
