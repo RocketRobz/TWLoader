@@ -32,8 +32,8 @@ NIGHTLY := $(shell git describe --tags --match v[0-9]* --abbrev=8 | sed 's/-[0-9
 COMMIT := $(shell git rev-parse HEAD)
 IS_NIGHTLY := 0
 
-VERSION_MAJOR := 5
-VERSION_MINOR := 6
+VERSION_MAJOR := 6
+VERSION_MINOR := 0
 VERSION_MICRO := 0
 
 #VERSION_MAJOR := $(word 1, $(VERSION_PARTS))
