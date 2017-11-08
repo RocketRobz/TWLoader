@@ -79,7 +79,8 @@ MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 enum Menu_ControlSet {
 	CTRL_SET_MENU = 0,		// Menu (R4 Theme only)
 	CTRL_SET_GAMESEL = 1,	// ROM Select
-	CTRL_SET_DBOX = 2,		// Dialog box mode
+	CTRL_SET_ROMTYPE = 2,	// ROM type select
+	CTRL_SET_DBOX = 3,		// Dialog box mode
 };
 Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
@@ -1458,6 +1459,7 @@ static int storedcursorPosition = 0;
 static int r4menu_cursorPosition = 0;
 static int woodmenu_cursorPosition = 0;
 static int startmenu_cursorPosition = 0;
+static int setromtype_cursorPosition = 0;
 static int gamesettings_cursorPosition = 0;
 
 static bool gamesettings_isCia = false;
@@ -1763,7 +1765,7 @@ static void drawMenuDialogBox(void)
 		} buttons[] = {
 			{ 23,  31, &settings.twl.forwarder, TR(STR_START_GAMELOCATION), {TR(STR_START_SD_CARD), TR(STR_START_FLASHCARD)}},
 			{161,  31, &settings.romselect.toplayout, NULL, {TR(STR_START_BOXART_ON), TR(STR_START_BOXART_OFF)}},
-			{ 23,  71, &isDemo, TR(STR_START_START_GBARUNNER2), {NULL, NULL}},
+			{ 23,  71, &isDemo, TR(STR_START_SELECT_ROMTYPE), {NULL, NULL}},
 			{161,  71, &settings.ui.topborder, NULL, {TR(STR_START_TOP_BORDER_OFF), TR(STR_START_TOP_BORDER_ON)}},
 			{ 23, 111, NULL, TR(STR_START_UNSET_DONOR), {NULL, NULL}},
 			{161, 111, NULL, TR(STR_START_SEARCH), {NULL, NULL}},
@@ -3601,12 +3603,12 @@ int main(){
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 1) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						if (fcfile_count != 0)							
+						if (fcfile_count != 0 && settings.twl.romtype == 0)							
 							pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
 							pp2d_draw_texture_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
 					} else {
-						if (fcfile_count != 0)
+						if (fcfile_count != 0 && settings.twl.romtype == 0)
 							pp2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 						else
 							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
@@ -3627,7 +3629,7 @@ int main(){
 						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
 						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
-					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Start GBARunner2");
+					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_START_SELECT_ROMTYPE));
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 4) {
@@ -3637,6 +3639,34 @@ int main(){
 						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
+				} else if (menu_ctrlset == CTRL_SET_ROMTYPE) {
+					int Ypos = 26;
+					filenameYpos = 36;
+					if (setromtype_cursorPosition == 0) {
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else {
+						pp2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					}
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Nintendo DS/DSi");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (setromtype_cursorPosition == 1) {
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else {
+						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					}
+					pp2d_draw_text(46, filenameYpos-8, 0.45f, 0.45f, WHITE, "GameBoy Advance");
+					pp2d_draw_wtext(46, filenameYpos+8, 0.45f, 0.45f, WHITE, TR(STR_START_START_GBARUNNER2));
+					Ypos += 39;
+					filenameYpos += 39;
+					if (setromtype_cursorPosition == 2) {
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(gbctex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else
+						pp2d_draw_texture_part(gbctex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "GameBoy/Super GB/GB Color");
 				} else {
 					int Ypos = 26;
 					filenameYpos = 36;
@@ -3648,9 +3678,14 @@ int main(){
 						}
 
 						// Get the current filename and convert it to wstring.
-						const char *filename = (settings.twl.forwarder
-								? fcfiles.at(filenum).c_str()
-								: files.at(filenum).c_str());
+						const char *filename = "";
+						if (settings.twl.romtype == 0) {
+							filename = (settings.twl.forwarder
+									? fcfiles.at(filenum).c_str()
+									: files.at(filenum).c_str());
+						} else {
+							filename = (gbfiles.at(filenum).c_str());
+						}
 						wstring wstr = utf8_to_wstring(filename);
 						pp2d_draw_wtext(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
 
@@ -3668,13 +3703,18 @@ int main(){
 					else
 						pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Games (SD Card)");
 					
-					const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-					
+					size_t file_count = 0;
+					if (settings.twl.romtype == 0) {
+						file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+					} else {
+						file_count = (gbfiles.size());
+					}
+
 					char romsel_counter1[16];
 					char romsel_counter2[16];
 					snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", settings.ui.cursorPosition+1);		
 					snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);					
-					
+
 					if (settings.ui.counter) {
 						if (file_count < 100) {
 							pp2d_draw_text(276, 2, 0.50, 0.50, WHITE, romsel_counter1);
@@ -4227,7 +4267,7 @@ int main(){
 						switch (woodmenu_cursorPosition) {
 							case 0:
 							default:
-								if (sdfile_count != 0) {
+								if (sdfile_count != 0 || gbfile_count != 0) {
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									if (settings.twl.forwarder) {
 										settings.twl.forwarder = false;
@@ -4245,7 +4285,7 @@ int main(){
 								}
 								break;
 							case 1:
-								if (fcfile_count != 0) {
+								if (fcfile_count != 0 && settings.twl.romtype == 0) {
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									if (!settings.twl.forwarder) {
 										settings.twl.forwarder = true;
@@ -4271,17 +4311,8 @@ int main(){
 								}
 								break;
 							case 3:
-								if (!isDemo) {
-									gbarunnervalue = 1;
-									settings.ui.romfolder = "_nds";									
-									rom = "GBARunner2.nds";
-									if (settings.twl.forwarder)
-										settings.twl.launchslot1 = true;
-									else
-										settings.twl.launchslot1 = false;
-									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
-									applaunchon = true;
-								}
+								menu_ctrlset = CTRL_SET_ROMTYPE;
+								setromtype_cursorPosition = settings.twl.romtype;
 								break;
 							case 4:
 								pp2d_set_3D(1);
@@ -4290,7 +4321,7 @@ int main(){
 								break;
 						}
 						wood_ndsiconscaletimer = 0;
-					} else if((hDown & KEY_Y) && (woodmenu_cursorPosition == 1) && !isDemo){
+					} else if((hDown & KEY_Y) && (woodmenu_cursorPosition == 1) && !isDemo && settings.twl.romtype == 0){
 						settings.twl.forwarder = true;
 						settings.twl.launchslot1 = true;
 						keepsdvalue = true;
@@ -4311,6 +4342,74 @@ int main(){
 						}
 						wood_ndsiconscaletimer = 0;
 					}
+				} else if (menu_ctrlset == CTRL_SET_ROMTYPE) {
+					if (hDown & KEY_A) {
+						switch (setromtype_cursorPosition) {
+							case 0:
+							default:
+								if (sdfile_count != 0 || fcfile_count != 0) {
+									settings.twl.romtype = 0;
+									menu_ctrlset = CTRL_SET_MENU;
+									if (sdfile_count != 0) settings.twl.forwarder = false;
+									else settings.twl.forwarder = true;
+									settings.ui.cursorPosition = 0;
+									settings.ui.pagenum = 0;
+									boxarttexloaded = false; // Reload boxarts
+									bnricontexloaded = false; // Reload banner icons
+									colortexloaded = false; // Reload top textures
+									colortexloaded_bot = false; // Reload bottom textures
+									boxartpage = 0;
+									loadboxartnum = 0+settings.ui.pagenum*20;
+									loadbnriconnum = 0+settings.ui.pagenum*20;
+									bannertextloaded = false;
+								}
+								break;
+							case 1:
+								if (!isDemo) {
+									settings.twl.romtype = 0;
+									gbarunnervalue = 1;
+									settings.ui.romfolder = "_nds";									
+									rom = "GBARunner2.nds";
+									if (settings.twl.forwarder)
+										settings.twl.launchslot1 = true;
+									else
+										settings.twl.launchslot1 = false;
+									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+									applaunchon = true;
+								}
+								break;
+							case 2:
+								if (gbfile_count != 0) {
+									settings.twl.romtype = 1;
+									menu_ctrlset = CTRL_SET_MENU;
+									settings.twl.forwarder = false;
+									settings.ui.cursorPosition = 0;
+									settings.ui.pagenum = 0;
+									boxarttexloaded = false; // Reload boxarts
+									bnricontexloaded = false; // Reload banner icons
+									colortexloaded = false; // Reload top textures
+									colortexloaded_bot = false; // Reload bottom textures
+									boxartpage = 0;
+									loadboxartnum = 0+settings.ui.pagenum*20;
+									loadbnriconnum = 0+settings.ui.pagenum*20;
+									bannertextloaded = false;
+								}
+								break;
+						}
+						wood_ndsiconscaletimer = 0;
+					} else if(hDown & KEY_DOWN){
+						setromtype_cursorPosition++;
+						if (setromtype_cursorPosition > 2) {
+							setromtype_cursorPosition = 2;
+						}
+						wood_ndsiconscaletimer = 0;
+					} else if(hDown & KEY_UP){
+						setromtype_cursorPosition--;
+						if (setromtype_cursorPosition < 0) {
+							setromtype_cursorPosition = 0;
+						}
+						wood_ndsiconscaletimer = 0;
+					}
 				} else {
 					if(settings.ui.cursorPosition < 0) {
 						filenameYmovepos = 0;
@@ -4325,26 +4424,30 @@ int main(){
 								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 							} else {
 								settings.twl.launchslot1 = false;
-								rom = files.at(settings.ui.cursorPosition).c_str();
 								bool isCia = false;
 								bool overlaysIncluded = false;
-								if(settings.ui.cursorPosition >= 0) {
-									char path[256];
-									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
-									std::string fn = rom;
-									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+								if (settings.twl.romtype == 0) {
+									rom = files.at(settings.ui.cursorPosition).c_str();
+									if(settings.ui.cursorPosition >= 0) {
+										char path[256];
+										snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
+										std::string fn = rom;
+										if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 
-									if(isCia) {
-										FILE *f_nds_file = fopen(path, "rb");
-										if (f_nds_file) {
-											overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
-											fclose(f_nds_file);
+										if(isCia) {
+											FILE *f_nds_file = fopen(path, "rb");
+											if (f_nds_file) {
+												overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
+												fclose(f_nds_file);
+											}
 										}
 									}
+								} else {
+									homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
 								}
 
 								if(!overlaysIncluded) {
-									sav = ReplaceAll(rom, ".nds", ".sav");
+									if (settings.twl.romtype == 0) sav = ReplaceAll(rom, ".nds", ".sav");
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
 								}
@@ -4464,7 +4567,7 @@ int main(){
 						settings.ui.cursorPosition = 0;
 						updatetopscreen = true;
 					}
-					if(hDown & KEY_L) {
+					if((hDown & KEY_L) && settings.twl.romtype == 0) {
 						settings.twl.forwarder = !settings.twl.forwarder;
 						settings.ui.cursorPosition = 0;
 						settings.ui.pagenum = 0;
@@ -4485,26 +4588,30 @@ int main(){
 								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
 							} else {
 								settings.twl.launchslot1 = false;
-								rom = files.at(settings.ui.cursorPosition).c_str();
 								bool isCia = false;
 								bool overlaysIncluded = false;
-								if(settings.ui.cursorPosition >= 0) {
-									char path[256];
-									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
-									std::string fn = rom;
-									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+								rom = files.at(settings.ui.cursorPosition).c_str();
+								if (settings.twl.romtype == 0) {
+									if(settings.ui.cursorPosition >= 0) {
+										char path[256];
+										snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom);
+										std::string fn = rom;
+										if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
 
-									if(isCia) {
-										FILE *f_nds_file = fopen(path, "rb");
-										if (f_nds_file) {
-											overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
-											fclose(f_nds_file);
+										if(isCia) {
+											FILE *f_nds_file = fopen(path, "rb");
+											if (f_nds_file) {
+												overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
+												fclose(f_nds_file);
+											}
 										}
 									}
+								} else {
+									homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
 								}
 
 								if(!overlaysIncluded) {
-									sav = ReplaceAll(rom, ".nds", ".sav");
+									if (settings.twl.romtype == 0) sav = ReplaceAll(rom, ".nds", ".sav");
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
 								}
