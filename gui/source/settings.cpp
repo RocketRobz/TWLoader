@@ -1962,8 +1962,9 @@ void SaveSettings(void) {
 		// Save some settings to SRLoader as well.
 		CIniFile srldrsettingsini( srldrsettingsinipath );
 
-		srldrsettingsini.SetInt("SRLOADER", "IS_3DS", 1);
+		srldrsettingsini.SetInt("SRLOADER", "IS_3DS", 1);	// In case if older version is used
 		srldrsettingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
+		srldrsettingsini.SetInt("SRLOADER", "ROM_TYPE", settings.twl.romtype);
 		if(settings.ui.theme <= THEME_3DSMENU) {
 			srldrsettingsini.SetInt("SRLOADER", "THEME", 0);
 		} else {
