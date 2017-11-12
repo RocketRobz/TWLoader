@@ -4443,7 +4443,7 @@ int main(){
 										}
 									}
 								} else {
-									homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
+									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
 								if(!overlaysIncluded) {
@@ -4607,7 +4607,7 @@ int main(){
 										}
 									}
 								} else {
-									homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
+									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
 								if(!overlaysIncluded) {
@@ -4956,7 +4956,7 @@ int main(){
 											settings.twl.launchslot1 = true;
 											if(matching_files.size() == 0){
 												rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-											}else {
+											} else {
 												rom = matching_files.at(settings.ui.cursorPosition).c_str();
 											}
 										} else {
@@ -4964,15 +4964,15 @@ int main(){
 											if (settings.twl.romtype == 0) {
 												if(matching_files.size() == 0){
 													rom = files.at(settings.ui.cursorPosition).c_str();
-												}else {
+												} else {
 													rom = matching_files.at(settings.ui.cursorPosition).c_str();
 												}
 												sav = ReplaceAll(rom, ".nds", ".sav");
 											} else {
 												if(matching_files.size() == 0){
-													homebrew_arg = (settings.ui.gbromfolder)+"/"+(gbfiles.at(settings.ui.cursorPosition).c_str());
-												}else {
-													homebrew_arg = (settings.ui.gbromfolder)+"/"+(matching_files.at(settings.ui.cursorPosition).c_str());
+													homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
+												} else {
+													homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
 												}
 											}
 										}

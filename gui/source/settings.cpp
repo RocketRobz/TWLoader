@@ -1841,6 +1841,8 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(settings.ui.romfolder);
 	settings.ui.fcromfolder = settingsini.GetString("FRONTEND", "FCROM_FOLDER", "");
 	RemoveTrailingSlashes(settings.ui.fcromfolder);
+	settings.ui.gbromfolder = settingsini.GetString("FRONTEND", "GBROM_FOLDER", "");
+	RemoveTrailingSlashes(settings.ui.gbromfolder);
 	settings.ui.pagenum = settingsini.GetInt("FRONTEND", "PAGE_NUMBER", 0);
 
 	// Customizable UI settings.
@@ -1904,6 +1906,7 @@ void SaveSettings(void) {
 	// UI settings.
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
+	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
@@ -1949,6 +1952,7 @@ void SaveSettings(void) {
 	}
 
 	settingsini.SetInt("TWL-MODE", "ROM_TYPE", settings.twl.romtype);
+	settingsini.SetString("TWL-MODE", "HOMEBREW_ARG", homebrew_arg);
 	settingsini.SetInt("TWL-MODE", "FORWARDER", settings.twl.forwarder);
 	settingsini.SetInt("TWL-MODE", "FLASHCARD", settings.twl.flashcard);
 	settingsini.SetInt("TWL-MODE", "GBARUNNER", gbarunnervalue);

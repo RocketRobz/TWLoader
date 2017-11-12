@@ -120,6 +120,7 @@ int main(int argc, char **argv) {
 	int useArm7Donor = 1;
 	bool TriggerExit = false;
 	std::string gamesettingsPath = "";
+	std::string gbromfolder = "";
 	std::string homebrew_arg = "";
 
 	bool consoleOn = false;
@@ -158,6 +159,7 @@ int main(int argc, char **argv) {
 		if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
 
 		romtype = twloaderini.GetInt( "TWL-MODE", "ROM_TYPE", 0);
+		gbromfolder = twloaderini.GetString("FRONTEND", "GBROM_FOLDER", "roms/gb");
 
 		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
 
@@ -242,9 +244,10 @@ int main(int argc, char **argv) {
 			for (int i = 0; i < 20; i++) { swiWaitForVBlank(); }
 
 			vector<char*> argarray;
+			argarray.push_back(strdup(homebrew_arg.c_str()));
 
 			char gbROMpath[256];
-			snprintf (gbROMpath, sizeof(gbROMpath), "/%s", homebrew_arg.c_str());
+			snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), homebrew_arg.c_str());
 			argarray.push_back(gbROMpath);
 			argarray.at(0) = "sd:/_nds/twloader/emulators/gameyob.nds";
 			int err = runNdsFile ("sd:/_nds/twloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
@@ -260,7 +263,7 @@ int main(int argc, char **argv) {
 				if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_06, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
 			}
 		}
-		
+
 		if(twloaderini.GetInt("TWL-MODE","LAUNCH_SLOT1",0) == 1) {
 			REG_SCFG_EXT = 0x83000000; // NAND/SD Access
 			if(twloaderini.GetInt("TWL-MODE","FORWARDER",0) == 1) {
