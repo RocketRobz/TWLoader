@@ -117,6 +117,7 @@ int main(int argc, char **argv) {
 	bool TWLCLK = true;	// false == NTR, true == TWL
 	bool SOUND_FREQ = false;	// false == 32.73 kHz, true == 47.61 kHz
 	int romtype = 0;
+	int gbarunnervalue = 0;
 	int useArm7Donor = 1;
 	bool TriggerExit = false;
 	std::string gamesettingsPath = "";
@@ -158,12 +159,13 @@ int main(int argc, char **argv) {
 		twloaderini.SaveIniFile( "sd:/_nds/twloader/settings.ini" );
 		if (logEnabled)	LogFMA("TWL.Main", "Saved username to GUI", p);
 
+		gbarunnervalue = twloaderini.GetInt( "TWL-MODE", "GBARUNNER", 0);
 		romtype = twloaderini.GetInt( "TWL-MODE", "ROM_TYPE", 0);
 		gbromfolder = twloaderini.GetString("FRONTEND", "GBROM_FOLDER", "roms/gb");
 
 		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
 
-		if(romtype==0) {
+		if(romtype==0 || gbarunnervalue==1) {
 			if(!access(gamesettingsPath.c_str(), F_OK)) {
 				CIniFile gamesettingsini( gamesettingsPath );
 				if(gamesettingsini.GetInt("GAME-SETTINGS","TWL_CLOCK",0) == -1) {
@@ -200,7 +202,7 @@ int main(int argc, char **argv) {
 			consoleDemoInit();
 			consoleOn = true;
 		}
-		if(romtype==0) {
+		if(romtype==0 || gbarunnervalue==1) {
 			if(TWLCLK) {
 				if (logEnabled)	LogFM("TWL.Main", "ARM9 CPU Speed set to 133mhz(TWL)");
 				if(twloaderini.GetInt("TWL-MODE","DEBUG",0) == 1) {
@@ -234,7 +236,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(romtype==1) {
+		if(romtype==1 && gbarunnervalue==0) {
 			// Tell Arm7 to apply changes.
 			fifoSendValue32(FIFO_USER_07, 1);
 
