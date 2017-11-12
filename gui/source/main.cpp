@@ -46,6 +46,7 @@ bool menuaction_nextpage = false;
 bool menuaction_prevpage = false;
 bool menuaction_launch = false;
 bool menudboxaction_switchloc = false;
+bool menudboxaction_changeromtype = false;
 bool buttondeletegame = false;
 bool addgametodeletequeue = false;
 
@@ -69,10 +70,11 @@ RomSelect_Mode menudboxmode = DBOX_MODE_OPTIONS; */
 
 enum MenuDBox_Mode {
 	DBOX_MODE_OPTIONS = 0,	// Options
-	DBOX_MODE_SETTINGS = 1,	// Game Settings
-	DBOX_MODE_DELETE = 2,	// Delete confirmation
-	DBOX_MODE_DELETED = 3,	// Title deleted message
-	DBOX_MODE_OVERLAYS = 4,	// Overlays included message
+	DBOX_MODE_ROMTYPE = 1,	// Select ROM type
+	DBOX_MODE_SETTINGS = 2,	// Game Settings
+	DBOX_MODE_DELETE = 3,	// Delete confirmation
+	DBOX_MODE_DELETED = 4,	// Title deleted message
+	DBOX_MODE_OVERLAYS = 5,	// Overlays included message
 };
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
@@ -868,7 +870,7 @@ static void SaveBootstrapConfig(void)
 {
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
-		if (!settings.twl.launchslot1 && settings.twl.romtype == 0) {
+		if (!settings.twl.launchslot1 && gbarunnervalue == 0 && settings.twl.romtype == 0) {
 			SetHomebrewBootstrap();
 			SetDonorSDK();
 			SetCompatibilityCheck();
@@ -878,15 +880,16 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "CHECK_COMPATIBILITY", settings.twl.run_timeout);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
-			if (gbarunnervalue == 0) {
-				bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
-				char path[256];
-				snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
-				if (access(path, F_OK) == -1) {
-					// Create a save file if it doesn't exist
-					CreateGameSave(path);
-				}
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
+			char path[256];
+			snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
+			if (access(path, F_OK) == -1) {
+				// Create a save file if it doesn't exist
+				CreateGameSave(path);
 			}
+		} else {
+			bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
+			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, "sd:/_nds/GBARunner2.nds");
 		}
 	}
 	if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using path:", bootstrapPath.c_str());
@@ -1750,6 +1753,51 @@ static void drawMenuDialogBox(void)
 						settings.pergame.blue, 255);
 					pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
 				}
+			}
+		}
+	} else if (menudboxmode == DBOX_MODE_ROMTYPE) {
+		pp2d_draw_wtext(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
+
+		// UI options.
+		const struct {
+			int x;
+			int y;
+			const char *title;
+			const wchar_t *value_desc;
+		} buttons[] = {
+			{ 23,  31, "Nintendo DS/DSi", NULL},
+			{161,  31, "GameBoy Advance", TR(STR_START_START_GBARUNNER2)},
+			{ 23,  71, "GameBoy/SGB/GBC", NULL},
+		};
+
+		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
+			if (setromtype_cursorPosition == i) {
+				// Button is highlighted.
+				pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
+			} else {
+				// Button is not highlighted. Darken the texture.
+				pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, GRAY);
+			}
+
+			const char *title = buttons[i].title;
+			const wchar_t *value_desc = buttons[i].value_desc;
+
+			// Determine width and height.
+			const int h = (title && value_desc ? 32 : 16);
+
+			// Draw the text.
+			// NOTE: Button texture size is 132x34.
+			int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+			if (title) {
+				const int w = 0;
+				const int x = ((2 - w) / 2) + buttons[i].x;
+				pp2d_draw_text(x, y, 0.50, 0.50, BLACK, title);
+				y += 16;
+			}
+			if (value_desc) {
+				const int w = 0;
+				const int x = ((2 - w) / 2) + buttons[i].x;
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, value_desc);
 			}
 		}
 	} else {
@@ -4313,6 +4361,7 @@ int main(){
 							case 3:
 								menu_ctrlset = CTRL_SET_ROMTYPE;
 								setromtype_cursorPosition = settings.twl.romtype;
+								if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
 								break;
 							case 4:
 								pp2d_set_3D(1);
@@ -4366,10 +4415,7 @@ int main(){
 								break;
 							case 1:
 								if (!isDemo) {
-									settings.twl.romtype = 0;
 									gbarunnervalue = 1;
-									settings.ui.romfolder = "_nds";									
-									rom = "GBARunner2.nds";
 									if (settings.twl.forwarder)
 										settings.twl.launchslot1 = true;
 									else
@@ -4532,8 +4578,6 @@ int main(){
 							case 2:
 								if (!isDemo) {
 									gbarunnervalue = 1;
-									settings.ui.romfolder = "_nds";									
-									rom = "GBARunner2.nds";
 									if (settings.twl.forwarder)
 										settings.twl.launchslot1 = true;
 									else
@@ -5065,29 +5109,9 @@ int main(){
 								}
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Start GBARunner2 button
 								startmenu_cursorPosition = 2;
-								if (!isDemo) {
-									gbarunnervalue = 1;
-									settings.ui.romfolder = "_nds";
-									rom = "GBARunner2.nds";
-									if (settings.twl.forwarder) {
-										settings.twl.launchslot1 = true;
-									} else {
-										settings.twl.launchslot1 = false;
-									}
-									fadeout = true;
-									if (dspfirmfound) {
-										bgm_menu->stop();
-										sfx_launch->play();
-									}
-								} else {
-									if (!playwrongsounddone) {
-										if (dspfirmfound) {
-											sfx_wrong->stop();
-											sfx_wrong->play();
-										}
-										playwrongsounddone = true;
-									}
-								}
+								menudboxmode = DBOX_MODE_ROMTYPE;
+								setromtype_cursorPosition = settings.twl.romtype;
+								if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Top border button
 								startmenu_cursorPosition = 3;
 								settings.ui.topborder = !settings.ui.topborder;
@@ -5191,29 +5215,9 @@ int main(){
 									}
 									break;
 								case 2:
-									if (!isDemo) {
-										gbarunnervalue = 1;
-										settings.ui.romfolder = "_nds";
-										rom = "GBARunner2.nds";
-										if (settings.twl.forwarder) {
-											settings.twl.launchslot1 = true;
-										} else {
-											settings.twl.launchslot1 = false;
-										}
-										fadeout = true;
-										if (dspfirmfound) {
-											bgm_menu->stop();
-											sfx_launch->play();
-										}
-									} else {
-										if (!playwrongsounddone) {
-											if (dspfirmfound) {
-												sfx_wrong->stop();
-												sfx_wrong->play();
-											}
-											playwrongsounddone = true;
-										}
-									}
+									menudboxmode = DBOX_MODE_ROMTYPE;
+									setromtype_cursorPosition = settings.twl.romtype;
+									if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
 									break;
 								case 3:
 									settings.ui.topborder = !settings.ui.topborder;
@@ -5289,6 +5293,113 @@ int main(){
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
 							menu_ctrlset = CTRL_SET_GAMESEL;
+						}
+					} else if (menudboxmode == DBOX_MODE_ROMTYPE) {
+						if (hDown & KEY_RIGHT) {
+							if (setromtype_cursorPosition % 2 != 1 &&
+							    setromtype_cursorPosition != 2)
+							{
+								// Move right.
+								setromtype_cursorPosition++;
+							}
+						} else if (hDown & KEY_LEFT) {
+							if (setromtype_cursorPosition % 2 != 0) {
+								// Move left.
+								setromtype_cursorPosition--;
+							}
+						} else if (hDown & KEY_DOWN) {
+							if (setromtype_cursorPosition < 1) {
+								setromtype_cursorPosition += 2;
+							}
+	
+						} else if (hDown & KEY_UP) {
+							if (setromtype_cursorPosition > 1) {
+								setromtype_cursorPosition -= 2;
+							}
+						} else if(hDown & KEY_TOUCH){
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)) { // Game location button
+								setromtype_cursorPosition = 0;
+								settings.twl.romtype = 0;
+								menudboxaction_changeromtype = true;
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)){ // Box art button
+								setromtype_cursorPosition = 1;
+								if (!isDemo) {
+									gbarunnervalue = 1;
+									if (settings.twl.forwarder) {
+										settings.twl.launchslot1 = true;
+									} else {
+										settings.twl.launchslot1 = false;
+									}
+									fadeout = true;
+									if (dspfirmfound) {
+										bgm_menu->stop();
+										sfx_launch->play();
+									}
+								} else {
+									if (!playwrongsounddone) {
+										if (dspfirmfound) {
+											sfx_wrong->stop();
+											sfx_wrong->play();
+										}
+										playwrongsounddone = true;
+									}
+								}
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Start GBARunner2 button
+								setromtype_cursorPosition = 2;
+								settings.twl.romtype = 1;
+								menudboxaction_changeromtype = true;
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
+								menudboxmode = DBOX_MODE_OPTIONS;
+							}
+						} else if (hDown & KEY_A) {
+							switch (setromtype_cursorPosition) {
+								case 0:
+								default:
+									settings.twl.romtype = 0;
+									menudboxaction_changeromtype = true;
+									break;
+								case 1:
+									if (!isDemo) {
+										gbarunnervalue = 1;
+										if (settings.twl.forwarder) {
+											settings.twl.launchslot1 = true;
+										} else {
+											settings.twl.launchslot1 = false;
+										}
+										fadeout = true;
+										if (dspfirmfound) {
+											bgm_menu->stop();
+											sfx_launch->play();
+										}
+									} else {
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong->stop();
+												sfx_wrong->play();
+											}
+											playwrongsounddone = true;
+										}
+									}
+									break;
+								case 2:
+									settings.twl.romtype = 1;
+									menudboxaction_changeromtype = true;
+									break;
+							}
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						} else if (hDown & (KEY_B | KEY_START)) {
+							menudboxmode = DBOX_MODE_OPTIONS;
 						}
 					} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 						hidTouchRead(&touch);
@@ -5489,7 +5600,7 @@ int main(){
 							menu_ctrlset = CTRL_SET_GAMESEL;
 						}
 					}
-					
+
 					if (menudboxaction_switchloc) { menudboxaction_switchloc = false;
 						if (dspfirmfound) {
 							sfx_switch->stop();	// Prevent freezing
@@ -5527,7 +5638,45 @@ int main(){
 							loadSlot1BoxArt();
 						}
 					}
-					
+
+					if (menudboxaction_changeromtype) { menudboxaction_changeromtype = false;
+						if (dspfirmfound) {
+							sfx_switch->stop();	// Prevent freezing
+							sfx_switch->play();
+						}
+						if (matching_files.size() != 0) matching_files.clear();
+						if (delete_queue.size() != 0) delete_queue.clear();
+						settings.ui.pagenum = 0;
+						bannertextloaded = false;
+						settings.ui.cursorPosition = 0;
+						storedcursorPosition = settings.ui.cursorPosition;
+						scrollwindowXmovepos = 0;
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						noromsfound = false;
+						settings.twl.forwarder = false;
+						bnricontexloaded = false;
+						boxarttexloaded = false;
+						boxartpage = 0;
+						loadboxartnum = 0+settings.ui.pagenum*20;
+						loadbnriconnum = 0+settings.ui.pagenum*20;
+						if (dspfirmfound) {
+							sfx_switch->stop();	// Prevent freezing
+							sfx_switch->play();
+						}
+						
+						if (!settings.twl.forwarder) {
+							// Poll for Slot-1 changes.
+							gamecardPoll(true);
+
+							// Load the Slot-1 boxart.
+							// NOTE: This is needed here; otherwise, the
+							// boxart won't be visible for a few frames
+							// when switching from flashcard to SD.
+							loadSlot1BoxArt();
+						}
+					}
+
 					if(buttondeletegame) {
 						// Delete game mode.
 						buttondeletegame = false; // Prevent deleting by accident.
@@ -5689,6 +5838,7 @@ int main(){
 					}
 				}
 			} else if (settings.twl.forwarder && gbarunnervalue == 1) {
+				rom = "GBARunner2.nds";
 				if (settings.twl.forwarder) {
 					switch (settings.twl.flashcard) {
 						case 0:

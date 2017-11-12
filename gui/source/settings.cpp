@@ -1906,7 +1906,7 @@ void SaveSettings(void) {
 	// UI settings.
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
-	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
+	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
