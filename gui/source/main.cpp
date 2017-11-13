@@ -5179,7 +5179,7 @@ int main(){
 								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 111) && touch.py <= (menudbox_Ypos + 145)){ // Search button
 								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
-								if(matching_files.size() != 0){
+								/*if(matching_files.size() != 0){
 									matching_files.clear();
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
@@ -5219,7 +5219,7 @@ int main(){
 								}							
 
 								if (matching_files.size() != 0) {
-									/** Prepare some stuff to show correctly the filtered roms */
+									// Prepare some stuff to show correctly the filtered roms
 									settings.ui.pagenum = 0; // Go to page 0
 									settings.ui.cursorPosition = 0; // Move the cursor to 0
 									storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
@@ -5238,7 +5238,11 @@ int main(){
 								pp2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
-								menu_ctrlset = CTRL_SET_GAMESEL;			
+								menu_ctrlset = CTRL_SET_GAMESEL;*/			
+								if (dspfirmfound) {
+									sfx_wrong->stop();	// Prevent freezing
+									sfx_wrong->play();
+								}
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 151) && touch.py <= (menudbox_Ypos + 185)){ // Settings button
 								startmenu_cursorPosition = 6; // Only this is making sometimes to not show the light texture
 								pp2d_draw_texture(dboxtex_button, 23, menudbox_Ypos + 151); // Light the button to print it always
@@ -5287,7 +5291,7 @@ int main(){
 									break;
 								case 5: {
 									// Search
-									if(matching_files.size() != 0){
+									/*if(matching_files.size() != 0){
 										matching_files.clear();
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									}
@@ -5311,7 +5315,7 @@ int main(){
 									}
 
 									if (matching_files.size() != 0) {
-										/** Prepare some stuff to show correctly the filtered roms */
+										// Prepare some stuff to show correctly the filtered roms
 										settings.ui.pagenum = 0; // Go to page 0
 										settings.ui.cursorPosition = 0; // Move the cursor to 0
 										storedcursorPosition = settings.ui.cursorPosition; // Move the cursor to 0
@@ -5329,7 +5333,11 @@ int main(){
 									}
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
-									menu_ctrlset = CTRL_SET_GAMESEL;
+									menu_ctrlset = CTRL_SET_GAMESEL;*/
+									if (dspfirmfound) {
+										sfx_wrong->stop();	// Prevent freezing
+										sfx_wrong->play();
+									}
 									break;
 								}
 								case 6:
@@ -5506,13 +5514,18 @@ int main(){
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set LED Color
 									gamesettings_cursorPosition = 3;								
 
-									RGB[0] = keyboardInputInt("Red color: max is 255");
+									/*RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2];
+									settings.pergame.blue = RGB[2];*/
+
+									if (dspfirmfound) {
+										sfx_wrong->stop();	// Prevent freezing
+										sfx_wrong->play();
+									}
 								}
 							} else {
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
@@ -5556,13 +5569,18 @@ int main(){
 								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
 									gamesettings_cursorPosition = 3;								
 
-									RGB[0] = keyboardInputInt("Red color: max is 255");
+									/* RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2];
+									settings.pergame.blue = RGB[2]; */
+
+									if (dspfirmfound) {
+										sfx_wrong->stop();	// Prevent freezing
+										sfx_wrong->play();
+									}
 								}
 							}
 							if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
@@ -5626,13 +5644,18 @@ int main(){
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 3:
-									RGB[0] = keyboardInputInt("Red color: max is 255");
+									/*RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2];
+									settings.pergame.blue = RGB[2];*/
+
+									if (dspfirmfound) {
+										sfx_wrong->stop();	// Prevent freezing
+										sfx_wrong->play();
+									}
 									break;
 							}
 						} else if (hDown & (KEY_B | KEY_SELECT)) {
