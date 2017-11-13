@@ -82,7 +82,8 @@ extern size_t disabledtex;
 extern size_t settingstex;
 extern size_t settingslogooadertex;
 extern size_t new_tex;
-extern size_t iconplaceholdertex;
+extern size_t gbctex;
+extern size_t anniversarytex;
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)

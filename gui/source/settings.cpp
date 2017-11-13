@@ -250,6 +250,8 @@ void settingsDrawTopScreen(void)
 				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture	
 			}
 		} else {
+			if(showAnniversaryText) pp2d_draw_texture(anniversarytex, 0, 40);
+
 			pp2d_draw_texture(settingslogotex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2);
 			pp2d_draw_texture_blend(settingslogotwltex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,twlfadealpha));
 			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));

@@ -1976,13 +1976,15 @@ void dsiMenuTheme_loadingScreen() {
 	pp2d_draw_text(8, 38, 0.70, 0.70, BLACK, "Loading...");
 	pp2d_end_draw();
 }
+
+bool showAnniversaryText = true;
+
 int main(){
 	pp2d_init();
 	
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 	pp2d_set_3D(0);
 	
-	pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
 	Result res = 0;
 
 	aptInit();
@@ -1996,11 +1998,35 @@ int main(){
 	hidInit();
 	acInit();
 	
+	int aninumfadealpha = 0;
+	int showAnniversaryTextYPos = 100;
+
 	if(isDemo)
 		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo_demo.png"); // TWLoader (3DSX demo version) logo on top screen
 	else
 		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo.png"); // TWLoader logo on top screen
-	pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	pp2d_load_texture_png(anniversarytex, "romfs:/graphics/anniversary/text.png"); // TWLoader logo on top screen
+	if(showAnniversaryText) {
+		for(int i = 0; i < 64; i++) {
+			pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
+			pp2d_draw_texture_part_blend(anniversarytex, 0, 40, 0, 0, 160, 40, RGBA8(255, 255, 255, aninumfadealpha));
+			pp2d_draw_texture_part(anniversarytex, 160, showAnniversaryTextYPos, 160, 0, 240, 40);
+			pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+			pp2d_end_draw();
+			aninumfadealpha += 4;
+			if(aninumfadealpha > 255) aninumfadealpha = 255;
+			showAnniversaryTextYPos--;
+			if(showAnniversaryTextYPos < 40) showAnniversaryTextYPos = 40;
+		}
+	}
+
+	pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
+	if(showAnniversaryText) {
+		pp2d_draw_texture(anniversarytex, 0, 40);
+		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	} else {
+		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	}
 	
 	int filenum = 0;
 	bool noromsfound = false;

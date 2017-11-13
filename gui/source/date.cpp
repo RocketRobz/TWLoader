@@ -72,8 +72,7 @@ string RetTime(bool donotblink)
 	static int chartimer = 0;
 	if (!donotblink) {
 		chartimer++;
-//		if (chartimer >= 120*2) {
-		if (chartimer >= 60*2) {	// 60 due to 3d is dissable for now
+		if (chartimer >= 120*2) {
 			chartimer = 0;
 		}
 	} else {
@@ -81,8 +80,7 @@ string RetTime(bool donotblink)
 	}
 
 	char Tmp[24];
-//	if (chartimer >= 120) {
-	if (chartimer >= 60) {
+	if (chartimer >= 120) {
 		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
 	} else {
 		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);

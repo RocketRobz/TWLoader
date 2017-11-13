@@ -124,4 +124,5 @@ size_t disabledtex = 120;
 size_t settingstex = 121;
 size_t settingslogooadertex = 122;
 size_t new_tex = 123;
-size_t iconplaceholdertex = 124;
+size_t gbctex = 124;
+size_t anniversarytex = 125;

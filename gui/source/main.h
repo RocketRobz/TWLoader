@@ -23,6 +23,8 @@ extern bool run;	// Set to false to exit to the Home Menu.
 extern bool isNightly;
 
 
+extern std::string homebrew_arg;
+
 extern std::string fat;
 
 // Dialog box
@@ -39,6 +41,8 @@ extern int RshoulderYpos;
 // Status bar functions.
 void draw_volume_slider(size_t texarray[]);
 void update_battery_level(size_t texchrg, size_t texarray[]);
+
+extern bool showAnniversaryText;
 
 // Screen effects.
 extern int fadealpha;
