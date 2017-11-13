@@ -265,8 +265,9 @@ void settingsDrawTopScreen(void)
 			}
 		}
 
-		pp2d_draw_text(318.0f, 1, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
-		
+		pp2d_draw_text(318, 1, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
+		pp2d_draw_text(336, 1, 0.58f, 0.58f, WHITE, RetTimeDot(true).c_str());
+
 		if(!isNightly){
 			std::string version = settings_vertext;		
 			if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {

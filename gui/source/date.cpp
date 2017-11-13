@@ -56,21 +56,36 @@ size_t GetDate(DateFormat format, char *buf, size_t size)
 
 /**
  * Get the current time formatted for the top bar.
- * This includes the blinking ':'.
- * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
-string RetTime(bool donotblink)
+string RetTime(bool dot)
 {
 	time_t Raw;
 	time(&Raw);
 	const struct tm *Time = localtime(&Raw);
 
+	char Tmp[24];
+	if(dot) {
+		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
+	} else {
+		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
+	}
+
+	return string(Tmp);
+}
+
+/**
+ * The blinking ':'.
+ * @param donotblink If true, reset the blink counter.
+ * @return std::string containing the time.
+ */
+string RetTimeDot(bool blink)
+{
 	// Blink the ':' approximately once per second.
 	// (120 is because two top frames are drawn every 1/60th
 	//  due to 3D.)
 	static int chartimer = 0;
-	if (!donotblink) {
+	if (blink) {
 		chartimer++;
 		if (chartimer >= 120*2) {
 			chartimer = 0;
@@ -79,11 +94,11 @@ string RetTime(bool donotblink)
 		chartimer = 0;
 	}
 
-	char Tmp[24];
+	char Tmp[2];
 	if (chartimer >= 120) {
-		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
+		snprintf(Tmp, sizeof(Tmp), " ");
 	} else {
-		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
+		snprintf(Tmp, sizeof(Tmp), ":");
 	}
 
 	return string(Tmp);

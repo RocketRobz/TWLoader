@@ -2964,17 +2964,17 @@ int main(){
 						case 0:
 						default:
 							pp2d_draw_text(40+200, 148, 0.82, 0.82, TIME, RetTime(true).c_str());
-							DrawDateF(40+179, 198, 0.85, 0.85, false, FORMAT_MY);
+							DrawDateF(40+179, 198, 0.85, 0.85, TIME, FORMAT_MY);
 							break;
 						case 1:
 							pp2d_draw_text(40+184, 8, 1.30, 1.30, WHITE, RetTime(true).c_str());
-							DrawDateF(40+180, 78, 0.85, 0.85, false, FORMAT_M);
-							DrawDateF(40+232, 78, 0.85, 0.85, false, FORMAT_Y);
+							DrawDateF(40+180, 78, 0.85, 0.85, WHITE, FORMAT_M);
+							DrawDateF(40+232, 78, 0.85, 0.85, WHITE, FORMAT_Y);
 							break;
 						case 2:
 							pp2d_draw_text(40+16, 78, 1.30, 1.30, WHITE, RetTime(true).c_str());
-							DrawDateF(40+68, 202, 0.80, 0.80, false, FORMAT_M);
-							DrawDateF(40+108, 202, 0.75, 0.80, false, FORMAT_Y);
+							DrawDateF(40+68, 202, 0.80, 0.80, WHITE, FORMAT_M);
+							DrawDateF(40+108, 202, 0.75, 0.80, WHITE, FORMAT_Y);
 							break;
 						case 3:
 							pp2d_draw_text(40+176, 172, 1.30, 1.30, WHITE, RetTime(true).c_str());
@@ -3135,14 +3135,17 @@ int main(){
 					if (settings.ui.theme != THEME_3DSMENU) {
 						if (settings.ui.topborder) {
 							pp2d_draw_texture_blend(toptex, 400/2 - 400/2, 240/2 - 240/2, menucolor);
-							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+							pp2d_draw_text(318, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+							pp2d_draw_text(336, 1.0f, 0.58f, 0.58f, BLACK, RetTimeDot(true).c_str());
 							DrawDate(264.0f, 1.0f, 0.58f, 0.58f, BLACK);
 						} else {
-							pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
+							pp2d_draw_text(318, 1.0f, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
+							pp2d_draw_text(336, 1.0f, 0.58f, 0.58f, WHITE, RetTimeDot(true).c_str());
 							DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 						}
 					} else {
-						pp2d_draw_text(318.0f, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+						pp2d_draw_text(318, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
+						pp2d_draw_text(336, 1.0f, 0.58f, 0.58f, BLACK, RetTimeDot(true).c_str());
 						DrawDate(264.0f, 1.0f, 0.58f, 0.58f, BLACK);
 					}
 					
