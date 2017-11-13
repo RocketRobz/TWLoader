@@ -2414,6 +2414,9 @@ int main(){
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
 	const bool isTWLNAND2Installed = checkTWLNANDSide2();
+	// For testing in Citra
+	//const bool isTWLNANDInstalled = true;
+	//const bool isTWLNAND2Installed = true;
 	// Save by default if the TWLNAND-side title is installed.
 	// Otherwise, we don't want to save anything.
 	bool saveOnExit = isTWLNANDInstalled && isTWLNAND2Installed;
@@ -2917,7 +2920,7 @@ int main(){
 									break;
 							}
 						}
-					} else {
+					} else if (menu_ctrlset == CTRL_SET_GAMESEL) {
 						if (settings.twl.forwarder && !isDemo) {
 							switch (settings.ui.subtheme) {
 								case 0:
@@ -3763,6 +3766,7 @@ int main(){
 					} else
 						pp2d_draw_texture_part(gbctex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "GameBoy/Super GB/GB Color");
+					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Select ROM type");
 				} else {
 					int Ypos = 26;
 					filenameYpos = 36;
@@ -4502,6 +4506,9 @@ int main(){
 						if (setromtype_cursorPosition < 0) {
 							setromtype_cursorPosition = 0;
 						}
+						wood_ndsiconscaletimer = 0;
+					} else if (hDown & KEY_B) {
+						menu_ctrlset = CTRL_SET_MENU;
 						wood_ndsiconscaletimer = 0;
 					}
 				} else {
