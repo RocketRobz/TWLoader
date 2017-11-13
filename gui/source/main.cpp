@@ -2274,7 +2274,7 @@ int main(){
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
-	const char* wifiStuckMsg = "Checking WiFi status...\n\nIf you see this for more than 10 seconds,\ntry rebooting and turning off wireless.";
+	const char* wifiStuckMsg = "Checking WiFi status...\n\nIf you see this for more than 25 seconds,\ntry rebooting and turning off wireless.";
 
 	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
