@@ -2248,14 +2248,18 @@ int main(){
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
-	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "If you see this for more than 10 seconds,\ntry rebooting and turning off wireless.");
+	pp2d_end_draw();
 	
 	// Download missing files
 	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 		// Nothing
 	}
 
-	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Scanning ROM directories...");
+	pp2d_end_draw();
 	
 	// Scan the ROM directories.
 	scanRomDirectories();
@@ -2272,12 +2276,18 @@ int main(){
 	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
 	
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+	pp2d_end_draw();
+
 	// Download box art
 	if (checkWifiStatus()) {
 		downloadBoxArt();
 	}
 	
-	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+	pp2d_end_draw();
 
 	// Cache banner data for ROMs on the SD card.
 	// TODO: Re-cache if it's 0 bytes?
@@ -2305,7 +2315,9 @@ int main(){
 		fclose(f_nds_file);
 	}
 	
-	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+	pp2d_end_draw();
 
 	if (checkWifiStatus()) {
 		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -2326,7 +2338,9 @@ int main(){
 	}
 
 	showdialogbox = false;
-	pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+	pp2d_end_draw();
 	
 	if (settings.ui.theme >= THEME_R4) {
 		menu_ctrlset = CTRL_SET_MENU;
@@ -2349,15 +2363,20 @@ int main(){
 			// Top
 			pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 			pp2d_draw_texture(r4loadingtex, 40, 0);
-			pp2d_end_draw();
-			
+
 			// Clear bottom
-			pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
+			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+			pp2d_end_draw();
 		} else {
 			// Clear Top
-			pp2d_set_screen_color(GFX_BOTTOM, TRANSPARENT);
-			
+			pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+			pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+
 			// Bottom
+			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
 			pp2d_end_draw();
 		}
