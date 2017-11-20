@@ -47,7 +47,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Sélection du linker(s)",                                   // "Flashcard(s) select"
 	"LED arc-en-ciel",                                          // "Rainbow LED"
 	"Vitesse du CPU ARM9",                                      // "ARM9 CPU Speed"
-	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
+	"Fréquence Son/Micro",								// "Sound/Microphone frequency"
 	"Accès carte SD pour Slot-1",								// "SD card access for Slot-1"
 	"Reset Slot-1",                                             // "Reset Slot-1"
 	"Écran de bootstrap",									// "Bootstrap loading screen"
@@ -190,7 +190,7 @@ static const char *const lang_FR[STR_MAX] = {
 	"Aucun sous-thème pour ce thème.",                    		// "No sub-themes exist for this theme."
 	 
 	/** Settings others minor strings **/
-	"/: Sauvegarder and Retourner",                         	// "A/B: Save and Return"
+	"/: Sauvegarder et Retourner",                         	// "A/B: Save and Return"
 	"Gauche/Droite: Choisir",                                   // "Left/Right: Pick"
 	"Paramètres: GUI",                                          // "Settings: GUI"
 	"Paramètres: NTR mode",										// "Settings: NTR mode"
