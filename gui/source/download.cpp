@@ -243,11 +243,18 @@ std::vector<std::string> internal_json_reader(json_value* json, json_value* val,
  */
 int checkUpdate(void) {
 	if (logEnabled)	LogFM("checkUpdate", "Checking updates...");
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_end_draw();
+	}
 	static const char title[] = "Now checking TWLoader version...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
-	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_draw_texture(settingstex, 0, 0);
 		pp2d_draw_texture(dialogboxtex, 0, 0);
@@ -256,6 +263,7 @@ int checkUpdate(void) {
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 
 	}
+	pp2d_end_draw();
 	
 	u32 responseCode = 0;
 	httpcContext context;	
@@ -542,31 +550,33 @@ int checkUpdate(void) {
 
 					bool checkanswer = true;
 
-					while(checkanswer) {
-						pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);						
-						static const char msg[] =
-							"TWLoader is up-to-date.\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							"\n"
-							": OK";		
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					static const char msg[] =
+						"TWLoader is up-to-date.\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						"\n"
+						": OK";		
 
-						if (screenmode == SCREEN_MODE_SETTINGS) {
-							pp2d_draw_texture(settingstex, 0, 0);
-							pp2d_draw_texture(dialogboxtex, 0, 0);
-							pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
-						} else {
-							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
-						}
+					if (screenmode == SCREEN_MODE_SETTINGS) {
+						pp2d_draw_texture(settingstex, 0, 0);
+						pp2d_draw_texture(dialogboxtex, 0, 0);
+						pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+					} else {
+						pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					}
+					pp2d_end_draw();
+
+					while(checkanswer) {
 						hidScanInput();
 
 						const u32 hDown = hidKeysDown();
@@ -686,32 +696,32 @@ void DownloadTWLoaderCIAs(void) {
 	bool checkanswer = true;
 	bool yestoupdate = false;
 	
-	while(checkanswer) {
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		static const char gui_msg[] =
-			"An update for TWLoader is available.\n"
-			"Do you want to update?\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			"\n"
-			": Yes\n"
-			": No";
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			pp2d_draw_texture(settingstex, 0, 0);
-			pp2d_draw_texture(dialogboxtex, 0, 0);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, gui_msg);
-		} else {
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
-		}		
-		pp2d_end_draw();
-		
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	static const char gui_msg[] =
+		"An update for TWLoader is available.\n"
+		"Do you want to update?\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		"\n"
+		": Yes\n"
+		": No";
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_draw_texture(settingstex, 0, 0);
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, gui_msg);
+	} else {
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
+	}		
+	pp2d_end_draw();
+
+	while(checkanswer) {		
 		hidScanInput();
 
 		const u32 hDown = hidKeysDown();
@@ -723,7 +733,7 @@ void DownloadTWLoaderCIAs(void) {
 			checkanswer = false;	// Exit loop
 		}
 	}
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+
 	if(yestoupdate) {
 		int resGUI = -1;
 		int resGUI_3DSX = -1;
@@ -734,6 +744,7 @@ void DownloadTWLoaderCIAs(void) {
 		struct stat st;
 		if (updateGUI) {
 			if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				static const char gui_msg[] =
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, CIA)\n"
@@ -746,7 +757,8 @@ void DownloadTWLoaderCIAs(void) {
 				} else {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
 				}
-			
+				pp2d_end_draw();
+
 				if(!isNightly){ 
 					if(stat("sdmc:/cia",&st) == 0){		
 						// Use root/cia folder instead
@@ -766,12 +778,6 @@ void DownloadTWLoaderCIAs(void) {
 						resGUI = downloadFile(nightly_zip.c_str(),"/_nds/twloader/cia/TWLoader-beta.cia", MEDIA_SD_FILE);
 					}
 				}
-				
-				if (screenmode == SCREEN_MODE_SETTINGS) {
-					pp2d_draw_texture(settingstex, 0, 0);
-					pp2d_draw_texture(dialogboxtex, 0, 0);
-				}
-				pp2d_end_draw();
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -787,6 +793,7 @@ void DownloadTWLoaderCIAs(void) {
 				} else {
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, gui_msg);
 				}
+				pp2d_end_draw();
 
 				if (isDemo) {
 					mkdir("sdmc:/3ds/TWLoader_demo", 0777);
@@ -797,12 +804,6 @@ void DownloadTWLoaderCIAs(void) {
 					resGUI_3DSX = downloadFile(gui_3dsx_url.c_str(),"/3ds/TWLoader/TWLoader.3dsx", MEDIA_SD_FILE);
 					resGUI_SMDH = downloadFile(gui_smdh_url.c_str(),"/3ds/TWLoader/TWLoader.smdh", MEDIA_SD_FILE);
 				}
-				
-				if (screenmode == SCREEN_MODE_SETTINGS) {
-					pp2d_draw_texture(settingstex, 0, 0);
-					pp2d_draw_texture(dialogboxtex, 0, 0);
-				}
-				pp2d_end_draw();
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
@@ -812,8 +813,15 @@ void DownloadTWLoaderCIAs(void) {
 				"(TWLNAND side CIA (part 1))\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand_msg);
-			
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand_msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand_msg);
+			}
+			pp2d_end_draw();
+
 			// Delete first if installed.
 			if(checkTWLNANDSide()){
 				amInit();
@@ -827,11 +835,6 @@ void DownloadTWLoaderCIAs(void) {
 			}else{		
 				resNAND = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 			}
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				pp2d_draw_texture(settingstex, 0, 0);
-				pp2d_draw_texture(dialogboxtex, 0, 0);
-			}
-			pp2d_end_draw();
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -840,14 +843,17 @@ void DownloadTWLoaderCIAs(void) {
 				"(SD stage of (part 1 of) TWLNAND side)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnandstg2_msg);
-			resNAND_STG2 = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
-			
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnandstg2_msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnandstg2_msg);
 			}
 			pp2d_end_draw();
+
+			resNAND_STG2 = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
+			
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -856,8 +862,15 @@ void DownloadTWLoaderCIAs(void) {
 				"(TWLNAND side CIA (part 2))\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand2_msg);
-			
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, twlnand2_msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, twlnand2_msg);
+			}
+			pp2d_end_draw();
+
 			// Delete first if installed.
 			if(checkTWLNANDSide2()){
 				amInit();
@@ -871,36 +884,35 @@ void DownloadTWLoaderCIAs(void) {
 			}else{		
 				resNAND_STG2 = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
 			}
-			if (screenmode == SCREEN_MODE_SETTINGS) {
-				pp2d_draw_texture(settingstex, 0, 0);
-				pp2d_draw_texture(dialogboxtex, 0, 0);
-			}
-			pp2d_end_draw();
 		} 
 		if(resGUI_SMDH == 0) {
 			// TODO (3dsx version update)
 		}
 		// If gui or nand failed, stop before downloading prebuilds.
 		if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
-			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			if(resGUI != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
-				} else for (int i = 0; i < 15; i++) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
+				} else {
+					for (int i = 0; i < 15; i++) {
+						pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+						pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Update failed.");
+						pp2d_end_draw();
+					}
 				}
 			}
-			pp2d_end_draw();
 		} else if (settings.ui.filetype == 1) {
-			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			if(resGUI_3DSX != 0 || (updateNAND && resNAND != 0) || (updateNAND_STG2 && resNAND_STG2 != 0) || (updateNAND_part2 && resNAND_part2 != 0) ) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
-				} else for (int i = 0; i < 15; i++) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Update failed.");
+				} else {
+					for (int i = 0; i < 15; i++) {
+						pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+						pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Update failed.");
+						pp2d_end_draw();
+					}
 				}
 			}
-			pp2d_end_draw();
 		}
 		if(resGUI == 0 && updateACE_RPG) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -909,21 +921,25 @@ void DownloadTWLoaderCIAs(void) {
 				"(ace_rpg.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
-			
-			int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
 			}
+			pp2d_end_draw();
+
+			int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
-			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -932,21 +948,25 @@ void DownloadTWLoaderCIAs(void) {
 				"(GBARunner2.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
-			
-			int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
 			}
+			pp2d_end_draw();
+			
+			int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
-			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -955,21 +975,25 @@ void DownloadTWLoaderCIAs(void) {
 				"(loadcard_dstt.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
-			
-			int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
 			}
+			pp2d_end_draw();
+
+			int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
-			pp2d_end_draw();
 		}
 		if (resGUI == 0 && updateR4) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -978,34 +1002,46 @@ void DownloadTWLoaderCIAs(void) {
 				"(r4.nds)\n"
 				"\n"
 				"Do not turn off the power.\n";
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
-			
-			int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_draw_texture(settingstex, 0, 0);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
 			}
+			pp2d_end_draw();
+
+			int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 			if (res != 0) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else for (int i = 0; i < 15; i++) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Download failed.");
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+					pp2d_end_draw();
 				}
 			}
-			pp2d_end_draw();
 		}
 		if (resGUI == 0) {
+			static const char msg[] =
+				"Now returning to HOME Menu...";
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Now returning to HOME Menu...");
-			run = false;
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, msg);
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+			}
 			pp2d_end_draw();
+			run = false;
 		}
 	} else {
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else for (int i = 0; i < 15; i++) {
 			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, false, "Update cancelled.");
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Update cancelled.");
 			pp2d_end_draw();
 		}
 	}
@@ -1381,12 +1417,20 @@ int DownloadMissingFiles(void) {
  * Update nds-bootstrap to the latest unofficial build.
  */
 void UpdateBootstrapUnofficial(void) {
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_end_draw();
+	}
 	static const char title[] = "Now updating bootstrap (Unofficial)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_draw_texture(settingstex, 0, 0);
 		pp2d_draw_texture(dialogboxtex, 0, 0);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
 	} else {
@@ -1416,12 +1460,20 @@ void UpdateBootstrapUnofficial(void) {
  * Update nds-bootstrap to the latest release build.
  */
 void UpdateBootstrapRelease(void) {
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_end_draw();
+	}
 	static const char title[] = "Now updating bootstrap (Release)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_draw_texture(settingstex, 0, 0);
 		pp2d_draw_texture(dialogboxtex, 0, 0);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
 	} else {
