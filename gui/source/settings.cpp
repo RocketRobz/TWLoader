@@ -781,7 +781,20 @@ void settingsDrawBottomScreen(void)
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
-		const char *rainbowledvaluetext = (settings.twl.rainbowled ? "On" : "Off");
+		const char *rainbowledvaluetext;
+		switch (settings.twl.rainbowled) {
+			case 0:
+			default:
+				rainbowledvaluetext = "Off";
+				break;
+			case 1:
+				rainbowledvaluetext = "Green";
+				break;
+			case 2:
+				rainbowledvaluetext = "Rainbow";
+				break;
+		}
+
 		const char *cpuspeedvaluetext = (settings.twl.cpuspeed ? "133mhz (TWL)" : "67mhz (NTR)");
 		const char *soundfreqvaluetext = (settings.twl.soundfreq ? "47.61 kHz" : "32.73 kHz");
 		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
@@ -1213,7 +1226,17 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					break;
 				case 1:	// Rainbow LED
-					settings.twl.rainbowled = !settings.twl.rainbowled;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.twl.rainbowled++;
+						if (settings.twl.rainbowled > 2) {
+							settings.twl.rainbowled = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.twl.rainbowled--;
+						if (settings.twl.rainbowled < 0) {
+							settings.twl.rainbowled = 2;
+						}
+					}
 					break;
 				case 2:	// CPU speed
 					settings.twl.cpuspeed = !settings.twl.cpuspeed;

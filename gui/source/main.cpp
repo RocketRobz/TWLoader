@@ -760,6 +760,27 @@ static int PergameLed(void) {
 	ptmsysmExit();
 	return 0;
 }
+/**
+ * Set green color for notification LED
+ * @return 0 on success; non-zero on error.
+ */
+static int dsGreenLed(void) {
+	RGBLedPattern pattern;
+	pattern.ani = 32;	// Need to be 32 in order to be it constant
+
+	// Set the color values to a single RGB value.
+	memset(&pattern.r, (u8)0, sizeof(pattern.r));
+	memset(&pattern.g, (u8)255, sizeof(pattern.g));
+	memset(&pattern.b, (u8)0, sizeof(pattern.b));
+
+	if (ptmsysmInit() < 0)
+		return -1;
+	ptmsysmSetInfoLedPattern(&pattern);
+	ptmsysmExit();
+	if (logEnabled)	LogFM("Main.dsGreenLed", "Notification LED is green");
+	return 0;
+}
+
 static void ChangeBNRIconNo(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = bnriconnum - (settings.ui.pagenum * 20);
@@ -6050,8 +6071,10 @@ int main(){
 					}
 				}
 				if((RGB[0] <= 0) && (RGB[1] <= 0) && (RGB[2] <= 0)){
-					// If RGB in pergame is 0 or less, use standard rainbowled patern
-					if (settings.twl.rainbowled) {
+					// If RGB in pergame is 0 or less, use standard green or rainbowled patern
+					if (settings.twl.rainbowled==1) {
+						dsGreenLed();
+					} else {
 						RainbowLED();
 					}
 				}else{
