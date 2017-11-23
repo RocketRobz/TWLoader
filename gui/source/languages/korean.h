@@ -84,7 +84,7 @@ static const char *const lang_KO[STR_MAX] = {
 
 	// Menu Color
 	"흰색",														// "White"
-	"검정색",														// "Black"
+	"회색-검정색",													// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"게임 배너를 포함해 ",												// "The language to use for the UI,"
@@ -162,7 +162,7 @@ static const char *const lang_KO[STR_MAX] = {
 	"게임 위치",													// "Game location"
 	"박스아트: 켜짐",												// "Box Art: On"
 	"박스아트: 꺼짐",												// "Box Art: OFF"
-	"GBARunner2 구동",											// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"상단 테두리: 켜짐",												// "Top border: On"
 	"상단 테두리: 꺼짐",												// "Top border: Off"
 	"donor rom 해제",												// "Unset donor rom"
@@ -171,6 +171,9 @@ static const char *const lang_KO[STR_MAX] = {
 	"SD 카드",													// "SD Card"
 	"플래시카드",													// "Flashcard"
 	"롬 검색 시 키보드 사용",											// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"GBARunner2 구동",											// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

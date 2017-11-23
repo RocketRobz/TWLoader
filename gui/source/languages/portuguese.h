@@ -84,7 +84,7 @@ static const char *const lang_PT[STR_MAX] = {
 
 	// Menu Color
 	"Branco",													// "White"
-	"Preto",													// "Black"
+	"Cinzento-Preto",											// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"A língua a utilisar para a interface,",					// "The language to use for the UI,"
@@ -162,7 +162,7 @@ static const char *const lang_PT[STR_MAX] = {
 	"Localização do jogo",										// "Game location"
 	"Capa do jogo: On",											// "Box Art: On"
 	"Capa do jogo: Off",										// "Box Art: OFF"
-	"Iniciar GBARunner2",										// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Borda do topo: Off",										// "Top border: On"
 	"Borda do topo: On",										// "Top border: Off"
 	"Desactivar ROM donor",										// "Unset donor rom"
@@ -171,6 +171,9 @@ static const char *const lang_PT[STR_MAX] = {
 	"Carta SD",													// "SD Card"
 	"Flashcard",												// "Flashcard"
 	"Utilisar teclado para encontrar roms",						// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"Iniciar GBARunner2",										// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

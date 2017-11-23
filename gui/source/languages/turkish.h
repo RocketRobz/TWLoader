@@ -50,6 +50,7 @@ static const char *const lang_TR[STR_MAX] = {
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Slot-1 için SD card erişimi",								// "SD card access for Slot-1"
 	"Slot-1'i sıfırla",												// "Reset Slot-1"
+	"Bootstrap loading screen",									// "Bootstrap loading screen"
 	"Konsol çıktısı",											// "Console output"
 	"Bootstrap'ı otomatik güncelleştir",									// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -83,7 +84,7 @@ static const char *const lang_TR[STR_MAX] = {
 
 	// Menu Color
 	"Beyaz",													// "White"
-	"Siyah",													// "Black"
+	"Gri-Siyah",												// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"Arayüzde kullanılacak dil,",							// "The language to use for the UI,"
@@ -161,7 +162,7 @@ static const char *const lang_TR[STR_MAX] = {
 	"Oyun konumu",											// "Game location"
 	"Kapak Resmi: Açık",												// "Box Art: On"
 	"Kapak Resmi: Kapalı",												// "Box Art: OFF"
-	"GBARunner2'yi Başlat",											// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Üst Kenarlık: Açık",											// "Top border: On"
 	"Üst Kenarlık: Kapalı",											// "Top border: Off"
 	"Donor Rom seçimini kaldır",											// "Unset donor rom"
@@ -170,6 +171,9 @@ static const char *const lang_TR[STR_MAX] = {
 	"SD Kart",													// "SD Card"
 	"Flashkart",												// "Flashcard"
 	"Romları bulmak için klavyeyi kullan",							// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"GBARunner2'yi Başlat",											// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

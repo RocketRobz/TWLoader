@@ -84,7 +84,7 @@ static const char *const lang_TRCH[STR_MAX] = {
 
 	// Menu Color
 	"白色",														// "White"
-	"黑色",														// "Black"
+	"灰色-黑色",													// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"介面上所使用的語言,",											// "The language to use for the UI,"
@@ -162,7 +162,7 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"遊戲位置",													// "Game location"
 	"遊戲圖示: 開",												// "Box Art: On"
 	"遊戲圖示: 關",												// "Box Art: OFF"
-	"啟動 GBARunner2",											// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"上邊緣: 開",													// "Top border: On"
 	"上邊緣: 關",													// "Top border: Off"
 	"取消 donor rom",											// "Unset donor rom"
@@ -171,6 +171,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"SD 卡",														// "SD Card"
 	"燒錄卡",														// "Flashcard"
 	"使用鍵盤選找 roms",											// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"啟動 GBARunner2",											// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

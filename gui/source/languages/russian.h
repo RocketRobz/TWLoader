@@ -84,7 +84,7 @@ static const char *const lang_RU[STR_MAX] = {
 
 	// Menu Color
 	"Белый",													// "White"
-	"Черный",													// "Black"
+	"Серый-Черный",												// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"Язый интерфейса,",											// "The language to use for the UI,"
@@ -162,7 +162,7 @@ static const char *const lang_RU[STR_MAX] = {
 	"Расположение игр",											// "Game location"
 	"Обложка: Вкл",												// "Box Art: On"
 	"Обложка: Выкл",											// "Box Art: OFF"
-	"Запуск GBARunner2",										// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Оверлей: Вкл",												// "Top border: On"
 	"Оверлей: Выкл",											// "Top border: Off"
 	"Не исп. ROM-донор",										// "Unset donor rom"
@@ -171,6 +171,9 @@ static const char *const lang_RU[STR_MAX] = {
 	"SD карта",													// "SD Card"
 	"Флешкарта",												// "Flashcard"
 	"Используйте клавиатуру для поиска ROM-ов",					// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"Запуск GBARunner2",										// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

@@ -224,18 +224,29 @@ static std::string ReplaceAll(std::string str, const std::string& from, const st
 }
 
 
-static inline void screenoff(void)
+static bool screenoff_ran = false;
+static bool screenon_ran = true;
+
+inline void screenoff(void)
 {
-    gspLcdInit();
-    GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
-    gspLcdExit();
+	screenon_ran = false;
+	if(!screenoff_ran) {
+		gspLcdInit();
+		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
+		gspLcdExit();
+		screenoff_ran = true;
+	}
 }
 
-static inline void screenon(void)
+inline void screenon(void)
 {
-    gspLcdInit();
-    GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-    gspLcdExit();
+ 	screenoff_ran = false;
+	if(!screenon_ran) {
+		gspLcdInit();
+		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+		gspLcdExit();
+		screenon_ran = true;
+	}
 }
 
 static Handle ptmsysmHandle = 0;
@@ -422,8 +433,10 @@ static int CreateGameSave(const char *filename) {
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 	if (!f_nds_file) {
+		screenon();
 		DialogBoxAppear(12, 16, "fopen(nds_path) failed, continuing anyway.");
 		DialogBoxDisappear(12, 16, "fopen(nds_path) failed, continuing anyway.");
+		screenoff();
 		return -1;
 	}
 
@@ -434,6 +447,7 @@ static int CreateGameSave(const char *filename) {
 	fclose(f_nds_file);
 	
 	if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
+		screenon();
 		DialogBoxAppear(12, 72, "Creating save file...");
 		static const int BUFFER_SIZE = 4096;
 		char buffer[BUFFER_SIZE];
@@ -474,6 +488,7 @@ static int CreateGameSave(const char *filename) {
 		}
 
 		DialogBoxDisappear(12, 72, "Done!");
+		screenoff();
 	}
 	return 0;
 }
@@ -4355,13 +4370,24 @@ int main(){
 					// Draw the menu dialog box.
 					drawMenuDialogBox();
 				}
-				if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+				if (fadealpha > 0) {
+					pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+					if (fadealpha == 255) screenoff();
+				} else {
+					screenon();
+				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
 			settingsDrawBottomScreen();
-			if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+			if (fadealpha > 0) {
+				pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
+				if (fadealpha == 255) screenoff();
+			} else {
+				screenon();
+			}
 		}
-		
+		pp2d_end_draw();
+
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
@@ -5181,7 +5207,7 @@ int main(){
 								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 111) && touch.py <= (menudbox_Ypos + 145)){ // Search button
 								startmenu_cursorPosition = 5; // Only this is making sometimes to not show the light texture								
-								/*if(matching_files.size() != 0){
+								if(matching_files.size() != 0){
 									matching_files.clear();
 									snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
@@ -5240,11 +5266,7 @@ int main(){
 								pp2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
-								menu_ctrlset = CTRL_SET_GAMESEL;*/			
-								if (dspfirmfound) {
-									sfx_wrong->stop();	// Prevent freezing
-									sfx_wrong->play();
-								}
+								menu_ctrlset = CTRL_SET_GAMESEL;
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 151) && touch.py <= (menudbox_Ypos + 185)){ // Settings button
 								startmenu_cursorPosition = 6; // Only this is making sometimes to not show the light texture
 								pp2d_draw_texture(dboxtex_button, 23, menudbox_Ypos + 151); // Light the button to print it always
@@ -5293,7 +5315,7 @@ int main(){
 									break;
 								case 5: {
 									// Search
-									/*if(matching_files.size() != 0){
+									if(matching_files.size() != 0){
 										matching_files.clear();
 										snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
 									}
@@ -5335,11 +5357,7 @@ int main(){
 									}
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
-									menu_ctrlset = CTRL_SET_GAMESEL;*/
-									if (dspfirmfound) {
-										sfx_wrong->stop();	// Prevent freezing
-										sfx_wrong->play();
-									}
+									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								}
 								case 6:
@@ -5516,18 +5534,13 @@ int main(){
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set LED Color
 									gamesettings_cursorPosition = 3;								
 
-									/*RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2];*/
-
-									if (dspfirmfound) {
-										sfx_wrong->stop();	// Prevent freezing
-										sfx_wrong->play();
-									}
+									settings.pergame.blue = RGB[2];
 								}
 							} else {
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
@@ -5571,18 +5584,13 @@ int main(){
 								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
 									gamesettings_cursorPosition = 3;								
 
-									/* RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2]; */
-
-									if (dspfirmfound) {
-										sfx_wrong->stop();	// Prevent freezing
-										sfx_wrong->play();
-									}
+									settings.pergame.blue = RGB[2];
 								}
 							}
 							if (touch.px >= 233 && touch.px <= 299 && touch.py >= (menudbox_Ypos + 191) && touch.py <= (menudbox_Ypos + 217)){ // Back button
@@ -5646,13 +5654,13 @@ int main(){
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 3:
-									/*RGB[0] = keyboardInputInt("Red color: max is 255");
+									RGB[0] = keyboardInputInt("Red color: max is 255");
 									RGB[1] = keyboardInputInt("Green color: max is 255");
 									RGB[2] = keyboardInputInt("Blue color: max is 255");
 									
 									settings.pergame.red = RGB[0];
 									settings.pergame.green = RGB[1];
-									settings.pergame.blue = RGB[2];*/
+									settings.pergame.blue = RGB[2];
 
 									if (dspfirmfound) {
 										sfx_wrong->stop();	// Prevent freezing
@@ -6072,9 +6080,8 @@ int main(){
 			}
 			break;
 		}
-		pp2d_end_draw();
 	}	// aptMainLoop
-	
+
 	// Unregister the "returned from HOME Menu" handler.
 	aptUnhook(&rfhm_cookie);
 	if (logEnabled) LogFM("Main", "returned from HOME Menu handler unregistered");
@@ -6121,6 +6128,7 @@ int main(){
 	if (logEnabled) LogFM("Main", "Stoping pp2d...");
 	pp2d_exit();
 	
+	screenon();
 	if (logEnabled) LogFM("Main", "All services are closing and returning to HOME Menu");
 
 	acExit();

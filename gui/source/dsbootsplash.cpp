@@ -56,6 +56,7 @@ void fade_whiteToBlack() {
 			if (fade == 255) break;
 		}
 	}
+	screenoff();
 }
 
 /**
@@ -253,6 +254,7 @@ void bootSplash() {
 		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(bg_col, bg_col, bg_col, 255));
 		pp2d_end_draw();
+		screenon();
 	}
 
 	while (aptMainLoop()) {

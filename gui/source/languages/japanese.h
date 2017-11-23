@@ -84,7 +84,7 @@ static const char *const lang_JP[STR_MAX] = {
 
 	// Menu Color
 	"白",														// "White"
-	"黒",														// "Black"
+	"灰色-黒",													// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"The language to use for the UI,",							// "The language to use for the UI,"
@@ -159,10 +159,10 @@ static const char *const lang_JP[STR_MAX] = {
 
 	/** Start menu **/
 	// Options
-	"ゲームロケーション",												// "Game location"
+	"ゲームロケーション",													// "Game location"
 	"Box Art: はい",												// "Box Art: On"
 	"Box Art: いいえ",												// "Box Art: OFF"
-	"GBARunner2スタート",											// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Top border: はい",											// "Top border: On"
 	"Top border: いいえ",											// "Top border: Off"
 	"Unset donor ROM",											// "Unset donor rom"	
@@ -171,6 +171,9 @@ static const char *const lang_JP[STR_MAX] = {
 	"SDカード",													// "SD Card"
 	"フラッシュカード",													// "Flashcard"
 	"Use the keyboard to find roms",							// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"GBARunner2スタート",											// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

@@ -84,7 +84,7 @@ static const char *const lang_ES[STR_MAX] = {
 
 	// Menu Color
 	"Blanco",													// "White"
-	"Negro",													// "Black"
+	"Gris-Negro",												// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"El idioma para usar en TWLoader.",							// "The language to use for the UI,"
@@ -162,7 +162,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"Localización:",											// "Game location"
 	"Carátulas: On",											// "Box Art: On"
 	"Carátulas: Off",											// "Box Art: OFF"
-	"Iniciar GBARunner2",										// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Borde superior: On",										// "Top border: On"
 	"Borde superior: Off",										// "Top border: Off"
 	"Eliminar donante",											// "Unset donor rom"
@@ -171,6 +171,9 @@ static const char *const lang_ES[STR_MAX] = {
 	"Tarjeta SD",												// "SD Card"
 	"Flashcard",												// "Flashcard"
 	"Usa el teclado para buscar ROMs",							// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"Iniciar GBARunner2",										// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

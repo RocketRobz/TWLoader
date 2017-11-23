@@ -84,10 +84,10 @@ static const char *const lang_FR[STR_MAX] = {
 
 	// Menu Color
 	"Blanc",                                                    // "White"
-	"Noir",                                                     // "Black"
+	"Gris-Noir",												// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
-	"La langue à utiliser pour l'interface,",                          // "The language to use for the UI,"
+	"La langue à utiliser pour l'interface,",					// "The language to use for the UI,"
 	"incluant le texte des bannières des jeux.",                // "including game banner text."
 	 
 	"Le thème à utiliser dans TWLoader.",                       // "The theme to use in TWLoader."

@@ -84,11 +84,11 @@ static const char *const lang_DE[STR_MAX] = {
 
 	// Menu Color
 	"Weiß",														// "White"
-	"Schwarz",													// "Black"
+	"Grau-Schwarz",												// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"Die Sprache der Benutzeroberfläche",						// "The language to use for the UI,"
-	"und des Spiel-Banner Texts.",										// "including game banner text."
+	"und des Spiel-Banner Texts.",								// "including game banner text."
 
 	"Das benutzte Design für TWLoader.",						// "The theme to use in TWLoader."
 	"Drücke START für Unterdesigns.",							// "Press START for sub-themes."
@@ -162,7 +162,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Spielort",													// "Game location"
 	"Box-Art: An",												// "Box Art: On"
 	"Box-Art: Aus",												// "Box Art: OFF"
-	"GBARunner2 starten",										// "Start GBARunner2"
+	"Select ROM type",											// "Select ROM type"
 	"Oberer Rand: An",											// "Top border: On"
 	"Oberer Rand: Aus",											// "Top border: Off"	
 	"Entferne Donor ROM",										// "Unset donor rom"	
@@ -171,6 +171,9 @@ static const char *const lang_DE[STR_MAX] = {
 	"SD Karte",													// "SD Card"
 	"Flashkarte",												// "Flashcard"
 	"Benutze die Tastatur um ROMs zu finden",					// "Use the keyboard to find roms"
+
+	/** Select ROM type **/
+	"GBARunner2 starten",										// "Start GBARunner2"
 
 	/** Select menu **/
 	// Options

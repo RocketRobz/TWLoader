@@ -1,4 +1,4 @@
-#ifndef FINNISH_H
+﻿#ifndef FINNISH_H
 #define FINNISH_H
 
 #include <3ds/types.h>
@@ -84,7 +84,7 @@ static const char *const lang_FI[STR_MAX] = {
 
 	// Menu Color
 	"Valkoinen",									// "White"
-	"Musta",									// "Black"
+	"Harmaa-Musta",									// "Gray-Black"
 
 	/** Settings: GUI descriptions **/
 	"Kieli jota käytetään käyttöliittymässä,",					// "The language to use for the UI,"
