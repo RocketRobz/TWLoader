@@ -6095,7 +6095,7 @@ int main(){
 					// If RGB in pergame is 0 or less, use standard green or rainbowled patern
 					if (settings.twl.rainbowled==1) {
 						dsGreenLed();
-					} else {
+					} else if (settings.twl.rainbowled==2) {
 						RainbowLED();
 					}
 				}else{
