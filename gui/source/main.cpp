@@ -1893,6 +1893,10 @@ static void drawMenuDialogBox(void)
 extern const u64 TWLNAND_TID;
 const u64 TWLNAND_TID = 0x0004800554574C44ULL;
 
+// TWLNAND side (TWL touch mode) Title ID.
+extern const u64 TWLNANDTWLTOUCH_TID;
+const u64 TWLNANDTWLTOUCH_TID = 0x0004800554434C44ULL;
+
 // TWLoader's NTR Launcher Title ID.
 extern const u64 NTRLAUNCHER_TID;
 const u64 NTRLAUNCHER_TID = 0x0004800554574C31ULL;
@@ -1905,6 +1909,18 @@ const u64 NTRLAUNCHER_TID = 0x0004800554574C31ULL;
 */
 bool checkTWLNANDSide(void) {
 	u64 tid = TWLNAND_TID;
+	AM_TitleEntry entry;
+	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
+}
+
+/**
+* Check if the TWLNAND-side (part 1.1) title is installed or not
+* Title ID: 0x0004800554434C44ULL
+* MediaType: MEDIATYPE_NAND
+* @return: true if installed, false if not
+*/
+bool checkTWLNANDSide1(void) {
+	u64 tid = TWLNANDTWLTOUCH_TID;
 	AM_TitleEntry entry;
 	return R_SUCCEEDED(AM_GetTitleInfo(MEDIATYPE_NAND, 1, &tid, &entry));
 }
@@ -2451,6 +2467,7 @@ int main(){
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
+	const bool isTWLNAND1Installed = checkTWLNANDSide1();
 	const bool isTWLNAND2Installed = checkTWLNANDSide2();
 	// For testing in Citra
 	//const bool isTWLNANDInstalled = true;
@@ -2462,7 +2479,7 @@ int main(){
 	// Check if the TWLNAND-side title (both parts) are installed.
 	if ((!isTWLNANDInstalled && !isDemo) || (!isTWLNAND2Installed && !isDemo)) {
 		if (!isTWLNAND2Installed) {
-			TWLNANDnotfound_msg = 1;
+			TWLNANDnotfound_msg = 2;
 			if (logEnabled)	LogFM("Main.isTWLNAND2Installed", "TWLNAND side (part 2) not installed.");
 		} else {
 			TWLNANDnotfound_msg = 0;
@@ -5989,7 +6006,11 @@ int main(){
 
 			// Prepare for the app launch.
 			u64 tid;
-			tid = TWLNAND_TID;
+			if (settings.twl.romtype == 1 && isTWLNAND1Installed) {
+				tid = TWLNANDTWLTOUCH_TID;
+			} else {
+				tid = TWLNAND_TID;
+			}
 			if (settings.twl.forwarder) {
 				CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
 				if(settingsini.GetInt("TWL-MODE","FLASHCARD",0) == 0
