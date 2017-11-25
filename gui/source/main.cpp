@@ -3240,7 +3240,8 @@ int main(){
 			if (!colortexloaded_bot) {
 				settingsUnloadTextures();
 				pp2d_load_texture_png(dotcircletex, color_data->dotcircleloc); // Dots forming a circle
-				pp2d_load_texture_png(startbordertex, color_data->startborderloc); // "START" border
+				if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png(startbordertex, color_data->startborderloc); // "START" border
+				else pp2d_load_texture_png(startbordertex, "romfs:/graphics/3ds_cursor.png");	// HOME Menu cursor
 				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
@@ -3821,22 +3822,26 @@ int main(){
 							if (showbubble) {
 								// Print "START" and the cursor border.
 								if (settings.ui.iconsize) {
-									pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
-									const wchar_t *start_text = TR(STR_START);
-									if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.50, 0.60);
-									else text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
 									if (settings.ui.theme != THEME_3DSMENU) {
+										pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
+										const wchar_t *start_text = TR(STR_START);
+										if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.50, 0.60);
+										else text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
 										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 180, 0.50, 0.60, WHITE, start_text);
 										else pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
+									} else {
+										pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize, startborderscalesize);
 									}
 								} else {
-									pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
-									const wchar_t *start_text = TR(STR_START);
-									if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.40, 0.50);
-									else text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
 									if (settings.ui.theme != THEME_3DSMENU) {
+										pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
+										const wchar_t *start_text = TR(STR_START);
+										if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.40, 0.50);
+										else text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
 										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 173, 0.40, 0.50, WHITE, start_text);
 										else pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
+									} else {
+										pp2d_draw_texture_scale(startbordertex, 130+startbordermovepos, 116+startbordermovepos, startborderscalesize-0.25, startborderscalesize-0.25);
 									}
 								}
 							}
@@ -4235,6 +4240,7 @@ int main(){
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				startbordermovepos = 1;
+				if(settings.ui.theme == THEME_3DSMENU) startbordermovepos++;
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
 			} else if (titleboxXmovetimer == 2) {
@@ -4346,6 +4352,7 @@ int main(){
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
 				startbordermovepos = 1;
+				if(settings.ui.theme == THEME_3DSMENU) startbordermovepos++;
 				startborderscalesize = 0.97;
 				cursorPositionset = false;
 			} else if (titleboxXmovetimer == 2) {
