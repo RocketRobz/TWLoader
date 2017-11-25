@@ -21,7 +21,7 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_FRONTEND = 0,			// Frontend settings (page 1)
 	SUBSCREEN_MODE_FRONTEND2 = 1,			// Frontend settings (page 2)
 	SUBSCREEN_MODE_FRONTEND3 = 2,			// Frontend settings (page 3)
-	SUBSCREEN_MODE_NTR = 3,				// NTR mode settings
+	SUBSCREEN_MODE_NTR = 3,					// NTR mode settings
 	SUBSCREEN_MODE_FLASH_CARD = 4,			// Flash card options
 	SUBSCREEN_MODE_SUB_THEME = 5,			// Sub-theme select
 	SUBSCREEN_MODE_CHANGE_ROM_PATH = 6,		// Sub-menu with rom path location
@@ -75,6 +75,16 @@ void settingsLoadTextures(void)
 {
 	if (settings_tex_loaded)
 		return;
+
+	/** Unload menu textures **/
+	if (settings.ui.theme == THEME_R4) pp2d_free_texture(toplogotex);
+	pp2d_free_texture(topbgtex);
+
+	pp2d_free_texture(iconstex);
+	pp2d_free_texture(startbordertex);
+	pp2d_free_texture(bottomtex);
+	pp2d_free_texture(bubbletex);
+	pp2d_free_texture(boxfulltex);
 
 	/** Top screen **/
 	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (settings)
@@ -1144,6 +1154,13 @@ void settingsDrawBottomScreen(void)
 				"\n"
 				"sd:/_nds/twloader/cias/TWLoader - TWLNAND side.cia";
 		} else if (TWLNANDnotfound_msg == 1) {
+			twlnand_msg =
+				"TWLNAND-side (part 1.1) has not been installed.\n"
+				"Please install the TWLNAND-side (part 1.1) CIA:\n"
+				"\n"
+				"sd:/_nds/twloader/cias/\n"
+				"TWLoader - TWLNAND side (part 1.1).cia";
+		} else if (TWLNANDnotfound_msg == 2) {
 			twlnand_msg =
 				"TWLNAND-side (part 2) has not been installed.\n"
 				"Please install the TWLNAND-side (part 2) CIA:\n"

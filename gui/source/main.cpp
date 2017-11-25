@@ -2260,7 +2260,6 @@ int main(){
 	pp2d_load_texture_png(cartctrtex, "romfs:/graphics/cart_ctr.png"); // CTR cartridge
 	pp2d_load_texture_png(boxemptytex, "romfs:/graphics/box_empty.png"); // (DSiWare) empty box on bottom screen
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
-	pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
 	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
 
 	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
@@ -3312,9 +3311,11 @@ int main(){
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
 					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
+					pp2d_load_texture_png(bubbletex, "romfs:/graphics/3ds_bubble.png"); // Text bubble
 					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/3ds_box_full.png"); // (DSiWare) box on bottom screen
 				} else {
 					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
+					pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
 					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/box_full.png"); // (DSiWare) box on bottom screen
 				}
 				colortexloaded_bot = true;
@@ -3753,19 +3754,23 @@ int main(){
 							if (settings.ui.theme != THEME_3DSMENU) {
 								pp2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
 							} else {
-								pp2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108);
+								pp2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 116);
 							}
 							titleboxXpos += 80;
 
 							bnriconnum = filenum;
 							if (loadbnriconnum <= filenum) {
-								pp2d_draw_texture_scale(dotcircletex,ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
+								if (settings.ui.theme != THEME_3DSMENU) {
+									pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
+								} else {
+									pp2d_draw_texture_part_scale(dotcircletex, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+								}
 							} else {
 								ChangeBNRIconNo();
 								if (settings.ui.theme != THEME_3DSMENU) {
 									pp2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
 								} else {
-									pp2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+									pp2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
 								}
 							}
 							ndsiconXpos += 80;
@@ -3790,7 +3795,11 @@ int main(){
 						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
 						bipxPos += 12.5;
 						if (settings.ui.iconsize) {
-							pp2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+							} else {
+								pp2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 116, 1.25, 1.25);
+							}
 							titleboxXpos += 80;
 							ndsiconXpos += 80;
 						} else {
@@ -3805,7 +3814,11 @@ int main(){
 				}
 
 				if (settings.ui.iconsize) {
-					pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
+					if (settings.ui.theme != THEME_3DSMENU) {
+						pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
+					} else {
+						pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 112, -1.25, 1.25);
+					}
 				} else {
 					pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 112, -1, 1);
 				}
@@ -3825,21 +3838,27 @@ int main(){
 									if (settings.ui.theme != THEME_3DSMENU) {
 										pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 104+startbordermovepos, startborderscalesize+0.25, startborderscalesize+0.25);
 										const wchar_t *start_text = TR(STR_START);
-										if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.50, 0.60);
-										else text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
-										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 180, 0.50, 0.60, WHITE, start_text);
-										else pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
+										if(language==13) {
+											text_width = pp2d_get_wtext_width(start_text, 0.50, 0.60);
+											pp2d_draw_wtext(((320-text_width)/2), 180, 0.50, 0.60, WHITE, start_text);
+										} else {
+											text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
+											pp2d_draw_wtext(((320-text_width)/2), 180, 0.60, 0.60, WHITE, start_text);
+										}
 									} else {
-										pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 108+startbordermovepos, startborderscalesize, startborderscalesize);
+										pp2d_draw_texture_scale(startbordertex, 120+startbordermovepos, 116+startbordermovepos, startborderscalesize, startborderscalesize);
 									}
 								} else {
 									if (settings.ui.theme != THEME_3DSMENU) {
 										pp2d_draw_texture_scale(startbordertex, 128+startbordermovepos, 112+startbordermovepos, startborderscalesize, startborderscalesize);
 										const wchar_t *start_text = TR(STR_START);
-										if(language==13) text_width = pp2d_get_wtext_width(start_text, 0.40, 0.50);
-										else text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
-										if(language==13) pp2d_draw_wtext(((320-text_width)/2), 173, 0.40, 0.50, WHITE, start_text);
-										else pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
+										if(language==13) {
+											text_width = pp2d_get_wtext_width(start_text, 0.40, 0.50);
+											pp2d_draw_wtext(((320-text_width)/2), 173, 0.40, 0.50, WHITE, start_text);
+										} else {
+											text_width = pp2d_get_wtext_width(start_text, 0.50, 0.50);
+											pp2d_draw_wtext(((320-text_width)/2), 173, 0.50, 0.50, WHITE, start_text);
+										}
 									} else {
 										pp2d_draw_texture_scale(startbordertex, 130+startbordermovepos, 116+startbordermovepos, startborderscalesize-0.25, startborderscalesize-0.25);
 									}
