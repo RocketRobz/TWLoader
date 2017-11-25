@@ -84,7 +84,7 @@ void settingsLoadTextures(void)
 	pp2d_free_texture(startbordertex);
 	pp2d_free_texture(bottomtex);
 	pp2d_free_texture(bubbletex);
-	pp2d_free_texture(boxfulltex);
+	pp2d_free_texture(boxtex);
 
 	/** Top screen **/
 	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (settings)

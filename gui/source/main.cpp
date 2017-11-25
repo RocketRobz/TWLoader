@@ -2258,7 +2258,7 @@ int main(){
 	pp2d_load_texture_png(cartntrtex, "romfs:/graphics/cart_ntr.png"); // NTR cartridge
 	pp2d_load_texture_png(carttwltex, "romfs:/graphics/cart_twl.png"); // TWL cartridge
 	pp2d_load_texture_png(cartctrtex, "romfs:/graphics/cart_ctr.png"); // CTR cartridge
-	pp2d_load_texture_png(boxemptytex, "romfs:/graphics/box_empty.png"); // (DSiWare) empty box on bottom screen
+	pp2d_load_texture_png(_3dsbottopbartex, "romfs:/graphics/3ds/bot_topbar.png");
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
 	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
 
@@ -2624,7 +2624,7 @@ int main(){
 							break;
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
-					pp2d_load_texture_png(topbgtex, "romfs:/graphics/3ds_top.png"); // Top background, behind the DSi-Menu border
+					pp2d_load_texture_png(topbgtex, "romfs:/graphics/3ds/top.png"); // Top background, behind the DSi-Menu border
 				} else {
 					pp2d_load_texture_png(topbgtex, color_data->topbgloc); // Top background, behind the DSi-Menu border
 				}
@@ -3240,7 +3240,7 @@ int main(){
 				settingsUnloadTextures();
 				pp2d_load_texture_png(dotcircletex, color_data->dotcircleloc); // Dots forming a circle
 				if (settings.ui.theme != THEME_3DSMENU) pp2d_load_texture_png(startbordertex, color_data->startborderloc); // "START" border
-				else pp2d_load_texture_png(startbordertex, "romfs:/graphics/3ds_cursor.png");	// HOME Menu cursor
+				else pp2d_load_texture_png(startbordertex, "romfs:/graphics/3ds/cursor.png");	// HOME Menu cursor
 				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
@@ -3311,12 +3311,12 @@ int main(){
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
 					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
-					pp2d_load_texture_png(bubbletex, "romfs:/graphics/3ds_bubble.png"); // Text bubble
-					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/3ds_box_full.png"); // (DSiWare) box on bottom screen
+					pp2d_load_texture_png(bubbletex, "romfs:/graphics/3ds/bubble.png"); // Text bubble
+					pp2d_load_texture_png(boxtex, "romfs:/graphics/3ds/box.png"); // (DSiWare) box on bottom screen
 				} else {
 					pp2d_load_texture_png(bottomtex, bottomloc); // Bottom of menu
 					pp2d_load_texture_png(bubbletex, "romfs:/graphics/bubble.png"); // Text bubble
-					pp2d_load_texture_png(boxfulltex, "romfs:/graphics/box_full.png"); // (DSiWare) box on bottom screen
+					pp2d_load_texture_png(boxtex, "romfs:/graphics/box.png"); // (DSiWare) box on bottom screen
 				}
 				colortexloaded_bot = true;
 			}
@@ -3646,6 +3646,7 @@ int main(){
 				} else {
 					if (settings.ui.theme == THEME_3DSMENU) {
 						pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(233, 219, 215, 255));
+						pp2d_draw_texture(_3dsbottopbartex, 0, 0);
 					} else {
 						pp2d_draw_texture_blend(bottomtex, 320/2 - 320/2, 240/2 - 240/2, menucolor);
 					}
@@ -3752,9 +3753,9 @@ int main(){
 						bipxPos += 12.5;
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_scale(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos*1.25, 108, 0, 0, 64, 64, 1.25, 1.25);
 							} else {
-								pp2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos*1.25, 116);
+								pp2d_draw_texture_part(boxtex, titleboxXpos+titleboxXmovepos*1.25, 116, 0, 0, 80, 80);
 							}
 							titleboxXpos += 80;
 
@@ -3776,9 +3777,9 @@ int main(){
 							ndsiconXpos += 80;
 						} else {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture(boxfulltex, titleboxXpos+titleboxXmovepos, 116);
+								pp2d_draw_texture_part(boxtex, titleboxXpos+titleboxXmovepos, 116, 0, 0, 64, 64);
 							} else {
-								pp2d_draw_texture_scale(boxfulltex, 5+titleboxXpos+titleboxXmovepos, 119, 0.68, 0.67);
+								pp2d_draw_texture_part_scale(boxtex, 5+titleboxXpos+titleboxXmovepos, 119, 0, 0, 80, 80, 0.68, 0.67);
 							}
 							titleboxXpos += 64;
 
@@ -3796,14 +3797,18 @@ int main(){
 						bipxPos += 12.5;
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 108, 1.25, 1.25);
+								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos*1.25, 108, 0, 64, 64, 64, 1.25, 1.25);
 							} else {
-								pp2d_draw_texture_scale(boxemptytex, titleboxXpos+titleboxXmovepos*1.25, 116, 1.25, 1.25);
+								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos*1.25, 116, 0, 80, 80, 80, 1.25, 1.25);
 							}
 							titleboxXpos += 80;
 							ndsiconXpos += 80;
 						} else {
-							pp2d_draw_texture(boxemptytex, titleboxXpos+titleboxXmovepos, 116);
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_part(boxtex, titleboxXpos+titleboxXmovepos, 116, 0, 64, 64, 64);
+							} else {
+								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos, 116, 0, 80, 80, 80, 0.68, 0.67);
+							}
 							titleboxXpos += 64;
 							ndsiconXpos += 64;
 						}
@@ -3885,7 +3890,7 @@ int main(){
 							pp2d_draw_texture(cardicontex, 144, ndsiconYmovepos);
 						}
 					} else {
-						pp2d_draw_texture(boxfulltex, 128, titleboxYmovepos); // Draw selected game/app that moves up
+						pp2d_draw_texture_part(boxtex, 128, titleboxYmovepos, 0, 0, 64, 64); // Draw selected game/app that moves up
 						if (!applaunchicon) {
 							bnriconnum = settings.ui.cursorPosition;
 							ChangeBNRIconNo();
@@ -4019,7 +4024,11 @@ int main(){
 						int y, dy;
 						//top dialog = 100px tall
 						if (settings.twl.romtype == 1) {
-							pp2d_draw_wtext(10, 40, 0.75, 0.75, BLACK, romsel_filename_w.c_str());
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_wtext(10, 40, 0.75, 0.75, BLACK, romsel_filename_w.c_str());
+							} else {
+								pp2d_draw_wtext(36, 68, 0.65, 0.65, BLACK, romsel_filename_w.c_str());
+							}
 						} else {
 							if (settings.ui.theme != THEME_3DSMENU) {
 								if (settings.ui.filename) {
@@ -4032,20 +4041,26 @@ int main(){
 									//y = 16; dy = 22;
 									dy = 22;
 								}
+								// Print the banner text, center-aligned.
+								const size_t banner_lines = std::min(3U, romsel_gameline.size());
+								for (size_t i = 0; i < banner_lines; i++, y += dy) {
+									const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.75, 0.75);
+									pp2d_draw_wtext((320-text_width)/2, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+								}
 							} else {
 								if (settings.ui.filename) {
-									pp2d_draw_wtext(10, 28, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+									pp2d_draw_wtext(10, 196, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
 								}
-								y = (126-(19*romsel_gameline.size()))/2 + 4;
+								y = (150-(19*romsel_gameline.size()))/2 + 4;
 								//y = 24; dy = 19;
 								dy = 19;
-							}
 
-							// Print the banner text, center-aligned.
-							const size_t banner_lines = std::min(3U, romsel_gameline.size());
-							for (size_t i = 0; i < banner_lines; i++, y += dy) {
-								const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.75, 0.75);
-								pp2d_draw_wtext((320-text_width)/2, y, 0.75, 0.75, BLACK, romsel_gameline[i].c_str());
+								// Print the banner text, center-aligned.
+								const size_t banner_lines = std::min(3U, romsel_gameline.size());
+								for (size_t i = 0; i < banner_lines; i++, y += dy) {
+									const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.65, 0.65);
+									pp2d_draw_wtext((320-text_width)/2, y, 0.65, 0.65, BLACK, romsel_gameline[i].c_str());
+								}
 							}
 						}
 
