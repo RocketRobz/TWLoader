@@ -4021,15 +4021,24 @@ int main(){
 						if (settings.twl.romtype == 1) {
 							pp2d_draw_wtext(10, 40, 0.75, 0.75, BLACK, romsel_filename_w.c_str());
 						} else {
-							if (settings.ui.filename) {
-								pp2d_draw_wtext(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
-								y = (100-(19*romsel_gameline.size()))/2 + 4;
+							if (settings.ui.theme != THEME_3DSMENU) {
+								if (settings.ui.filename) {
+									pp2d_draw_wtext(10, 8, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+									y = (100-(19*romsel_gameline.size()))/2 + 4;
+									//y = 24; dy = 19;
+									dy = 19;
+								} else {
+									y = (100-(22*romsel_gameline.size()))/2;
+									//y = 16; dy = 22;
+									dy = 22;
+								}
+							} else {
+								if (settings.ui.filename) {
+									pp2d_draw_wtext(10, 28, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+								}
+								y = (126-(19*romsel_gameline.size()))/2 + 4;
 								//y = 24; dy = 19;
 								dy = 19;
-							} else {
-								y = (100-(22*romsel_gameline.size()))/2;
-								//y = 16; dy = 22;
-								dy = 22;
 							}
 
 							// Print the banner text, center-aligned.
