@@ -867,6 +867,7 @@ static void LoadBoxArt(void) {
 	if (idx >= 0 && idx < 21) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
+		pp2d_free_texture(boxarttex[idx % 6]);
 		const char *path = (boxartpath[idx] ? boxartpath[idx] : "romfs:/graphics/blank_128x115.png");
 		pp2d_load_texture_png(boxarttex[idx % 6], path); // Box art
 	}
@@ -874,6 +875,7 @@ static void LoadBoxArt(void) {
 
 static void LoadBoxArt_WoodTheme(void) {
 	// Selected boxart is on the current page.
+	pp2d_free_texture(boxarttex[6]);
 	const char *path = (boxartpath[boxartnum] ? boxartpath[boxartnum] : "romfs:/graphics/blank_128x115.png");
 	pp2d_load_texture_png(boxarttex[6], path); // Box art
 }
@@ -3233,369 +3235,6 @@ int main(){
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {			
 			settingsDrawTopScreen();
 		}
-					
-		if(hHeld & KEY_L){
-			if (LshoulderYpos != 223)
-			{LshoulderYpos += 1;}
-		} else {
-			if (LshoulderYpos != 220)
-			{LshoulderYpos -= 1;}
-		}
-		if(hHeld & KEY_R){
-			if (RshoulderYpos != 223)
-			{RshoulderYpos += 1;}
-		} else {
-			if (RshoulderYpos != 220)
-			{RshoulderYpos -= 1;}
-		}		
-		
-		if (fadein) {
-			showbubble = false;
-			fadealpha -= 31;
-			if (fadealpha < 0) {
-				fadealpha = 0;
-				fadein = false;
-				titleboxXmovetimer = 0;
-				if (settings.ui.cursorPosition >= 0) {
-					if (settings.ui.cursorPosition >= (int)file_count)
-						showbubble = false;
-					else
-						showbubble = true;
-				}
-			}
-		}
-		
-		if (fadeout) {
-			showbubble = false;
-			fadealpha += 31;
-			if (fadealpha > 255) {
-				fadealpha = 255;
-				musicbool = false;
-				if(screenmode == SCREEN_MODE_SETTINGS) {
-					screenmode = SCREEN_MODE_ROM_SELECT;
-					fadeout = false;
-					fadein = true;
-
-					// Poll for Slot-1 changes.
-					gamecardPoll(true);
-
-					// Force banner text reload in case
-					// the Slot-1 cartridge was changed
-					// or the UI language was changed.
-					bannertextloaded = false;
-					
-					// Reload language
-					langInit();
-					
-					// Clear delete queue
-					if (delete_queue.size() != 0) {
-						delete_queue.clear();
-					}
-					
-					// Clear matching_files vector
-					if(matching_files.size() != 0) {
-						matching_files.clear(); // Clear filter
-						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
-						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter for FlashCard
-						snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size()); // Reload counter for GB ROMs
-						boxarttexloaded = false; // Reload boxarts
-						bnricontexloaded = false; // Reload banner icons
-						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
-					}
-					if (settings.ui.theme == THEME_AKMENU) {
-						pp2d_set_3D(0);
-						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
-						menu_ctrlset = CTRL_SET_MENU;
-						woodmenu_cursorPosition = 4;
-						if (settings.ui.cursorPosition < 0)
-							settings.ui.cursorPosition = 0;
-					} else if (settings.ui.theme == THEME_R4) {
-						pp2d_set_3D(0);
-						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
-						menu_ctrlset = CTRL_SET_MENU;
-						titleboxXmovepos = 0;
-						boxartXmovepos = 0;
-						if (settings.ui.cursorPosition < 0)
-							settings.ui.cursorPosition = 0;
-					} else {
-						pp2d_set_3D(1);
-						titleboxXmovepos = 0;
-						settings.ui.cursorPosition = 0 + settings.ui.pagenum * 20; // This is to reset cursor position after switching from R4 theme.
-						if (settings.twl.forwarder) {
-							if (fcfiles.size() <= 0) {
-								startbordermovepos = 0;
-								startborderscalesize = 1.0;
-								// No ROMs were found.
-								settings.ui.cursorPosition = -1;
-								titleboxXmovepos = +64;
-								noromsfound = true;
-							}
-						} else {
-							if (files.size() <= 0) {
-								startbordermovepos = 0;
-								startborderscalesize = 1.0;
-								// No ROMs were found.
-								settings.ui.cursorPosition = -1;
-								titleboxXmovepos = +64;
-								noromsfound = true;
-							}
-						}							
-						storedcursorPosition = settings.ui.cursorPosition; // This is to reset cursor position after switching from R4 theme.
-						boxartXmovepos = 0;
-						loadboxartnum = settings.ui.pagenum*20;
-						boxarttexloaded = false;
-						menu_ctrlset = CTRL_SET_GAMESEL;
-					}
-					colortexloaded = false; // Reload top textures
-					colortexloaded_bot = false; // Reload bottom textures
-				} else if (gbarunnervalue == 1) {
-					if (logEnabled)	LogFM("Main", "Loading GBARunner.");
-					applaunchon = true;
-				} else if (screenmodeswitch) {
-					screenmode = SCREEN_MODE_SETTINGS;
-					settingsResetSubScreenMode();
-					fadeout = false;
-					fadein = true;
-					screenmodeswitch = false;
-				}
-			}
-		}
-		
-		if (playwrongsounddone) {
-			if (hHeld & KEY_LEFT || hHeld & KEY_RIGHT) {} else {
-				soundwaittimer += 1;
-				if (soundwaittimer == 2) {
-					soundwaittimer = 0;
-					playwrongsounddone = false;
-				}
-			}
-		}
-
-		if (titleboxXmoveleft) {
-			titleboxXmovetimer += 1;
-			if (titleboxXmovetimer == 10) {
-				titleboxXmovetimer = 0;
-				titleboxXmoveleft = false;
-			} else if (titleboxXmovetimer == 9) {
-				// Delay a frame
-				bannertextloaded = false;
-				if (settings.ui.cursorPosition >= 0) {
-					if (settings.ui.cursorPosition >= (int)file_count)
-						showbubble = false;
-					else {
-						showbubble = true;
-						if (dspfirmfound) {
-							sfx_stop->stop();
-							sfx_stop->play();
-						}
-					}
-				} else {
-					showbubble = true;
-					if (dspfirmfound) {
-						sfx_stop->stop();
-						sfx_stop->play();
-					}
-				}
-				storedcursorPosition = settings.ui.cursorPosition;
-			} else if (titleboxXmovetimer == 8) {
-				scrollwindowXmovepos -= 1.53;
-				titleboxXmovepos += 8;
-				boxartXmovepos += 18;
-				startbordermovepos = 1;
-				startborderscalesize = 0.97;
-				cursorPositionset = false;
-			} else if (titleboxXmovetimer == 2) {
-				if (dspfirmfound) {
-					sfx_select->stop();
-					sfx_select->play();
-				}
-				scrollwindowXmovepos -= 1.53;
-				titleboxXmovepos += 8;
-				boxartXmovepos += 18;
-				// Load the previous box art
-				if ( settings.ui.cursorPosition == 3+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 9+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 15+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
-					boxartpage--;
-					boxartnum = settings.ui.cursorPosition-1;
-					LoadBoxArt();
-					boxartnum--;
-					LoadBoxArt();
-					boxartnum--;
-					LoadBoxArt();
-				}
-				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
-					boxartXmovepos = -144*7;
-					boxartXmovepos += 18*2;
-				}
-			} else {
-				if (!cursorPositionset) {
-					settings.ui.cursorPosition--;
-					cursorPositionset = true;
-				}
-				if (settings.ui.pagenum == 0) {
-					if (settings.ui.cursorPosition != -3) {
-						scrollwindowXmovepos -= 1.53;
-						titleboxXmovepos += 8;
-						boxartXmovepos += 18;
-					} else {
-						titleboxXmovetimer = 0;
-						titleboxXmoveleft = false;
-						cursorPositionset = false;
-						settings.ui.cursorPosition++;
-						if (!playwrongsounddone) {
-							if (dspfirmfound) {
-								sfx_wrong->stop();
-								sfx_wrong->play();
-							}
-							playwrongsounddone = true;
-						}
-					}
-				} else {
-					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*20) {
-						scrollwindowXmovepos -= 1.53;
-						titleboxXmovepos += 8;
-						boxartXmovepos += 18;
-					} else {
-						titleboxXmovetimer = 0;
-						titleboxXmoveleft = false;
-						cursorPositionset = false;
-						settings.ui.cursorPosition++;
-						if (!playwrongsounddone) {
-							if (dspfirmfound) {
-								sfx_wrong->stop();
-								sfx_wrong->play();
-							}
-							playwrongsounddone = true;
-						}
-					}
-				}
-			}
-		} else if(titleboxXmoveright) {
-			titleboxXmovetimer += 1;
-			if (titleboxXmovetimer == 10) {
-				titleboxXmovetimer = 0;
-				titleboxXmoveright = false;
-			} else if (titleboxXmovetimer == 9) {
-				// Delay a frame
-				bannertextloaded = false;
-				if (settings.ui.cursorPosition >= 0) {
-					if (settings.ui.cursorPosition >= (int)file_count)
-						showbubble = false;
-					else {
-						showbubble = true;
-						if (dspfirmfound) {
-							sfx_stop->stop();
-							sfx_stop->play();
-						}
-					}
-				} else {
-					showbubble = true;
-					if (dspfirmfound) {
-						sfx_stop->stop();
-						sfx_stop->play();
-					}
-				}
-				storedcursorPosition = settings.ui.cursorPosition;
-				// Load the next box art
-				if ( settings.ui.cursorPosition == 4+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 10+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 16+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
-					boxartpage++;
-					boxartnum = settings.ui.cursorPosition+2;
-					LoadBoxArt();
-					boxartnum++;
-					LoadBoxArt();
-					boxartnum++;
-					LoadBoxArt();
-				}
-				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
-					boxartXmovepos = -144;
-				}
-			} else if (titleboxXmovetimer == 8) {
-				scrollwindowXmovepos += 1.53;
-				titleboxXmovepos -= 8;
-				boxartXmovepos -= 18;
-				startbordermovepos = 1;
-				startborderscalesize = 0.97;
-				cursorPositionset = false;
-			} else if (titleboxXmovetimer == 2) {
-				if (dspfirmfound) {
-					sfx_select->stop();
-					sfx_select->play();
-				}
-				scrollwindowXmovepos += 1.53;
-				titleboxXmovepos -= 8;
-				boxartXmovepos -= 18;
-			} else {
-				if (!cursorPositionset) {
-					settings.ui.cursorPosition++;
-					cursorPositionset = true;
-				}
-				if (settings.ui.cursorPosition != filenum) {
-					scrollwindowXmovepos += 1.53;
-					titleboxXmovepos -= 8;
-					boxartXmovepos -= 18;
-				} else {
-					titleboxXmovetimer = 0;
-					titleboxXmoveright = false;
-					cursorPositionset = false;
-					settings.ui.cursorPosition--;
-					if (!playwrongsounddone) {
-						if (dspfirmfound) {
-							sfx_wrong->stop();
-							sfx_wrong->play();
-						}
-						playwrongsounddone = true;
-					}
-				}
-			}
-		}
-		if (applaunchprep) {
-			rad += 0.50f;
-			boxartYmovepos -= 6;
-			boxartreflYmovepos += 2;
-			titleboxYmovepos -= 6;
-			ndsiconYmovepos -= 6;
-			if (titleboxYmovepos < -240) {
-				if (screenmodeswitch) {
-					musicbool = false;
-					screenmode = SCREEN_MODE_SETTINGS;
-					settingsResetSubScreenMode();
-					rad = 0.0f;
-					boxartYmovepos = 63;
-					boxartreflYmovepos = 178;
-					scrollwindowXmovepos = 0;
-					titleboxYmovepos = 116;
-					ndsiconYmovepos = 129;
-					fadein = true;
-					screenmodeswitch = false;
-					applaunchprep = false;
-				} else {
-					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
-					applaunchon = true;
-				}
-			}
-			if (settings.ui.theme == THEME_3DSMENU) {
-				fadealpha += 14;
-			} else {
-				fadealpha += 6;
-			}
-			if (fadealpha > 255) {
-				showbubble = false;
-				fadealpha = 255;
-			}
-		}
 
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded_bot) {
@@ -4426,6 +4065,358 @@ int main(){
 		}
 		pp2d_end_draw();
 
+		if(hHeld & KEY_L){
+			if (LshoulderYpos != 223)
+			{LshoulderYpos += 1;}
+		} else {
+			if (LshoulderYpos != 220)
+			{LshoulderYpos -= 1;}
+		}
+		if(hHeld & KEY_R){
+			if (RshoulderYpos != 223)
+			{RshoulderYpos += 1;}
+		} else {
+			if (RshoulderYpos != 220)
+			{RshoulderYpos -= 1;}
+		}		
+		
+		if (fadein) {
+			showbubble = false;
+			fadealpha -= 31;
+			if (fadealpha < 0) {
+				fadealpha = 0;
+				fadein = false;
+				titleboxXmovetimer = 0;
+				if (settings.ui.cursorPosition >= 0) {
+					if (settings.ui.cursorPosition >= (int)file_count)
+						showbubble = false;
+					else
+						showbubble = true;
+				}
+			}
+		}
+		
+		if (fadeout) {
+			showbubble = false;
+			fadealpha += 31;
+			if (fadealpha > 255) {
+				fadealpha = 255;
+				musicbool = false;
+				if(screenmode == SCREEN_MODE_SETTINGS) {
+					screenmode = SCREEN_MODE_ROM_SELECT;
+					fadeout = false;
+					fadein = true;
+
+					// Poll for Slot-1 changes.
+					gamecardPoll(true);
+
+					// Force banner text reload in case
+					// the Slot-1 cartridge was changed
+					// or the UI language was changed.
+					bannertextloaded = false;
+					
+					// Reload language
+					langInit();
+					
+					// Clear delete queue
+					if (delete_queue.size() != 0) {
+						delete_queue.clear();
+					}
+					
+					// Clear matching_files vector
+					if(matching_files.size() != 0) {
+						matching_files.clear(); // Clear filter
+						snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size()); // Reload counter
+						snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size()); // Reload counter for FlashCard
+						snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size()); // Reload counter for GB ROMs
+						boxarttexloaded = false; // Reload boxarts
+						bnricontexloaded = false; // Reload banner icons
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
+					}
+					if (settings.ui.theme == THEME_AKMENU) {
+						pp2d_set_3D(0);
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
+						menu_ctrlset = CTRL_SET_MENU;
+						woodmenu_cursorPosition = 4;
+						if (settings.ui.cursorPosition < 0)
+							settings.ui.cursorPosition = 0;
+					} else if (settings.ui.theme == THEME_R4) {
+						pp2d_set_3D(0);
+						pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
+						menu_ctrlset = CTRL_SET_MENU;
+						titleboxXmovepos = 0;
+						boxartXmovepos = 0;
+						if (settings.ui.cursorPosition < 0)
+							settings.ui.cursorPosition = 0;
+					} else {
+						pp2d_set_3D(1);
+						titleboxXmovepos = 0;
+						settings.ui.cursorPosition = 0 + settings.ui.pagenum * 20; // This is to reset cursor position after switching from R4 theme.
+						if (settings.twl.forwarder) {
+							if (fcfiles.size() <= 0) {
+								startbordermovepos = 0;
+								startborderscalesize = 1.0;
+								// No ROMs were found.
+								settings.ui.cursorPosition = -1;
+								titleboxXmovepos = +64;
+								noromsfound = true;
+							}
+						} else {
+							if (files.size() <= 0) {
+								startbordermovepos = 0;
+								startborderscalesize = 1.0;
+								// No ROMs were found.
+								settings.ui.cursorPosition = -1;
+								titleboxXmovepos = +64;
+								noromsfound = true;
+							}
+						}							
+						storedcursorPosition = settings.ui.cursorPosition; // This is to reset cursor position after switching from R4 theme.
+						boxartXmovepos = 0;
+						loadboxartnum = settings.ui.pagenum*20;
+						boxarttexloaded = false;
+						menu_ctrlset = CTRL_SET_GAMESEL;
+					}
+					colortexloaded = false; // Reload top textures
+					colortexloaded_bot = false; // Reload bottom textures
+				} else if (gbarunnervalue == 1) {
+					if (logEnabled)	LogFM("Main", "Loading GBARunner.");
+					applaunchon = true;
+				} else if (screenmodeswitch) {
+					screenmode = SCREEN_MODE_SETTINGS;
+					settingsResetSubScreenMode();
+					fadeout = false;
+					fadein = true;
+					screenmodeswitch = false;
+				}
+			}
+		}
+		
+		if (playwrongsounddone) {
+			if (hHeld & KEY_LEFT || hHeld & KEY_RIGHT) {} else {
+				soundwaittimer += 1;
+				if (soundwaittimer == 2) {
+					soundwaittimer = 0;
+					playwrongsounddone = false;
+				}
+			}
+		}
+
+		if (titleboxXmoveleft) {
+			titleboxXmovetimer += 1;
+			if (titleboxXmovetimer == 10) {
+				titleboxXmovetimer = 0;
+				titleboxXmoveleft = false;
+			} else if (titleboxXmovetimer == 9) {
+				bannertextloaded = false;
+				if (settings.ui.cursorPosition >= 0) {
+					if (settings.ui.cursorPosition >= (int)file_count)
+						showbubble = false;
+					else {
+						showbubble = true;
+						if (dspfirmfound) {
+							sfx_stop->stop();
+							sfx_stop->play();
+						}
+					}
+				} else {
+					showbubble = true;
+					if (dspfirmfound) {
+						sfx_stop->stop();
+						sfx_stop->play();
+					}
+				}
+				storedcursorPosition = settings.ui.cursorPosition;
+			} else if (titleboxXmovetimer == 9) {
+				startbordermovepos = 0;
+				startborderscalesize = 1.0;
+			} else if (titleboxXmovetimer == 8) {
+				scrollwindowXmovepos -= 1.53;
+				titleboxXmovepos += 8;
+				boxartXmovepos += 18;
+				startbordermovepos = 1;
+				startborderscalesize = 0.97;
+				cursorPositionset = false;
+			} else if (titleboxXmovetimer == 2) {
+				if (dspfirmfound) {
+					sfx_select->stop();
+					sfx_select->play();
+				}
+				scrollwindowXmovepos -= 1.53;
+				titleboxXmovepos += 8;
+				boxartXmovepos += 18;
+				// Load the previous box art
+				if ( settings.ui.cursorPosition >= 1+settings.ui.pagenum*20
+				&& settings.ui.cursorPosition <= 18+settings.ui.pagenum*20 ) {
+					boxartpage--;
+					boxartnum = settings.ui.cursorPosition-1;
+					LoadBoxArt();
+				}
+				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
+					boxartXmovepos = -144*7;
+					boxartXmovepos += 18*2;
+				}
+			} else {
+				if (!cursorPositionset) {
+					settings.ui.cursorPosition--;
+					cursorPositionset = true;
+				}
+				if (settings.ui.pagenum == 0) {
+					if (settings.ui.cursorPosition != -3) {
+						scrollwindowXmovepos -= 1.53;
+						titleboxXmovepos += 8;
+						boxartXmovepos += 18;
+					} else {
+						titleboxXmovetimer = 0;
+						titleboxXmoveleft = false;
+						cursorPositionset = false;
+						settings.ui.cursorPosition++;
+						if (!playwrongsounddone) {
+							if (dspfirmfound) {
+								sfx_wrong->stop();
+								sfx_wrong->play();
+							}
+							playwrongsounddone = true;
+						}
+					}
+				} else {
+					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*20) {
+						scrollwindowXmovepos -= 1.53;
+						titleboxXmovepos += 8;
+						boxartXmovepos += 18;
+					} else {
+						titleboxXmovetimer = 0;
+						titleboxXmoveleft = false;
+						cursorPositionset = false;
+						settings.ui.cursorPosition++;
+						if (!playwrongsounddone) {
+							if (dspfirmfound) {
+								sfx_wrong->stop();
+								sfx_wrong->play();
+							}
+							playwrongsounddone = true;
+						}
+					}
+				}
+			}
+		} else if(titleboxXmoveright) {
+			titleboxXmovetimer += 1;
+			if (titleboxXmovetimer == 10) {
+				titleboxXmovetimer = 0;
+				titleboxXmoveright = false;
+			} else if (titleboxXmovetimer == 9) {
+				bannertextloaded = false;
+				if (settings.ui.cursorPosition >= 0) {
+					if (settings.ui.cursorPosition >= (int)file_count)
+						showbubble = false;
+					else {
+						showbubble = true;
+						if (dspfirmfound) {
+							sfx_stop->stop();
+							sfx_stop->play();
+						}
+					}
+				} else {
+					showbubble = true;
+					if (dspfirmfound) {
+						sfx_stop->stop();
+						sfx_stop->play();
+					}
+				}
+				storedcursorPosition = settings.ui.cursorPosition;
+				// Load the next box art
+				if ( settings.ui.cursorPosition >= 4+settings.ui.pagenum*20
+				&& settings.ui.cursorPosition <= 19+settings.ui.pagenum*20 ) {
+					boxartpage++;
+					boxartnum = settings.ui.cursorPosition+2;
+					LoadBoxArt();
+				}
+				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
+				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
+					boxartXmovepos = -144;
+				}
+			} else if (titleboxXmovetimer == 9) {
+				startbordermovepos = 0;
+				startborderscalesize = 1.0;
+			} else if (titleboxXmovetimer == 8) {
+				scrollwindowXmovepos += 1.53;
+				titleboxXmovepos -= 8;
+				boxartXmovepos -= 18;
+				startbordermovepos = 1;
+				startborderscalesize = 0.97;
+				cursorPositionset = false;
+			} else if (titleboxXmovetimer == 2) {
+				if (dspfirmfound) {
+					sfx_select->stop();
+					sfx_select->play();
+				}
+				scrollwindowXmovepos += 1.53;
+				titleboxXmovepos -= 8;
+				boxartXmovepos -= 18;
+			} else {
+				if (!cursorPositionset) {
+					settings.ui.cursorPosition++;
+					cursorPositionset = true;
+				}
+				if (settings.ui.cursorPosition != filenum) {
+					scrollwindowXmovepos += 1.53;
+					titleboxXmovepos -= 8;
+					boxartXmovepos -= 18;
+				} else {
+					titleboxXmovetimer = 0;
+					titleboxXmoveright = false;
+					cursorPositionset = false;
+					settings.ui.cursorPosition--;
+					if (!playwrongsounddone) {
+						if (dspfirmfound) {
+							sfx_wrong->stop();
+							sfx_wrong->play();
+						}
+						playwrongsounddone = true;
+					}
+				}
+			}
+		}
+		if (applaunchprep) {
+			rad += 0.50f;
+			boxartYmovepos -= 6;
+			boxartreflYmovepos += 2;
+			titleboxYmovepos -= 6;
+			ndsiconYmovepos -= 6;
+			if (titleboxYmovepos < -240) {
+				if (screenmodeswitch) {
+					musicbool = false;
+					screenmode = SCREEN_MODE_SETTINGS;
+					settingsResetSubScreenMode();
+					rad = 0.0f;
+					boxartYmovepos = 63;
+					boxartreflYmovepos = 178;
+					scrollwindowXmovepos = 0;
+					titleboxYmovepos = 116;
+					ndsiconYmovepos = 129;
+					fadein = true;
+					screenmodeswitch = false;
+					applaunchprep = false;
+				} else {
+					if (logEnabled)	LogFM("Main.applaunchprep", "Switching to NTR/TWL-mode");
+					applaunchon = true;
+				}
+			}
+			if (settings.ui.theme == THEME_3DSMENU) {
+				fadealpha += 14;
+			} else {
+				fadealpha += 6;
+			}
+			if (fadealpha > 255) {
+				showbubble = false;
+				fadealpha = 255;
+			}
+		}
+
+		// Controls
 		if (screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (settings.ui.theme == THEME_AKMENU) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
@@ -4832,8 +4823,6 @@ int main(){
 					}
 				}
 			} else {
-				startbordermovepos = 0;
-				startborderscalesize = 1.0;
 				if (!noromsfound && file_count == 0) {
 					// No ROMs were found.
 					settings.ui.cursorPosition = -1;
