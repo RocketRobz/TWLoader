@@ -227,24 +227,26 @@ static std::string ReplaceAll(std::string str, const std::string& from, const st
 static bool screenoff_ran = false;
 static bool screenon_ran = true;
 
-inline void screenoff(void)
+void screenoff(void)
 {
 	screenon_ran = false;
 	if(!screenoff_ran) {
-		gspLcdInit();
-		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
+		if (R_SUCCEEDED(gspLcdInit())) {
+			GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
+			gspLcdExit();
+		}
 		screenoff_ran = true;
 	}
 }
 
-inline void screenon(void)
+void screenon(void)
 {
  	screenoff_ran = false;
 	if(!screenon_ran) {
-		gspLcdInit();
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
+		if (R_SUCCEEDED(gspLcdInit())) {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+			gspLcdExit();
+		}
 		screenon_ran = true;
 	}
 }
@@ -2436,7 +2438,10 @@ int main(){
 	if (settings.ui.showbootscreen == 1) {
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
-		if (settings.ui.theme == THEME_DSIMENU && aptMainLoop()) fade_whiteToBlack();
+		if (settings.ui.theme >= THEME_R4) {
+		} else if(aptMainLoop()) {
+			fade_whiteToBlack();
+		}
 	}
 
 	if (aptMainLoop()) {
@@ -6149,25 +6154,26 @@ int main(){
 				}
 			}
 
-			if (settings.ui.showbootscreen == 2 && settings.twl.romtype == 0 && gbarunnervalue == 0) {
+			if (settings.ui.showbootscreen == 2 && settings.twl.romtype == 0 && gbarunnervalue == 0 && switchToTwl) {
 				bootSplash();
 				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
 				if(aptMainLoop()) fade_whiteToBlack();
 			}
 
 			if(aptMainLoop()) {
-				// Buffers for APT_DoApplicationJump().
-				u8 param[0x300];
-				u8 hmac[0x20];
-				// Clear both buffers
-				memset(param, 0, sizeof(param));
-				memset(hmac, 0, sizeof(hmac));
+				while(1) {
+					// Buffers for APT_DoApplicationJump().
+					u8 param[0x300];
+					u8 hmac[0x20];
+					// Clear both buffers
+					memset(param, 0, sizeof(param));
+					memset(hmac, 0, sizeof(hmac));
 
-				APT_PrepareToDoApplicationJump(0, tid, mediaType);
-				// Tell APT to trigger the app launch and set the status of this app to exit
-				APT_DoApplicationJump(param, sizeof(param), hmac);
+					APT_PrepareToDoApplicationJump(0, tid, mediaType);
+					// Tell APT to trigger the app launch and set the status of this app to exit
+					APT_DoApplicationJump(param, sizeof(param), hmac);
+				}
 			}
-			break;
 		}
 	}	// aptMainLoop
 
@@ -6189,7 +6195,7 @@ int main(){
 
 	if (logEnabled) LogFM("Main.settingsUnloadTextures", "Settings textures unloaded");
 
-	if (settings.ui.theme == THEME_DSIMENU) gamecardClearCache();
+	if (settings.ui.theme <= THEME_3DSMENU) gamecardClearCache();
 
 	// Free the arrays.
 	if (bnricontexloaded) {

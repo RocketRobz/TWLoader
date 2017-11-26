@@ -48,8 +48,8 @@ extern bool showAnniversaryText;
 extern int fadealpha;
 extern bool fadein;
 extern bool fadeout;
-extern inline void screenoff(void);
-extern inline void screenon(void);
+extern void screenoff(void);
+extern void screenon(void);
 
 extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
 
