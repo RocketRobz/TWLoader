@@ -4233,6 +4233,12 @@ int main(){
 				} else if (screenmodeswitch) {
 					screenmode = SCREEN_MODE_SETTINGS;
 					settingsResetSubScreenMode();
+					rad = 0.0f;
+					boxartYmovepos = 63;
+					boxartreflYmovepos = 178;
+					scrollwindowXmovepos = 0;
+					titleboxYmovepos = 116;
+					ndsiconYmovepos = 129;
 					fadeout = false;
 					fadein = true;
 					screenmodeswitch = false;
