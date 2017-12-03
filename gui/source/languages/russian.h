@@ -42,10 +42,11 @@ static const char *const lang_RU[STR_MAX] = {
 	"Экран Техники без-ти",										// "Health and Safety message"
 	"Старт. экран",												// "Show Boot Screen"
 	"Путь к ROM-у",												// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Выбор флешкарты",											// "Flashcard(s) select"
-	"Радуга LED",												// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"Скорость ЦП ARM9",											// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Доступ SD-карты для Slot-1",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_RU[STR_MAX] = {
 
 	"Когда вы хотите видеть",									// "Where do you want to see the"
 	"экран запуска DS/DSi?",									// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Выберите флешкарту для",									// "Pick a flashcard to use to"

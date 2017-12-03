@@ -42,10 +42,11 @@ static const char *const lang_TR[STR_MAX] = {
 	"Sağlık ve Güvenlik mesajı",								// "Health and Safety message"
 	"Başlangıç Ekranını Göster",											// "Show Boot Screen"
 	"ROM dizini",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashkart(ları) seç",										// "Flashcard(s) select"
-	"Gökkuşağı LED",												// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU Hızı",											// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"Slot-1 için SD card erişimi",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_TR[STR_MAX] = {
 
 	"DS/DSi başlangıç ekranını",								// "Where do you want to see the"
 	"Nerede görmek istersiniz?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"ROMları yükleyeceğiniz bir",								// "Pick a flashcard to use to"

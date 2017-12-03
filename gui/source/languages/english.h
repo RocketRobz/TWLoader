@@ -42,10 +42,11 @@ static const char *const lang_EN[STR_MAX] = {
 	"H&S Message",												// "Health and Safety message"
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
-	"Rainbow LED",												// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU Speed",											// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
@@ -114,11 +115,14 @@ static const char *const lang_EN[STR_MAX] = {
 	"Where do you want to see the",								// "Where do you want to see the"
 	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
 
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
+
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Pick a flashcard to use to",								// "Pick a flashcard to use to"
 	"run ROMs from it.",										// "run ROMs from it."
 
-	"See rainbow colors glowing in",							// "See rainbow colors glowing in"
+	"Set a color to glow in",									// "Set a color to glow in"
 	"the Notification LED.",									// "the Notification LED."
 
 	"Set to TWL to get rid of lags",							// "Set to TWL to get rid of lags"

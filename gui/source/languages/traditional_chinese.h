@@ -42,10 +42,11 @@ static const char *const lang_TRCH[STR_MAX] = {
 	"健康與安全信息",												// "Health and Safety message"
 	"Show 啟動畫面",												// "Show Boot Screen"
 	"ROM path",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"選擇燒錄卡",													// "Flashcard(s) select"
-	"彩虹 LED",													// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU 速度",												// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_TRCH[STR_MAX] = {
 
 	"Where do you want to see the",								// "Where do you want to see the"
 	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"選擇一個要使用來運行",											// "Pick a flashcard to use to"

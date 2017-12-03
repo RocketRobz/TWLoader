@@ -42,10 +42,11 @@ static const char *const lang_ES[STR_MAX] = {
 	"Salud y Seguridad",										// "Health and Safety message"
 	"Pantalla de arranque",										// "Show Boot Screen"
 	"Rutas",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Seleccionar flashcard",									// "Flashcard(s) select"
-	"LED efecto arcoiris",										// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"Velocidad del CPU ARM9",									// "ARM9 CPU Speed"
 	"Frecuencia de sonido/micrófono",							// "Sound/Microphone frequency"
 	"Acceso SD para Slot-1",									// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_ES[STR_MAX] = {
 
 	"Permite mostrar (u ocultar) la pantalla",					// "Where do you want to see the"
 	"de DS/DSi.",												// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Elije una flashcard para cargar ROMs",						// "Pick a flashcard to use to"

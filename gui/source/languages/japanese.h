@@ -33,19 +33,20 @@ static const char *const lang_JP[STR_MAX] = {
 	"セッティングの色",													// "Color"
 	"メニューの色",													// "Menu Color"
 	"表示するファイル名",												// "Show filename"
-	"ゲームのカウンター",												// "Game counter"
+	"ゲームのカウンター",													// "Game counter"
 	"Custom bottom image",										// "Custom bottom image"
 	"Auto-update TWLoader",										// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"TWLoaderの自動更新",											// "Update TWLoader"
 	"DS/DSi Boot Screen",										// "DS/DSi Boot Screen"
 	"Health and Safety message",								// "Health and Safety message"
-	"ブートスクリーンの見せる",											// "Show Boot Screen"
+	"ブートスクリーンの見せる",												// "Show Boot Screen"
 	"ROM path",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashcard(s) select",										// "Flashcard(s) select"
-	"虹LED",														// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPUスピード",												// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_JP[STR_MAX] = {
 
 	"Where do you want to see the",								// "Where do you want to see the"
 	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Pick a flashcard to use to",								// "Pick a flashcard to use to"

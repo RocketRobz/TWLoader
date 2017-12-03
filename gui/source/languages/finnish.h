@@ -42,10 +42,11 @@ static const char *const lang_FI[STR_MAX] = {
 	"H&S Viesti",									// "Health and Safety message"
 	"Näytä alku ruutu",								// "Show Boot Screen"
 	"ROM polku",									// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashkortin valinta",								// "Flashcard(s) select"
-	"Sateenkaari LED",								// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU nopeus",								// "ARM9 CPU Speed"
 	"Ääni/Mikrofooni taajuus",						    	// "Sound/Microphone frequency"
 	"SD-kortti lupa Slot-1:delle",							// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_FI[STR_MAX] = {
 
 	"Missä haluat käyttää",								// "Where do you want to see the"
 	"DS/DSi alku kuvaa?",								// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Valitse flash-kortti jolta voi",						// "Pick a flashcard to use to"

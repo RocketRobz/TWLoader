@@ -790,6 +790,10 @@ void settingsDrawBottomScreen(void)
 			// Selected			
 			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to change rom location folder.");
 		}
+		if (cursor_pos[2] == 2) {
+			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_QUICK_START_1));
+			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_QUICK_START_2));
+		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);

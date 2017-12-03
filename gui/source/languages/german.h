@@ -25,7 +25,7 @@ static const char *const lang_DE[STR_MAX] = {
 	"Unbekannte Karte",											// "Unknown Cartridge"
 	"Einstellungen",											// "Settings"
 	": Zurück",												// "B: Back"	
-	": Spiele hinzufügen",												// "Y: Add Games"
+	": Spiele hinzufügen",										// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Sprache",													// "Language"
@@ -35,17 +35,18 @@ static const char *const lang_DE[STR_MAX] = {
 	"Dateiname anzeigen",										// "Show filename"
 	"Spielzähler",												// "Game counter"
 	"Benutzerdefiniertes unteres Bild",							// "Custom bottom image"
-	"TWLoader automatisch aktualisieren",								// "Auto-update TWLoader"
+	"TWLoader automatisch aktualisieren",						// "Auto-update TWLoader"
 	"TWLoader filetype",										// "TWLoader filetype"
 	"TWLoader aktualisieren",									// "Update TWLoader"
 	"DS/DSi Startbildschirm",									// "DS/DSi Boot Screen"
 	"Gesundheits- und Sicherheitshinweise",						// "Health and Safety message"
-	"Zeige Startbildschirm",											// "Show Boot Screen"
+	"Zeige Startbildschirm",									// "Show Boot Screen"
 	"ROM Pfad",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashkart(en) auswählen",									// "Flashcard(s) select"
-	"Regenbogen LED",											// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU Geschwindigkeit",									// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD Zugriff für Slot-1",									// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_DE[STR_MAX] = {
 
 	"Wo möchtest du den",								// "Where do you want to see the"
 	"DS/DSi Startbildschirm sehen?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Wähle die Flashkarte, die du zum",							// "Pick a flashcard to use to"

@@ -42,10 +42,11 @@ static const char *const lang_KO[STR_MAX] = {
 	"안전 및 주의사항 메세지",											// "Health and Safety message"
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"플래시카드 선택",												// "Flashcard(s) select"
-	"무지개색 LED",													// "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"ARM9 CPU 속도",												// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_KO[STR_MAX] = {
 
 	"Where do you want to see the",								// "Where do you want to see the"
 	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"ROM 파일이 있는",												// "Pick a flashcard to use to"

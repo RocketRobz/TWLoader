@@ -62,6 +62,7 @@ typedef enum _StrID {
 	STR_SETTINGS_DS_DSi_SAFETY_MESSAGE,							// "Health and Safety message"
 	STR_SETTINGS_SHOW_BOOT_SCREEN,								// "Show Boot Screen"
 	STR_SETTINGS_ROM_PATH,										// "ROM path"
+	STR_SETTINGS_QUICK_START,									// "Quick start"
 	
 	/** Settings: NTR_mode **/
 	STR_SETTINGS_FLASHCARD_SELECT,								// "Flashcard(s) select"
@@ -134,15 +135,18 @@ typedef enum _StrID {
 	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1,				// "Where do you want to see the"
 	STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_2,				// "DS/DSi boot screen?"
 	
+	STR_SETTINGS_DESCRIPTION_QUICK_START_1,						// "On startup, WiFi features and"
+	STR_SETTINGS_DESCRIPTION_QUICK_START_2,						// "banner caching will be skipped."
+	
 	/** Settings: NTR/TWL_mode descriptions **/
 	STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_1,				// "Pick a flashcard to use to"
 	STR_SETTINGS_DESCRIPTION_FLASHCARD_SELECT_2,				// "run ROMs from it."
 	
-	STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1,						// "See rainbow colors glowing in"
+	STR_SETTINGS_DESCRIPTION_RAINBOW_LED_1,						// "Set a color to glow in"
 	STR_SETTINGS_DESCRIPTION_RAINBOW_LED_2,						// "the Notification LED."
 	
-	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1,					// "Set to TWL to get rid of lags in some games."
-	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2,					// (empty)
+	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_1,					// "Set to TWL to get rid of lags"
+	STR_SETTINGS_DESCRIPTION_ARM9_CPU_SPEED_2,					// "in some games."
 	
 	STR_SETTINGS_DESCRIPTION_SOUND_FREQ_1,						// "32.73 kHz: Original quality"
 	STR_SETTINGS_DESCRIPTION_SOUND_FREQ_2,						// "47.61 kHz: High quality"
@@ -179,7 +183,7 @@ typedef enum _StrID {
 	STR_START_GAMELOCATION,										// "Game location"
 	STR_START_BOXART_ON,										// "Box Art: On"
 	STR_START_BOXART_OFF,										// "Box Art: OFF"
-	STR_START_START_GBARUNNER2,									// "Start GBARunner2"
+	STR_START_SELECT_ROMTYPE,									// "Select ROM type"
 	STR_START_TOP_BORDER_ON,									// "Top border: On"
 	STR_START_TOP_BORDER_OFF,									// "Top border: Off"
 	STR_START_UNSET_DONOR,										// "Unset donor rom"
@@ -189,6 +193,9 @@ typedef enum _StrID {
 	STR_START_FLASHCARD,										// "Flashcard"
 	STR_START_SEARCH_HINT,										// "Use the keyboard to find roms"
 	
+	/** Select ROM type **/
+	STR_START_START_GBARUNNER2,									// "Start GBARunner2"
+
 	/** Select menu **/
 	// Options
 	STR_START_ARM9_CPU_SPEED,									// "ARM9 CPU Speed"

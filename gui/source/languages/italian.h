@@ -42,10 +42,11 @@ static const char *const lang_IT[STR_MAX] = {
 	"Messaggio Salute e Sicurezza",                             // "Health and Safety message"
 	"Show Boot Screen",											// "Show Boot Screen"
 	"ROM path",													// "ROM path"
+	"Quick start",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Seleziona la Flashcard",                                   // "Flashcard(s) select"
-	"LED arcobaleno",                                           // "Rainbow LED"
+	"Notification LED color",									// "Notification LED color"
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
 	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
 	"SD card access for Slot-1",								// "SD card access for Slot-1"
@@ -113,6 +114,9 @@ static const char *const lang_IT[STR_MAX] = {
 
 	"Where do you want to see the",								// "Where do you want to see the"
 	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+
+	"On startup, WiFi features and",							// "On startup, WiFi features and"
+	"banner caching will be skipped.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Seleziona una flashcard da usare",                         // "Pick a flashcard to use to"
