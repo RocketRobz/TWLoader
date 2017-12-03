@@ -2331,15 +2331,14 @@ int main(){
 		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
 	}
 
-	const char* wifiStuckMsg = "Checking WiFi status...\n\nIf you see this for more than 25 seconds,\ntry rebooting and turning off wireless.";
+	// Scan hid shared memory for input events
+	hidScanInput();
 
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-	pp2d_end_draw();
-	
-	// Download missing files
-	if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
-		// Nothing
+	const u32 hDown = hidKeysDown();
+	const u32 hHeld = hidKeysHeld();
+
+	if(hHeld & KEY_A) {
+		settings.ui.quickStart = true;
 	}
 
 	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -2361,64 +2360,73 @@ int main(){
 	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
 	
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-	pp2d_end_draw();
+	if(!settings.ui.quickStart) {
+		const char* wifiStuckMsg = "Checking WiFi status...\n\nIf you see this for more than 25 seconds,\ntry rebooting and turning off wireless.";
 
-	// Download box art
-	if (checkWifiStatus()) {
-		downloadBoxArt();
-	}
-	
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
-	pp2d_end_draw();
-
-	// Cache banner data for ROMs on the SD card.
-	// TODO: Re-cache if it's 0 bytes?
-	for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
-		static const char title[] = "Now checking banner data (SD Card)...";
-		char romsel_counter1[16];
-		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
-		bool isCia = false;
-		const char *tempfile = files.at(bnriconnum).c_str();
-		std::string fn = tempfile;
-		if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
-
-		wstring tempfile_w = utf8_to_wstring(tempfile);
-
-		char nds_path[256];
-		snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
-		FILE *f_nds_file = fopen(nds_path, "rb");
-		if (!f_nds_file)
-			continue;
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
 		
-		if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd, isCia) != 0) {
-			if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
-		}
-		
-		fclose(f_nds_file);
-	}
-	
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-	pp2d_end_draw();
-
-	if (checkWifiStatus()) {
-		if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
-			DownloadTWLoaderCIAs();
+		// Download missing files
+		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
+			// Nothing
 		}
 
-		switch (settings.ui.autoupdate) {
-			case 0:
-			default:
-				break;
-			case 1:
-				UpdateBootstrapRelease();
-				break;
-			case 2:
-				UpdateBootstrapUnofficial();
-				break;
+		// Download box art
+		if (checkWifiStatus()) {
+			downloadBoxArt();
+		}
+	
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+		pp2d_end_draw();
+
+		// Cache banner data for ROMs on the SD card.
+		// TODO: Re-cache if it's 0 bytes?
+		for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
+			static const char title[] = "Now checking banner data (SD Card)...";
+			char romsel_counter1[16];
+			snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
+			bool isCia = false;
+			const char *tempfile = files.at(bnriconnum).c_str();
+			std::string fn = tempfile;
+			if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+			wstring tempfile_w = utf8_to_wstring(tempfile);
+
+			char nds_path[256];
+			snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+			FILE *f_nds_file = fopen(nds_path, "rb");
+			if (!f_nds_file)
+				continue;
+			
+			if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd, isCia) != 0) {
+				if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
+			}
+			
+			fclose(f_nds_file);
+		}
+	
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
+
+		if (checkWifiStatus()) {
+			if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
+				DownloadTWLoaderCIAs();
+			}
+
+			switch (settings.ui.autoupdate) {
+				case 0:
+				default:
+					break;
+				case 1:
+					UpdateBootstrapRelease();
+					break;
+				case 2:
+					UpdateBootstrapUnofficial();
+					break;
+			}
 		}
 	}
 

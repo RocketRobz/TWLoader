@@ -732,6 +732,8 @@ void settingsDrawBottomScreen(void)
 		char printedROMpath[256];
 		snprintf (printedROMpath, sizeof(printedROMpath), "SD:/%s", settings.ui.romfolder.c_str());
 
+		const char *quickstartvaluetext = (settings.ui.quickStart ? "On" : "Off");
+
 		title = TR(STR_SETTINGS_GUI);
 		struct {
 			int x;
@@ -739,14 +741,17 @@ void settingsDrawBottomScreen(void)
 		} buttons[] = {
 			{ 17,  39},
 			{169,  39},
+			{ 17,  87},
 		};
 		const wchar_t *button_titles[] = {
 			TR(STR_SETTINGS_SHOW_BOOT_SCREEN),
 			TR(STR_SETTINGS_ROM_PATH),
+			TR(STR_SETTINGS_QUICK_START),
 		};
 		const char *button_desc[] = {
 			showbootscreenvaluetext,
 			printedROMpath,
+			quickstartvaluetext,
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -1384,11 +1389,16 @@ bool settingsMoveCursor(u32 hDown)
 						subscreenmode = SUBSCREEN_MODE_CHANGE_ROM_PATH;
 					}
 					break;
+				case 2: // Quick start
+					if (hDown & KEY_A) {
+						settings.ui.quickStart = !settings.ui.quickStart;
+					}
+					break;
 			}
 			sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[2] < 2) {
 			cursor_pos[2] += 2;
-			if (cursor_pos[2] > 1) cursor_pos[2] -= 2;
+			if (cursor_pos[2] > 2) cursor_pos[2] -= 2;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[2] > 0) {
 			cursor_pos[2] -= 2;
@@ -1889,6 +1899,7 @@ void LoadSettings(void) {
 	settings.ui.pagenum = settingsini.GetInt("FRONTEND", "PAGE_NUMBER", 0);
 
 	// Customizable UI settings.
+	settings.ui.quickStart = settingsini.GetInt("FRONTEND", "QUICK_START", 0);
 	settings.ui.language = settingsini.GetInt("FRONTEND", "LANGUAGE", -1);
 	settings.ui.theme = settingsini.GetInt("FRONTEND", "THEME", 0);
 	settings.ui.subtheme = settingsini.GetInt("FRONTEND", "SUB_THEME", 0);
@@ -1951,6 +1962,7 @@ void SaveSettings(void) {
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
+	settingsini.SetInt("FRONTEND", "QUICK_START", settings.ui.quickStart);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
