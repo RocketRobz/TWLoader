@@ -2261,6 +2261,8 @@ int main(){
 	pp2d_load_texture_png(carttwltex, "romfs:/graphics/cart_twl.png"); // TWL cartridge
 	pp2d_load_texture_png(cartctrtex, "romfs:/graphics/cart_ctr.png"); // CTR cartridge
 	pp2d_load_texture_png(_3dsbottopbartex, "romfs:/graphics/3ds/bot_topbar.png");
+	pp2d_load_texture_png(_3dsbotbotbartex, "romfs:/graphics/3ds/bot_botbar.png");
+	pp2d_load_texture_png(_3dsbotbotbarbuttex, "romfs:/graphics/3ds/bot_botbarbut.png");
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
 	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
 
@@ -3673,6 +3675,7 @@ int main(){
 							pp2d_draw_wtext(home_x+20, 195, 0.50, 0.50, BLACK, home_text);
 						}
 					} else {
+						pp2d_draw_texture(_3dsbotbotbartex, 0, 240-31);
 						const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
 						const int home_width = pp2d_get_wtext_width(home_text, 0.50, 0.50) + 16;
 						const int home_x = (320-home_width)/2;
@@ -3683,8 +3686,13 @@ int main(){
 
 				if (settings.ui.pagenum == 0) {
 					if (settings.ui.iconsize) {
-						pp2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 104, 1.25, 1.25);
-						pp2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+						if (settings.ui.theme != THEME_3DSMENU) {
+							pp2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 104, 1.25, 1.25);
+							pp2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+						} else {
+							pp2d_draw_texture_scale(bracetex, -74+titleboxXmovepos*1.25, 112, 1.25, 1.25);
+							pp2d_draw_texture_scale(settingsicontex, -40+setsboxXpos+titleboxXmovepos*1.25, 115, 1.25, 1.25);
+						}
 					} else {
 						pp2d_draw_texture(bracetex, -32+titleboxXmovepos, 112);
 						pp2d_draw_texture(settingsicontex, setsboxXpos+titleboxXmovepos, 115);
@@ -3714,29 +3722,52 @@ int main(){
 							}
 						}
 
-						if (settings.ui.iconsize)
-							pp2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
-						else
+						if (settings.ui.iconsize) {
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+							} else {
+								pp2d_draw_texture_scale(carttex(), -24+cartXpos+titleboxXmovepos*1.25, 115, 1.25, 1.25);
+							}
+						} else {
 							pp2d_draw_texture(carttex(), cartXpos+titleboxXmovepos, 116);
+						}
 						size_t cardicontex = gamecardGetIcon();
 						if (!gamecardIsInserted()) {
 							cardicontex = iconnulltex;
 						} else if (gamecardGetType() == CARD_TYPE_UNKNOWN || gamecardGetType() == CARD_TYPE_CTR) {
 							cardicontex = iconnulltex;
 						}
-						if (settings.ui.iconsize)
-							pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
-						else
+						if (settings.ui.iconsize) {
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+							} else {
+								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+							}
+						} else {
 							pp2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+						}
 					} else {
 						// Get flash cart games.
-						if (settings.ui.iconsize)
-							pp2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
-						else
+						if (settings.ui.iconsize) {
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 107, 1.25, 1.25);
+							} else {
+								pp2d_draw_texture_scale(getfcgameboxtex, -24+cartXpos+titleboxXmovepos*1.25, 115, 1.25, 1.25);
+							}
+						} else {
 							pp2d_draw_texture(getfcgameboxtex, cartXpos+titleboxXmovepos, 115);
+						}
 					}
 				} else {
-					pp2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 112);
+					if (settings.ui.iconsize) {
+						if (settings.ui.theme != THEME_3DSMENU) {
+							pp2d_draw_texture_scale(bracetex, 15+cartXpos+titleboxXmovepos*1.25, 104, 1.25, 1.25);
+						} else {
+							pp2d_draw_texture_scale(bracetex, 15+cartXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25);
+						}
+					} else {
+						pp2d_draw_texture(bracetex, 32+cartXpos+titleboxXmovepos, 112);
+					}
 				}
 
 				if (settings.ui.iconsize) {
@@ -3908,17 +3939,32 @@ int main(){
 				}
 				if (showbubble) {
 					pp2d_draw_texture(bubbletex, 0, 0);
+					if (settings.ui.theme == THEME_3DSMENU) {
+						pp2d_draw_texture(_3dsbotbotbarbuttex, 0, 240-28);
+						const wchar_t *start_text = TR(STR_START);
+						text_width = pp2d_get_wtext_width(start_text, 0.60, 0.60);
+						pp2d_draw_wtext(((320-text_width)/2), 219.50, 0.60, 0.60, WHITE, start_text);
+						pp2d_draw_wtext(((320-text_width)/2), 218, 0.60, 0.60, BLACK, start_text);
+					}
 					bool drawBannerText = true;
 					if (settings.ui.cursorPosition == -2) {
 						const wchar_t *curn2text = TR(STR_SETTINGS_TEXT);
 						text_width = pp2d_get_wtext_width(curn2text, 0.70, 0.70);
-						pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, curn2text);
+						if (settings.ui.theme != THEME_3DSMENU) {
+							pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, curn2text);
+						} else {
+							pp2d_draw_wtext(((320-text_width)/2), 68, 0.70, 0.70, BLACK, curn2text);
+						}
 						drawBannerText = false;
 					} else if (settings.ui.cursorPosition == -1) {
 						if (settings.twl.forwarder) {
 							static const char add_games_text[] = "Add Games";
 							text_width = pp2d_get_text_width(add_games_text, 0.70, 0.70);
-							pp2d_draw_text(((320-text_width)/2), 38, 0.70, 0.70, BLACK, add_games_text);
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_text(((320-text_width)/2), 38, 0.70, 0.70, BLACK, add_games_text);
+							} else {
+								pp2d_draw_text(((320-text_width)/2), 68, 0.70, 0.70, BLACK, add_games_text);
+							}
 							drawBannerText = false;
 						} else {
 							// Get the text from the Slot 1 cartridge.
@@ -4058,7 +4104,7 @@ int main(){
 								}
 								y = (150-(19*romsel_gameline.size()))/2 + 4;
 								//y = 24; dy = 19;
-								dy = 19;
+								dy = 20;
 
 								// Print the banner text, center-aligned.
 								const size_t banner_lines = std::min(3U, romsel_gameline.size());
@@ -4082,19 +4128,37 @@ int main(){
 									p_romsel_counter = romsel_counter2sd;
 								}
 							}
-							if (file_count < 100) {
-								pp2d_draw_text(8, 96, 0.50, 0.50, BLACK, romsel_counter1);
-								pp2d_draw_text(27, 96, 0.50, 0.50, BLACK, "/");
-								pp2d_draw_text(32, 96, 0.50, 0.50, BLACK, p_romsel_counter);
+							if (settings.ui.theme != THEME_3DSMENU) {
+								if (file_count < 100) {
+									pp2d_draw_text(8, 96, 0.50, 0.50, BLACK, romsel_counter1);
+									pp2d_draw_text(27, 96, 0.50, 0.50, BLACK, "/");
+									pp2d_draw_text(32, 96, 0.50, 0.50, BLACK, p_romsel_counter);
+								} else {
+									pp2d_draw_text(8, 96, 0.50, 0.50, BLACK, romsel_counter1);
+									pp2d_draw_text(35, 96, 0.50, 0.50, BLACK, "/");
+									pp2d_draw_text(40, 96, 0.50, 0.50, BLACK, p_romsel_counter);
+								}
 							} else {
-								pp2d_draw_text(8, 96, 0.50, 0.50, BLACK, romsel_counter1);
-								pp2d_draw_text(35, 96, 0.50, 0.50, BLACK, "/");
-								pp2d_draw_text(40, 96, 0.50, 0.50, BLACK, p_romsel_counter);
+								if (file_count < 100) {
+									pp2d_draw_text(8, 220, 0.50, 0.50, WHITE, romsel_counter1);
+									pp2d_draw_text(27, 220, 0.50, 0.50, WHITE, "/");
+									pp2d_draw_text(32, 220, 0.50, 0.50, WHITE, p_romsel_counter);
+									pp2d_draw_text(8, 219, 0.50, 0.50, BLACK, romsel_counter1);
+									pp2d_draw_text(27, 219, 0.50, 0.50, BLACK, "/");
+									pp2d_draw_text(32, 219, 0.50, 0.50, BLACK, p_romsel_counter);
+								} else {
+									pp2d_draw_text(8, 220, 0.50, 0.50, WHITE, romsel_counter1);
+									pp2d_draw_text(35, 220, 0.50, 0.50, WHITE, "/");
+									pp2d_draw_text(40, 220, 0.50, 0.50, WHITE, p_romsel_counter);
+									pp2d_draw_text(8, 219, 0.50, 0.50, BLACK, romsel_counter1);
+									pp2d_draw_text(35, 219, 0.50, 0.50, BLACK, "/");
+									pp2d_draw_text(40, 219, 0.50, 0.50, BLACK, p_romsel_counter);
+								}
 							}
 						}
 					}
 				} else {
-					pp2d_draw_texture(bottomlogotex, 320/2 - 189/2, 40);
+					if (settings.ui.theme == THEME_DSIMENU) pp2d_draw_texture(bottomlogotex, 320/2 - 189/2, 40);
 				}
 				if (menudbox_Ypos != -240) {
 					// Draw the menu dialog box.
