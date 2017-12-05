@@ -251,6 +251,22 @@ void screenon(void)
 	}
 }
 
+void botscreenoff(void)
+{
+	if (R_SUCCEEDED(gspLcdInit())) {
+		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);
+		gspLcdExit();
+	}
+}
+
+void botscreenon(void)
+{
+	if (R_SUCCEEDED(gspLcdInit())) {
+		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);
+		gspLcdExit();
+	}
+}
+
 static Handle ptmsysmHandle = 0;
 
 static inline Result ptmsysmInit(void)
@@ -2036,6 +2052,8 @@ void dsiMenuTheme_loadingScreen() {
 bool showAnniversaryText = true;
 
 int main(){
+	botscreenoff();
+
 	pp2d_init();
 	
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
@@ -2168,6 +2186,32 @@ int main(){
 	
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
+	aninumfadealpha = 0;
+	bool botscreenon_ran = false;
+
+	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/pseudoHDRlogo.png");
+
+	for(int i = 0; i < 60*3; i++) {
+		if(i <= 30) {
+			aninumfadealpha += 25;
+			if(aninumfadealpha > 255) aninumfadealpha = 255;
+		} else if(i >= 160) {
+			aninumfadealpha -= 25;
+			if(aninumfadealpha < 0) aninumfadealpha = 0;
+		}
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
+		pp2d_draw_texture_blend(bottomlogotex, 0, 0, RGBA8(255, 255, 255, aninumfadealpha));
+		pp2d_draw_text(32, 48, 0.60, 0.60f, BLACK, "Enhanced with");
+		pp2d_end_draw();
+		if(!botscreenon_ran) {
+			botscreenon();
+			botscreenon_ran = true;
+		}
+	}
+	botscreenoff();
+	
+	pp2d_free_texture(bottomlogotex);
+
 	/** Speed up New 3DS only. **/
 	bool isNew = 0;
 	res = 0; // prev. result
@@ -2197,9 +2241,9 @@ int main(){
 	
 	pp2d_set_texture_filter(GPU_LINEAR, GPU_NEAREST);
 
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
-	pp2d_end_draw();
+	pp2d_end_draw(); */
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
 
@@ -2272,17 +2316,17 @@ int main(){
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspfirmfound = true;
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
-		pp2d_end_draw();
+		pp2d_end_draw(); */
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
 	}else{
 		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm not found.\n"
-			"Dumping DSP...");
-		dumpDsp();
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
 		pp2d_end_draw();
+		botscreenon();
+		dumpDsp();
 		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 			ndspInit();
 			dspfirmfound = true;
@@ -2293,24 +2337,25 @@ int main(){
 			for (int i = 0; i < 90; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				if (!isDemo) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
 						"Running without sound.\n"
 						"(NTR/TWL mode will still have sound.)");
 				} else {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm dumping failed.\n"
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
 						"Running without sound.");
 				}
 				pp2d_end_draw();
 			}
 		}
+		botscreenoff();
 	}
 
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
-		pp2d_end_draw();
+		pp2d_end_draw(); */
 		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
 	}else {
 		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
@@ -2318,9 +2363,9 @@ int main(){
 
 	// Load the sound effects if DSP is available.
 	if (dspfirmfound) {
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
-		pp2d_end_draw();
+		pp2d_end_draw(); */
 		
 		bgm_menu = new sound(musicpath);
 		sfx_launch = new sound("romfs:/sounds/launch.wav", 2, false);
@@ -2341,9 +2386,9 @@ int main(){
 		settings.ui.quickStart = true;
 	}
 
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Scanning ROM directories...");
-	pp2d_end_draw();
+	pp2d_end_draw(); */
 	
 	// Scan the ROM directories.
 	scanRomDirectories();
@@ -2361,6 +2406,8 @@ int main(){
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
 	
 	if(!settings.ui.quickStart) {
+		botscreenon();
+
 		const char* wifiStuckMsg =
 		"Checking WiFi status...\n"
 		"\n"
@@ -2383,7 +2430,7 @@ int main(){
 		}
 	
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Now checking banner data (SD Card)...");
 		pp2d_end_draw();
 
 		// Cache banner data for ROMs on the SD card.
@@ -2435,6 +2482,7 @@ int main(){
 		}
 	}
 
+	botscreenoff();
 	showdialogbox = false;
 	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
@@ -2459,8 +2507,8 @@ int main(){
 		}
 	}
 
-	if (aptMainLoop()) {
-		if (settings.ui.theme >= THEME_R4) {
+	if (settings.ui.theme >= THEME_R4) {
+		if (aptMainLoop()) {
 			// Top
 			pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 			pp2d_draw_texture(r4loadingtex, 40, 0);
@@ -2469,17 +2517,7 @@ int main(){
 			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
 			pp2d_end_draw();
-		} else {
-			// Clear Top
-			pp2d_begin_draw(GFX_TOP, GFX_LEFT);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
-			pp2d_draw_on(GFX_TOP, GFX_RIGHT);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
-
-			// Bottom
-			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading...");
-			pp2d_end_draw();
+			botscreenon();
 		}
 	}
 	
