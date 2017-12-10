@@ -13,7 +13,7 @@ before_install:
   - export DEVKITARM=${DEVKITPRO}/devkitARM
 
 install:
-  - sudo apt-get update update-ca-certificates
+  - sudo apt-get upgrade update-ca-certificates
   - sudo perl devkitARMupdate.pl  
   - wget https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
