@@ -19,10 +19,10 @@ install:
   - wget https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
   - unzip /tmp/3ds_portlibs.zip
   - sudo cp -R portlibs ${DEVKITPRO}/
-  - wget  https://github.com/Steveice10/buildtools/blob/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/bannertool-linux64?raw=true
+  - wget  https://raw.githubusercontent.com/Steveice10/buildtools/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/bannertool-linux64
   - chmod 777 bannertool-linux64
   - sudo cp bannertool-linux64 /usr/bin/bannertool
-  - wget https://github.com/Steveice10/buildtools/blob/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/makerom-linux64?raw=true
+  - wget https://raw.githubusercontent.com/Steveice10/buildtools/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/makerom-linux64
   - chmod 777 makerom-linux64
   - sudo cp makerom-linux64 /usr/bin/makerom
   - pip3 install requests
