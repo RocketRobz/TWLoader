@@ -13,7 +13,7 @@ before_install:
   - export DEVKITARM=${DEVKITPRO}/devkitARM
 
 install:
-  - sudo wget -P /usr/local/share/ca-certificates https://curl.haxx.se/ca/cacert.pem | mv cacert.pem cacert.crt
+  - sudo wget -P /usr/local/share/ca-certificates https://curl.haxx.se/ca/cacert.pem -O cacert.crt
   - sudo update-ca-certificates
   - sudo perl devkitARMupdate.pl  
   - wget https://github.com/xerpi/3ds_portlibs/releases/download/1/portlibs-linux.zip -O /tmp/3ds_portlibs.zip
