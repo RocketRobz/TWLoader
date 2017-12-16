@@ -9,9 +9,9 @@ static const char *const lang_TR[STR_MAX] = {
 	/** DS/DSi boot screen **/
 	"UYARI - SAĞLIK VE GÜVENLİK",								// "WARNING - HEALTH AND SAFETY"
 	"OYNAMADAN ÖNCE, SAĞLIK VE",							// "BEFORE PLAYING, READ THE HEALTH"
-	"GÜVENLİK ÖNLEMLERİ KİTAPÇIĞINI OKUYUN",							// "AND SAFETY PRECAUTIONS BOOKLET"
-	"SAĞLIK VE GÜVENLİĞİNİZ HAKKINDA",								// "FOR IMPORTANT INFORMATION"
-	"ÖNEMLİ BİLGİLER İÇİN.",							// "ABOUT YOUR HEALTH AND SAFETY."
+	"GÜVENLİĞİNİZ HAKKINDA ÖNEMLİ BİLGİLER",							// "AND SAFETY PRECAUTIONS BOOKLET"
+	"İÇİN SAĞLIK VE GÜVENLİK",								// "FOR IMPORTANT INFORMATION"
+	"ÖNLEMLERİ KİTAPÇIĞINI OKUYUN.",							// "ABOUT YOUR HEALTH AND SAFETY."
 	"BÖLGENİZE GÖRE EKSTRA BİR KİTAPÇIK KOPYASI",            // "TO GET AN EXTRA COPY FOR YOUR REGION, GO ONLINE AT"
 	"ALMAK İÇİN ZİYARET EDİN",		
 	"www.nintendo.com/healthsafety/",							// "www.nintendo.com/healthandsafety/"
@@ -42,16 +42,16 @@ static const char *const lang_TR[STR_MAX] = {
 	"Sağlık ve Güvenlik mesajı",								// "Health and Safety message"
 	"Başlangıç Ekranını Göster",											// "Show Boot Screen"
 	"ROM dizini",													// "ROM path"
-	"Quick start",												// "Quick start"
+	"Hızlı Başlat",												// "Quick start"
 
 	/** Settings: NTR_mode **/
 	"Flashkart(ları) seç",										// "Flashcard(s) select"
-	"Notification LED color",									// "Notification LED color"
+	"Bildirim ışığı rengi",									// "Notification LED color"
 	"ARM9 CPU Hızı",											// "ARM9 CPU Speed"
-	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
+	"Ses/Mikrofon frekansı",								// "Sound/Microphone frequency"
 	"Slot-1 için SD card erişimi",								// "SD card access for Slot-1"
 	"Slot-1'i sıfırla",												// "Reset Slot-1"
-	"Bootstrap loading screen",									// "Bootstrap loading screen"
+	"Bootstrap yükleme ekranı",									// "Bootstrap loading screen"
 	"Konsol çıktısı",											// "Console output"
 	"Bootstrap'ı otomatik güncelleştir",									// "Auto-update bootstrap"
 	"Bootstrap",												// "Bootstrap"
@@ -94,16 +94,16 @@ static const char *const lang_TR[STR_MAX] = {
 	"TWLoader'da kullanılacak tema.",							// "The theme to use in TWLoader."
 	"Yan temalar için BAŞLAT tuşuna basın.",								// "Press START for sub-themes."
 
-	"Üst ekran arkaplan rengi,",							// "The color of the top background,"
-	"Başlat kenarlığı ve daire çizgileri",					// "the START border, and the circling dots."
+	"Üst ekran arkaplan,",							// "The color of the top background,"
+	"Başlat kenarlığı ve daire çizgileri rengi.",					// "the START border, and the circling dots."
 
-	"Üst kenarlık rengi,",								// "The color of the top border,"
-	"ve alt ekran arkaplanı.",								// "and the bottom background."
+	"Üst kenarlık,",								// "The color of the top border,"
+	"ve alt ekran arkaplanı rengi.",								// "and the bottom background."
 
 	"Oyunun adını baloncuğun",								// "Shows game filename at the"
 	"üst tarafında gösterir.",										// "top of the bubble."
 
-	"Seçilen oyun ve sayısı",						// "A number of selected game and listed"
+	"Seçilen oyun ve oyun sayısı",						// "A number of selected game and listed"
 	"metin baloncuğunun altında görünür.",					// "games is shown below the text bubble."
 
 	"DSi Menü teması için",						// "Loads a custom bottom screen image"
@@ -115,8 +115,8 @@ static const char *const lang_TR[STR_MAX] = {
 	"DS/DSi başlangıç ekranını",								// "Where do you want to see the"
 	"Nerede görmek istersiniz?",										// "DS/DSi boot screen?"
 
-	"On startup, WiFi features and",							// "On startup, WiFi features and"
-	"banner caching will be skipped.",							// "banner caching will be skipped."
+	"Başlangıçta, WiFi özellikleri ve",							// "On startup, WiFi features and"
+	"banner önbelleğe alımı atlanacak.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"ROMları yükleyeceğiniz bir",								// "Pick a flashcard to use to"
@@ -128,8 +128,8 @@ static const char *const lang_TR[STR_MAX] = {
 	"Bazı oyunlarda TWL'nin takılmaları",							// "Set to TWL to get rid of lags"
 	"atlatabilmesi için seçin.",											// "in some games."
 
-	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
-	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+	"32.73 kHz: Orijinal kalite",								// "32.73 kHz: Original quality"
+	"47.61 kHz: Yüksek kalite",									// "47.61 kHz: High quality"
 
 	// "8 bit VRAM yazmalarına izin verir",									// "Allows 8 bit VRAM writes"
 	// "ve veri yolunu 32 bite çıkarır.",							// "and expands the bus to 32 bit."
@@ -146,8 +146,8 @@ static const char *const lang_TR[STR_MAX] = {
 	"Eğer Slot-1 kartlar beyaz ekranda",					// "Enable this if Slot-1 carts are stuck"
 	"takılı kalıyorsa bunu etkinleştirin.",										// "on white screens."
 
-	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
-	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+	"ROM nds-bootstrap'te başlatılmadan",						// "Shows a loading screen before ROM"
+	"önce bir yükleme ekranı gösterir.",								// "is started in nds-bootstrap."
 
 	"Oyun başlamadan önce bazı yazılar gösterir.",					// "Displays some text before launched game."
 	"",															// (empty)
@@ -166,7 +166,7 @@ static const char *const lang_TR[STR_MAX] = {
 	"Oyun konumu",											// "Game location"
 	"Kapak Resmi: Açık",												// "Box Art: On"
 	"Kapak Resmi: Kapalı",												// "Box Art: OFF"
-	"Select ROM type",											// "Select ROM type"
+	"ROM tipini seçin",											// "Select ROM type"
 	"Üst Kenarlık: Açık",											// "Top border: On"
 	"Üst Kenarlık: Kapalı",											// "Top border: Off"
 	"Donor Rom seçimini kaldır",											// "Unset donor rom"
