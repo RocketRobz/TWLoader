@@ -977,7 +977,7 @@ void settingsDrawBottomScreen(void)
 		// Flash card options.
 		static const char *const flash_card_options[][6] = {
 			{"DSTT", "R4i Gold", "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)",
-				"R4 SDHC Dual-Core", "R4 SDHC Upgrade", "SuperCard DSONE"},
+				"R4 SDHC Upgrade", "SuperCard DSONE", " "},
 			{"Original R4", "M3 Simply", " ", " ", " ", " "},
 			{"R4iDSN", "R4i Gold RTS", "R4 Ultra", " ", " ", " "},
 			{"Acekard 2(i)", "Galaxy Eagle", "M3DS Real", " ", " ", " "},
