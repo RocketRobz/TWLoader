@@ -2049,7 +2049,7 @@ void dsiMenuTheme_loadingScreen() {
 	pp2d_end_draw();
 }
 
-bool showAnniversaryText = true;
+bool showAnniversaryText = false;
 
 int main(){
 	botscreenoff();
