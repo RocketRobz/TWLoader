@@ -1028,7 +1028,10 @@ void settingsDrawBottomScreen(void)
 		if (settings.ui.theme == THEME_DSIMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_DSi);
 			pp2d_draw_wtext(Xpos, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_NO_SUB_THEMES));
-		} else if (settings.ui.theme == THEME_R4) {
+		} else if (settings.ui.theme == THEME_3DSMENU) {
+			title = L"Sub-theme select: 3DS Menu";
+			pp2d_draw_wtext(Xpos, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_NO_SUB_THEMES));
+        } else if (settings.ui.theme == THEME_R4) {
 			title = TR(STR_SETTINGS_SUBTHEME_R4);
 			int Ypos = 30;
 			if (settings.ui.subtheme == 0) {
