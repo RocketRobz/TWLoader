@@ -2499,7 +2499,9 @@ int main(){
 	storedcursorPosition = settings.ui.cursorPosition;
 	
 	if (settings.ui.showbootscreen == 1) {
+        botscreenon();
 		bootSplash();
+        botscreenoff();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
 		if (settings.ui.theme >= THEME_R4) {
 		} else if(aptMainLoop()) {
