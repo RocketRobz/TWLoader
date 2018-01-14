@@ -77,6 +77,7 @@ extern size_t dsiboottex;
 extern size_t invdsboottex;
 extern size_t invdsiboottex;
 extern size_t dshstex;
+extern size_t invdshstex;
 extern size_t dsihstex;
 extern size_t disabledtex;
 extern size_t settingstex;

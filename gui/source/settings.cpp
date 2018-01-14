@@ -106,40 +106,56 @@ void settingsLoadTextures(void)
 	pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/dsiboot.png"); // DSi boot screen in settings
 	pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_dsboot.png"); // DS boot screen in settings
 	pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_dsiboot.png"); // DSi boot screen in settings
+    
 	switch (settings.ui.language) {
 		case 0:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_JA.png"); // DS(i) black H&S screen in settings
+            //btw, H&S message for both devices seem to be the same on each device
 			break;
 		case 1:
 		default:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dsihs.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dsihs.png"); // DSi H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 2:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_FR.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 3:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_DE.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 4:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_IT.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 5:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_ES.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 6:
 		case 11:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_CH.png"); // DS(i) black H&S screen in settings
+
+            pp2d_load_texture_png(dsboottex, "romfs:/graphics/settings/iqueboot.png"); // iQue boot screen in settings
+            pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/iqueiboot.png"); // iQuei boot screen in settings
+            pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_iqueboot.png"); // iQue boot screen in settings
+            pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_iqueiboot.png"); // iQuei boot screen in settings
+
 			break;
 		case 7:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
+            pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_KO.png"); // DS(i) black H&S screen in settings 
 			break;
 	}
 	pp2d_load_texture_png(disabledtex, "romfs:/graphics/settings/disable.png"); // Red circle with line
@@ -176,6 +192,7 @@ void settingsUnloadTextures(void)
 	pp2d_free_texture(invdsiboottex);
 	pp2d_free_texture(dshstex);
 	pp2d_free_texture(dsihstex);
+    pp2d_free_texture(invdshstex);
 	pp2d_free_texture(disabledtex);
 
 	/** Bottom screen **/
@@ -237,8 +254,8 @@ void settingsDrawTopScreen(void)
 			}
 			if (settings.ui.healthsafety == 1) {
 				if (settings.ui.bootscreen >= 3) {
-					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
-					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");					
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK); // Is this even required? ¯\_('u')_/¯
+					pp2d_draw_texture(invdshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen (dark)
 				} else if (settings.ui.bootscreen == 2) {
 					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {

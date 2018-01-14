@@ -128,3 +128,4 @@ size_t gbctex = 124;
 size_t anniversarytex = 125;
 size_t _3dsbotbotbartex = 126;
 size_t _3dsbotbotbarbuttex = 127;
+size_t invdshstex = 128;
