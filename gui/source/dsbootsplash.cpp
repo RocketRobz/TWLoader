@@ -499,6 +499,7 @@ void bootSplash() {
 			// French
 				if (settings.ui.healthsafety) {
 					pp2d_draw_texture(hstex, 12, 16);
+					pp2d_draw_wtext(35, 19, 0.60, 0.60, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS));
 					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.45, 0.47);
 					pp2d_draw_wtext(((320-text_width)/2), 56, 0.45, 0.47, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS1));
 					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS2), 0.45, 0.47);
@@ -532,11 +533,11 @@ void bootSplash() {
 					pp2d_draw_wtext(((320-text_width)/2), 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
 					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.40, 0.40);
 					pp2d_draw_wtext(((320-text_width)/2), 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1),0.38, 0.45);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5),0.38, 0.45);
 					pp2d_draw_wtext(((320-text_width)/2), 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.38, 0.45);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.38, 0.45);
 					pp2d_draw_wtext(((320-text_width)/2), 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS1), 0.55, 0.55);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS7), 0.55, 0.55);
 					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
@@ -557,11 +558,11 @@ void bootSplash() {
 					pp2d_draw_wtext(((320-text_width)/2), 95, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS3));
 					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.40, 0.40);
 					pp2d_draw_wtext(((320-text_width)/2), 115, 0.40, 0.40, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS4));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.38, 0.45);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS5), 0.38, 0.45);
 					pp2d_draw_wtext(((320-text_width)/2), 147, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS5));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.38, 0.45);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS6), 0.38, 0.45);
 					pp2d_draw_wtext(((320-text_width)/2), 161, 0.38, 0.45, RGBA8(text_col, text_col, text_col, 255), TR(STR_DSSPLASH_WARNING_HS6));
-					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS4), 0.55, 0.55);
+					text_width = pp2d_get_wtext_width(TR(STR_DSSPLASH_WARNING_HS7), 0.55, 0.55);
 					pp2d_draw_wtext(((320-text_width)/2), 178, 0.55, 0.55, DSSPLASH, TR(STR_DSSPLASH_WARNING_HS7));
 				}
 				if (touchtocontinue_show) {
