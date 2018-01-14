@@ -106,6 +106,7 @@ void settingsLoadTextures(void)
 	pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/dsiboot.png"); // DSi boot screen in settings
 	pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_dsboot.png"); // DS boot screen in settings
 	pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_dsiboot.png"); // DSi boot screen in settings
+	
 	switch (settings.ui.language) {
 		case 0:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
@@ -440,12 +441,12 @@ void settingsDrawBottomScreen(void)
 			"Deutsch",	// German
 			"Italiano",	// Italian
 			"Español",	// Spanish
-			"ZHCN",		// Simplified Chinese (TODO)
+			"简体中文",		// Simplified Chinese (TODO) (font seems to miss some characters)
 			"Korean",	// Korean [Font is missing characters]
 			"Nederlands",	// Dutch
 			"Português",	// Portuguese
 			"Russian",	// Russian (TODO) [Font's characters are too wide]
-			"ZHTW",		// Traditional Chinese (TODO)
+			"繁體中文",		// Traditional Chinese (TODO)
 			"Turkish",		// Turkish
 			"Finnish",		// Finnish
 		};
@@ -694,7 +695,13 @@ void settingsDrawBottomScreen(void)
 			int y = buttons[i].y + ((34 - h) / 2);
 			int w = 0;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+			if ((i == 0) || (i == 1)) { //if title being drawn is option 1 or 2 (they go off the button)
+				pp2d_draw_wtext(x, y, 0.45, 0.45, BLACK, title); //hacky workaround? is there a scale to fit text?
+			} else {
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+			}
+				
+			
 			y += 16;
 
 			// Draw the value.
@@ -796,7 +803,11 @@ void settingsDrawBottomScreen(void)
 			// Draw the value.
 			w = 0;
 			x = ((2 - w) / 2) + buttons[i].x;
-			pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
+			if (i == 0) { //this is for boot options, hopefully smallen the text so it doesn't go out of the button anymore
+				pp2d_draw_text(x, y, 0.40, 0.40, BLACK, value_desc); //this is also a hacky workaround and you know it
+			} else {
+				pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
+			}
 		}
 		if (cursor_pos[2] == 0) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1));
@@ -1436,7 +1447,7 @@ bool settingsMoveCursor(u32 hDown)
 			|| cursor_pos[2] == 5)
 				cursor_pos[2]--;
 			sfx = sfx_select;
-		} else 	if (hDown & KEY_L) {
+		} else	if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
@@ -1533,7 +1544,7 @@ bool settingsMoveCursor(u32 hDown)
 			|| cursor_pos[1] == 5)
 				cursor_pos[1]--;
 			sfx = sfx_select;
-		} else 	if (hDown & KEY_L) {
+		} else	if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
