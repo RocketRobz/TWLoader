@@ -2499,7 +2499,9 @@ int main(){
 	storedcursorPosition = settings.ui.cursorPosition;
 	
 	if (settings.ui.showbootscreen == 1) {
+		botscreenon();
 		bootSplash();
+		botscreenoff();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
 		if (settings.ui.theme >= THEME_R4) {
 		} else if(aptMainLoop()) {
@@ -5108,7 +5110,7 @@ int main(){
 						}
 					} else if(hDown & KEY_A && showbubble){
 						menuaction_launch = true;
-					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240){
+					} else if((hHeld & KEY_RIGHT && menudbox_Ypos == -240) || (hHeld & KEY_R && menudbox_Ypos == -240)) {
 						if (!titleboxXmoveleft) {
 							if (settings.ui.cursorPosition == -1) {
 								if (filenum == 0) {
@@ -5126,7 +5128,7 @@ int main(){
 								titleboxXmoveright = true;
 							}
 						}
-					} else if(hHeld & KEY_LEFT && menudbox_Ypos == -240){
+					} else if((hHeld & KEY_LEFT && menudbox_Ypos == -240) || (hHeld & KEY_L && menudbox_Ypos == -240)){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}

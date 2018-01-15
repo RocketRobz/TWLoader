@@ -106,40 +106,56 @@ void settingsLoadTextures(void)
 	pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/dsiboot.png"); // DSi boot screen in settings
 	pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_dsboot.png"); // DS boot screen in settings
 	pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_dsiboot.png"); // DSi boot screen in settings
+	
 	switch (settings.ui.language) {
 		case 0:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_JA.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_JA.png"); // DS(i) black H&S screen in settings
+			//btw, H&S message for both devices seem to be the same on each device
 			break;
 		case 1:
 		default:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dsihs.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dsihs.png"); // DSi H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 2:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_FR.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_FR.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 3:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_DE.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_DE.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 4:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_IT.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_IT.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 5:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_ES.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_ES.png"); // DS(i) black H&S screen in settings 
 			break;
 		case 6:
 		case 11:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_CH.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_CH.png"); // DS(i) black H&S screen in settings
+
+			pp2d_load_texture_png(dsboottex, "romfs:/graphics/settings/iqueboot.png"); // iQue boot screen in settings
+			pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/iqueiboot.png"); // iQuei boot screen in settings
+			pp2d_load_texture_png(invdsboottex, "romfs:/graphics/settings/inv_iqueboot.png"); // iQue boot screen in settings
+			pp2d_load_texture_png(invdsiboottex, "romfs:/graphics/settings/inv_iqueiboot.png"); // iQuei boot screen in settings
+
 			break;
 		case 7:
 			pp2d_load_texture_png(dshstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
 			pp2d_load_texture_png(dsihstex, "romfs:/graphics/settings/dshs_KO.png"); // DS H&S screen in settings
+			pp2d_load_texture_png(invdshstex, "romfs:/graphics/settings/inv_dshs_KO.png"); // DS(i) black H&S screen in settings 
 			break;
 	}
 	pp2d_load_texture_png(disabledtex, "romfs:/graphics/settings/disable.png"); // Red circle with line
@@ -176,6 +192,7 @@ void settingsUnloadTextures(void)
 	pp2d_free_texture(invdsiboottex);
 	pp2d_free_texture(dshstex);
 	pp2d_free_texture(dsihstex);
+	pp2d_free_texture(invdshstex);
 	pp2d_free_texture(disabledtex);
 
 	/** Bottom screen **/
@@ -237,8 +254,8 @@ void settingsDrawTopScreen(void)
 			}
 			if (settings.ui.healthsafety == 1) {
 				if (settings.ui.bootscreen >= 3) {
-					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK);
-					pp2d_draw_text(offset3D[topfb].boxart+162, 152, 0.55, 0.55, WHITE, "  Preview\nunavailable");					
+					pp2d_draw_rectangle(offset3D[topfb].boxart+136, 124, 128, 96, BLACK); // Is this even required? ¯\_('u')_/¯
+					pp2d_draw_texture(invdshstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen (dark)
 				} else if (settings.ui.bootscreen == 2) {
 					pp2d_draw_texture(dsihstex, offset3D[topfb].boxart+136, 124); // Draw H&S screen
 				} else if (settings.ui.bootscreen <= 1) {
@@ -424,12 +441,12 @@ void settingsDrawBottomScreen(void)
 			"Deutsch",	// German
 			"Italiano",	// Italian
 			"Español",	// Spanish
-			"ZHCN",		// Simplified Chinese (TODO)
+			"简体中文",		// Simplified Chinese (TODO) (font seems to miss some characters)
 			"Korean",	// Korean [Font is missing characters]
 			"Nederlands",	// Dutch
 			"Português",	// Portuguese
 			"Russian",	// Russian (TODO) [Font's characters are too wide]
-			"ZHTW",		// Traditional Chinese (TODO)
+			"繁體中文",		// Traditional Chinese (TODO)
 			"Turkish",		// Turkish
 			"Finnish",		// Finnish
 		};
@@ -678,7 +695,13 @@ void settingsDrawBottomScreen(void)
 			int y = buttons[i].y + ((34 - h) / 2);
 			int w = 0;
 			int x = ((2 - w) / 2) + buttons[i].x;
-			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+			if ((i == 0) || (i == 1)) { //if title being drawn is option 1 or 2 (they go off the button)
+				pp2d_draw_wtext(x, y, 0.45, 0.45, BLACK, title); //hacky workaround? is there a scale to fit text?
+			} else {
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+			}
+				
+			
 			y += 16;
 
 			// Draw the value.
@@ -780,7 +803,11 @@ void settingsDrawBottomScreen(void)
 			// Draw the value.
 			w = 0;
 			x = ((2 - w) / 2) + buttons[i].x;
-			pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
+			if (i == 0) { //this is for boot options, hopefully smallen the text so it doesn't go out of the button anymore
+				pp2d_draw_text(x, y, 0.40, 0.40, BLACK, value_desc); //this is also a hacky workaround and you know it
+			} else {
+				pp2d_draw_text(x, y, 0.50, 0.50, BLACK, value_desc);
+			}
 		}
 		if (cursor_pos[2] == 0) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_SHOW_BOOT_SCREEN_1));
@@ -1001,7 +1028,10 @@ void settingsDrawBottomScreen(void)
 		if (settings.ui.theme == THEME_DSIMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_DSi);
 			pp2d_draw_wtext(Xpos, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_NO_SUB_THEMES));
-		} else if (settings.ui.theme == THEME_R4) {
+		} else if (settings.ui.theme == THEME_3DSMENU) {
+			title = L"Sub-theme select: 3DS Menu";
+			pp2d_draw_wtext(Xpos, 40, 0.55, 0.55, SET_ALPHA(color_data->color, 255), TR(STR_SETTINGS_NO_SUB_THEMES));
+        } else if (settings.ui.theme == THEME_R4) {
 			title = TR(STR_SETTINGS_SUBTHEME_R4);
 			int Ypos = 30;
 			if (settings.ui.subtheme == 0) {
@@ -1420,7 +1450,7 @@ bool settingsMoveCursor(u32 hDown)
 			|| cursor_pos[2] == 5)
 				cursor_pos[2]--;
 			sfx = sfx_select;
-		} else 	if (hDown & KEY_L) {
+		} else	if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND2;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
@@ -1517,7 +1547,7 @@ bool settingsMoveCursor(u32 hDown)
 			|| cursor_pos[1] == 5)
 				cursor_pos[1]--;
 			sfx = sfx_select;
-		} else 	if (hDown & KEY_L) {
+		} else	if (hDown & KEY_L) {
 			subscreenmode = SUBSCREEN_MODE_FRONTEND;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_R) {
