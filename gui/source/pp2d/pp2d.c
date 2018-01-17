@@ -20,18 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * https://discord.gg/zqXWgsH
+ * https://discord.gg/bGKEyfY
  */
  
 /**
  * Plug & Play 2D
  * @file pp2d.c
  * @author Bernardo Giordano
- * @date 26 October 2017
+ * @date 17 January 2018
  * @brief pp2d implementation
  */
 
 #include "pp2d.h"
+#include "loadbmp.h"
 
 static DVLB_s* vshader_dvlb;
 static shaderProgram_s program;
@@ -76,7 +77,7 @@ static struct {
 } textures[MAX_TEXTURES];
 
 static void pp2d_add_text_vertex(float vx, float vy, float vz, float tx, float ty);
-static bool pp2d_fast_draw_vbo(int x, int y, int height, int width, float left, float right, float top, float bottom, float depth);
+static bool pp2d_add_quad(int x, int y, int height, int width, float left, float right, float top, float bottom, float depth);
 static u32 pp2d_get_next_pow2(u32 n);
 static void pp2d_get_text_size_internal(float* width, float* height, float scaleX, float scaleY, int wrapX, const char* text);
 static void pp2d_set_text_color(u32 color);
@@ -114,10 +115,10 @@ void pp2d_draw_rectangle(int x, int y, int width, int height, u32 color)
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvSrc(env, C3D_Both, GPU_CONSTANT, GPU_CONSTANT, 0);
 	C3D_TexEnvOp(env, C3D_Both, 0, 0, 0);
-	C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
+	C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
 	C3D_TexEnvColor(env, color);
 	
-	if (pp2d_fast_draw_vbo(x, y, height, width, 0, 0, 0, 0, DEFAULT_DEPTH))
+	if (pp2d_add_quad(x, y, height, width, 0, 0, 0, 0, DEFAULT_DEPTH))
 	{
 		C3D_DrawArrays(GPU_TRIANGLE_STRIP, textVtxArrayPos - 4, 4);
 	}
@@ -296,7 +297,7 @@ void pp2d_exit(void)
 	gfxExit();
 }
 
-static bool pp2d_fast_draw_vbo(int x, int y, int height, int width, float left, float right, float top, float bottom, float depth)
+static bool pp2d_add_quad(int x, int y, int height, int width, float left, float right, float top, float bottom, float depth)
 {
 	if ((textVtxArrayPos+4) >= TEXT_VTX_ARRAY_COUNT)
 		return false;
@@ -429,46 +430,50 @@ void pp2d_get_text_size(float* width, float* height, float scaleX, float scaleY,
 
 static void pp2d_get_text_size_internal(float* width, float* height, float scaleX, float scaleY, int wrapX, const char* text)
 {
-	float w = 0.0f;
-	float h = 0.0f;
-	
-	ssize_t  units;
-	uint32_t code;
-	float x = 0;
-	float firstX = x;
-	const uint8_t* p = (const uint8_t*)text;
-	
-	do
-	{
-		if (!*p) break;
-		units = decode_utf8(&code, p);
-		if (units == -1)
-			break;
-		p += units;
-		if (code == '\n' || (wrapX != -1 && x + scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth >= firstX + wrapX))
-		{
-			x = firstX;
-			h += scaleY*fontGetInfo()->lineFeed;
-			p -= code == '\n' ? 0 : 1;
-		}
-		else if (code > 0)
-		{
-			float len = (scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth);
-			w += len;
-			x += len;
-		}
-	} while (code > 0);
-	
-	if (width)
-	{
-		*width = w;
-	}
-	
-	if (height)
-	{
-		h += scaleY*fontGetInfo()->lineFeed;
-		*height = h;
-	}
+    float maxW = 0.0f;
+    float w = 0.0f;
+    float h = 0.0f;
+    
+    ssize_t  units;
+    uint32_t code;
+    float x = 0;
+    float firstX = x;
+    const uint8_t* p = (const uint8_t*)text;
+    
+    do
+    {
+        if (!*p) break;
+        units = decode_utf8(&code, p);
+        if (units == -1)
+            break;
+        p += units;
+        if (code == '\n' || (wrapX != -1 && x + scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth >= firstX + wrapX))
+        {
+            x = firstX;
+            h += scaleY*fontGetInfo()->lineFeed;
+            p -= code == '\n' ? 0 : 1;
+            if (w > maxW)
+                maxW = w;
+            w = 0.f;
+        }
+        else if (code > 0)
+        {
+            float len = (scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth);
+            w += len;
+            x += len;
+        }
+    } while (code > 0);
+    
+    if (width)
+    {
+        *width = w > maxW ? w : maxW;
+    }
+    
+    if (height)
+    {
+        h += scaleY*fontGetInfo()->lineFeed;
+        *height = h;
+    }
 }
 
 float pp2d_get_text_width(const char* text, float scaleX, float scaleY)
@@ -502,6 +507,19 @@ float pp2d_get_wtext_width(const wchar_t* text, float scaleX, float scaleY)
 	float width;
 	pp2d_get_text_size_internal(&width, NULL, scaleX, scaleY, -1, buf);
 	return width;
+}
+
+void pp2d_load_texture_bmp(size_t id, const char* path)
+{
+	if (id >= MAX_TEXTURES)
+		return;
+	
+	u8* image = NULL;
+	unsigned int width = 0, height = 0;
+	loadbmp_decode_file(path, &image, &width, &height);
+	
+	pp2d_load_texture_memory(id, image, width, height);
+	free(image);
 }
 
 void pp2d_load_texture_memory(size_t id, void* buf, u32 width, u32 height)
@@ -564,11 +582,9 @@ void pp2d_load_texture_png(size_t id, const char* path)
 		return;
 	
 	u8* image;
-	unsigned width;
-	unsigned height;
+	unsigned width, height;
 
 	lodepng_decode32_file(&image, &width, &height, path);
-
 	for (u32 i = 0; i < width; i++) 
 	{
 		for (u32 j = 0; j < height; j++) 

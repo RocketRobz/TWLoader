@@ -2186,22 +2186,23 @@ int main(){
 	
 	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
 	
-	aninumfadealpha = 0;
+	aninumfadealpha = 255;
 	bool botscreenon_ran = false;
 
 	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/pseudoHDRlogo.png");
 
 	for(int i = 0; i < 60*3; i++) {
 		if(i <= 30) {
-			aninumfadealpha += 25;
-			if(aninumfadealpha > 255) aninumfadealpha = 255;
-		} else if(i >= 160) {
 			aninumfadealpha -= 25;
 			if(aninumfadealpha < 0) aninumfadealpha = 0;
+		} else if(i >= 160) {
+			aninumfadealpha += 25;
+			if(aninumfadealpha > 255) aninumfadealpha = 255;
 		}
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
-		pp2d_draw_texture_blend(bottomlogotex, 0, 0, RGBA8(255, 255, 255, aninumfadealpha));
-		pp2d_draw_text(32, 48, 0.60, 0.60f, BLACK, "Enhanced with");
+		pp2d_draw_texture(bottomlogotex, 0, 0);
+		pp2d_draw_text(32, 48, 0.60, 0.60f, WHITE, "Enhanced with");
+		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, aninumfadealpha));
 		pp2d_end_draw();
 		if(!botscreenon_ran) {
 			botscreenon();
@@ -5110,7 +5111,7 @@ int main(){
 						}
 					} else if(hDown & KEY_A && showbubble){
 						menuaction_launch = true;
-					} else if((hHeld & KEY_RIGHT && menudbox_Ypos == -240) || (hHeld & KEY_R && menudbox_Ypos == -240)) {
+					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240) {
 						if (!titleboxXmoveleft) {
 							if (settings.ui.cursorPosition == -1) {
 								if (filenum == 0) {
@@ -5128,7 +5129,7 @@ int main(){
 								titleboxXmoveright = true;
 							}
 						}
-					} else if((hHeld & KEY_LEFT && menudbox_Ypos == -240) || (hHeld & KEY_L && menudbox_Ypos == -240)){
+					} else if(hHeld & KEY_LEFT && menudbox_Ypos == -240){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
