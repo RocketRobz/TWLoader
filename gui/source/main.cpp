@@ -5388,7 +5388,7 @@ int main(){
 						} else if(hDown & KEY_TOUCH){
 							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)) { // Game location button
 								startmenu_cursorPosition = 0;
-								menudboxaction_switchloc = true;
+								if (settings.twl.romtype == 0) menudboxaction_switchloc = true;
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)){ // Box art button
 								startmenu_cursorPosition = 1;
 								settings.romselect.toplayout = !settings.romselect.toplayout;
@@ -5494,7 +5494,7 @@ int main(){
 							switch (startmenu_cursorPosition) {
 								case 0:
 								default:
-									menudboxaction_switchloc = true;
+									if (settings.twl.romtype == 0) menudboxaction_switchloc = true;
 									break;
 								case 1:
 									settings.romselect.toplayout = !settings.romselect.toplayout;
