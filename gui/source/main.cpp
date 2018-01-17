@@ -69,12 +69,13 @@ int TWLNANDnotfound_msg = 2;
 RomSelect_Mode menudboxmode = DBOX_MODE_OPTIONS; */
 
 enum MenuDBox_Mode {
-	DBOX_MODE_OPTIONS = 0,	// Options
-	DBOX_MODE_ROMTYPE = 1,	// Select ROM type
-	DBOX_MODE_SETTINGS = 2,	// Game Settings
-	DBOX_MODE_DELETE = 3,	// Delete confirmation
-	DBOX_MODE_DELETED = 4,	// Title deleted message
-	DBOX_MODE_OVERLAYS = 5,	// Overlays included message
+	DBOX_MODE_OPTIONS = 0,			// Options
+	DBOX_MODE_ROMTYPE = 1,			// Select ROM type
+	DBOX_MODE_SETTINGS = 2,			// Game Settings
+	DBOX_MODE_DELETE = 3,			// Delete confirmation
+	DBOX_MODE_DELETED = 4,			// Title deleted message
+	DBOX_MODE_OVERLAYS = 5,			// Overlays included message
+	DBOX_MODE_DONOR_NOT_SET = 6,	// Donor ROM not set message
 };
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
@@ -1531,7 +1532,18 @@ static void drawMenuDialogBox(void)
 	pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	pp2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	pp2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	if (menudboxmode == DBOX_MODE_OVERLAYS) {
+	if (menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
+		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
+		pp2d_draw_text(32, 32+menudbox_Ypos, 0.50, 0.50, BLACK,
+		"Donor ROM is not set.\n"
+		"\n"
+		"Please set Mario Kart DS as donor ROM,\n"
+		"by moving to the ROM, press SELECT,\n"
+		"then \"Set as donor ROM\".\n"
+		"\n"
+		"Some games will not work or save,\n"
+		"if this isn't set.");
+	} else if (menudboxmode == DBOX_MODE_OVERLAYS) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		
 		bnriconnum = settings.ui.cursorPosition;
@@ -1571,7 +1583,9 @@ static void drawMenuDialogBox(void)
 			pp2d_draw_text(48, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
 		}
 		
-		pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "This DSi-Enhanced game cannot be launched,\n" "due to overlays being included.");
+		pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK,
+		"This DSi-Enhanced game cannot be launched,\n"
+		"due to overlays being included.");
 	} else if (menudboxmode == DBOX_MODE_DELETED) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		pp2d_draw_text(64, 112+menudbox_Ypos, 0.50, 0.50, BLACK, "Deleted.");
@@ -1619,9 +1633,14 @@ static void drawMenuDialogBox(void)
 		}
 		
 		if (settings.twl.forwarder) {
-			pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "Are you sure you want to delete this title?\n" "(ROM and save data on the flashcard\n" "will be kept.)");
+			pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK,
+			"Are you sure you want to delete this title?\n"
+			"(ROM and save data on the flashcard\n"
+			"will be kept.)");
 		} else {
-			pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK, "Are you sure you want to delete this title?\n" "(Save data will be kept.)");
+			pp2d_draw_text(32, 128+menudbox_Ypos, 0.50, 0.50, BLACK,
+			"Are you sure you want to delete this title?\n"
+			"(Save data will be kept.)");
 		}
 	} else if (menudboxmode == DBOX_MODE_SETTINGS) {
 		pp2d_draw_wtext(240, menudbox_Ypos+199, 0.50, 0.50, BLACK, TR(STR_BACK));
@@ -2499,6 +2518,8 @@ int main(){
 	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
 	storedcursorPosition = settings.ui.cursorPosition;
 	
+	std::string donorpath;
+
 	if (settings.ui.showbootscreen == 1) {
 		botscreenon();
 		bootSplash();
@@ -2616,6 +2637,13 @@ int main(){
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
+				donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
+				// Show "Donor ROM not set" message, if donor path is blank
+				if (donorpath.compare("") == 0) {
+					showdialogbox_menu = true;
+					menu_ctrlset = CTRL_SET_DBOX;
+					menudboxmode = DBOX_MODE_DONOR_NOT_SET;
+				}
 				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
@@ -5343,7 +5371,9 @@ int main(){
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					hidTouchRead(&touch);
 					
-					if (menudboxmode == DBOX_MODE_DELETED || menudboxmode == DBOX_MODE_OVERLAYS) {
+					if (menudboxmode == DBOX_MODE_DELETED
+					|| menudboxmode == DBOX_MODE_OVERLAYS
+					|| menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
 						if (hDown & (KEY_A | KEY_B)) {
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
@@ -5416,7 +5446,7 @@ int main(){
 								settings.ui.topborder = !settings.ui.topborder;
 							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 111) && touch.py <= (menudbox_Ypos + 145)){ // Unset donor ROM button
 								startmenu_cursorPosition = 4;
-								bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
+								bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
 								bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
@@ -5533,7 +5563,7 @@ int main(){
 									break;
 								case 4:
 									// Unset donor ROM path
-									bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", "");
+									bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
 									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
@@ -5801,7 +5831,7 @@ int main(){
 										}else{
 											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
-										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+										bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
 										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									}
 									showdialogbox_menu = false;
@@ -5872,7 +5902,7 @@ int main(){
 										}else{
 											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
-										bootstrapini.SetString(bootstrapini_ndsbootstrap, "ARM7_DONOR_PATH", fat+settings.ui.romfolder+slashchar+rom);
+										bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
 										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									}
 									showdialogbox_menu = false;
