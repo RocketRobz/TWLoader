@@ -585,6 +585,8 @@ void SetDonorSDK() {
 		"BT2",	// TrackMania Turbo
 		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
 		"TAD",	// Kirby Mass Attack
+		"BVP",	// Drawn to Life Collection
+		"TCS",	// Scribblenauts Collection
 		"THM",	// FabStyle
 	};
 
