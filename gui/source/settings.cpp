@@ -857,6 +857,9 @@ void settingsDrawBottomScreen(void)
 			case 2:
 				loadingscreenvaluetext = "Pong";
 				break;
+			case 3:
+				loadingscreenvaluetext = "Tic-Tac-Toe";
+				break;
 		}
 
 		const char *autoupdatevaluetext;
@@ -1019,7 +1022,7 @@ void settingsDrawBottomScreen(void)
 				"R4 SDHC Upgrade", "SuperCard DSONE", " "},
 			{"Original R4", "M3 Simply", " ", " ", " ", " "},
 			{"R4iDSN", "R4i Gold RTS", "R4 Ultra", " ", " ", " "},
-			{"Acekard 2(i)", "Galaxy Eagle", "M3DS Real", " ", " ", " "},
+			{"Galaxy Eagle", "M3DS Real", " ", " ", " ", " "},
 			{"Acekard RPG", " ", " ", " ", " ", " "},
 			{"Ace 3DS+", "Gateway Blue Card", "R4iTT", " ", " ", " "},
 			{"SuperCard DSTWO", " ", " ", " ", " ", " "},
@@ -1321,13 +1324,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 6:	// Bootstrap loading screen
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.twl.loadingscreen++;
-						if (settings.twl.loadingscreen > 2) {
+						if (settings.twl.loadingscreen > 3) {
 							settings.twl.loadingscreen = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.twl.loadingscreen--;
 						if (settings.twl.loadingscreen < 0) {
-							settings.twl.loadingscreen = 2;
+							settings.twl.loadingscreen = 3;
 						}
 					}
 					break;
