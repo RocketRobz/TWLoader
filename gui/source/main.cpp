@@ -2712,7 +2712,7 @@ int main(){
 			if (!colortexloaded) {
 				donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
 				// Show "Donor ROM not set" message, if donor path is blank
-				if ((donorpath.compare("") == 0) && (!settings.twl.forwarder) && (settings.ui.theme <= THEME_3DSMENU)) {
+				if (!isDemo && (donorpath.compare("") == 0) && (!settings.twl.forwarder) && (settings.ui.theme <= THEME_3DSMENU)) {
 					showdialogbox_menu = true;
 					menu_ctrlset = CTRL_SET_DBOX;
 					menudboxmode = DBOX_MODE_DONOR_NOT_SET;
