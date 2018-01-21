@@ -542,6 +542,8 @@ void SetHomebrewBootstrap() {
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK() {
+	const u32 hHeld = hidKeysHeld();
+
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
@@ -632,6 +634,13 @@ void SetDonorSDK() {
 		}
 	}
 
+	if(hHeld & KEY_UP){
+		if (settings.twl.bootstrapfile == 1) {
+			bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+		} else {
+			bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
+		}
+	}
 }
 
 /**
