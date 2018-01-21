@@ -1756,6 +1756,79 @@ static void drawMenuDialogBox(void)
 				settings.pergame.green,
 				settings.pergame.blue, 255);
 			pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
+		} else if (settings.twl.forwarder) {
+			for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i -= 3) {
+				if (gamesettings_cursorPosition == i) {
+					// Button is highlighted.
+					pp2d_draw_texture(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y);
+				} else {
+					// Button is not highlighted. Darken the texture.
+					pp2d_draw_texture_blend(dboxtex_button, buttons[i].x, menudbox_Ypos+buttons[i].y, RGBA8(127, 127, 127, 255));
+				}
+
+				const wchar_t *title = buttons[i].title;
+				const wchar_t *value_desc = TR(STR_START_DEFAULT);
+				if (i == 0 || i == 2) {
+					switch (*(buttons[i].value)) {
+						case -1:
+						default:
+							value_desc = TR(STR_START_DEFAULT);
+							break;
+						case 0:
+							value_desc = buttons[i].value_desc[0];
+							break;
+						case 1:
+							value_desc = buttons[i].value_desc[1];
+							break;
+					}
+				} else if (i == 1) {
+					switch (*(buttons[i].value)) {
+						case 0:
+						default:
+							value_desc = buttons[i].value_desc[0];
+							break;
+						case 1:
+							value_desc = buttons[i].value_desc[1];
+							break;
+						case 2:
+							value_desc = buttons[i].value_desc[2];
+							break;
+					}
+				}
+
+				// Determine the text height.
+				// NOTE: Button texture size is 132x34.
+				const int h = 32;
+
+				// Draw the title.
+				int y = menudbox_Ypos + buttons[i].y + ((34 - h) / 2);
+				int w = 0;
+				int x = ((2 - w) / 2) + buttons[i].x;
+				pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
+				y += 16;
+
+				// Draw the value.
+				if (i < 3) {
+					w = 0;
+					x = ((2 - w) / 2) + buttons[i].x;
+					pp2d_draw_wtext(x, y, 0.50, 0.50, GRAY, value_desc);
+				} else if (i == 3) {
+					// Show the RGB value.
+					char rgb_str[32];
+					snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
+						settings.pergame.red,
+						settings.pergame.green,
+						settings.pergame.blue);
+					w = 0;
+					x = ((2 - w) / 2) + buttons[i].x;
+
+					// Print the RGB value using its color.
+					const u32 color = RGBA8(settings.pergame.red,
+						settings.pergame.green,
+						settings.pergame.blue, 255);
+					pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
+				}
+			}
 		} else {
 			for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
 				if (gamesettings_cursorPosition == i) {
@@ -2639,7 +2712,7 @@ int main(){
 			if (!colortexloaded) {
 				donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
 				// Show "Donor ROM not set" message, if donor path is blank
-				if (donorpath.compare("") == 0) {
+				if ((donorpath.compare("") == 0) && (!settings.twl.forwarder) && (settings.ui.theme <= THEME_3DSMENU)) {
 					showdialogbox_menu = true;
 					menu_ctrlset = CTRL_SET_DBOX;
 					menudboxmode = DBOX_MODE_DONOR_NOT_SET;
@@ -5761,29 +5834,37 @@ int main(){
 							}
 							SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
-						} else if (hDown & KEY_RIGHT) {
+						} else if ((hDown & KEY_RIGHT) && (!settings.twl.forwarder)) {
 							if (gamesettings_cursorPosition == 1) {
 								gamesettings_cursorPosition = 2;
 							}
-						} else if (hDown & KEY_LEFT) {
+						} else if ((hDown & KEY_LEFT) && (!settings.twl.forwarder)) {
 							if (gamesettings_cursorPosition == 2) {
 								gamesettings_cursorPosition = 1;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (gamesettings_cursorPosition == 0) {
-								gamesettings_cursorPosition = 1;
-							} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
+							if(!settings.twl.forwarder) {
+								if (gamesettings_cursorPosition == 0) {
+									gamesettings_cursorPosition = 1;
+								} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
+									gamesettings_cursorPosition = 3;
+								} else if (gamesettings_cursorPosition == 3) {
+									gamesettings_cursorPosition = 0;
+								}
+							} else {
 								gamesettings_cursorPosition = 3;
-							} else if (gamesettings_cursorPosition == 3) {
-								gamesettings_cursorPosition = 0;
 							}
 						} else if (hDown & KEY_UP) {
-							if (gamesettings_cursorPosition == 0) {
-								gamesettings_cursorPosition = 3;
-							} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
+							if(!settings.twl.forwarder) {
+								if (gamesettings_cursorPosition == 0) {
+									gamesettings_cursorPosition = 3;
+								} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
+									gamesettings_cursorPosition = 0;
+								} else if (gamesettings_cursorPosition == 3) {
+									gamesettings_cursorPosition = 1;
+								}
+							} else {
 								gamesettings_cursorPosition = 0;
-							} else if (gamesettings_cursorPosition == 3) {
-								gamesettings_cursorPosition = 1;
 							}
 						} else if(hDown & KEY_TOUCH){
 							if(gamesettings_isCia) {
@@ -5808,7 +5889,7 @@ int main(){
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
-								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
+								}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && (!settings.twl.forwarder) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
 									gamesettings_cursorPosition = 1;
 									settings.pergame.usedonor++;
 									if(settings.pergame.usedonor == 3)
@@ -5817,23 +5898,15 @@ int main(){
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
-								}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
+								}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && (!settings.twl.forwarder) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
 									gamesettings_cursorPosition = 2;
-									if (settings.twl.forwarder) {
-										if(matching_files.size() == 0){
-											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-										} else {
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-									} else {
-										if(matching_files.size() == 0){
-											rom = files.at(settings.ui.cursorPosition).c_str();
-										}else{
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-										bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
-										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
+									if(matching_files.size() == 0){
+										rom = files.at(settings.ui.cursorPosition).c_str();
+									}else{
+										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
+									bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
+									bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
 									menu_ctrlset = CTRL_SET_GAMESEL;
