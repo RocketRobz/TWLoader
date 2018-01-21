@@ -845,7 +845,19 @@ void settingsDrawBottomScreen(void)
 		const char *soundfreqvaluetext = (settings.twl.soundfreq ? "47.61 kHz" : "32.73 kHz");
 		const char *enablesdvaluetext = (settings.twl.enablesd ? "On" : "Off");
 		const char *resetslot1valuetext = (settings.twl.resetslot1 ? "On" : "Off");
-		const char *loadingscreenvaluetext = (settings.twl.loadingscreen ? "On" : "Off");
+		const char *loadingscreenvaluetext;
+		switch (settings.twl.loadingscreen) {
+			case 0:
+			default:
+				loadingscreenvaluetext = "None";
+				break;
+			case 1:
+				loadingscreenvaluetext = "Regular";
+				break;
+			case 2:
+				loadingscreenvaluetext = "Pong";
+				break;
+		}
 
 		const char *autoupdatevaluetext;
 		switch (settings.ui.autoupdate) {
@@ -1307,7 +1319,17 @@ bool settingsMoveCursor(u32 hDown)
 					settings.twl.resetslot1 = !settings.twl.resetslot1;
 					break;
 				case 6:	// Bootstrap loading screen
-					settings.twl.loadingscreen = !settings.twl.loadingscreen;
+					if (hDown & (KEY_A | KEY_RIGHT)) {
+						settings.twl.loadingscreen++;
+						if (settings.twl.loadingscreen > 2) {
+							settings.twl.loadingscreen = 0;
+						}
+					} else if (hDown & KEY_LEFT) {
+						settings.twl.loadingscreen--;
+						if (settings.twl.loadingscreen < 0) {
+							settings.twl.loadingscreen = 2;
+						}
+					}
 					break;
 				case 7:	// Console output
 					if (hDown & (KEY_A | KEY_RIGHT)) {

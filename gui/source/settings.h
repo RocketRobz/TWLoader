@@ -93,7 +93,7 @@ typedef struct _Settings_t {
 
 		bool launchslot1;
 		bool resetslot1;
-		bool loadingscreen;
+		int loadingscreen;	// 0 = None, 1 = Regular, 2 = Pong
 		int console;	// 0 = Off, 1 = On, 2 = On (Debug)
 		bool lockarm9scfgext;
 		
