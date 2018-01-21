@@ -582,6 +582,10 @@ void SetDonorSDK() {
 	static const char sdk5_list[][4] = {
 		"CS3",	// Sonic and Sega All Stars Racing
 		"BXS",	// Sonic Colo(u)rs
+		"BT2",	// TrackMania Turbo
+		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
+		"TAD",	// Kirby Mass Attack
+		"THM",	// FabStyle
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -616,6 +620,12 @@ void SetDonorSDK() {
 		if (!memcmp(game_TID, sdk5_list[i], 3)) {
 			// Found a match.
 			settings.twl.donorSdkVer = 5;
+
+			if (settings.twl.bootstrapfile == 1) {
+				bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+			} else {
+				bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
+			}
 			break;
 		}
 	}
