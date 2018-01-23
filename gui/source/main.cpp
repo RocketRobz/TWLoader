@@ -552,6 +552,12 @@ void SetDonorSDK() {
 	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
+	char game_TID_char1[5];
+	grabTID(f_nds_file, game_TID_char1, false);
+	game_TID_char1[4] = 0;
+	game_TID_char1[3] = 0;
+	game_TID_char1[2] = 0;
+	game_TID_char1[1] = 0;
 	fclose(f_nds_file);
 	
 	settings.twl.donorSdkVer = 0;
@@ -571,11 +577,13 @@ void SetDonorSDK() {
 		"APA",	// Pokemon Pearl
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 	
 	static const char sdk4_list[][4] = {
-		"A6C",	// MegaMan Star Force - Dragon
+		"YKW",	// Kirby Super Star Ultra
+		"A6C",	// MegaMan Star Force: Dragon
+		"A6B",	// MegaMan Star Force: Leo Pegasus
+		"A6A",	// MegaMan Star Force: Dragon
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"YT7",	// SEGA Superstars Tennis
 		"AZL",	// Style Savvy
@@ -584,11 +592,19 @@ void SetDonorSDK() {
 	static const char sdk5_list[][4] = {
 		"CS3",	// Sonic and Sega All Stars Racing
 		"BXS",	// Sonic Colo(u)rs
+		"BK9",	// Kingdom Hearts: Re-Coded
+		"BRJ",	// Radiant Historia
+		"IRA",	// Pokemon Black Version
+		"IRB",	// Pokemon White Version
+		"BOO",	// Okamiden
 		"BT2",	// TrackMania Turbo
 		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
 		"TAD",	// Kirby Mass Attack
-		"BVP",	// Drawn to Life Collection
+		"IRE",	// Pokemon Black Version 2
+		"IRD",	// Pokemon White Version 2
 		"TCS",	// Scribblenauts Collection
+		"BVP",	// Drawn to Life Collection
+		"TFB",	// Frozen: Olaf's Quest
 		"THM",	// FabStyle
 	};
 
@@ -619,6 +635,15 @@ void SetDonorSDK() {
 		}
 	}
 
+	if(strcmp("V", game_TID_char1) == 0) {
+		settings.twl.donorSdkVer = 5;
+
+		if (settings.twl.bootstrapfile == 1) {
+			bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+		} else {
+			bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
+		}
+	} else
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk5_list)/sizeof(sdk5_list[0]); i++) {
 		if (!memcmp(game_TID, sdk5_list[i], 3)) {
