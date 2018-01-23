@@ -175,6 +175,8 @@ char settings_vertext[13];
 
 std::string settings_releasebootstrapver;
 std::string settings_unofficialbootstrapver;
+std::string settings_SDK5releasebootstrapver;
+std::string settings_SDK5unofficialbootstrapver;
 
 static bool applaunchprep = false;
 static bool launchCia = false;
@@ -2544,24 +2546,40 @@ int main(){
 	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
 	
-	if(!settings.ui.quickStart) {
-		botscreenon();
+	botscreenon();
 
-		const char* wifiStuckMsg =
+	const char* wifiStuckMsg =
+	"Checking WiFi status...\n"
+	"\n"
+	"If you see this for more than 25 seconds,\n"
+	"try rebooting, then after launching TWLoader,\n"
+	"hold  to skip downloading missing files.\n"
+	"\n"
+	"If the issue persists, reboot, then do the same,\n"
+	"and also hold  to turn on quick start.";
+
+	if(!(hHeld & KEY_Y)) {
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
+			
+		// Download missing files
+		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
+			// Nothing
+		}
+	}
+
+	if(!settings.ui.quickStart) {
+		wifiStuckMsg =
 		"Checking WiFi status...\n"
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
 		"hold  to turn on quick start.";
-
+	
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
 		pp2d_end_draw();
-		
-		// Download missing files
-		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
-			// Nothing
-		}
 
 		// Download box art
 		if (checkWifiStatus()) {

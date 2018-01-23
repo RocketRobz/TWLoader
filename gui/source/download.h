@@ -51,18 +51,22 @@ int DownloadMissingFiles(void);
 /**
  * Update nds-bootstrap to the latest unofficial build.
  */
+void UpdateSDK1BootstrapUnofficial(void);
+void UpdateSDK5BootstrapUnofficial(void);
 void UpdateBootstrapUnofficial(void);
 
 /**
  * Update nds-bootstrap to the latest release build.
  */
+void UpdateSDK1BootstrapRelease(void);
+void UpdateSDK5BootstrapRelease(void);
 void UpdateBootstrapRelease(void);
 
 /**
  * Download bootstrap version files
  */
 
-int downloadBootstrapVersion(bool type);
+int downloadBootstrapVersion(bool type, bool sdk5);
 
 /**
  * Download store bootstrap version

@@ -309,12 +309,22 @@ void settingsDrawTopScreen(void)
 		}
 		if (settings.twl.bootstrapfile == 1) {
 			fat = "sd:/";
+			char text[28];
+			snprintf(text, sizeof(text), "SDK1-4: %s", settings_unofficialbootstrapver.c_str());
+			char text2[28];
+			snprintf(text2, sizeof(text2), "SDK5: %s", settings_SDK5unofficialbootstrapver.c_str());
 			// Green
-			pp2d_draw_text(5, 222, 0.60, 0.60f, GREEN, settings_unofficialbootstrapver.c_str());
+			pp2d_draw_text(5, 208, 0.60, 0.60f, GREEN, text);
+			pp2d_draw_text(5, 222, 0.60, 0.60f, GREEN, text2);
 		} else {
 			fat = "sd:/";
+			char text[28];
+			snprintf(text, sizeof(text), "SDK1-4: %s", settings_releasebootstrapver.c_str());
+			char text2[28];
+			snprintf(text2, sizeof(text2), "SDK5: %s", settings_SDK5releasebootstrapver.c_str());
 			// Blue
-			pp2d_draw_text(5, 222, 0.60, 0.60f, BLUE, settings_releasebootstrapver.c_str());
+			pp2d_draw_text(5, 208, 0.60, 0.60f, BLUE, text);
+			pp2d_draw_text(5, 222, 0.60, 0.60f, BLUE, text2);
 		}
 
 		draw_volume_slider(setvoltex);

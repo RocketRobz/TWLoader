@@ -56,6 +56,8 @@ extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
 // Settings
 extern std::string settings_releasebootstrapver;
 extern std::string settings_unofficialbootstrapver;
+extern std::string settings_SDK5releasebootstrapver;
+extern std::string settings_SDK5unofficialbootstrapver;
 extern char settings_vertext[13];
 
 extern const u64 TWLNAND_TID;	// TWLNAND title ID.

@@ -27,7 +27,7 @@ using std::vector;
 
 #include "json/json.h"
 
-const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
 const char* JSON_NIGHTLIES_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/updatenightlies.json";
 bool updateGUI = false;
 bool updateNAND = false;
@@ -54,6 +54,10 @@ std::string release_BS_ver;
 std::string unofficial_BS_ver;
 std::string release_BS_url;
 std::string unofficial_BS_url;
+std::string release_SDK5BS_ver;
+std::string unofficial_SDK5BS_ver;
+std::string release_SDK5BS_url;
+std::string unofficial_SDK5BS_url;
 
 std::string nightly_url = "";
 std::string nightly_commit = "";
@@ -1164,14 +1168,17 @@ int DownloadMissingFiles(void) {
 				strValues.clear();
 				strNames.clear();
 
-				/** Bootstrap **/
+				// Search in nds-bootstrap object
+
+				/** SDK1-4 Bootstrap **/
 				val = json->u.object.values[3].value;
+				val2 = val->u.object.values[0].value;
 				strNames.push_back("release_ver");
 				strNames.push_back("unofficial_ver");
 				strNames.push_back("release_url");
 				strNames.push_back("unofficial_url");
 
-				strValues = internal_json_reader(json, val, strNames);
+				strValues = internal_json_reader(json, val2, strNames);
 				
 				release_BS_ver = strValues[0];
 				unofficial_BS_ver = strValues[1];
@@ -1180,6 +1187,22 @@ int DownloadMissingFiles(void) {
 				strValues.clear();
 				strNames.clear();
 				
+				/** TWLSDK/SDK5 Bootstrap **/
+				val2 = val->u.object.values[1].value;
+				strNames.push_back("sdk5-release_ver");
+				strNames.push_back("sdk5-unofficial_ver");
+				strNames.push_back("sdk5-release_url");
+				strNames.push_back("sdk5-unofficial_url");
+
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				release_SDK5BS_ver = strValues[0];
+				unofficial_SDK5BS_ver = strValues[1];
+				release_SDK5BS_url = strValues[2];
+				unofficial_SDK5BS_url = strValues[3];
+				strValues.clear();
+				strNames.clear();
+
 				struct stat st;
 				
 				if (!checkTWLNANDSide()) {
@@ -1326,11 +1349,13 @@ int DownloadMissingFiles(void) {
 						}
 					}
 				}
+				
+				// Download nds-bootstrap version data
 				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
-						"Now downloading release-bootstrap...\n"
-						"\n"
+						"Now downloading SDK1-4 release-bootstrap...\n"
+						"(Version data)"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
@@ -1347,11 +1372,32 @@ int DownloadMissingFiles(void) {
 					fputs(release_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
+				if (access("sdmc:/_nds/twloader/release-bootstrap-sdk5", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					static const char msg[] =
+						"Now downloading SDK5 release-bootstrap...\n"
+						"(Version data)"
+						"\n"
+						"Do not turn off the power.\n";
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
+					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap-sdk5", "w");
+					if(!ver) {
+						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+						}
+					}
+					fputs(release_SDK5BS_ver.c_str(), ver);
+					fclose(ver);
+				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
-						"Now downloading unofficial-bootstrap...\n"
-						"\n"
+						"Now downloading SDK1-4 unofficial-bootstrap...\n"
+						"(Version data)"
 						"\n"
 						"Do not turn off the power.\n";
 					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
@@ -1368,10 +1414,33 @@ int DownloadMissingFiles(void) {
 					fputs(unofficial_BS_ver.c_str(), ver);
 					fclose(ver);
 				}
+				if (access("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					static const char msg[] =
+						"Now downloading SDK5 unofficial-bootstrap...\n"
+						"(Version data)"
+						"\n"
+						"Do not turn off the power.\n";
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
+					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", "w");
+					if(!ver) {
+						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+						}
+					}
+					fputs(unofficial_SDK5BS_ver.c_str(), ver);
+					fclose(ver);
+				}
+
+				// Download nds-bootstrap .nds files
 				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
-						"Now downloading release-bootstrap...\n"
+						"Now downloading SDK1-4 release-bootstrap...\n"
 						"(release-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
@@ -1387,10 +1456,29 @@ int DownloadMissingFiles(void) {
 						}
 					}
 				}
+				if (access("sdmc:/_nds/release-bootstrap-sdk5.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					static const char msg[] =
+						"Now downloading SDK5 release-bootstrap...\n"
+						"(release-bootstrap-sdk5.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
+					int res = downloadFile(release_SDK5BS_url.c_str(),"/_nds/release-bootstrap-sdk5.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+						}
+					}
+				}
 				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					static const char msg[] =
-						"Now downloading unofficial-bootstrap...\n"
+						"Now downloading SDK1-4 unofficial-bootstrap...\n"
 						"(unofficial-bootstrap.nds)\n"
 						"\n"
 						"Do not turn off the power.\n";
@@ -1398,6 +1486,25 @@ int DownloadMissingFiles(void) {
 					pp2d_end_draw();
 					
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
+					if (res != 0) {
+						for (int i = 0; i < 15; i++) {
+							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+							pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Download failed.");
+							pp2d_end_draw();
+						}
+					}
+				}
+				if (access("sdmc:/_nds/unofficial-bootstrap-sdk5.nds", F_OK) == -1) {
+					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+					static const char msg[] =
+						"Now downloading SDK5 unofficial-bootstrap...\n"
+						"(unofficial-bootstrap-sdk5.nds)\n"
+						"\n"
+						"Do not turn off the power.\n";
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
+					pp2d_end_draw();
+					
+					int res = downloadFile(unofficial_SDK5BS_url.c_str(),"/_nds/unofficial-bootstrap-sdk5.nds", MEDIA_SD_FILE);
 					if (res != 0) {
 						for (int i = 0; i < 15; i++) {
 							pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1416,7 +1523,7 @@ int DownloadMissingFiles(void) {
 /**
  * Update nds-bootstrap to the latest unofficial build.
  */
-void UpdateBootstrapUnofficial(void) {
+void UpdateSDK1BootstrapUnofficial(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
@@ -1424,7 +1531,7 @@ void UpdateBootstrapUnofficial(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	static const char title[] = "Now updating bootstrap (Unofficial)...";
+	static const char title[] = "Now updating SDK1-4 bootstrap (Unofficial)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
@@ -1444,22 +1551,34 @@ void UpdateBootstrapUnofficial(void) {
 	// Then, download version string
 	if(result == 0) {
 		remove("sdmc:/_nds/twloader/unofficial-bootstrap");
-		downloadBootstrapVersion(false);
+		downloadBootstrapVersion(false, false);
 		checkBootstrapVersion();
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			DialogBoxDisappear(12, 16, "Done!");
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Done!");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Done!");
+			}
+			pp2d_end_draw();
 		}
 	} else {
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			DialogBoxDisappear(12, 16, "An error ocurred! Check log for details.");
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "An error occurred! Check log for details.");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "An error occurred! Check log for details.");
+			}
+			pp2d_end_draw();
 		}
 	}
 }
-
-/**
- * Update nds-bootstrap to the latest release build.
- */
-void UpdateBootstrapRelease(void) {
+void UpdateSDK5BootstrapUnofficial(void) {
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
@@ -1467,7 +1586,71 @@ void UpdateBootstrapRelease(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	static const char title[] = "Now updating bootstrap (Release)...";
+	static const char title[] = "Now updating SDK5 bootstrap (Unofficial)...";
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		DialogBoxAppear(12, 16, title);
+	}
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_draw_texture(settingstex, 0, 0);
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
+	} else {
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	}
+	pp2d_end_draw();
+	// Download first .nds file
+	remove("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5.nds");
+	int result = downloadFile(unofficial_SDK5BS_url.c_str(),"/_nds/unofficial-bootstrap-sdk5.nds", MEDIA_SD_FILE);
+	
+	// Then, download version string
+	if(result == 0) {
+		remove("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5");
+		downloadBootstrapVersion(false, true);
+		checkBootstrapVersion();
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Done!");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Done!");
+			}
+			pp2d_end_draw();
+		}
+	} else {
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "An error occurred! Check log for details.");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "An error occurred! Check log for details.");
+			}
+			pp2d_end_draw();
+		}
+	}
+}
+void UpdateBootstrapUnofficial(void) {
+	UpdateSDK1BootstrapUnofficial();
+	UpdateSDK5BootstrapUnofficial();
+	DialogBoxDisappear(12, 16, "");
+}
+
+/**
+ * Update nds-bootstrap to the latest release build.
+ */
+void UpdateSDK1BootstrapRelease(void) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_end_draw();
+	}
+	static const char title[] = "Now updating SDK1-4 bootstrap (Release)...";
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, title);
 	}
@@ -1487,16 +1670,92 @@ void UpdateBootstrapRelease(void) {
 	// Then, download version string
 	if(result == 0) {
 		remove("sdmc:/_nds/twloader/release-bootstrap");
-		downloadBootstrapVersion(true);
+		downloadBootstrapVersion(true, false);
 		checkBootstrapVersion();
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			DialogBoxDisappear(12, 16, "Done!");
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Done!");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Done!");
+			}
+			pp2d_end_draw();
 		}
 	} else {
-		if (screenmode == SCREEN_MODE_SETTINGS) {
-			DialogBoxDisappear(12, 16, "An error ocurred! Check log for details.");
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "An error occurred! Check log for details.");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "An error occurred! Check log for details.");
+			}
+			pp2d_end_draw();
 		}
 	}
+}
+void UpdateSDK5BootstrapRelease(void) {
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_draw_on(GFX_TOP, GFX_RIGHT);
+		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
+		pp2d_end_draw();
+	}
+	static const char title[] = "Now updating SDK5 bootstrap (Release)...";
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		DialogBoxAppear(12, 16, title);
+	}
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	if (screenmode == SCREEN_MODE_SETTINGS) {
+		pp2d_draw_texture(settingstex, 0, 0);
+		pp2d_draw_texture(dialogboxtex, 0, 0);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, title);
+	} else {
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
+	}
+	pp2d_end_draw();
+	// Download first .nds file
+	remove("sdmc:/_nds/twloader/release-bootstrap-sdk5.nds");
+	int result = downloadFile(release_SDK5BS_url.c_str(),"/_nds/release-bootstrap-sdk5.nds", MEDIA_SD_FILE);
+
+	// Then, download version string
+	if(result == 0) {
+		remove("sdmc:/_nds/twloader/release-bootstrap-sdk5");
+		downloadBootstrapVersion(true, true);
+		checkBootstrapVersion();
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "Done!");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Done!");
+			}
+			pp2d_end_draw();
+		}
+	} else {
+		for (int i = 0; i < 60; i++) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_draw_texture(settingstex, 0, 0);
+				pp2d_draw_texture(dialogboxtex, 0, 0);
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, BLACK, "An error occurred! Check log for details.");
+			} else {
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "An error occurred! Check log for details.");
+			}
+			pp2d_end_draw();
+		}
+	}
+}
+void UpdateBootstrapRelease(void) {
+	UpdateSDK1BootstrapRelease();
+	UpdateSDK5BootstrapRelease();
+	DialogBoxDisappear(12, 16, "");
 }
 
 /**
@@ -1661,7 +1920,7 @@ static int downloadBoxArt_internal(const char *ba_TID, RomLocation location)
  * @return non zero if error
  */
 
-int downloadBootstrapVersion(bool type)
+int downloadBootstrapVersion(bool type, bool sdk5)
 {
 	u32 responseCode = 0;
 	httpcContext context;	
@@ -1710,21 +1969,38 @@ int downloadBootstrapVersion(bool type)
 			if(json->type == json_object) {				
 				
 				json_value* val = json->u.object.values[3].value;				
+				json_value* val2 = val->u.object.values[0].value;
 				vector<std::string> strNames;
 				vector<std::string> strValues;
-								
-				/** Bootstrap **/
+
+				/** SDK1-4 Bootstrap **/
 				strNames.push_back("release_ver");
 				strNames.push_back("unofficial_ver");
 				strNames.push_back("release_url");
 				strNames.push_back("unofficial_url");
 
-				strValues = internal_json_reader(json, val, strNames);
+				strValues = internal_json_reader(json, val2, strNames);
 				
 				release_BS_ver = strValues[0];
 				unofficial_BS_ver = strValues[1];
 				release_BS_url = strValues[2];
 				unofficial_BS_url = strValues[3];
+				strValues.clear();
+				strNames.clear();				
+
+				/** TWLSDK/SDK5 Bootstrap **/
+				val2 = val->u.object.values[1].value;
+				strNames.push_back("sdk5-release_ver");
+				strNames.push_back("sdk5-unofficial_ver");
+				strNames.push_back("sdk5-release_url");
+				strNames.push_back("sdk5-unofficial_url");
+
+				strValues = internal_json_reader(json, val2, strNames);
+				
+				release_SDK5BS_ver = strValues[0];
+				unofficial_SDK5BS_ver = strValues[1];
+				release_SDK5BS_url = strValues[2];
+				unofficial_SDK5BS_url = strValues[3];
 				strValues.clear();
 				strNames.clear();				
 			}
@@ -1734,20 +2010,38 @@ int downloadBootstrapVersion(bool type)
 	free(jsonText);
 	httpcCloseContext(&context);		
 		
-	if (type){
-		FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
-		if(!ver) {
-			return res;
+	if (sdk5){
+		if (type){
+			FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap-sdk5", "w");
+			if(!ver) {
+				return res;
+			}
+			fputs(release_SDK5BS_ver.c_str(), ver);
+			fclose(ver);
+		}else{
+			FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", "w");
+			if(!ver){
+				return res;
+			}
+			fputs(unofficial_SDK5BS_ver.c_str(), ver);
+			fclose(ver);
 		}
-		fputs(release_BS_ver.c_str(), ver);
-		fclose(ver);
-	}else{
-		FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
-		if(!ver){
-			return res;
+	} else {
+		if (type){
+			FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
+			if(!ver) {
+				return res;
+			}
+			fputs(release_BS_ver.c_str(), ver);
+			fclose(ver);
+		}else{
+			FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
+			if(!ver){
+				return res;
+			}
+			fputs(unofficial_BS_ver.c_str(), ver);
+			fclose(ver);
 		}
-		fputs(unofficial_BS_ver.c_str(), ver);
-		fclose(ver);
 	}
 	
 	return res;
@@ -1763,6 +2057,9 @@ void checkBootstrapVersion(void){
 	long fileSize;
 	char buf[128];
 	if (logEnabled) LogFM("download.checkBootstrapVersion()", "Checking bootstrap version");
+	
+	// release-bootstrap
+	
 	// Clean buf array
 	for (size_t i=0; i< sizeof(buf); i++){
 		buf[i] = '\0';
@@ -1773,7 +2070,7 @@ void checkBootstrapVersion(void){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "release-bootstrap ver file not found.");
 		if(checkWifiStatus()){
 			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading release-bootstrap ver file.");
-			res = downloadBootstrapVersion(true); // true == release
+			res = downloadBootstrapVersion(true, false); // true == release, false == sdk1-4
 		}else{
 			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No release version file available.");
 			settings_releasebootstrapver = "No version available";
@@ -1815,12 +2112,73 @@ void checkBootstrapVersion(void){
 	
 	res = false; // Just to be sure	
 	
+	// release-bootstrap-sdk5
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap-sdk5", "r");
+	if (!VerFile){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "release-bootstrap-sdk5 ver file not found.");
+		if(checkWifiStatus()){
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading release-bootstrap-sdk5 ver file.");
+			res = downloadBootstrapVersion(true, true); // true == release, true == sdk5
+		}else{
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No release version file available.");
+			settings_SDK5releasebootstrapver = "No version available";
+		}
+	}else{
+		fseek(VerFile , 0 , SEEK_END);
+		fileSize = ftell(VerFile);
+		rewind(VerFile);
+		fread(buf,1,fileSize,VerFile);
+		settings_SDK5releasebootstrapver = buf;
+		fclose(VerFile);
+		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release-bootstrap-sdk5 ver file:", settings_SDK5releasebootstrapver.c_str());
+	}
+	
+	if (res) settings_SDK5releasebootstrapver = "No version available";
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	if(res == 0){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening release-bootstrap-sdk5 ver file.");
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/release-bootstrap-sdk5", "r");
+		if (!VerFile){
+				if (logEnabled) LogFM("download.checkBootstrapVersion()", "No release version file available #2.");
+				settings_SDK5releasebootstrapver = "No version available";
+		}else{
+			fseek(VerFile , 0 , SEEK_END);
+			fileSize = ftell(VerFile);
+			rewind(VerFile);
+			fread(buf,1,fileSize,VerFile);
+			settings_SDK5releasebootstrapver = buf;
+			fclose(VerFile);
+			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading release-bootstrap-dsk5 ver file #2:", settings_SDK5releasebootstrapver.c_str());
+		}
+	}
+	
+	res = false; // Just to be sure	
+	
+	// unofficial-bootstrap
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
 	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "r");
 	if (!VerFile){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "unofficial-bootstrap ver file not found.");
 		if(checkWifiStatus()){
 			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading unofficial-bootstrap ver file.");
-			res = downloadBootstrapVersion(false); // false == unofficial
+			res = downloadBootstrapVersion(false, false); // false == unofficial
 		}else{
 			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No unofficial version file available.");
 			settings_unofficialbootstrapver = "No version available";
@@ -1836,6 +2194,11 @@ void checkBootstrapVersion(void){
 	}
 	if (res) settings_unofficialbootstrapver = "No version available";
 
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
 	if(res == 0){
 		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening unofficial bootstrap ver file.");
 		// Try to open again
@@ -1851,6 +2214,58 @@ void checkBootstrapVersion(void){
 			settings_unofficialbootstrapver = buf;
 			fclose(VerFile);
 			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial bootstrap ver file #2:", settings_unofficialbootstrapver.c_str());
+		}
+	}
+
+
+	// unofficial-bootstrap-sdk5
+	
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", "r");
+	if (!VerFile){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "unofficial-bootstrap-sdk5 ver file not found.");
+		if(checkWifiStatus()){
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "downloading unofficial-bootstrap-sdk5 ver file.");
+			res = downloadBootstrapVersion(false, true); // false == unofficial, true == sdk5
+		}else{
+			if (logEnabled) LogFM("download.checkBootstrapVersion()", "No unofficial version file available.");
+			settings_SDK5unofficialbootstrapver = "No version available";
+		}
+	}else{
+		fseek(VerFile , 0 , SEEK_END);
+		fileSize = ftell(VerFile);
+		rewind(VerFile);
+		fread(buf,1,fileSize,VerFile);
+		settings_SDK5unofficialbootstrapver = buf;
+		fclose(VerFile);
+		if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial-bootstrap-sdk5 ver file:", settings_SDK5unofficialbootstrapver.c_str());
+	}
+	if (res) settings_SDK5unofficialbootstrapver = "No version available";
+
+	// Clean buf array
+	for (size_t i=0; i< sizeof(buf); i++){
+		buf[i] = '\0';
+	}
+	
+	if(res == 0){
+		if (logEnabled) LogFM("download.checkBootstrapVersion()", "Re-opening unofficial-bootstrap-sdk5 ver file.");
+		// Try to open again
+		VerFile = fopen("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", "r");
+		if (!VerFile){
+				if (logEnabled) LogFM("download.checkBootstrapVersion()", "No unofficial version file available #2.");		
+				settings_SDK5unofficialbootstrapver = "No version available";
+		}else{
+			fseek(VerFile , 0 , SEEK_END);
+			fileSize = ftell(VerFile);
+			rewind(VerFile);
+			fread(buf,1,fileSize,VerFile);
+			settings_SDK5unofficialbootstrapver = buf;
+			fclose(VerFile);
+			if (logEnabled) LogFMA("download.checkBootstrapVersion()", "Reading unofficial-bootstrap-sdk5 ver file #2:", settings_SDK5unofficialbootstrapver.c_str());
 		}
 	}
 }
