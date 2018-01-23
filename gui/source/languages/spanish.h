@@ -159,7 +159,7 @@ static const char *const lang_ES[STR_MAX] = {
 	"durante el arranque.",										// (empty) 
 
 	"Cambia entre la version 'Release' (oficial)",				// "Change between release and"
-	"la 'Unofficial' (desarrollo) y la 'Old'.",					// "unofficial bootstrap file."
+	"y la 'Unofficial' (desarrollo)",							// "unofficial bootstrap file."
 
 	/** Start menu **/
 	// Options

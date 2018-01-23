@@ -158,8 +158,8 @@ static const char *const lang_FI[STR_MAX] = {
 	"Auto-päivitä nds-bootstrap käynnistyessä.",					// "Auto-update nds-bootstrap at launch."
 	"",																	// (empty)
 
-	"Valitse julkaistu, epävirallinen,",						// "Pick release, unofficial,"
-	"tai vanha bootstrap.",								// "or old bootstrap."
+	"Valitse julkaistu tai epävirallinen",				// "Pick release or unofficial bootstrap."
+	"bootstrap.",										// (empty)
 
 	/** Start menu **/
 	// Options

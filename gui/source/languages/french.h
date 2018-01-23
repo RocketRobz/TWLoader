@@ -158,8 +158,8 @@ static const char *const lang_FR[STR_MAX] = {
 	"Mise à jour auto. de nds-bootstrap",         		    	// "Auto-update nds-bootstrap at launch."
 	"au démarrage.",                                            // (empty)
 
-	"Choisir le fichier de bootstrap",                 	// "Pick release, unofficial,"
-	"(Release, Unofficial ou Old).",                        // "or old bootstrap."
+	"Choisir le fichier de bootstrap",							// "Pick release or unofficial bootstrap."
+	"(Release ou Unofficial).",									// (empty)
 	 
 	/** Start menu **/
 	// Options

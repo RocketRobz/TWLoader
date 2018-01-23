@@ -158,8 +158,8 @@ static const char *const lang_NL[STR_MAX] = {
 	"Auto-update nds-bootstrap at launch.",						// "Auto-update nds-bootstrap at launch."
 	"",															// (empty)
 
-	"Pick release, unofficial,",								// "Pick release, unofficial,"
-	"or old bootstrap.",										// "or old bootstrap."
+	"Pick release or unofficial bootstrap.",					// "Pick release or unofficial bootstrap."
+	"",															// (empty)
 
 	/** Start menu **/
 	// Options
