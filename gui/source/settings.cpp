@@ -276,6 +276,11 @@ void settingsDrawTopScreen(void)
 				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 20); // Draw disabled texture
 				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture	
 			}
+		} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
+			pp2d_draw_wtext(offset3D[topfb].disabled+72, 30, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
+			pp2d_draw_wtext(offset3D[topfb].disabled+72, 46, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+		} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
+			pp2d_draw_text(offset3D[topfb].disabled+32, 120, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
 		} else {
 			if(showAnniversaryText) pp2d_draw_texture(anniversarytex, 0, 40);
 
@@ -284,12 +289,6 @@ void settingsDrawTopScreen(void)
 			pp2d_draw_texture_blend(settingslogooadertex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,oaderfadealpha));
 
 			if(isDemo) pp2d_draw_texture_blend(settingslogodemotex, offset3D[topfb].boxart+400/2 - 256/2, 240/2 - 128/2, RGBA8(255,255,255,demofadealpha));
-			if (subscreenmode == SUBSCREEN_MODE_NTR) {
-				pp2d_draw_wtext(offset3D[topfb].disabled+72, 174, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
-				pp2d_draw_wtext(offset3D[topfb].disabled+72, 190, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
-			} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
-				pp2d_draw_text(offset3D[topfb].disabled+32, 192, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
-			}
 		}
 
 		pp2d_draw_text(318, 1, 0.58f, 0.58f, WHITE, RetTime(false).c_str());
@@ -307,6 +306,7 @@ void settingsDrawTopScreen(void)
 			snprintf(nightlyhash, 16, "%s", NIGHTLY);
 			pp2d_draw_text(272, 222, 0.60, 0.60f, WHITE, nightlyhash);			
 		}
+		pp2d_draw_text(5, 194, 0.55f, 0.55f, WHITE, "nds-bootstrap:");
 		if (settings.twl.bootstrapfile == 1) {
 			fat = "sd:/";
 			char text[28];
