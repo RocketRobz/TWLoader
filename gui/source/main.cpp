@@ -598,18 +598,24 @@ void SetDonorSDK() {
 	static const char sdk5_list[][4] = {
 		"CS3",	// Sonic and Sega All Stars Racing
 		"B2D",	// Doctor Who: Evacuation Earth
+		"BH2",	// Super Scribblenauts
 		"BXS",	// Sonic Colo(u)rs
 		"BOE",	// Inazuma Eleven 3: Sekai heno Chousen! The Ogre
 		"BK9",	// Kingdom Hearts: Re-Coded
+		"BWB",	// Plants vs. Zombies
 		"BRJ",	// Radiant Historia
 		"IRA",	// Pokemon Black Version
 		"IRB",	// Pokemon White Version
 		"BOO",	// Okamiden
 		"BT2",	// TrackMania Turbo
 		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
+		"TAK",	// All Kamen Rider: Rider Generation
 		"TAD",	// Kirby Mass Attack
+		"BLF",	// Professor Layton and the Last Specter
+		"BLF",	// Zuma's Revenge
 		"IRE",	// Pokemon Black Version 2
 		"IRD",	// Pokemon White Version 2
+		"TPT",	// Transformers Prime: The Game
 		"TCS",	// Scribblenauts Collection
 		"BVP",	// Drawn to Life Collection
 		"TFB",	// Frozen: Olaf's Quest
