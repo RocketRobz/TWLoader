@@ -550,6 +550,9 @@ void SetDonorSDK() {
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
+	char game_TID_full[5];
+	grabTID(f_nds_file, game_TID_full, false);
+	game_TID_full[4] = 0;
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
@@ -564,7 +567,7 @@ void SetDonorSDK() {
 	
 	settings.twl.donorSdkVer = 0;
 
-	// Check for ROM hacks that need an SDK version.
+	// Check for ROMs or ROM hacks that need an SDK version.
 	static const char sdk2_list[][4] = {
 		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
 		"AMH",	// Metroid Prime Hunters
@@ -591,9 +594,12 @@ void SetDonorSDK() {
 		"AZL",	// Style Savvy
 	};
 
+	// TIDs without 4th letter
 	static const char sdk5_list[][4] = {
 		"CS3",	// Sonic and Sega All Stars Racing
+		"B2D",	// Doctor Who: Evacuation Earth
 		"BXS",	// Sonic Colo(u)rs
+		"BOE",	// Inazuma Eleven 3: Sekai heno Chousen! The Ogre
 		"BK9",	// Kingdom Hearts: Re-Coded
 		"BRJ",	// Radiant Historia
 		"IRA",	// Pokemon Black Version
@@ -608,6 +614,25 @@ void SetDonorSDK() {
 		"BVP",	// Drawn to Life Collection
 		"TFB",	// Frozen: Olaf's Quest
 		"THM",	// FabStyle
+	};
+
+	// Full TIDs
+	static const char sdk5_list2[][5] = {
+		"YEED",		// Inazuma Eleven (Germany)
+		"YEEF",		// Inazuma Eleven (France)
+		"YEEI",		// Inazuma Eleven (Italy)
+		"YEEP",		// Inazuma Eleven (Europe)
+		"YEES",		// Inazuma Eleven (Spain)
+		"BEBD",		// Inazuma Eleven 2: Blizzard (Germany)
+		"BEBF",		// Inazuma Eleven 2: Blizzard (France)
+		"BEBI",		// Inazuma Eleven 2: Blizzard (Italy)
+		"BEBP",		// Inazuma Eleven 2: Blizzard (Europe)
+		"BEBS",		// Inazuma Eleven 2: Blizzard (Spain)
+		"BEED",		// Inazuma Eleven 2: Firestorm (Germany)
+		"BEEF",		// Inazuma Eleven 2: Firestorm (France)
+		"BEEI",		// Inazuma Eleven 2: Firestorm (Italy)
+		"BEEP",		// Inazuma Eleven 2: Firestorm (Europe)
+		"BEES",		// Inazuma Eleven 2: Firestorm (Spain)
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -637,15 +662,6 @@ void SetDonorSDK() {
 		}
 	}
 
-	if(strcmp("V", game_TID_char1) == 0) {
-		settings.twl.donorSdkVer = 5;
-
-		if (settings.twl.bootstrapfile == 1) {
-			bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
-		} else {
-			bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
-		}
-	} else
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk5_list)/sizeof(sdk5_list[0]); i++) {
 		if (!memcmp(game_TID, sdk5_list[i], 3)) {
@@ -658,6 +674,31 @@ void SetDonorSDK() {
 				bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
 			}
 			break;
+		}
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk5_list2)/sizeof(sdk5_list2[0]); i++) {
+		if (!memcmp(game_TID_full, sdk5_list2[i], 4)) {
+			// Found a match.
+			settings.twl.donorSdkVer = 5;
+
+			if (settings.twl.bootstrapfile == 1) {
+				bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+			} else {
+				bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
+			}
+			break;
+		}
+	}
+
+	if(strcmp("V", game_TID_char1) == 0) {
+		settings.twl.donorSdkVer = 5;
+
+		if (settings.twl.bootstrapfile == 1) {
+			bootstrapPath = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+		} else {
+			bootstrapPath = "sd:/_nds/release-bootstrap-sdk5.nds";
 		}
 	}
 
