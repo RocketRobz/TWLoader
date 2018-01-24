@@ -129,3 +129,6 @@ size_t anniversarytex = 125;
 size_t _3dsbotbotbartex = 126;
 size_t _3dsbotbotbarbuttex = 127;
 size_t invdshstex = 128;
+size_t regularloadtex = 129;
+size_t pongloadtex = 130;
+size_t tictactoeloadtex = 131;

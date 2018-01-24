@@ -160,6 +160,10 @@ void settingsLoadTextures(void)
 	}
 	pp2d_load_texture_png(disabledtex, "romfs:/graphics/settings/disable.png"); // Red circle with line
 
+	pp2d_load_texture_png(regularloadtex, "romfs:/graphics/settings/loading/regular.png");
+	pp2d_load_texture_png(pongloadtex, "romfs:/graphics/settings/loading/pong.png");
+	pp2d_load_texture_png(tictactoeloadtex, "romfs:/graphics/settings/loading/tictactoe.png");
+
 	/** Bottom screen **/
 	pp2d_load_texture_png(settingstex, "romfs:/graphics/settings/screen.png"); // Bottom of settings screen
 	pp2d_load_texture_png(whomeicontex, "romfs:/graphics/settings/whomeicon.png"); // HOME icon
@@ -194,6 +198,9 @@ void settingsUnloadTextures(void)
 	pp2d_free_texture(dsihstex);
 	pp2d_free_texture(invdshstex);
 	pp2d_free_texture(disabledtex);
+	pp2d_free_texture(regularloadtex);
+	pp2d_free_texture(pongloadtex);
+	pp2d_free_texture(tictactoeloadtex);
 
 	/** Bottom screen **/
 	pp2d_free_texture(settingstex);
@@ -279,6 +286,15 @@ void settingsDrawTopScreen(void)
 		} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 			pp2d_draw_wtext(offset3D[topfb].disabled+72, 30, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
 			pp2d_draw_wtext(offset3D[topfb].disabled+72, 46, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+			if (settings.twl.loadingscreen == 3) {
+				pp2d_draw_texture(tictactoeloadtex, offset3D[topfb].boxart+120, 72); // Draw Tic-Tac-Toe loading screen
+			} else if (settings.twl.loadingscreen == 2) {
+				pp2d_draw_texture(pongloadtex, offset3D[topfb].boxart+120, 72); // Draw pong loading screen
+			} else if (settings.twl.loadingscreen == 1) {
+				pp2d_draw_texture(regularloadtex, offset3D[topfb].boxart+120, 72); // Draw regular loading screen
+			} else {
+				pp2d_draw_rectangle(offset3D[topfb].boxart+120, 72, 160, 120, WHITE);
+			}
 		} else if (subscreenmode == SUBSCREEN_MODE_CHANGE_ROM_PATH) {
 			pp2d_draw_text(offset3D[topfb].disabled+32, 120, 0.55, 0.55, WHITE, "TWLoader will auto-restart if location is changed.");
 		} else {
