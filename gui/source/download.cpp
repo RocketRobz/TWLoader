@@ -27,7 +27,7 @@ using std::vector;
 
 #include "json/json.h"
 
-const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/update.json";
+const char* JSON_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/update.json";
 const char* JSON_NIGHTLIES_URL = "https://raw.githubusercontent.com/Jolty95/TWLoader-update/master/beta/updatenightlies.json";
 bool updateGUI = false;
 bool updateNAND = false;
