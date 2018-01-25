@@ -262,7 +262,24 @@ void bootSplash() {
 
 		// Scan hid shared memory for input events
 		hidScanInput();
-		const u32 hDown = hidKeysDown();		
+		const u32 hDown = hidKeysDown();
+
+		// Poll for Slot-1 changes.
+		bool forcePoll = false;
+		bool doSlot1Update = false;
+		if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+			// Card is inserted, but we don't know its type.
+			// Force an update.
+			forcePoll = true;
+		}
+		bool s1chg = gamecardPoll(forcePoll);
+		if (s1chg) {
+			// Update Slot-1 if:
+			// - forcePoll is false
+			// - forcePoll is true, and card is no longer unknown.
+			doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+		}
+
 		offset3D_oeffect1 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect1_chng;
 		offset3D_oeffect2 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect2_chng;
 		offset3D_oeffect3 = CONFIG_3D_SLIDERSTATE * offset3D_oeffect3_chng;
