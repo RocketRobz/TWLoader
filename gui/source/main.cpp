@@ -544,8 +544,6 @@ void SetHomebrewBootstrap() {
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK() {
-	const u32 hHeld = hidKeysHeld();
-
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
@@ -1572,15 +1570,12 @@ static void drawMenuDialogBox(void)
 	pp2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
 	if (menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
-		pp2d_draw_text(32, 32+menudbox_Ypos, 0.50, 0.50, BLACK,
-		"Donor ROM is not set.\n"
+		pp2d_draw_text(32, 40+menudbox_Ypos, 0.50, 0.50, BLACK,
+		"This game needs a Donor ROM set.\n"
 		"\n"
 		"Please set Mario Kart DS as donor ROM,\n"
 		"by moving to the ROM, press SELECT,\n"
-		"then \"Set as donor ROM\".\n"
-		"\n"
-		"Some games will not work or save,\n"
-		"if this isn't set.");
+		"then \"Set as donor ROM\".\n");
 	} else if (menudboxmode == DBOX_MODE_OVERLAYS) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		
@@ -2764,13 +2759,6 @@ int main(){
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
-				donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
-				// Show "Donor ROM not set" message, if donor path is blank
-				if (!isDemo && (donorpath.compare("") == 0) && (!settings.twl.forwarder) && (settings.ui.theme <= THEME_3DSMENU)) {
-					showdialogbox_menu = true;
-					menu_ctrlset = CTRL_SET_DBOX;
-					menudboxmode = DBOX_MODE_DONOR_NOT_SET;
-				}
 				if (settings.ui.theme == THEME_AKMENU) {
 					switch (settings.ui.subtheme) {
 						case 0:
@@ -5382,6 +5370,7 @@ int main(){
 					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
 						bool isCia = false;
 						bool overlaysIncluded = false;
+						bool donorFound = true;
 						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0 && settings.twl.romtype == 0) {
 							char path[256];
 							const char *rom_filename;
@@ -5405,10 +5394,36 @@ int main(){
 									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, isCia);
 									fclose(f_nds_file);
 								}
+							} else {
+								donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
+								// Show "Donor ROM not set" message, if game is SDK3-4, but not MKDS, and donor path is blank
+								if (donorpath.compare("") == 0) {
+									FILE *f_nds_file = fopen(path, "rb");
+									char game_TID[5];
+									grabTID(f_nds_file, game_TID, false);
+									game_TID[4] = 0;
+									game_TID[3] = 0;
+									u32 SDKVersion = getSDKVersion(f_nds_file, rom_filename);
+									if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
+										donorFound = false;
+									}
+									fclose(f_nds_file);
+								}
 							}
 						}
 
-						if(!overlaysIncluded) {
+						if(!donorFound) {
+							if (!playwrongsounddone) {
+								if (dspfirmfound) {
+									sfx_wrong->stop();
+									sfx_wrong->play();
+								}
+								playwrongsounddone = true;
+							}
+							showdialogbox_menu = true;
+							menu_ctrlset = CTRL_SET_DBOX;
+							menudboxmode = DBOX_MODE_DONOR_NOT_SET;
+						} else if(!overlaysIncluded) {
 							if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
 							if (!isDemo || settings.ui.cursorPosition == -2) {
 								bool playlaunchsound = true;

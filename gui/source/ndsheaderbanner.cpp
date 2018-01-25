@@ -233,6 +233,11 @@ u32 getSDKVersion(FILE* ndsFile, const char* filename) {
 	// Looking for moduleparams
 	uint32_t moduleparams = getOffset((u32*)arm9binary, NDSHeader.arm9binarySize, (u32*)moduleParamsSignature, 2, 1);
 
+	if (logEnabled) {
+		char textSDKver[8];
+		snprintf(textSDKver, sizeof(textSDKver), "%x", ((module_params_t*)(moduleparams - 0x1C))->sdk_version);
+		LogFMA("NDSBannerHeader.getSDKVersion", "SDK version:", textSDKver);
+	}
 	return ((module_params_t*)(moduleparams - 0x1C))->sdk_version;
 }
 
