@@ -4945,6 +4945,7 @@ int main(){
 								settings.twl.launchslot1 = false;
 								bool isCia = false;
 								bool overlaysIncluded = false;
+								bool donorFound = true;
 								if (settings.twl.romtype == 0) {
 									rom = files.at(settings.ui.cursorPosition).c_str();
 									if(settings.ui.cursorPosition >= 0) {
@@ -4959,13 +4960,31 @@ int main(){
 												overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
 												fclose(f_nds_file);
 											}
+										} else {
+											donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
+											// Show "Donor ROM not set" message, if game is SDK3-4, but not MKDS, and donor path is blank
+											if (donorpath.compare("") == 0) {
+												FILE *f_nds_file = fopen(path, "rb");
+												char game_TID[5];
+												grabTID(f_nds_file, game_TID, false);
+												game_TID[4] = 0;
+												game_TID[3] = 0;
+												u32 SDKVersion = 0;
+												if(strcmp(game_TID, "###") != 0) {
+													SDKVersion = getSDKVersion(f_nds_file, rom);
+													if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
+														donorFound = false;
+													}
+												}
+												fclose(f_nds_file);
+											}
 										}
 									}
 								} else {
 									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
-								if(!overlaysIncluded) {
+								if(!overlaysIncluded && donorFound) {
 									if (settings.twl.romtype == 0) sav = ReplaceAll(rom, ".nds", ".sav");
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
@@ -5107,6 +5126,7 @@ int main(){
 								settings.twl.launchslot1 = false;
 								bool isCia = false;
 								bool overlaysIncluded = false;
+								bool donorFound = true;
 								rom = files.at(settings.ui.cursorPosition).c_str();
 								if (settings.twl.romtype == 0) {
 									if(settings.ui.cursorPosition >= 0) {
@@ -5121,13 +5141,31 @@ int main(){
 												overlaysIncluded = getOverlaySize(f_nds_file, rom, isCia);
 												fclose(f_nds_file);
 											}
+										} else {
+											donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
+											// Show "Donor ROM not set" message, if game is SDK3-4, but not MKDS, and donor path is blank
+											if (donorpath.compare("") == 0) {
+												FILE *f_nds_file = fopen(path, "rb");
+												char game_TID[5];
+												grabTID(f_nds_file, game_TID, false);
+												game_TID[4] = 0;
+												game_TID[3] = 0;
+												u32 SDKVersion = 0;
+												if(strcmp(game_TID, "###") != 0) {
+													SDKVersion = getSDKVersion(f_nds_file, rom);
+													if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
+														donorFound = false;
+													}
+												}
+												fclose(f_nds_file);
+											}
 										}
 									}
 								} else {
 									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
-								if(!overlaysIncluded) {
+								if(!overlaysIncluded && donorFound) {
 									if (settings.twl.romtype == 0) sav = ReplaceAll(rom, ".nds", ".sav");
 									if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 									applaunchon = true;
