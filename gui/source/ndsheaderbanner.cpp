@@ -16,6 +16,38 @@ using std::string;
 using std::vector;
 using std::wstring;
 
+// Subroutine function signatures arm9
+u32 moduleParamsSignature[2]   = {0xDEC00621, 0x2106C0DE};
+
+//
+// Look in @data for @find and return the position of it.
+//
+u32 getOffset(u32* addr, size_t size, u32* find, size_t sizeofFind, int direction)
+{
+	u32* end = addr + size/sizeof(u32);
+
+    //u32 result = 0;
+	bool found = false;
+
+	do {
+		for(int i=0;i<(int)sizeofFind;i++) {
+			if (addr[i] != find[i]) 
+			{
+				break;
+			} else if(i==(int)sizeofFind-1) {
+				found = true;
+			}
+		}
+		if(!found) addr+=direction;
+	} while (addr != end && !found);
+
+	if (addr == end) {
+		return NULL;
+	}
+
+	return (u32)addr;
+}
+
 GX_TRANSFER_FORMAT gpuToGxFormat[13] = {
         GX_TRANSFER_FMT_RGBA8,
         GX_TRANSFER_FMT_RGB8,
@@ -178,6 +210,30 @@ bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia) {
 		if (logEnabled)	LogFMA("NDSBannerHeader.getOverlaySize", "ROM is DSi-Exclusive/DSiWare. skipping:", filename);
 		return false;
 	}
+}
+
+char arm9binary[0x400000];
+
+/**
+ * Get SDK version from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @return 0 on success; non-zero on error.
+ */
+u32 getSDKVersion(FILE* ndsFile, const char* filename) {
+	if (logEnabled)	LogFMA("NDSBannerHeader.getSDKVersion", "Reading .NDS file:", filename);
+	sNDSHeader NDSHeader;
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
+	if (logEnabled)	LogFMA("NDSBannerHeader.getSDKVersion", ".NDS file read:", filename);
+	
+	fseek(ndsFile , NDSHeader.arm9romOffset, SEEK_SET);
+	fread(&arm9binary, 1, NDSHeader.arm9binarySize, ndsFile);
+
+	// Looking for moduleparams
+	uint32_t moduleparams = getOffset((u32*)arm9binary, NDSHeader.arm9binarySize, (u32*)moduleParamsSignature, 2, 1);
+
+	return ((module_params_t*)(moduleparams - 0x1C))->sdk_version;
 }
 
 /**

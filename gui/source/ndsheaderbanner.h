@@ -39,6 +39,19 @@
 #include <string>
 #include <vector>
 
+typedef struct 
+{
+	u32 auto_load_list_offset;
+	u32 auto_load_list_end;
+	u32 auto_load_start;
+	u32 static_bss_start;
+	u32 static_bss_end;
+	u32 compressed_static_end;
+	u32 sdk_version;
+	u32 nitro_code_be;
+	u32 nitro_code_le;
+} module_params_t;
+
 /*!
 	\brief the GBA file header format.
 	See gbatek for more info.
@@ -236,6 +249,14 @@ std::vector<std::wstring> grabText(FILE* binFile, int bnrtitlenum);
  * @return 0 on success; non-zero on error.
  */
 bool getOverlaySize(FILE* ndsFile, const char* filename, bool isCia);
+
+/**
+ * Get SDK version from an NDS file.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @return 0 on success; non-zero on error.
+ */
+u32 getSDKVersion(FILE* ndsFile, const char* filename);
 
 /**
  * Cache the banner from an NDS file.
