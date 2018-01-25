@@ -599,6 +599,7 @@ void SetDonorSDK() {
 		"CS3",	// Sonic and Sega All Stars Racing
 		"B2D",	// Doctor Who: Evacuation Earth
 		"BH2",	// Super Scribblenauts
+		"BSD",	// Lufia: Curse of the Sinistrals
 		"BXS",	// Sonic Colo(u)rs
 		"BOE",	// Inazuma Eleven 3: Sekai heno Chousen! The Ogre
 		"BQ8",	// Crafting Mama
@@ -611,6 +612,7 @@ void SetDonorSDK() {
 		"BOO",	// Okamiden
 		"BT2",	// TrackMania Turbo
 		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
+		"B5V",	// Phineas and Ferb: Across the 2nd Dimension
 		"BLF",	// Professor Layton and the Last Specter
 		"UZP",	// Learn with Pokemon: Typing Adventure
 		"IRE",	// Pokemon Black Version 2
