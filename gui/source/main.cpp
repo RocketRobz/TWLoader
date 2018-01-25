@@ -548,11 +548,12 @@ void SetDonorSDK() {
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
 
-	u32 SDKVersion = getSDKVersion(f_nds_file, rom);
+	u32 SDKVersion = 0;
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID, false);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
+	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file, rom);
 	fclose(f_nds_file);
 	
 	settings.twl.donorSdkVer = 0;
@@ -1571,7 +1572,7 @@ static void drawMenuDialogBox(void)
 	if (menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 		pp2d_draw_text(32, 40+menudbox_Ypos, 0.50, 0.50, BLACK,
-		"This game needs a Donor ROM set.\n"
+		"This game needs a donor ROM set.\n"
 		"\n"
 		"Please set Mario Kart DS as donor ROM,\n"
 		"by moving to the ROM, press SELECT,\n"
@@ -5403,9 +5404,12 @@ int main(){
 									grabTID(f_nds_file, game_TID, false);
 									game_TID[4] = 0;
 									game_TID[3] = 0;
-									u32 SDKVersion = getSDKVersion(f_nds_file, rom_filename);
-									if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
-										donorFound = false;
+									u32 SDKVersion = 0;
+									if(strcmp(game_TID, "###") != 0) {
+										SDKVersion = getSDKVersion(f_nds_file, rom_filename);
+										if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
+											donorFound = false;
+										}
 									}
 									fclose(f_nds_file);
 								}
