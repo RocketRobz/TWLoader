@@ -232,6 +232,10 @@ u32 getSDKVersion(FILE* ndsFile, const char* filename) {
 
 	// Looking for moduleparams
 	uint32_t moduleparams = getOffset((u32*)arm9binary, NDSHeader.arm9binarySize, (u32*)moduleParamsSignature, 2, 1);
+	if(!moduleparams) {
+		if (logEnabled) LogFM("NDSBannerHeader.getSDKVersion", "No SDK version found");
+		return 0;
+	}
 
 	if (logEnabled) {
 		char textSDKver[8];
