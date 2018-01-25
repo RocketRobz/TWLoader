@@ -3346,9 +3346,9 @@ int main(){
 								pp2d_draw_text(40+295, 0, 0.50, 0.50, text_color, "/");
 								pp2d_draw_text(40+300, 0, 0.50, 0.50, text_color, romsel_counter2);
 							} else {
-								pp2d_draw_text(40+276, 0, 0.50, 0.50, text_color, romsel_counter1);
-								pp2d_draw_text(40+303, 0, 0.50, 0.50, text_color, "/");
-								pp2d_draw_text(40+308, 0, 0.50, 0.50, text_color, romsel_counter2);
+								pp2d_draw_text(40+264, 0, 0.50, 0.50, text_color, romsel_counter1);
+								pp2d_draw_text(40+289, 0, 0.50, 0.50, text_color, "/");
+								pp2d_draw_text(40+294, 0, 0.50, 0.50, text_color, romsel_counter2);
 							}
 						}
 					} else {
