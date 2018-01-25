@@ -1157,6 +1157,13 @@ void settingsDrawBottomScreen(void)
 			} else {
 				pp2d_draw_text(Xpos, Ypos, 0.55, 0.55, WHITE, "theme12");
 			}
+
+			Ypos = 30;
+			if (settings.ui.subtheme == 12) {
+				pp2d_draw_text(Xpos+80, Ypos, 0.55, 0.55, SET_ALPHA(color_data->color, 255), "BlueMoon");
+			} else {
+				pp2d_draw_text(Xpos+80, Ypos, 0.55, 0.55, WHITE, "BlueMoon");
+			}
 		} else if (settings.ui.theme == THEME_AKMENU) {
 			title = TR(STR_SETTINGS_SUBTHEME_WOOD);
 			int Ypos = 40;
@@ -1289,8 +1296,8 @@ bool settingsMoveCursor(u32 hDown)
 			settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == THEME_R4) {
 			if (settings.ui.subtheme < 0)
-				settings.ui.subtheme = 11;
-			else if (settings.ui.subtheme > 11)
+				settings.ui.subtheme = 12;
+			else if (settings.ui.subtheme > 12)
 				settings.ui.subtheme = 0;
 		} else if (settings.ui.theme == THEME_AKMENU) {
 			if (settings.ui.subtheme < 0)

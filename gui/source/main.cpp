@@ -2865,6 +2865,10 @@ int main(){
 							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/theme12/logo.png"); // Top logo
 							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/theme12/bckgrd_1.png"); // Top background
 							break;
+						case 12:
+							pp2d_load_texture_png(toplogotex, "romfs:/graphics/r4/BlueMoon/c_file.png"); // Top logo
+							pp2d_load_texture_png(topbgtex, "romfs:/graphics/r4/BlueMoon/c_file.png"); // Top background
+							break;
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
 					pp2d_load_texture_png(topbgtex, "romfs:/graphics/3ds/top.png"); // Top background, behind the DSi-Menu border
@@ -3292,6 +3296,8 @@ int main(){
 					pp2d_draw_on(GFX_TOP, GFX_LEFT);
 					if (menu_ctrlset != CTRL_SET_MENU) {
 						pp2d_draw_texture(topbgtex, 40, 0);
+						u32 text_color = BLACK;
+						if (settings.ui.subtheme == 12) text_color = WHITE;
 						filenameYpos = 15;
 						if (settings.twl.romtype == 0) {
 							file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
@@ -3304,7 +3310,7 @@ int main(){
 								if (settings.ui.cursorPosition == filenum) {
 									color = SET_ALPHA(color_data->color, 255);
 								} else {
-									color = BLACK;
+									color = text_color;
 								}
 
 								// Get the current filename and convert it to wstring.
@@ -3327,7 +3333,7 @@ int main(){
 						const char *title = (settings.twl.forwarder
 									? "Games (Flashcard)"
 									: "Games (SD Card)");
-						pp2d_draw_text(42, 0, 0.50, 0.50, BLACK, title);
+						pp2d_draw_text(42, 0, 0.50, 0.50, text_color, title);
 						
 						char romsel_counter1[16];
 						char romsel_counter2[16];
@@ -3336,13 +3342,13 @@ int main(){
 						
 						if (settings.ui.counter) {
 							if (file_count < 100) {
-								pp2d_draw_text(40+276, 0, 0.50, 0.50, BLACK, romsel_counter1);
-								pp2d_draw_text(40+295, 0, 0.50, 0.50, BLACK, "/");
-								pp2d_draw_text(40+300, 0, 0.50, 0.50, BLACK, romsel_counter2);
+								pp2d_draw_text(40+276, 0, 0.50, 0.50, text_color, romsel_counter1);
+								pp2d_draw_text(40+295, 0, 0.50, 0.50, text_color, "/");
+								pp2d_draw_text(40+300, 0, 0.50, 0.50, text_color, romsel_counter2);
 							} else {
-								pp2d_draw_text(40+276, 0, 0.50, 0.50, BLACK, romsel_counter1);
-								pp2d_draw_text(40+303, 0, 0.50, 0.50, BLACK, "/");
-								pp2d_draw_text(40+308, 0, 0.50, 0.50, BLACK, romsel_counter2);
+								pp2d_draw_text(40+276, 0, 0.50, 0.50, text_color, romsel_counter1);
+								pp2d_draw_text(40+303, 0, 0.50, 0.50, text_color, "/");
+								pp2d_draw_text(40+308, 0, 0.50, 0.50, text_color, romsel_counter2);
 							}
 						}
 					} else {
@@ -3550,6 +3556,10 @@ int main(){
 						case 11:
 							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/theme12/icons.png"); // Bottom of menu
 							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/theme12/bckgrd_2.png"); // Bottom of rom select
+							break;
+						case 12:
+							pp2d_load_texture_png(iconstex, "romfs:/graphics/r4/BlueMoon/icons.png"); // Bottom of menu
+							pp2d_load_texture_png(bottomtex, "romfs:/graphics/r4/BlueMoon/desktop.png"); // Bottom of rom select
 							break;
 					}
 				} else if (settings.ui.theme == THEME_3DSMENU) {
@@ -3768,7 +3778,7 @@ int main(){
 				}
 			} else if (settings.ui.theme == THEME_R4) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
-					pp2d_draw_texture(iconstex, 320/2 - 320/2, 240/2 - 240/2);
+					pp2d_draw_texture(iconstex, 0, 0);
 					if (r4menu_cursorPosition == 0) {
 						pp2d_draw_rectangle(12, 77, 92, 91, SET_ALPHA(color_data->color, 255));
 						pp2d_draw_texture_part(iconstex, 14, 79, 14, 79, 88, 87);
@@ -3791,7 +3801,7 @@ int main(){
 					DrawDate(2, 220, 0.60f, 0.60f, false);
 					pp2d_draw_text(274, 220, 0.60f, 0.60f, WHITE, RetTime(true).c_str());
 				} else {
-					pp2d_draw_texture(bottomtex, 320/2 - 320/2, 240/2 - 240/2);
+					pp2d_draw_texture(bottomtex, 0, 0);
 					if (settings.twl.forwarder && !isDemo) {
 						pp2d_draw_wtext(16, 192, 0.65f, 0.65f, WHITE, TR(STR_YBUTTON_ADD_GAMES));
 					}
