@@ -87,13 +87,6 @@ void settingsLoadTextures(void)
 	pp2d_free_texture(boxtex);
 
 	/** Top screen **/
-	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (settings)
-	pp2d_load_texture_png(setvoltex[1], "romfs:/graphics/settings/volume1.png"); // Volume low above 0 (settings)
-	pp2d_load_texture_png(setvoltex[2], "romfs:/graphics/settings/volume2.png"); // Volume medium (settings)
-	pp2d_load_texture_png(setvoltex[3], "romfs:/graphics/settings/volume3.png"); // Hight volume (settings)	
-	pp2d_load_texture_png(setvoltex[4], "romfs:/graphics/settings/volume4.png"); // 100% (settings)
-	pp2d_load_texture_png(setvoltex[5], "romfs:/graphics/settings/volume5.png"); // No DSP firm found (settings)
-
 	pp2d_load_texture_png(setbatterychrgtex, "romfs:/graphics/settings/battery_charging.png");
 	pp2d_load_texture_png(setbatterytex[0], "romfs:/graphics/settings/battery0.png");
 	pp2d_load_texture_png(setbatterytex[1], "romfs:/graphics/settings/battery1.png");
@@ -181,9 +174,6 @@ void settingsUnloadTextures(void)
 		return;
 
 	/** Top screen **/
-	for (int i = 0; i < 6; i++) {
-		pp2d_free_texture(setvoltex[i]);
-	}
 	pp2d_free_texture(setbatterychrgtex);
 
 	for (int i = 0; i < 6; i++) {

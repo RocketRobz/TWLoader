@@ -2428,6 +2428,12 @@ int main(){
 	pp2d_load_texture_png(voltex[3], "romfs:/graphics/volume3.png"); // Hight volume
 	pp2d_load_texture_png(voltex[4], "romfs:/graphics/volume4.png"); // 100%
 	pp2d_load_texture_png(voltex[5], "romfs:/graphics/volume5.png"); // No DSP firm found
+	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (white)
+	pp2d_load_texture_png(setvoltex[1], "romfs:/graphics/settings/volume1.png"); // Volume low above 0 (white)
+	pp2d_load_texture_png(setvoltex[2], "romfs:/graphics/settings/volume2.png"); // Volume medium (white)
+	pp2d_load_texture_png(setvoltex[3], "romfs:/graphics/settings/volume3.png"); // Hight volume (white)	
+	pp2d_load_texture_png(setvoltex[4], "romfs:/graphics/settings/volume4.png"); // 100% (white)
+	pp2d_load_texture_png(setvoltex[5], "romfs:/graphics/settings/volume5.png"); // No DSP firm found (white)
 
 	pp2d_load_texture_png(shoulderLtex, "romfs:/graphics/shoulder_L.png"); // L shoulder
 	pp2d_load_texture_png(shoulderRtex, "romfs:/graphics/shoulder_R.png"); // R shoulder
@@ -3458,7 +3464,11 @@ int main(){
 					}
 					
 
-					draw_volume_slider(voltex);
+					if (!settings.ui.topborder && settings.ui.theme == THEME_DSIMENU) {
+						draw_volume_slider(setvoltex);
+					} else {
+						draw_volume_slider(voltex);
+					}
 					pp2d_draw_texture(batteryIcon, 371, 2);
 					if (!settings.ui.name.empty()) {
 						pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
