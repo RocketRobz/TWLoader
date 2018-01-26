@@ -1373,13 +1373,13 @@ bool settingsMoveCursor(u32 hDown)
 				case 8:	// Enable or disable autoupdate
 					if (hDown & (KEY_A | KEY_RIGHT)) {
 						settings.ui.autoupdate++;
-						if (settings.ui.autoupdate > 1) {
+						if (settings.ui.autoupdate > 2) {
 							settings.ui.autoupdate = 0;
 						}
 					} else if (hDown & KEY_LEFT) {
 						settings.ui.autoupdate--;
 						if (settings.ui.autoupdate < 0) {
-							settings.ui.autoupdate = 1;
+							settings.ui.autoupdate = 2;
 						}
 					}
 					break;
