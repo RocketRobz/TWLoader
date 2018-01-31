@@ -565,6 +565,7 @@ void SetDonorSDK() {
 		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
 		"AMH",	// Metroid Prime Hunters
 		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
 	};
 	
 	static const char sdk3_list[][4] = {
@@ -587,7 +588,6 @@ void SetDonorSDK() {
 		"AZL",	// Style Savvy
 	};
 
-	// TIDs without 4th letter
 	static const char sdk5_list[][4] = {
 		"B2D",	// Doctor Who: Evacuation Earth
 		"BH2",	// Super Scribblenauts
