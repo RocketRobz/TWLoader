@@ -10,6 +10,10 @@
 #include "textfns.h"
 #include "language.h"
 #include "gamecard.h"
+#include "spi.h"
+#include "archive.h"
+#include "fsstream.h"
+#include "title.h"
 #include "rmkdir.h"
 
 #include <cstdio>
@@ -523,7 +527,11 @@ static int CreateGameSave(const char *filename) {
  * @param filename Filename.
  * @return 0 on success; non-zero on error.
  */
-/*static int WriteGameSaveToDonor(const char *filename) {
+static int WriteGameSaveToDonor(const char *filename) {
+	Result res = 0;
+
+	Title title;
+
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
@@ -537,14 +545,50 @@ static int CreateGameSave(const char *filename) {
 	
 	screenon();
 	DialogBoxAppear(12, 72, "Writing save file to game cart...");
-	pxiDevInit();
-	TWLCard::restoreSaveFile(filename);
-	pxiDevExit();
+
+	CardType cardType = title.getSPICardType();
+	u32 saveSize = SPIGetCapacity(cardType);
+	u32 pageSize = SPIGetPageSize(cardType);
+
+	u8* saveFile = new u8[saveSize];
+	FSStream stream(getArchiveSDMC(), filename, FS_OPEN_READ);
+
+	if (stream.getLoaded())
+	{
+		stream.read(saveFile, saveSize);
+	}
+	res = stream.getResult();
+	stream.close();
+
+	if (R_FAILED(res))
+	{
+		delete[] saveFile;
+		DialogBoxDisappear(12, 72, "Failed to read .sav file.");
+		screenoff();
+		return -1;
+	}
+
+	for (u32 i = 0; i < saveSize/pageSize; ++i)
+	{
+		res = SPIWriteSaveData(cardType, pageSize*i, saveFile + pageSize*i, pageSize);
+		if (R_FAILED(res))
+		{
+			break;
+		}
+	}
+
+	if (R_FAILED(res))
+	{
+		delete[] saveFile;
+		DialogBoxDisappear(12, 72, "Failed to write save to game cart.");
+		screenoff();
+		return -1;
+	}		
 
 	DialogBoxDisappear(12, 72, "Done!");
 	screenoff();
 	return 0;
-}*/
+}
 
 /**
  * Set homebrew version of nds-bootstrap for homebrew ROMs.
