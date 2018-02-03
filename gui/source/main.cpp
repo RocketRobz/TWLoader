@@ -528,7 +528,7 @@ static int CreateGameSave(const char *filename) {
  * @param filename Filename.
  * @return 0 on success; non-zero on error.
  */
-static int WriteGameSaveToDonor(const char* filename) {
+static int WriteGameSaveToDonor(std::u16string filename) {
 	Result res = 0;
 
 	Title title;
@@ -544,54 +544,72 @@ static int WriteGameSaveToDonor(const char* filename) {
 		return -1;
 	}
 	
-	screenon();
-	DialogBoxAppear(12, 72, "Writing save file to game cart...");
-	pxiDevInit();
-
-	CardType cardType = title.getSPICardType();
-	u32 saveSize = SPIGetCapacity(cardType);
-	u32 pageSize = SPIGetPageSize(cardType);
-
-	u8* saveFile = new u8[saveSize];
-	FSStream stream(getArchiveSDMC(), u8tou16(filename), FS_OPEN_READ);
-
-	if (stream.getLoaded())
-	{
-		stream.read(saveFile, saveSize);
+	// Poll for Slot-1 changes.
+	bool forcePoll = false;
+	bool doSlot1Update = false;
+	if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
+		// Card is inserted, but we don't know its type.
+		// Force an update.
+		forcePoll = true;
 	}
-	res = stream.getResult();
-	stream.close();
-
-	if (R_FAILED(res))
-	{
-		delete[] saveFile;
-		DialogBoxDisappear(12, 72, "Failed to read .sav file.");
-		screenoff();
-		pxiDevExit();
-		return -1;
+	bool s1chg = gamecardPoll(forcePoll);
+	if (s1chg) {
+		// Update Slot-1 if:
+		// - forcePoll is false
+		// - forcePoll is true, and card is no longer unknown.
+		doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
 	}
 
-	for (u32 i = 0; i < saveSize/pageSize; ++i)
-	{
-		res = SPIWriteSaveData(cardType, pageSize*i, saveFile + pageSize*i, pageSize);
+	if (gamecardGetType() == CARD_TYPE_NTR || gamecardGetType() == CARD_TYPE_TWL_ENH) {
+		screenon();
+		DialogBoxAppear(12, 72, "Writing save file to game cart...");
+		pxiDevInit();
+
+		CardType cardType = title.getSPICardType();
+		u32 saveSize = SPIGetCapacity(cardType);
+		u32 pageSize = SPIGetPageSize(cardType);
+
+		u8* saveFile = new u8[saveSize];
+		FSStream stream(getArchiveSDMC(), filename, FS_OPEN_READ);
+
+		if (stream.getLoaded())
+		{
+			stream.read(saveFile, saveSize);
+		}
+		res = stream.getResult();
+		stream.close();
+
 		if (R_FAILED(res))
 		{
-			break;
+			delete[] saveFile;
+			DialogBoxDisappear(12, 72, "Failed to read .sav file.");
+			screenoff();
+			pxiDevExit();
+			return -1;
 		}
-	}
 
-	if (R_FAILED(res))
-	{
-		delete[] saveFile;
-		DialogBoxDisappear(12, 72, "Failed to write save to game cart.");
+		for (u32 i = 0; i < saveSize/pageSize; ++i)
+		{
+			res = SPIWriteSaveData(cardType, pageSize*i, saveFile + pageSize*i, pageSize);
+			if (R_FAILED(res))
+			{
+				break;
+			}
+		}
+
+		if (R_FAILED(res))
+		{
+			delete[] saveFile;
+			DialogBoxDisappear(12, 72, "Failed to write save to game cart.");
+			screenoff();
+			pxiDevExit();
+			return -1;
+		}		
+
+		DialogBoxDisappear(12, 72, "Done!");
 		screenoff();
 		pxiDevExit();
-		return -1;
-	}		
-
-	DialogBoxDisappear(12, 72, "Done!");
-	screenoff();
-	pxiDevExit();
+	}
 	return 0;
 }
 
@@ -1057,14 +1075,14 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 			char path[256];
-			char path2[256];
+			std::u16string u16_path;
 			snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
-			snprintf(path2, sizeof(path2), "/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
+			u16_path = u8tou16("/") + u8tou16(settings.ui.romfolder.c_str()) + u8tou16("/") + u8tou16(sav.c_str());
 			if (access(path, F_OK) == -1) {
 				// Create a save file if it doesn't exist
 				CreateGameSave(path);
 			}
-			if(SDKVersion > 0x5000000) WriteGameSaveToDonor(path2);
+			if(SDKVersion > 0x5000000) WriteGameSaveToDonor(u16_path);
 		} else {
 			bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, "sd:/_nds/GBARunner2.nds");

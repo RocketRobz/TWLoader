@@ -1,5 +1,5 @@
 /*  This file is part of Checkpoint
->	Copyright (C) 2017 Bernardo Giordano
+>	Copyright (C) 2017/2018 Bernardo Giordano
 >
 >   This program is free software: you can redistribute it and/or modify
 >   it under the terms of the GNU General Public License as published by
@@ -30,14 +30,6 @@
 #include <vector>
 #include "directory.h"
 
-bool fileExist(FS_Archive archive, std::u16string path);
-
-void copyFile(FS_Archive srcArch, FS_Archive dstArch, std::u16string srcPath, std::u16string dstPath);
-
-Result createDirectory(FS_Archive archive, std::u16string path);
-bool directoryExist(FS_Archive archive, std::u16string path);
-//Result copyDirectory(FS_Archive srcArch, FS_Archive dstArch, std::u16string srcPath, std::u16string dstPath);
-
 class FSStream
 {
 public:
@@ -48,6 +40,7 @@ public:
 	bool getLoaded(void);
 	Result getResult(void);
 	u32 getSize(void);
+	u32 getOffset(void);
 	
 	u32 read(void *buf, u32 size);
 	u32 write(void *buf, u32 size);
