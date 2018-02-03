@@ -546,14 +546,14 @@ static int WriteGameSaveToDonor(const char* filename) {
 	
 	screenon();
 	DialogBoxAppear(12, 72, "Writing save file to game cart...");
+	pxiDevInit();
 
 	CardType cardType = title.getSPICardType();
 	u32 saveSize = SPIGetCapacity(cardType);
 	u32 pageSize = SPIGetPageSize(cardType);
 
 	u8* saveFile = new u8[saveSize];
-	std::u16string u16_filename = u8tou16(filename);
-	FSStream stream(getArchiveSDMC(), u16_filename, FS_OPEN_READ);
+	FSStream stream(getArchiveSDMC(), u8tou16(filename), FS_OPEN_READ);
 
 	if (stream.getLoaded())
 	{
@@ -567,6 +567,7 @@ static int WriteGameSaveToDonor(const char* filename) {
 		delete[] saveFile;
 		DialogBoxDisappear(12, 72, "Failed to read .sav file.");
 		screenoff();
+		pxiDevExit();
 		return -1;
 	}
 
@@ -584,11 +585,13 @@ static int WriteGameSaveToDonor(const char* filename) {
 		delete[] saveFile;
 		DialogBoxDisappear(12, 72, "Failed to write save to game cart.");
 		screenoff();
+		pxiDevExit();
 		return -1;
 	}		
 
 	DialogBoxDisappear(12, 72, "Done!");
 	screenoff();
+	pxiDevExit();
 	return 0;
 }
 
@@ -1054,12 +1057,14 @@ static void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 			char path[256];
+			char path2[256];
 			snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
+			snprintf(path2, sizeof(path2), "/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
 			if (access(path, F_OK) == -1) {
 				// Create a save file if it doesn't exist
 				CreateGameSave(path);
 			}
-			if(SDKVersion > 0x5000000) WriteGameSaveToDonor(path);
+			if(SDKVersion > 0x5000000) WriteGameSaveToDonor(path2);
 		} else {
 			bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, "sd:/_nds/GBARunner2.nds");
