@@ -20,7 +20,14 @@
 #define STRINGUTIL_H
 
 #include <3ds.h>
+#include <algorithm>
+#include <codecvt>
+#include <locale>
+#include <sstream>
+#include <stdlib.h>
 #include <string>
+#include <sys/stat.h>
+#include <vector>
 
 std::u16string u8tou16(const char* src);
 std::string u16tou8(std::u16string src);

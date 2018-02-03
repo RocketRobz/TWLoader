@@ -14,6 +14,7 @@
 #include "archive.h"
 #include "fsstream.h"
 #include "title.h"
+#include "stringutil.h"
 #include "rmkdir.h"
 
 #include <cstdio>
@@ -426,7 +427,7 @@ void DialogBoxDisappear(int x, int y, const char *text) {
 			pp2d_draw_texture(settingstex, 0, 0);
 		}
 		pp2d_draw_texture(dialogboxtex, 0, i);
-		pp2d_draw_text(x, y+i, 0.5f, 0.5f, false, dialog_text.c_str());
+		pp2d_draw_text(x, y+i, 0.5f, 0.5f, BLACK, dialog_text.c_str());
 		pp2d_end_draw();
 	}
 	showdialogbox = false;
@@ -527,7 +528,7 @@ static int CreateGameSave(const char *filename) {
  * @param filename Filename.
  * @return 0 on success; non-zero on error.
  */
-static int WriteGameSaveToDonor(const char *filename) {
+static int WriteGameSaveToDonor(const char* filename) {
 	Result res = 0;
 
 	Title title;
@@ -551,7 +552,8 @@ static int WriteGameSaveToDonor(const char *filename) {
 	u32 pageSize = SPIGetPageSize(cardType);
 
 	u8* saveFile = new u8[saveSize];
-	FSStream stream(getArchiveSDMC(), filename, FS_OPEN_READ);
+	std::u16string u16_filename = u8tou16(filename);
+	FSStream stream(getArchiveSDMC(), u16_filename, FS_OPEN_READ);
 
 	if (stream.getLoaded())
 	{
@@ -1057,7 +1059,7 @@ static void SaveBootstrapConfig(void)
 				// Create a save file if it doesn't exist
 				CreateGameSave(path);
 			}
-			//if(SDKVersion > 0x5000000) WriteGameSaveToDonor(path);
+			if(SDKVersion > 0x5000000) WriteGameSaveToDonor(path);
 		} else {
 			bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, "sd:/_nds/GBARunner2.nds");
