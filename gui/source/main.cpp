@@ -1078,6 +1078,7 @@ static void SaveBootstrapConfig(void)
 			std::u16string u16_path;
 			snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), sav.c_str());
 			u16_path = u8tou16("/") + u8tou16(settings.ui.romfolder.c_str()) + u8tou16("/") + u8tou16(sav.c_str());
+			if (logEnabled) LogFMA("Main.SaveBootstrapConfig", "Using u16_path:", u16tou8(u16_path).c_str());
 			if (access(path, F_OK) == -1) {
 				// Create a save file if it doesn't exist
 				CreateGameSave(path);
