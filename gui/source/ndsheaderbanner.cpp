@@ -358,7 +358,7 @@ void* grabIconDSi(const sNDSBanner* ndsBanner) {
 	for (int framenum = 0; framenum < 8; framenum++) {
 		for(u32 x = 0; x < 32; x++) {
 			for(u32 y = 0; y < 32; y++) {
-				int y2 = y+framenum*32;
+				u32 y2 = y+framenum*32;
 				u32 srcPos = (((y2 >> 3) * 4 + (x >> 3)) * 8 + (y2 & 7)) * 4 + ((x & 7) >> 1);
 				u32 srcShift = (x & 1) * 4;
 				u16 srcPx = palette[0][(ndsBanner->dsi_icon[framenum][srcPos] >> srcShift) & 0xF];
@@ -372,14 +372,14 @@ void* grabIconDSi(const sNDSBanner* ndsBanner) {
 
 	u32 pixelSize = sizeof(icon) / width / height;
 
-	u8* textureData = (u8*)linearAlloc(64 * 256 * pixelSize);
+	u8* textureData = (u8*)linearAlloc(32 * 256 * pixelSize);
 
-	memset(textureData, 0, 64 * 256 * pixelSize);
+	memset(textureData, 0, 32 * 256 * pixelSize);
 
 	for(u32 x = 0; x < width; x++) {
 		for(u32 y = 0; y < height; y++) {
 			u32 dataPos = (y * width + x) * pixelSize;
-			u32 texPos = (y * 64 + x) * pixelSize;
+			u32 texPos = (y * 32 + x) * pixelSize;
 
 			for(u32 i = 0; i < pixelSize; i++) {
 				textureData[texPos + i] = ((u8*) icon)[dataPos + i];
@@ -424,14 +424,14 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 
 	u32 pixelSize = sizeof(icon) / width / height;
 
-	u8* textureData = (u8*)linearAlloc(64 * 64 * pixelSize);
+	u8* textureData = (u8*)linearAlloc(32 * 64 * pixelSize);
 
-	memset(textureData, 0, 64 * 64 * pixelSize);
+	memset(textureData, 0, 32 * 64 * pixelSize);
 
 	for(u32 x = 0; x < width; x++) {
 		for(u32 y = 0; y < height; y++) {
 			u32 dataPos = (y * width + x) * pixelSize;
-			u32 texPos = (y * 64 + x) * pixelSize;
+			u32 texPos = (y * 32 + x) * pixelSize;
 
 			for(u32 i = 0; i < pixelSize; i++) {
 				textureData[texPos + i] = ((u8*) icon)[dataPos + i];
