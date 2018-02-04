@@ -338,6 +338,63 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
+void* grabIconDSi(const sNDSBanner* ndsBanner) {
+	// Convert the palette from BGR555 to RGB5A1.
+	// (We need to ensure the MSB is set for all except
+	// color 0, which is transparent.)
+	u16 palette[8][16];
+	for (int i = 0; i < 8; i++) {
+		palette[i][0] = 0;	// Color 0 is always transparent.
+		for (int i2 = 16-1; i2 > 0; i2--) {
+			// Convert from NDS BGR555 to RGB5A1.
+			// NOTE: The GPU expects byteswapped data.
+			palette[i][i2] = BGR555_to_RGB5A1(ndsBanner->dsi_palette[i][i2]);
+		}
+	}
+
+	static const int width = 32;
+	static const int height = 256; // 32 8x for 8 icon frames
+	u8 icon[32 * 256 * 2];
+	for (int framenum = 0; framenum < 8; framenum++) {
+		for(u32 x = 0; x < 32; x++) {
+			for(u32 y = 0; y < 32; y++) {
+				int y2 = y+framenum*32;
+				u32 srcPos = (((y2 >> 3) * 4 + (x >> 3)) * 8 + (y2 & 7)) * 4 + ((x & 7) >> 1);
+				u32 srcShift = (x & 1) * 4;
+				u16 srcPx = palette[0][(ndsBanner->dsi_icon[framenum][srcPos] >> srcShift) & 0xF];
+
+				u32 dstPos = (y2 * 32 + x) * 2;
+				icon[dstPos + 0] = (u8) (srcPx & 0xFF);
+				icon[dstPos + 1] = (u8) ((srcPx >> 8) & 0xFF);
+			}
+		}
+	}
+
+	u32 pixelSize = sizeof(icon) / width / height;
+
+	u8* textureData = (u8*)linearAlloc(64 * 256 * pixelSize);
+
+	memset(textureData, 0, 64 * 256 * pixelSize);
+
+	for(u32 x = 0; x < width; x++) {
+		for(u32 y = 0; y < height; y++) {
+			u32 dataPos = (y * width + x) * pixelSize;
+			u32 texPos = (y * 64 + x) * pixelSize;
+
+			for(u32 i = 0; i < pixelSize; i++) {
+				textureData[texPos + i] = ((u8*) icon)[dataPos + i];
+			}
+		}
+	}
+
+	return textureData;
+}
+
+/**
+ * Get the icon from an NDS banner.
+ * @param binFile NDS banner.
+ * @return Icon texture. (NULL on error)
+ */
 void* grabIcon(const sNDSBanner* ndsBanner) {
 	// Convert the palette from BGR555 to RGB5A1.
 	// (We need to ensure the MSB is set for all except
@@ -365,24 +422,42 @@ void* grabIcon(const sNDSBanner* ndsBanner) {
 		}
 	}
 
-    u32 pixelSize = sizeof(icon) / width / height;
+	u32 pixelSize = sizeof(icon) / width / height;
 
-    u8* textureData = (u8*)linearAlloc(64 * 64 * pixelSize);
+	u8* textureData = (u8*)linearAlloc(64 * 64 * pixelSize);
 
-    memset(textureData, 0, 64 * 64 * pixelSize);
+	memset(textureData, 0, 64 * 64 * pixelSize);
 
-    for(u32 x = 0; x < width; x++) {
-        for(u32 y = 0; y < height; y++) {
-            u32 dataPos = (y * width + x) * pixelSize;
-            u32 texPos = (y * 64 + x) * pixelSize;
+	for(u32 x = 0; x < width; x++) {
+		for(u32 y = 0; y < height; y++) {
+			u32 dataPos = (y * width + x) * pixelSize;
+			u32 texPos = (y * 64 + x) * pixelSize;
 
-            for(u32 i = 0; i < pixelSize; i++) {
-                textureData[texPos + i] = ((u8*) icon)[dataPos + i];
-            }
-        }
-    }
+			for(u32 i = 0; i < pixelSize; i++) {
+				textureData[texPos + i] = ((u8*) icon)[dataPos + i];
+			}
+		}
+	}
 
 	return textureData;
+}
+
+/**
+ * Get the icon from a cached NDS banner.
+ * @param binFile Banner file.
+ * @return Icon texture. (NULL on error)
+ */
+void* grabIconDSi(FILE* binFile) {
+	sNDSBanner ndsBanner;
+	fseek(binFile, 0, SEEK_SET);
+	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	if (read < NDS_BANNER_VER_ORIGINAL) {
+		// Banner file is invalid.
+		return NULL;
+	}
+
+	// Get the icon.
+	return grabIconDSi(&ndsBanner);
 }
 
 /**
@@ -401,4 +476,22 @@ void* grabIcon(FILE* binFile) {
 
 	// Get the icon.
 	return grabIcon(&ndsBanner);
+}
+
+/**
+ * Get banner version from NDS banner.
+ * @param binFile Banner file.
+ * @return Version number. (NULL on error)
+ */
+u32 grabBannerVersion(FILE* binFile) {
+	sNDSBanner ndsBanner;
+	fseek(binFile, 0, SEEK_SET);
+	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	if (read < NDS_BANNER_VER_ORIGINAL) {
+		// Banner file is invalid.
+		return NULL;
+	}
+
+	// Return banner version.
+	return ndsBanner.version;
 }

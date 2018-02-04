@@ -95,7 +95,8 @@ Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
 
 int bnriconnum = 0;
-int bnriconframenum = 0;
+// bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+int bnriconframenum[22] = {0};
 int loadbnriconnum = 0;
 int boxartnum = 0;
 int boxartpage = 0;
@@ -992,7 +993,12 @@ static void LoadBNRIcon(const char *filename) {
 			f_bnr = fopen(filename, "rb");
 		}
 
-		pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 64, 64);
+		u32 bannerVersion = grabBannerVersion(f_bnr);
+		if(bannerVersion == NDS_BANNER_VER_DSi) {
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 64, 256);
+		} else {
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 64, 64);
+		}
 		fclose(f_bnr);
 	}
 }
@@ -1012,7 +1018,12 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		f_bnr = fopen(filename, "rb");
 	}
 
-	pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIcon(f_bnr), 64, 64);
+	u32 bannerVersion = grabBannerVersion(f_bnr);
+	if(bannerVersion == NDS_BANNER_VER_DSi) {
+		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 64, 256);
+	} else {
+		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIcon(f_bnr), 64, 64);
+	}
 	fclose(f_bnr);
 }
 
@@ -1678,7 +1689,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1724,7 +1735,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1773,7 +1784,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1823,7 +1834,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenum*32, 0, 32, 32);
+		pp2d_draw_texture_part(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			if (settings.twl.romtype == 1) {
@@ -3761,14 +3772,14 @@ int main(){
 					if (woodmenu_cursorPosition == 0) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						if (sdfile_count != 0)
-							pp2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							pp2d_draw_texture_part_scale(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
-							pp2d_draw_texture_part_scale_blend(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_scale_blend(sdicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
 					} else {
 						if (sdfile_count != 0)
-							pp2d_draw_texture_part(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+							pp2d_draw_texture_part(sdicontex, 8, Ypos, 0, 0, 32, 32);
 						else
-							pp2d_draw_texture_part_blend(sdicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_blend(sdicontex, 8, Ypos, 0, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
 					}
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (SD Card)");
 					Ypos += 39;
@@ -3776,39 +3787,39 @@ int main(){
 					if (woodmenu_cursorPosition == 1) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
 						if (fcfile_count != 0 && settings.twl.romtype == 0)							
-							pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
-							pp2d_draw_texture_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_scale_blend(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, RGBA8(255, 255, 255, 127));
 					} else {
 						if (fcfile_count != 0 && settings.twl.romtype == 0)
-							pp2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+							pp2d_draw_texture_part(flashcardicontex, 8, Ypos, 0, 0, 32, 32);
 						else
-							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
+							pp2d_draw_texture_part_blend(flashcardicontex, 8, Ypos, 0, 0, 32, 32, (u32) RGBA8(255, 255, 255, 127));
 					}
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Games (Flashcard)");
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 2) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, bnriconframenum[21]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
-						pp2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(cardicontex, 8, Ypos, 0, bnriconframenum[21]*32, 32, 32);
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Launch Slot-1 card");
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 3) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
-						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(gbaicontex, 8, Ypos, 0, 0, 32, 32);
 					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_START_SELECT_ROMTYPE));
 					Ypos += 39;
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 4) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(smallsettingsicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
-						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(smallsettingsicontex, 8, Ypos, 0, 0, 32, 32);
 					pp2d_draw_wtext(46, filenameYpos, 0.45f, 0.45f, WHITE, TR(STR_SETTINGS_TEXT));						
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Menu");
 				} else if (menu_ctrlset == CTRL_SET_ROMTYPE) {
@@ -3816,18 +3827,18 @@ int main(){
 					filenameYpos = 36;
 					if (setromtype_cursorPosition == 0) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(flashcardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else {
-						pp2d_draw_texture_part(flashcardicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(flashcardicontex, 8, Ypos, 0, 0, 32, 32);
 					}
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Nintendo DS/DSi");
 					Ypos += 39;
 					filenameYpos += 39;
 					if (setromtype_cursorPosition == 1) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(gbaicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else {
-						pp2d_draw_texture_part(gbaicontex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(gbaicontex, 8, Ypos, 0, 0, 32, 32);
 					}
 					pp2d_draw_text(46, filenameYpos-8, 0.45f, 0.45f, WHITE, "GameBoy Advance");
 					pp2d_draw_wtext(46, filenameYpos+8, 0.45f, 0.45f, WHITE, TR(STR_START_START_GBARUNNER2));
@@ -3835,9 +3846,9 @@ int main(){
 					filenameYpos += 39;
 					if (setromtype_cursorPosition == 2) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(gbctex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(gbctex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
-						pp2d_draw_texture_part(gbctex, 8, Ypos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(gbctex, 8, Ypos, 0, 0, 32, 32);
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "GameBoy/Super GB/GB Color");
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Select ROM type");
 				} else {
@@ -3863,9 +3874,9 @@ int main(){
 						pp2d_draw_wtext(46, filenameYpos+filenameYmovepos*39, 0.45f, 0.45f, WHITE, wstr.c_str());
 
 						if (settings.ui.cursorPosition == filenum)
-							pp2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+							pp2d_draw_texture_part_scale(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos+filenameYmovepos*39, 0, bnriconframenum[bnriconnum]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 						else
-							pp2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, bnriconframenum*32, 0, 32, 32);
+							pp2d_draw_texture_part(bnricontexnum, 8, Ypos+filenameYmovepos*39, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 						Ypos += 39;
 						filenameYpos += 39;
 					}
@@ -3948,9 +3959,9 @@ int main(){
 					pp2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 					pp2d_draw_texture(dboxtex_iconbox, 47, 31);
 					if (settings.twl.romtype == 1) {
-						pp2d_draw_texture_part(gbctex, 52, 36, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
-						pp2d_draw_texture_part(bnricontex[20], 52, 36, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(bnricontex[20], 52, 36, 0, bnriconframenum[20]*32, 32, 32);
 					}
 					
 					if (!bannertextloaded) {
@@ -4109,12 +4120,12 @@ int main(){
 						}
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenum[21]*32, 32, 32, 1.25, 1.25);
 							} else {
-								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+								pp2d_draw_texture_part_scale(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenum[21]*32, 32, 32, 1.25, 1.25);
 							}
 						} else {
-							pp2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+							pp2d_draw_texture_part(cardicontex, 16+cartXpos+titleboxXmovepos, 129, 0, bnriconframenum[21]*32, 32, 32);
 						}
 					} else {
 						// Get flash cart games.
@@ -4170,14 +4181,14 @@ int main(){
 								if (settings.ui.theme != THEME_3DSMENU) {
 									pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
 								} else {
-									pp2d_draw_texture_part_scale(dotcircletex, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+									pp2d_draw_texture_part_scale(dotcircletex, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, 0, 32, 32, 1.50, 1.50);
 								}
 							} else {
 								ChangeBNRIconNo();
 								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenum*32, 0, 32, 32, 1.25, 1.25);
+									pp2d_draw_texture_part_scale(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenum[bnriconnum]*32, 32, 32, 1.25, 1.25);
 								} else {
-									pp2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenum*32, 0, 32, 32, 1.50, 1.50);
+									pp2d_draw_texture_part_scale(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenum[bnriconnum]*32, 32, 32, 1.50, 1.50);
 								}
 							}
 							ndsiconXpos += 80;
@@ -4194,7 +4205,7 @@ int main(){
 								pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos, 129, 0.40, 0.40);  // Dots moving in circles
 							} else {
 								ChangeBNRIconNo();
-								pp2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenum*32, 0, 32, 32);
+								pp2d_draw_texture_part(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 							}
 							ndsiconXpos += 64;
 						}
@@ -4303,7 +4314,7 @@ int main(){
 							bnricontexlaunch = bnricontexnum;
 							applaunchicon = true;
 						}
-						pp2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenum*32, 0, 32, 32);
+						pp2d_draw_texture_part(bnricontexlaunch, 144, ndsiconYmovepos, 0, bnriconframenum[bnriconnum]*32, 32, 32);
 					}
 					pp2d_draw_texture_rotate(dotcircletex, 120, 104, rad);  // Dots moving in circles
 				}
@@ -5486,6 +5497,11 @@ int main(){
 					} else if(hHeld & KEY_LEFT && menudbox_Ypos == -240){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
+						}
+					} else if(hDown & KEY_DOWN) {
+						bnriconframenum[settings.ui.cursorPosition]++;
+						if(bnriconframenum[settings.ui.cursorPosition] == 8) {
+							bnriconframenum[settings.ui.cursorPosition] = 0;
 						}
 					} else if (hDown & KEY_START) {
 						// Switch to the "Start" menu.
