@@ -495,3 +495,68 @@ u32 grabBannerVersion(FILE* binFile) {
 	// Return banner version.
 	return ndsBanner.version;
 }
+
+// bnriconframeseq[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+static u16 bnriconframeseq[22][64] = {0x0000};
+
+// bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+int bnriconframenum[22] = {0};
+
+// bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+bool bnriconisDSi[22] = {false};
+
+/**
+ * Get banner sequence from banner file.
+ * @param binFile Banner file.
+ */
+void grabBannerSequence(FILE* binFile, int iconnum) {
+	sNDSBanner ndsBanner;
+	fseek(binFile, 0, SEEK_SET);
+	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
+	
+	for (int i = 0; i < 64; i++) {
+		bnriconframeseq[iconnum][i] = ndsBanner.dsi_seq[i];
+	}
+}
+
+bool bannerDelayNumGot[22] = {false};
+u16 bannerDelayNum[22] = {0x0000};
+int currentbnriconframeseq[22] = {0};
+
+/**
+ * Play banner sequence.
+ * @param binFile Banner file.
+ */
+void playBannerSequence(int iconnum) {
+	u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
+	if(!bannerDelayNumGot[iconnum]) {
+		if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
+			bnriconframenum[iconnum] = 0;
+		} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
+			bnriconframenum[iconnum] = 1;
+		} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
+			bnriconframenum[iconnum] = 2;
+		} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
+			bnriconframenum[iconnum] = 3;
+		} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
+			bnriconframenum[iconnum] = 4;
+		} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
+			bnriconframenum[iconnum] = 5;
+		} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
+			bnriconframenum[iconnum] = 6;
+		} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
+			bnriconframenum[iconnum] = 7;
+		}
+		bannerDelayNumGot[iconnum] = true;
+	} else {
+		bannerDelayNum[iconnum]++;
+		if(bannerDelayNum[iconnum] == (setframeseq) & (0x00FF)) {
+			bannerDelayNum[iconnum] = 0x0000;
+			currentbnriconframeseq[iconnum]++;
+			if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
+				currentbnriconframeseq[iconnum] = 0;	// Reset sequence
+			}
+			bannerDelayNumGot[iconnum] = false;
+		}
+	}
+}

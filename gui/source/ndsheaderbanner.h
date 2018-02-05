@@ -302,4 +302,22 @@ void* grabIcon(FILE* binFile);
  */
 u32 grabBannerVersion(FILE* binFile);
 
+// bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+extern int bnriconframenum[22];
+
+// bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
+extern bool bnriconisDSi[22];
+
+/**
+ * Get banner sequence from banner file.
+ * @param binFile Banner file.
+ */
+void grabBannerSequence(FILE* binFile, int iconnum);
+
+/**
+ * Play banner sequence.
+ * @param binFile Banner file.
+ */
+void playBannerSequence(int iconnum);
+
 #endif // NDS_HEADER

@@ -95,8 +95,6 @@ Menu_ControlSet menu_ctrlset = CTRL_SET_GAMESEL;
 
 
 int bnriconnum = 0;
-// bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-int bnriconframenum[22] = {0};
 int loadbnriconnum = 0;
 int boxartnum = 0;
 int boxartpage = 0;
@@ -996,8 +994,11 @@ static void LoadBNRIcon(const char *filename) {
 		u32 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
+			grabBannerSequence(f_bnr, loadbnriconnum);
+			bnriconisDSi[loadbnriconnum] = true;
 		} else {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 32, 64);
+			bnriconisDSi[loadbnriconnum] = false;
 		}
 		fclose(f_bnr);
 	}
@@ -1021,8 +1022,11 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 	u32 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi) {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 32, 256);
+		grabBannerSequence(f_bnr, 20);
+		bnriconisDSi[20] = true;
 	} else {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIcon(f_bnr), 32, 64);
+		bnriconisDSi[20] = false;
 	}
 	fclose(f_bnr);
 }
@@ -3105,7 +3109,7 @@ int main(){
 		offset3D[1].boxart = CONFIG_3D_SLIDERSTATE * 5.0f;
 		offset3D[0].disabled = CONFIG_3D_SLIDERSTATE * -3.0f;
 		offset3D[1].disabled = CONFIG_3D_SLIDERSTATE * 3.0f;
-		
+
 		if (showdialogbox_menu) {
 			if (menudbox_movespeed <= 1) {
 				if (menudbox_Ypos >= 0) {
@@ -3308,6 +3312,11 @@ int main(){
 
 				bnricontexloaded = true;
 				bnriconnum = 0+settings.ui.pagenum*20;
+			}
+			for (int i = 0; i < 20; i++) {
+				if(bnriconisDSi[i]==true) {
+					playBannerSequence(i);
+				}
 			}
 			menuLoadBoxArt();
 
@@ -5498,11 +5507,11 @@ int main(){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
-					} else if(hDown & KEY_DOWN) {
-						bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
-						if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
-							bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
-						}
+					// } else if(hDown & KEY_DOWN) {
+						// bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
+						// if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
+						// 	bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
+						// }
 					} else if (hDown & KEY_START) {
 						// Switch to the "Start" menu.
 						menudboxmode = DBOX_MODE_OPTIONS;
