@@ -239,7 +239,8 @@ int main(int argc, char **argv) {
 				
 				TWLDsNDSBannersize1 myBannersize1;
 				TWLDsNDSBannersize2 myBannersize2;
-				TWLDsNDSBannersize3 myBanner;
+				TWLDsNDSBannersize3 myBannersize3;
+				TWLDsNDSBannersize4 myBanner;
 				
 				if (NDSHeader.bannerOffset != 0x00000000) {
 					fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
@@ -248,8 +249,10 @@ int main(int argc, char **argv) {
 					
 					iprintf ("Now caching banner data.\n");
 					if (logEnabled)	LogFMA("Flashcard.Main", "Caching banner data:", NDSHeader.gameCode);
-					if (myBanner.version == 0x0103 || myBanner.version == 0x0003) {
+					if (myBanner.version == 0x0103) {
 						fwrite(&myBanner,1,sizeof(myBanner),filetosave);
+					} else if (myBanner.version == 0x0003) {
+						fwrite(&myBanner,1,sizeof(myBannersize3),filetosave);
 					} else if (myBanner.version == 0x0002) {
 						fwrite(&myBanner,1,sizeof(myBannersize2),filetosave);
 					} else {

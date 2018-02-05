@@ -98,10 +98,7 @@ typedef struct {
 
 typedef struct {
   u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
+	u16 crc[4];		//!< CRC-16s of the banner.
   u8 reserved[22];
   u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
   u16 palette[16];		//!< the pallete of the icon.
@@ -109,40 +106,52 @@ typedef struct {
 } TWLDsNDSBanner;
 
 typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*6];		//!< title of the game in 6 different languages.
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[6][128];	//!< title of the game in 6 different languages.
 } TWLDsNDSBannersize1;
 
 typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*7];		//!< title of the game in 7 different languages.
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[7][128];	//!< title of the game in 7 different languages.
 } TWLDsNDSBannersize2;
 
 typedef struct {
-  u16 version;			//!< version of the banner.
-  u16 crc;				//!< 16 bit crc/checksum of the banner.
-  u16 crc2;				//!< 16 bit crc/checksum of the banner (w/ chinese text).
-  u16 crc3;				//!< 16 bit crc/checksum of the banner (w/ chinese & korean text).
-  u16 crci;				//!< 16 bit crc/checksum of the banner (w/ chinese, korean text, and animated icon data).
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u8 titles[256*8];		//!< title of the game in 8 different languages.
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[8][128];	//!< title of the game in 8 different languages.
 } TWLDsNDSBannersize3;
+
+/*!
+	\brief the NDS banner format.
+	See gbatek for more information.
+*/
+typedef struct {
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[8][128];	//!< title of the game in 8 different languages.
+
+	// [0xA40] Reserved space, possibly for other titles.
+	u8 reserved2[0x800];
+
+	// DSi-specific.
+	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
+	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
+	u16 dsi_seq[64];	//!< DSi animated icon sequence.
+} TWLDsNDSBannersize4;
 
 
 #endif // NDS_HEADER2
