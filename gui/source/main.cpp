@@ -3313,11 +3313,6 @@ int main(){
 				bnricontexloaded = true;
 				bnriconnum = 0+settings.ui.pagenum*20;
 			}
-			for (int i = 0; i < 20; i++) {
-				if(bnriconisDSi[i]==true) {
-					playBannerSequence(i);
-				}
-			}
 			menuLoadBoxArt();
 
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
@@ -4559,6 +4554,12 @@ int main(){
 					if (fadealpha == 255) screenoff();
 				} else {
 					screenon();
+				}
+
+				for (int i = 0; i < 20; i++) {
+					if(bnriconisDSi[i]==true) {
+						playBannerSequence(i);
+					}
 				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {

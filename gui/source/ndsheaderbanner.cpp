@@ -554,7 +554,7 @@ void playBannerSequence(int iconnum) {
 			bannerDelayNumGot[iconnum] = true;
 		} else {
 			bannerDelayNum[iconnum]++;
-			if(bannerDelayNum[iconnum] == (setframeseq) & (0x00FF)) {
+			if(bannerDelayNum[iconnum] >= ((setframeseq & 0x00FF) / 3)) {
 				bannerDelayNum[iconnum] = 0x0000;
 				currentbnriconframeseq[iconnum]++;
 				if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
