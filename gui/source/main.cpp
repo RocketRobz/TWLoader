@@ -1021,7 +1021,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 
 	u32 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi) {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 64, 128);
+		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 32, 256);
 		grabBannerSequence(f_bnr, 20);
 		bnriconisDSi[20] = true;
 	} else {
