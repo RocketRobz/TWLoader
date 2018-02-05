@@ -3915,6 +3915,22 @@ int main(){
 						}
 					}
 				}
+				// Playback animated icons
+				for (int i = 0; i < 20; i++) {
+					if(bnriconisDSi[i]==true) {
+						playBannerSequence(i);
+					} else {
+						bnriconframenumX[i] = 0;
+						bnriconframenumY[i] = 0;
+					}
+				}
+				// Playback animated icon on Slot-1
+				if(bnriconisDSi[21]==true) {
+					playBannerSequence(21);
+				} else {
+					bnriconframenumX[21] = 0;
+					bnriconframenumY[21] = 0;
+				}
 			} else if (settings.ui.theme == THEME_R4) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					pp2d_draw_texture(iconstex, 0, 0);
@@ -4031,6 +4047,13 @@ int main(){
 							pp2d_draw_wtext(84+(192-text_width)/2, y, 0.55, 0.55, BLACK, romsel_gameline[i].c_str());
 						}
 					}
+				}
+				// Playback animated icon
+				if(bnriconisDSi[20]==true) {
+					playBannerSequence(20);
+				} else {
+					bnriconframenumX[20] = 0;
+					bnriconframenumY[20] = 0;
 				}
 			} else {
 				if (settings.ui.custombot == 1) {
