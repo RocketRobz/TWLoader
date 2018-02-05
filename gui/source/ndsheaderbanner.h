@@ -305,6 +305,7 @@ u32 grabBannerVersion(FILE* binFile);
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 extern int bnriconframenumX[22];
 extern int bnriconframenumY[22];
+extern flipType bannerFlip[22];
 
 // bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 extern bool bnriconisDSi[22];

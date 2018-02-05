@@ -499,6 +499,7 @@ static u16 bnriconframeseq[22][64] = {0x0000};
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 int bnriconframenumX[22] = {0};
 int bnriconframenumY[22] = {0};
+flipType bannerFlip[22] = {NONE};
 
 // bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 bool bnriconisDSi[22] = {false};
@@ -548,25 +549,59 @@ void playBannerSequence(int iconnum) {
 		// Do nothing if icon isn't animated
 		bnriconframenumX[iconnum] = 0;
 		bnriconframenumY[iconnum] = 0;
+		bannerFlip[iconnum] = NONE;
 	} else {
 		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
 
 		if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
 			bnriconframenumY[iconnum] = 0;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
 			bnriconframenumY[iconnum] = 1;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
 			bnriconframenumY[iconnum] = 2;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
 			bnriconframenumY[iconnum] = 3;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
 			bnriconframenumY[iconnum] = 4;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
 			bnriconframenumY[iconnum] = 5;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
 			bnriconframenumY[iconnum] = 6;
+			bannerFlip[iconnum] = NONE;
 		} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
 			bnriconframenumY[iconnum] = 7;
+			bannerFlip[iconnum] = NONE;
+		} else // Check for horizontal-flipped frames
+		if((setframeseq >= 0x4000) && (setframeseq < 0x4100)) {
+			bnriconframenumY[iconnum] = 0;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4100) && (setframeseq < 0x4200)) {
+			bnriconframenumY[iconnum] = 1;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4200) && (setframeseq < 0x4300)) {
+			bnriconframenumY[iconnum] = 2;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4300) && (setframeseq < 0x4400)) {
+			bnriconframenumY[iconnum] = 3;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4400) && (setframeseq < 0x4500)) {
+			bnriconframenumY[iconnum] = 4;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4500) && (setframeseq < 0x4600)) {
+			bnriconframenumY[iconnum] = 5;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4600) && (setframeseq < 0x4700)) {
+			bnriconframenumY[iconnum] = 6;
+			bannerFlip[iconnum] = HORIZONTAL;
+		} else if((setframeseq >= 0x4700) && (setframeseq < 0x4800)) {
+			bnriconframenumY[iconnum] = 7;
+			bannerFlip[iconnum] = HORIZONTAL;
 		}
 
 		bannerDelayNum[iconnum]++;

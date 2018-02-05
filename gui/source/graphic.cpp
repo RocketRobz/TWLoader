@@ -23,10 +23,25 @@ void pp2d_draw_texture_part_blend(size_t id, int x, int y, int xbegin, int ybegi
 	pp2d_texture_draw();		
 }
 
+void pp2d_draw_texture_part_flip(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, flipType fliptype)
+{
+	pp2d_texture_select_part(id, x, y, xbegin, ybegin, width, height);
+	pp2d_texture_flip(fliptype);
+	pp2d_texture_draw();
+}
+
 void pp2d_draw_texture_part_scale(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, float scaleX, float scaleY)
 {
 	pp2d_texture_select_part(id, x, y, xbegin, ybegin, width, height);
 	pp2d_texture_scale(scaleX, scaleY);
+	pp2d_texture_draw();
+}
+
+void pp2d_draw_texture_part_scale_flip(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, float scaleX, float scaleY, flipType fliptype)
+{
+	pp2d_texture_select_part(id, x, y, xbegin, ybegin, width, height);
+	pp2d_texture_scale(scaleX, scaleY);
+	pp2d_texture_flip(fliptype);
 	pp2d_texture_draw();
 }
 
