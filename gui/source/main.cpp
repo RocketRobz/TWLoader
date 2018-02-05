@@ -4405,7 +4405,11 @@ int main(){
 									msg = TR(STR_NO_CARTRIDGE);
 								}
 								text_width = pp2d_get_wtext_width(msg, 0.70, 0.70);
-								pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, msg);
+								if (settings.ui.theme != THEME_3DSMENU) {
+									pp2d_draw_wtext(((320-text_width)/2), 38, 0.70, 0.70, BLACK, msg);
+								} else {
+									pp2d_draw_wtext(((320-text_width)/2), 68, 0.70, 0.70, BLACK, msg);
+								}
 								drawBannerText = false;
 							}
 						}
