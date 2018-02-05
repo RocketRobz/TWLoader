@@ -355,18 +355,15 @@ void* grabIconDSi(const sNDSBanner* ndsBanner) {
 	static const int width = 32;
 	static const int height = 256; // 32 8x for 8 icon frames
 	u8 icon[32 * 256 * 2];
-	for (int framenum = 0; framenum < 8; framenum++) {
-		for(u32 x = 0; x < 32; x++) {
-			for(u32 y = 0; y < 32; y++) {
-				u32 y2 = y+framenum*32;
-				u32 srcPos = (((y2 >> 3) * 4 + (x >> 3)) * 8 + (y2 & 7)) * 4 + ((x & 7) >> 1);
-				u32 srcShift = (x & 1) * 4;
-				u16 srcPx = palette[0][(ndsBanner->dsi_icon[framenum][srcPos] >> srcShift) & 0xF];
+	for(u32 x = 0; x < 32; x++) {
+		for(u32 y = 0; y < 32*8; y++) {
+			u32 srcPos = (((y >> 3) * 4 + (x >> 3)) * 8 + (y & 7)) * 4 + ((x & 7) >> 1);
+			u32 srcShift = (x & 1) * 4;
+			u16 srcPx = palette[0][(ndsBanner->dsi_icon[0][srcPos] >> srcShift) & 0xF];
 
-				u32 dstPos = (y2 * 32 + x) * 2;
-				icon[dstPos + 0] = (u8) (srcPx & 0xFF);
-				icon[dstPos + 1] = (u8) ((srcPx >> 8) & 0xFF);
-			}
+			u32 dstPos = (y * 32 + x) * 2;
+			icon[dstPos + 0] = (u8) (srcPx & 0xFF);
+			icon[dstPos + 1] = (u8) ((srcPx >> 8) & 0xFF);
 		}
 	}
 
@@ -500,7 +497,8 @@ u32 grabBannerVersion(FILE* binFile) {
 static u16 bnriconframeseq[22][64] = {0x0000};
 
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-int bnriconframenum[22] = {0};
+int bnriconframenumX[22] = {0};
+int bnriconframenumY[22] = {0};
 
 // bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 bool bnriconisDSi[22] = {false};
@@ -519,6 +517,15 @@ void grabBannerSequence(FILE* binFile, int iconnum) {
 	}
 }
 
+/**
+ * Clear loaded banner sequence.
+ */
+void clearBannerSequence(int iconnum) {
+	for (int i = 0; i < 64; i++) {
+		bnriconframeseq[iconnum][i] = 0x0000;
+	}
+}
+
 bool bannerDelayNumGot[22] = {false};
 static u16 bannerDelayNum[22] = {0x0000};
 int currentbnriconframeseq[22] = {0};
@@ -531,25 +538,27 @@ void playBannerSequence(int iconnum) {
 	if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0001
 	&& bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]+1] == 0x0100) {
 		// Do nothing if icon isn't animated
+		bnriconframenumX[iconnum] = 0;
+		bnriconframenumY[iconnum] = 0;
 	} else {
 		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
 		if(!bannerDelayNumGot[iconnum]) {
 			if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
-				bnriconframenum[iconnum] = 0;
+				bnriconframenumY[iconnum] = 0;
 			} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
-				bnriconframenum[iconnum] = 1;
+				bnriconframenumY[iconnum] = 1;
 			} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
-				bnriconframenum[iconnum] = 2;
+				bnriconframenumY[iconnum] = 2;
 			} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
-				bnriconframenum[iconnum] = 3;
+				bnriconframenumY[iconnum] = 3;
 			} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
-				bnriconframenum[iconnum] = 4;
+				bnriconframenumY[iconnum] = 4;
 			} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
-				bnriconframenum[iconnum] = 5;
+				bnriconframenumY[iconnum] = 5;
 			} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
-				bnriconframenum[iconnum] = 6;
+				bnriconframenumY[iconnum] = 6;
 			} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
-				bnriconframenum[iconnum] = 7;
+				bnriconframenumY[iconnum] = 7;
 			}
 			bannerDelayNumGot[iconnum] = true;
 		} else {
