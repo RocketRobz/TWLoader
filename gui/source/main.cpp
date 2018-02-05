@@ -3528,9 +3528,7 @@ int main(){
 					if (filenum != 0) {	// If ROMs are found, then display box art
 						if (!settings.romselect.toplayout) {
 							if (loadboxartnum != pagemax_ba) {
-								if (fadealpha == 0) {
-									pp2d_draw_text(112, 104, 0.50, 0.50, WHITE, "Storing box art paths...");
-								}
+								// Nothing
 							} else {
 								boxartXpos = 136;
 								if (!settings.twl.forwarder && settings.ui.pagenum == 0) {
@@ -3592,10 +3590,26 @@ int main(){
 							pp2d_draw_text(336, 1.0f, 0.58f, 0.58f, WHITE, RetTimeDot(true).c_str());
 							DrawDate(264.0f, 1.0f, 0.58f, 0.58f, WHITE);
 						}
+						if (!settings.romselect.toplayout) {
+							if (loadboxartnum != pagemax_ba) {
+								if (fadealpha == 0) {
+									pp2d_draw_text(112, 104, 0.50, 0.50, WHITE, "Storing box art paths...");
+								}
+							}
+						}
 					} else {
+						pp2d_draw_texture_part(topbgtex, offset3D[topfb].topbg-11, 0, 0, 0, 140, 240);	// Cover left box art
+						pp2d_draw_texture_part(topbgtex, 284+offset3D[topfb].topbg-11, 0, 284, 0, 140, 240);	// Cover right box art
 						pp2d_draw_text(318, 1.0f, 0.58f, 0.58f, BLACK, RetTime(false).c_str());
 						pp2d_draw_text(336, 1.0f, 0.58f, 0.58f, BLACK, RetTimeDot(true).c_str());
 						DrawDate(264.0f, 1.0f, 0.58f, 0.58f, BLACK);
+						if (!settings.romselect.toplayout) {
+							if (loadboxartnum != pagemax_ba) {
+								if (fadealpha == 0) {
+									pp2d_draw_text(112, 104, 0.50, 0.50, BLACK, "Storing box art paths...");
+								}
+							}
+						}
 					}
 					
 
