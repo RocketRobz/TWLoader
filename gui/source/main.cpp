@@ -5507,11 +5507,11 @@ int main(){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
-					// } else if(hDown & KEY_DOWN) {
-						// bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
-						// if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
-						// 	bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
-						// }
+					} else if((hDown & KEY_DOWN) && (bnriconisDSi[settings.ui.cursorPosition-settings.ui.pagenum*20]==true)) {
+						bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
+						if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
+							bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
+						}
 					} else if (hDown & KEY_START) {
 						// Switch to the "Start" menu.
 						menudboxmode = DBOX_MODE_OPTIONS;

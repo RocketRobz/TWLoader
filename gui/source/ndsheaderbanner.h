@@ -177,6 +177,27 @@ typedef struct {
 	u16 dsi_seq[64];	//!< DSi animated icon sequence.
 } sNDSBanner;
 
+/*!
+	\brief the NDS banner format.
+	See gbatek for more information.
+*/
+typedef struct {
+	u16 version;		//!< version of the banner.
+	u16 crc[4];		//!< CRC-16s of the banner.
+	u8 reserved[22];
+	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
+	u16 palette[16];	//!< the palette of the icon.
+	u16 titles[8][128];	//!< title of the game in 8 different languages.
+
+	// [0xA40] Reserved space, possibly for other titles.
+	u8 reserved2[0x800];
+
+	// DSi-specific.
+	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
+	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
+	u8 dsi_seq[128];	//!< DSi animated icon sequence.
+} sNDSBanner_seqsep;
+
 // sNDSBanner version.
 typedef enum {
 	NDS_BANNER_VER_ORIGINAL	= 0x0001,
