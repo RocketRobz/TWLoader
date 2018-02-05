@@ -990,9 +990,12 @@ static void LoadBNRIcon(const char *filename) {
 			filename = "romfs:/notextbanner";
 			f_bnr = fopen(filename, "rb");
 		}
+		fseek(f_bnr, 0, SEEK_END);
+		off_t fsize = ftell(f_bnr);
+		fseek(f_bnr, 0, SEEK_SET);
 
 		u32 bannerVersion = grabBannerVersion(f_bnr);
-		if(bannerVersion == NDS_BANNER_VER_DSi) {
+		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
 			grabBannerSequence(f_bnr, idx);
 			bnriconisDSi[idx] = true;
@@ -1018,9 +1021,12 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		filename = "romfs:/notextbanner";
 		f_bnr = fopen(filename, "rb");
 	}
+	fseek(f_bnr, 0, SEEK_END);
+	off_t fsize = ftell(f_bnr);
+	fseek(f_bnr, 0, SEEK_SET);
 
 	u32 bannerVersion = grabBannerVersion(f_bnr);
-	if(bannerVersion == NDS_BANNER_VER_DSi) {
+	if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 32, 256);
 		grabBannerSequence(f_bnr, 20);
 		bnriconisDSi[20] = true;
