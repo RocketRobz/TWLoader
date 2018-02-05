@@ -994,11 +994,11 @@ static void LoadBNRIcon(const char *filename) {
 		u32 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
-			grabBannerSequence(f_bnr, loadbnriconnum);
-			bnriconisDSi[loadbnriconnum] = true;
+			grabBannerSequence(f_bnr, idx);
+			bnriconisDSi[idx] = true;
 		} else {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 32, 64);
-			bnriconisDSi[loadbnriconnum] = false;
+			bnriconisDSi[idx] = false;
 		}
 		fclose(f_bnr);
 	}
@@ -5507,11 +5507,11 @@ int main(){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
-					} else if((hDown & KEY_DOWN) && (bnriconisDSi[settings.ui.cursorPosition-settings.ui.pagenum*20]==true)) {
+					/* } else if((hDown & KEY_DOWN) && (bnriconisDSi[settings.ui.cursorPosition-settings.ui.pagenum*20]==true)) {
 						bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
 						if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
 							bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
-						}
+						} */
 					} else if (hDown & KEY_START) {
 						// Switch to the "Start" menu.
 						menudboxmode = DBOX_MODE_OPTIONS;
