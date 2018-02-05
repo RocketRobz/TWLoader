@@ -507,14 +507,23 @@ bool bnriconisDSi[22] = {false};
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence(FILE* binFile, int iconnum) {
+void* grabBannerSequence(const sNDSBanner* ndsBanner, int iconnum) {
+	for (int i = 0; i < 64; i++) {
+		bnriconframeseq[iconnum][i] = ndsBanner->dsi_seq[i];
+	}
+	return 0;
+}
+
+/**
+ * Get banner sequence from banner file.
+ * @param binFile Banner file.
+ */
+void* grabBannerSequence(FILE* binFile, int iconnum) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
 	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
 	
-	for (int i = 0; i < 64; i++) {
-		bnriconframeseq[iconnum][i] = ndsBanner.dsi_seq[i];
-	}
+	return grabBannerSequence(&ndsBanner, iconnum);
 }
 
 /**

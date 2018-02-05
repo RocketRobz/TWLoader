@@ -4556,6 +4556,7 @@ int main(){
 					screenon();
 				}
 
+				// Playback animated icons on SD/flash card
 				for (int i = 0; i < 20; i++) {
 					if(bnriconisDSi[i]==true) {
 						playBannerSequence(i);
@@ -4563,6 +4564,13 @@ int main(){
 						bnriconframenumX[i] = 0;
 						bnriconframenumY[i] = 0;
 					}
+				}
+				// Playback animated icon on Slot-1
+				if(bnriconisDSi[21]==true) {
+					playBannerSequence(21);
+				} else {
+					bnriconframenumX[21] = 0;
+					bnriconframenumY[21] = 0;
 				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {

@@ -313,7 +313,13 @@ extern bool bnriconisDSi[22];
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence(FILE* binFile, int iconnum);
+void* grabBannerSequence(const sNDSBanner* ndsBanner, int iconnum);
+
+/**
+ * Get banner sequence from banner file.
+ * @param binFile Banner file.
+ */
+void* grabBannerSequence(FILE* binFile, int iconnum);
 
 /**
  * Clear loaded banner sequence.

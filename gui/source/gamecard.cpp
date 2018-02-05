@@ -105,7 +105,14 @@ static void gamecardCacheTWL(void)
 	}
 
 	// Store the icon and banner text.
-	pp2d_load_texture_memory_RGBA5551(card_icon, grabIcon(&ndsBanner), 64, 64);
+	if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+		pp2d_load_texture_memory_RGBA5551(card_icon, grabIconDSi(&ndsBanner), 64, 128);
+		grabBannerSequence(&ndsBanner, 21);
+		bnriconisDSi[21] = true;
+	} else {
+		pp2d_load_texture_memory_RGBA5551(card_icon, grabIcon(&ndsBanner), 32, 64);
+		bnriconisDSi[21] = false;
+	}
 	card_text = grabText(&ndsBanner, language);
 }
 
