@@ -526,7 +526,6 @@ void clearBannerSequence(int iconnum) {
 	}
 }
 
-bool bannerDelayNumGot[22] = {false};
 static u16 bannerDelayNum[22] = {0x0000};
 int currentbnriconframeseq[22] = {0};
 
@@ -542,35 +541,33 @@ void playBannerSequence(int iconnum) {
 		bnriconframenumY[iconnum] = 0;
 	} else {
 		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
-		if(!bannerDelayNumGot[iconnum]) {
-			if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
-				bnriconframenumY[iconnum] = 0;
-			} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
-				bnriconframenumY[iconnum] = 1;
-			} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
-				bnriconframenumY[iconnum] = 2;
-			} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
-				bnriconframenumY[iconnum] = 3;
-			} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
-				bnriconframenumY[iconnum] = 4;
-			} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
-				bnriconframenumY[iconnum] = 5;
-			} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
-				bnriconframenumY[iconnum] = 6;
-			} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
-				bnriconframenumY[iconnum] = 7;
-			}
-			bannerDelayNumGot[iconnum] = true;
-		} else {
-			bannerDelayNum[iconnum]++;
-			if(bannerDelayNum[iconnum] >= ((setframeseq & 0x00FF) / 3)) {
-				bannerDelayNum[iconnum] = 0x0000;
-				currentbnriconframeseq[iconnum]++;
-				if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
-					currentbnriconframeseq[iconnum] = 0;	// Reset sequence
-				}
-				bannerDelayNumGot[iconnum] = false;
+
+		if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
+			bnriconframenumY[iconnum] = 0;
+		} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
+			bnriconframenumY[iconnum] = 1;
+		} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
+			bnriconframenumY[iconnum] = 2;
+		} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
+			bnriconframenumY[iconnum] = 3;
+		} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
+			bnriconframenumY[iconnum] = 4;
+		} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
+			bnriconframenumY[iconnum] = 5;
+		} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
+			bnriconframenumY[iconnum] = 6;
+		} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
+			bnriconframenumY[iconnum] = 7;
+		}
+
+		bannerDelayNum[iconnum]++;
+		if(bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
+			bannerDelayNum[iconnum] = 0x0000;
+			currentbnriconframeseq[iconnum]++;
+			if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
+				currentbnriconframeseq[iconnum] = 0;	// Reset sequence
 			}
 		}
+
 	}
 }
