@@ -2724,6 +2724,7 @@ int main(){
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
 		pp2d_draw_texture(bottomlogotex, 0, 0);
 		pp2d_draw_text(32, 48, 0.60, 0.60f, WHITE, "Enhanced with");
+		pp2d_draw_text(32, 192, 0.50, 0.50f, WHITE, "*Games not enhanced with pseudo-HDR");
 		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, aninumfadealpha));
 		pp2d_end_draw();
 		if(!botscreenon_ran) {
