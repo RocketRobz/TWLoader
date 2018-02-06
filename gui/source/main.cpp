@@ -3096,6 +3096,9 @@ int main(){
 		}
 		screenmode = SCREEN_MODE_SETTINGS;
 		settingsResetSubScreenMode();
+	} else if(!settings.ui.firstTimeMsgViewed) {
+		screenmode = SCREEN_MODE_SETTINGS;
+		settingsResetSubScreenMode();
 	}
 
 	//createThread((ThreadFunc)threadLoadBoxArt);
@@ -3627,7 +3630,7 @@ int main(){
 						pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
 						pp2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 
-						// Draw the "Previous" and "Next" text for X/Y.
+						// Draw the "Previous" and "Next" text for L/R.
 						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
 								? BLACK
 								: GRAY;

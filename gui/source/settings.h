@@ -45,6 +45,8 @@ typedef struct _Settings_t {
 		std::string fcromfolder;
  		std::string gbromfolder;
 
+		bool firstTimeMsgViewed;
+
 		int pagenum;
 		int cursorPosition;
 		bool quickStart;

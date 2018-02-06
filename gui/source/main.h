@@ -83,6 +83,7 @@ extern bool logEnabled;
 
 // Sound effects
 extern bool dspfirmfound;
+extern sound *sfx_launch;
 extern sound *sfx_select;
 extern sound *sfx_switch;
 extern sound *sfx_wrong;

@@ -26,11 +26,15 @@ enum SubScreenMode {
 	SUBSCREEN_MODE_SUB_THEME = 5,			// Sub-theme select
 	SUBSCREEN_MODE_CHANGE_ROM_PATH = 6,		// Sub-menu with rom path location
 	SUBSCREEN_MODE_TWLNAND_NOT_FOUND = 7,	// TWLNAND side not found message
+	SUBSCREEN_MODE_FIRST_TIME = 8,			// First-time screen
 };
 static SubScreenMode subscreenmode = SUBSCREEN_MODE_FRONTEND;
 
 /** Settings **/
 const char *twlnand_msg;
+const char *FirstTime_msg;
+
+static int FirstTime_selectedmsg = 0;
 
 const char* srldrsettingsinipath = "sdmc:/_nds/srloader/settings.ini";
 static CIniFile settingsini("sdmc:/_nds/twloader/settings.ini");
@@ -64,6 +68,9 @@ void settingsResetSubScreenMode(void)
 		subscreenmode = SUBSCREEN_MODE_TWLNAND_NOT_FOUND;
 	} else {
 		subscreenmode = SUBSCREEN_MODE_FRONTEND;
+	}
+	if(!settings.ui.firstTimeMsgViewed) {
+		subscreenmode = SUBSCREEN_MODE_FIRST_TIME;
 	}
 	memset(cursor_pos, 0, sizeof(cursor_pos));
 }
@@ -404,8 +411,10 @@ void settingsDrawBottomScreen(void)
 	for (int i = 0; i < 80; i++)
 		pp2d_draw_rectangle(i*4, 26, 2, 1, GRAY);
 	pp2d_draw_rectangle(0, 179, 320, 41, RGBA8(0, 0, 0, 31));
-	for (int i = 0; i < 80; i++)
-		pp2d_draw_rectangle(i*4, 180, 2, 1, GRAY);
+	if(subscreenmode != SUBSCREEN_MODE_FIRST_TIME) {
+		for (int i = 0; i < 80; i++)
+			pp2d_draw_rectangle(i*4, 180, 2, 1, GRAY);
+	}
 	for (int i = 0; i < 80; i++)
 		pp2d_draw_rectangle(i*4, 218, 2, 1, GRAY);
 	
@@ -781,16 +790,19 @@ void settingsDrawBottomScreen(void)
 			{ 17,  39},
 			{169,  39},
 			{ 17,  87},
+			{169,  87},
 		};
 		const wchar_t *button_titles[] = {
 			TR(STR_SETTINGS_SHOW_BOOT_SCREEN),
 			TR(STR_SETTINGS_ROM_PATH),
 			TR(STR_SETTINGS_QUICK_START),
+			utf8_to_wchar("Welcome screen"),
 		};
 		const char *button_desc[] = {
 			showbootscreenvaluetext,
 			printedROMpath,
 			quickstartvaluetext,
+			"",
 		};
 		
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0]))-1; i >= 0; i--) {
@@ -836,6 +848,10 @@ void settingsDrawBottomScreen(void)
 		if (cursor_pos[2] == 2) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_QUICK_START_1));
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_QUICK_START_2));
+		}
+		if (cursor_pos[2] == 3) {
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to re-view first-time");
+			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "welcome screen.");
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
 		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
@@ -1246,6 +1262,57 @@ void settingsDrawBottomScreen(void)
 				"TWLoader - TWLNAND side (part 2).cia";
 		}
 		pp2d_draw_text(16, 40, 0.4, 0.4, WHITE, twlnand_msg);
+	} else if (subscreenmode == SUBSCREEN_MODE_FIRST_TIME) {
+		if(!isDemo) {
+			const wchar_t *home_text = TR(STR_RETURN_TO_HOME_MENU);
+			const int home_width = 144+16;
+			const int home_x = (320-home_width)/2;
+			pp2d_draw_texture(whomeicontex, home_x, 221); // Draw HOME icon
+			pp2d_draw_wtext(home_x+20, 222, 0.50, 0.50, WHITE, home_text);
+		}
+		if(FirstTime_selectedmsg != 0) pp2d_draw_text(8, 196, 0.50, 0.50, WHITE, ": Previous");
+		if(FirstTime_selectedmsg != 4) pp2d_draw_text(248, 196, 0.50, 0.50, WHITE, ": Next");
+
+		title = L"Welcome to TWLoader!";
+
+		if(FirstTime_selectedmsg == 0) {
+			FirstTime_msg =
+				"TWLoader is a CTR-mode GUI that looks and feels\n"
+				"like the Nintendo DSi Menu.\n"
+				"(The theme can be changed to R4 or akmenu/Wood.)";
+		} else if(FirstTime_selectedmsg == 1) {
+			FirstTime_msg =
+				"It is a frontend for nds-bootstrap, which can\n"
+				"run your ROMs natively from the SD card,\n"
+				"and not through emulation.\n"
+				"\n"
+				"It can also serve as a replacement for flashcard menus.";
+		} else if(FirstTime_selectedmsg == 2) {
+			FirstTime_msg =
+				"TWLoader also includes an enhanced hi-res\n"
+				"3D-depth version of the DS/DSi boot screen.";
+		} else if(FirstTime_selectedmsg == 3) {
+			FirstTime_msg =
+				"You can play your DS games with clock speed of 133mhz\n"
+				"(faster than normal DS), and higher sound quality.\n"
+				"\n"
+				"You can also change the UI color to your favorite color,\n"
+				"and have glowing rainbow colors in the Notification LED.\n"
+				"(Do not use the LED feature on 3DS firmware 8.1\n"
+				"or below.)";
+		} else if(FirstTime_selectedmsg == 4) {
+			FirstTime_msg =
+				"Enjoy using TWLoader to launch your games\n"
+				"from the SD card or a flashcard!\n"
+				"\n"
+				"(Please note that some games are not compatible\n"
+				"from SD card yet. Compatibility is higher for\n"
+				"games on a flashcard.)\n"
+				"\n"
+				"Press  to select a game.\n"
+				"Feel free to change some settings too!";
+		}
+		pp2d_draw_text(16, 40, 0.4, 0.4, WHITE, FirstTime_msg);
 	}
 	pp2d_draw_wtext(2, 2, 0.75, 0.75, WHITE, title);
 }
@@ -1271,7 +1338,26 @@ bool settingsMoveCursor(u32 hDown)
 	// Sound effect to play.
 	sound *sfx = NULL;
 
-	if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
+	if (subscreenmode == SUBSCREEN_MODE_FIRST_TIME) {
+		if (hDown & KEY_A) {
+			if(FirstTime_selectedmsg == 4) {
+				titleboxXmovetimer = 1;
+				fadeout = true;
+				sfx = sfx_launch;
+				settings.ui.firstTimeMsgViewed = true;
+			} else {
+				FirstTime_selectedmsg++;
+				sfx = sfx_select;
+			}
+		} else if (hDown & KEY_B) {
+			FirstTime_selectedmsg--;
+			if(FirstTime_selectedmsg < 0) {
+				FirstTime_selectedmsg = 0;
+			} else {
+				sfx = sfx_select;
+			}
+		}
+	} else if (subscreenmode == SUBSCREEN_MODE_SUB_THEME) {
 		if (hDown & KEY_UP) {
 			settings.ui.subtheme--;
 			sfx = sfx_select;
@@ -1476,17 +1562,22 @@ bool settingsMoveCursor(u32 hDown)
 						settings.ui.quickStart = !settings.ui.quickStart;
 					}
 					break;
+				case 3: // Welcome screen
+					if (hDown & KEY_A) {
+						subscreenmode = SUBSCREEN_MODE_FIRST_TIME;
+					}
+					break;
 			}
 			sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[2] < 2) {
 			cursor_pos[2] += 2;
-			if (cursor_pos[2] > 2) cursor_pos[2] -= 2;
+			if (cursor_pos[2] > 3) cursor_pos[2] -= 2;
 			sfx = sfx_select;
 		} else if ((hDown & KEY_UP) && cursor_pos[2] > 0) {
 			cursor_pos[2] -= 2;
 			if (cursor_pos[2] < 0) cursor_pos[2] += 2;
 			sfx = sfx_select;
-		} else if ((hDown & KEY_RIGHT) && cursor_pos[2] < 2) {
+		} else if ((hDown & KEY_RIGHT) && cursor_pos[2] < 3) {
 			if (cursor_pos[2] == 0
 			|| cursor_pos[2] == 2
 			|| cursor_pos[2] == 4)
@@ -1970,6 +2061,8 @@ static void RemoveTrailingSlashes(string& path)
  * Load settings.
  */
 void LoadSettings(void) {
+	settings.ui.firstTimeMsgViewed = settingsini.GetInt("FRONTEND", "FIRST_TIME_MSG_VIEWED", 0);
+
 	// UI settings.
 	settings.ui.name = settingsini.GetString("FRONTEND", "NAME", "");
 	settings.ui.romfolder = settingsini.GetString("FRONTEND", "ROM_FOLDER", "");
@@ -2000,6 +2093,9 @@ void LoadSettings(void) {
 	settings.ui.healthsafety = settingsini.GetInt("FRONTEND", "HEALTH&SAFETY_MSG", 1);
 	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
 	settings.ui.autoupdate_twldr = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
+
+	if(settings.ui.theme >= THEME_R4)
+		settings.ui.cursorPosition = settingsini.GetInt("FRONTEND", "CURSOR_POSITION", 0);
 
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
@@ -2039,11 +2135,14 @@ void SaveSettings(void) {
 	bool srldrsettingsFound = false;
 	if (!access(srldrsettingsinipath, F_OK)) srldrsettingsFound = true;
 
+	settingsini.SetInt("FRONTEND", "FIRST_TIME_MSG_VIEWED", settings.ui.firstTimeMsgViewed);
+
 	// UI settings.
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
+	settingsini.SetInt("FRONTEND", "CURSOR_POSITON", settings.ui.cursorPosition);
 	settingsini.SetInt("FRONTEND", "QUICK_START", settings.ui.quickStart);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
