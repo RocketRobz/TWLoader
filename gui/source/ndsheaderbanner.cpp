@@ -261,11 +261,11 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// TODO: If it's 0 bytes, re-cache it?
 		return 0;
 	}
-	pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
 	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
 	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
-	pp2d_draw_text(44, 16, 0.5f, 0.5f, WHITE, counter2);
+	pp2d_draw_text(44, 48, 0.5f, 0.5f, WHITE, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
@@ -284,6 +284,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
+		pp2d_end_draw();
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
@@ -301,10 +302,75 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 				bannersize = NDS_BANNER_SIZE_ORIGINAL;
 				break;
 		}
+
+		/* Banner fixes start here */
+
+		// Fire Emblem - Heroes of Light and Shadow (English Translation)
+		if(ndsBanner.crc[0] == 0xECF9
+		&& ndsBanner.crc[1] == 0xD18F
+		&& ndsBanner.crc[2] == 0xE22A
+		&& ndsBanner.crc[3] == 0xD8F4)
+		{
+			// Use fixed banner.
+			FILE* fixedBannerFile = fopen("romfs:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
+			if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (fixed):", bannerpath);
+			bannersize = NDS_BANNER_SIZE_DSi;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
+		} else // Pokemon Blaze Black (Clean Version)
+		if(ndsBanner.crc[0] == 0x4683
+		&& ndsBanner.crc[1] == 0x40AD
+		&& ndsBanner.crc[2] == 0x5641
+		&& ndsBanner.crc[3] == 0xEE5D)
+		{
+			// Use fixed banner.
+			FILE* fixedBannerFile = fopen("romfs:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
+			if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (fixed):", bannerpath);
+			bannersize = NDS_BANNER_SIZE_DSi;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
+		} else // Pokemon Blaze Black (Full Version)
+		if(ndsBanner.crc[0] == 0xA251
+		&& ndsBanner.crc[1] == 0x40AD
+		&& ndsBanner.crc[2] == 0x5641
+		&& ndsBanner.crc[3] == 0xEE5D)
+		{
+			// Use fixed banner.
+			FILE* fixedBannerFile = fopen("romfs:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
+			if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (fixed):", bannerpath);
+			bannersize = NDS_BANNER_SIZE_DSi;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
+		} else // Pokemon Volt White (Clean Version)
+		if(ndsBanner.crc[0] == 0x77F4
+		&& ndsBanner.crc[1] == 0x5C94
+		&& ndsBanner.crc[2] == 0xBF18
+		&& ndsBanner.crc[3] == 0x0C88)
+		{
+			// Use fixed banner.
+			FILE* fixedBannerFile = fopen("romfs:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
+			if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (fixed):", bannerpath);
+			bannersize = NDS_BANNER_SIZE_DSi;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
+		} else // Pokemon Volt White (Full Version)
+		if(ndsBanner.crc[0] == 0x9CA8
+		&& ndsBanner.crc[1] == 0x5C94
+		&& ndsBanner.crc[2] == 0xBF18
+		&& ndsBanner.crc[3] == 0x0C88)
+		{
+			// Use fixed banner.
+			FILE* fixedBannerFile = fopen("romfs:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
+			if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (fixed):", bannerpath);
+			bannersize = NDS_BANNER_SIZE_DSi;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
+		}
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
+		pp2d_end_draw();
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
@@ -315,7 +381,9 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Invalid banner loaded; not caching.");
+		pp2d_end_draw();
 		return -1;
 	}
 
@@ -324,7 +392,9 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Error writing the banner cache file.");
+		pp2d_end_draw();
 		return -2;
 	}
 	fwrite(&ndsBanner, 1, bannersize, filetosave);
