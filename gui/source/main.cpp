@@ -4091,6 +4091,8 @@ int main(){
 				if(bnriconisDSi[20]==true) {
 					playBannerSequence(20);
 				} else {
+					bnriconframenumX[20] = 0;
+					bnriconframenumY[20] = 0;
 					bannerFlip[20] = NONE;
 				}
 			} else {

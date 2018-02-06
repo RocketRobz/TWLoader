@@ -2094,9 +2094,6 @@ void LoadSettings(void) {
 	settings.ui.autoupdate = settingsini.GetInt("FRONTEND", "AUTOUPDATE", 0);
 	settings.ui.autoupdate_twldr = settingsini.GetInt("FRONTEND", "AUTODOWNLOAD", 0);
 
-	if(settings.ui.theme >= THEME_R4)
-		settings.ui.cursorPosition = settingsini.GetInt("FRONTEND", "CURSOR_POSITION", 0);
-
 	// TWL settings.
 	settings.twl.rainbowled = settingsini.GetInt("TWL-MODE", "RAINBOW_LED", 0);
 	settings.twl.cpuspeed = settingsini.GetInt("TWL-MODE", "TWL_CLOCK", 0);
@@ -2142,7 +2139,6 @@ void SaveSettings(void) {
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
-	settingsini.SetInt("FRONTEND", "CURSOR_POSITION", settings.ui.cursorPosition);
 	settingsini.SetInt("FRONTEND", "QUICK_START", settings.ui.quickStart);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
