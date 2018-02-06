@@ -2142,7 +2142,7 @@ void SaveSettings(void) {
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
-	settingsini.SetInt("FRONTEND", "CURSOR_POSITON", settings.ui.cursorPosition);
+	settingsini.SetInt("FRONTEND", "CURSOR_POSITION", settings.ui.cursorPosition);
 	settingsini.SetInt("FRONTEND", "QUICK_START", settings.ui.quickStart);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
 	settingsini.SetInt("FRONTEND", "THEME", settings.ui.theme);
