@@ -3050,7 +3050,6 @@ int main(){
 	if (settings.ui.showbootscreen == 1) {
 		botscreenon();
 		bootSplash();
-		botscreenoff();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
 		if (settings.ui.theme >= THEME_R4) {
 		} else if(aptMainLoop()) {
@@ -3070,6 +3069,8 @@ int main(){
 			pp2d_end_draw();
 			botscreenon();
 		}
+	} else {
+		botscreenoff();
 	}
 	
 	loadboxartnum = settings.ui.pagenum*20;
