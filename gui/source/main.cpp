@@ -2795,6 +2795,7 @@ int main(){
 
 	pp2d_load_texture_png(shoulderLtex, "romfs:/graphics/shoulder_L.png"); // L shoulder
 	pp2d_load_texture_png(shoulderRtex, "romfs:/graphics/shoulder_R.png"); // R shoulder
+	pp2d_load_texture_png(_3dsshouldertex, "romfs:/graphics/3ds/shoulder.png"); // 3DS HOME Menu shoulder
 
 	// Battery level textures.
 	pp2d_load_texture_png(batterychrgtex, "romfs:/graphics/battery_charging.png");
@@ -3622,18 +3623,35 @@ int main(){
 					if (!settings.ui.name.empty()) {
 						pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 					}
-					pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-					pp2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
-					// Draw the "Previous" and "Next" text for X/Y.
-					u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
-							? BLACK
-							: GRAY;
-					pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, lr_color, "Previous");
+					if (settings.ui.theme != THEME_3DSMENU) {
+						pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
+						pp2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
 
-					lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
-							? BLACK
-							: GRAY;
-					pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
+						// Draw the "Previous" and "Next" text for X/Y.
+						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
+								? BLACK
+								: GRAY;
+						pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, lr_color, "Previous");
+
+						lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
+								? BLACK
+								: GRAY;
+						pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
+					} else {
+						pp2d_draw_texture(_3dsshouldertex, 0, LshoulderYpos-5);
+						pp2d_draw_texture_flip(_3dsshouldertex, 312, RshoulderYpos-5, HORIZONTAL);
+
+						// Draw the "Previous" and "Next" text for L/R.
+						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
+								? BLACK
+								: GRAY;
+						pp2d_draw_text(4, LshoulderYpos+1, 0.55, 0.55, lr_color, " Previous");
+
+						lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
+								? BLACK
+								: GRAY;
+						pp2d_draw_text(346, RshoulderYpos+1, 0.55, 0.55, lr_color, "Next ");
+					}
 
 					if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 //					pp2d_end_draw();

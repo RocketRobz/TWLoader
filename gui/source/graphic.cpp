@@ -147,3 +147,4 @@ size_t invdshstex = 128;
 size_t regularloadtex = 129;
 size_t pongloadtex = 130;
 size_t tictactoeloadtex = 131;
+size_t _3dsshouldertex = 132;

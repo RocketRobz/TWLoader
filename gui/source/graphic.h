@@ -90,6 +90,7 @@ extern size_t _3dsbotbotbarbuttex;
 extern size_t regularloadtex;
 extern size_t pongloadtex;
 extern size_t tictactoeloadtex;
+extern size_t _3dsshouldertex;
 
 // Colors
 #define TRANSPARENT RGBA8(0, 0, 0, 0)
