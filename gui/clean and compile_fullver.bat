@@ -1,4 +1,5 @@
 @echo off
+make clean
 make -j8 COMPILE_3DSX=0
 copy "TWLoader.cia" "../TWLoader-update/TWLoader.cia"
 copy "TWLoader.cia" "../7zfile/sdroot/_nds/twloader/cia/TWLoader.cia"

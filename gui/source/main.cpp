@@ -5615,7 +5615,7 @@ int main(){
 								}
 							}
 						}
-					} else if(hDown & KEY_A && showbubble){
+					} else if((hDown & KEY_A) && showbubble){
 						menuaction_launch = true;
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240) {
 						if (!titleboxXmoveleft) {
@@ -5656,7 +5656,7 @@ int main(){
 								gamesettings_cursorPosition = 0;
 							}
 						}
-					} else if (hDown & KEY_SELECT) {
+					} else if ((hDown & KEY_SELECT) && showbubble) {
 						// Switch to per-game settings.
 						menudboxmode = DBOX_MODE_SETTINGS;
 						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0 && settings.twl.romtype==0) {
@@ -5711,7 +5711,7 @@ int main(){
 							SDKVersion = 0;
 						}
 						if (!showdialogbox_menu) {
-							if (settings.ui.cursorPosition >= 0 && showbubble && menudbox_Ypos == -240) {
+							if (settings.ui.cursorPosition >= 0 && menudbox_Ypos == -240) {
 								if (settings.twl.forwarder) {
 									if(matching_files.size() == 0){
 										rom = fcfiles.at(settings.ui.cursorPosition).c_str();
@@ -5969,61 +5969,59 @@ int main(){
 							menu_ctrlset = CTRL_SET_GAMESEL;
 						}
 					} else if (menudboxmode == DBOX_MODE_OPTIONS) {
-						if (hDown & KEY_SELECT) {
-							if (settings.ui.cursorPosition >= 0 && showbubble) {
-								// Switch to game-specific settings.
-								menudboxmode = DBOX_MODE_SETTINGS;
-								bool isCia = false;
-								if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0 && settings.twl.romtype==0) {
-									// Get SDK version to show
-									char path[256];
-									const char *rom_filename;
-									if(matching_files.size() == 0){
-										if (files.size() != 0) {
-											rom_filename = files.at(settings.ui.cursorPosition).c_str();
-										} else {
-											rom_filename = " ";
-										}
-										snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+						if ((hDown & KEY_SELECT) && showbubble && settings.ui.cursorPosition >= 0) {
+							// Switch to game-specific settings.
+							menudboxmode = DBOX_MODE_SETTINGS;
+							bool isCia = false;
+							if(!settings.twl.forwarder && settings.twl.romtype==0) {
+								// Get SDK version to show
+								char path[256];
+								const char *rom_filename;
+								if(matching_files.size() == 0){
+									if (files.size() != 0) {
+										rom_filename = files.at(settings.ui.cursorPosition).c_str();
 									} else {
-										rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
-										snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
-									}									
-									std::string fn = rom_filename;
-									if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
-
-									if(isCia) {
-										SDKnumbertext = "";	// Clear number
-									} else {
-										FILE *f_nds_file = fopen(path, "rb");
-										char game_TID[5];
-										grabTID(f_nds_file, game_TID, false);
-										game_TID[4] = 0;
-										game_TID[3] = 0;
-										SDKVersion = 0;
-										if(strcmp(game_TID, "###") != 0) {
-											SDKVersion = getSDKVersion(f_nds_file, rom_filename);
-											if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-												SDKnumbertext = "SDK ver: 1";
-											} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-												SDKnumbertext = "SDK ver: 2";
-											} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-												SDKnumbertext = "SDK ver: 3";
-											} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-												SDKnumbertext = "SDK ver: 4";
-											} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-												SDKnumbertext = "SDK ver: 5 (TWLSDK)";
-											} else {
-												SDKnumbertext = "SDK ver: ?";
-											}
-										} else {
-											SDKnumbertext = "";	// Clear number
-										}
-										fclose(f_nds_file);
+										rom_filename = " ";
 									}
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 								} else {
+									rom_filename = matching_files.at(settings.ui.cursorPosition).c_str();
+									snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
+								}									
+								std::string fn = rom_filename;
+								if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+								if(isCia) {
+									SDKnumbertext = "";	// Clear number
+								} else {
+									FILE *f_nds_file = fopen(path, "rb");
+									char game_TID[5];
+									grabTID(f_nds_file, game_TID, false);
+									game_TID[4] = 0;
+									game_TID[3] = 0;
 									SDKVersion = 0;
+									if(strcmp(game_TID, "###") != 0) {
+										SDKVersion = getSDKVersion(f_nds_file, rom_filename);
+										if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
+											SDKnumbertext = "SDK ver: 1";
+										} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+											SDKnumbertext = "SDK ver: 2";
+										} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+											SDKnumbertext = "SDK ver: 3";
+										} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+											SDKnumbertext = "SDK ver: 4";
+										} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+											SDKnumbertext = "SDK ver: 5 (TWLSDK)";
+										} else {
+											SDKnumbertext = "SDK ver: ?";
+										}
+									} else {
+										SDKnumbertext = "";	// Clear number
+									}
+									fclose(f_nds_file);
 								}
+							} else {
+								SDKVersion = 0;
 							}
 						} else if (hDown & KEY_RIGHT) {
 							if (startmenu_cursorPosition % 2 != 1 &&
