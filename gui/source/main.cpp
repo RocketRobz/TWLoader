@@ -5202,6 +5202,8 @@ int main(){
 							if (settings.twl.forwarder) {
 								settings.twl.launchslot1 = true;
 								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+								if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+								applaunchon = true;
 							} else {
 								settings.twl.launchslot1 = false;
 								bool isCia = false;
@@ -5404,6 +5406,8 @@ int main(){
 							if (settings.twl.forwarder) {
 								settings.twl.launchslot1 = true;
 								rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+								if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
+								applaunchon = true;
 							} else {
 								settings.twl.launchslot1 = false;
 								bool isCia = false;
