@@ -107,7 +107,7 @@ static void gamecardCacheTWL(void)
 	// Store the icon and banner text.
 	if(ndsBanner.version == NDS_BANNER_VER_DSi) {
 		pp2d_load_texture_memory_RGBA5551(card_icon, grabIconDSi(&ndsBanner), 32, 256);
-		grabBannerSequence(&ndsBanner, 21);
+		grabBannerSequence(&ndsBanner, 8);
 		bnriconisDSi[21] = true;
 	} else {
 		pp2d_load_texture_memory_RGBA5551(card_icon, grabIcon(&ndsBanner), 32, 64);

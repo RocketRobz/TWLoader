@@ -940,7 +940,7 @@ static void ChangeBNRIconNo(void) {
 	const int idx = bnriconnum - (settings.ui.pagenum * 20);
 	if (idx >= 0 && idx < 20) {
 		// Selected banner icon is on the current page.
-		bnricontexnum = bnricontex[idx];
+		bnricontexnum = bnricontex[idx % 6];
 	}
 	if (settings.twl.romtype == 1) bnricontexnum = gbctex;
 }
@@ -978,7 +978,7 @@ static void StoreBoxArtPath(const char *path) {
  */
 static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
-	const int idx = loadbnriconnum - (settings.ui.pagenum * 20);
+	const int idx = loadbnriconnum;
 	if (idx >= 0 && idx < 20) {
 		pp2d_free_texture(bnricontex[idx]);
 		// Selected bnriconnum is on the current page.
@@ -996,11 +996,11 @@ static void LoadBNRIcon(const char *filename) {
 
 		u32 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIconDSi(f_bnr), 32, 256);
 			grabBannerSequence(f_bnr, idx);
 			bnriconisDSi[idx] = true;
 		} else {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 32, 64);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIcon(f_bnr), 32, 64);
 			bnriconisDSi[idx] = false;
 		}
 		fclose(f_bnr);
@@ -1012,7 +1012,7 @@ static void LoadBNRIcon(const char *filename) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
-	pp2d_free_texture(bnricontex[20]);
+	pp2d_free_texture(bnricontex[7]);
 	if (!filename) {
 		filename = "romfs:/notextbanner";
 	}
@@ -1027,11 +1027,11 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 
 	u32 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIconDSi(f_bnr), 32, 256);
+		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIconDSi(f_bnr), 32, 256);
 		grabBannerSequence(f_bnr, 20);
 		bnriconisDSi[20] = true;
 	} else {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[20], grabIcon(f_bnr), 32, 64);
+		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIcon(f_bnr), 32, 64);
 		bnriconisDSi[20] = false;
 	}
 	fclose(f_bnr);
@@ -3258,9 +3258,9 @@ int main(){
 					if (!settings.twl.forwarder) {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)files.size()) {
-									const char *tempfile = files.at(loadbnriconnum).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)files.size()+settings.ui.pagenum*20) {
+									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									LoadBNRIcon(path);
 								} else {
@@ -3268,9 +3268,9 @@ int main(){
 								}
 							}
 						}else{
-							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)matching_files.size()) {
-									const char *tempfile = matching_files.at(loadbnriconnum).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
+									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									LoadBNRIcon(path);
 								} else {
@@ -3281,9 +3281,9 @@ int main(){
 					} else {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)fcfiles.size()) {
-									const char *tempfile = fcfiles.at(loadbnriconnum).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)fcfiles.size()+settings.ui.pagenum*20) {
+									const char *tempfile = fcfiles.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										LoadBNRIcon(path);
@@ -3295,9 +3295,9 @@ int main(){
 								}
 							}
 						}else{
-							for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)matching_files.size()) {
-									const char *tempfile = matching_files.at(loadbnriconnum).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
+									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										LoadBNRIcon(path);
@@ -3312,11 +3312,11 @@ int main(){
 					}
 				} else {
 					if(matching_files.size() == 0){
-						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
 							LoadBNRIcon(NULL);
 						}
 					}else{
-						for (loadbnriconnum = settings.ui.pagenum*20; loadbnriconnum < pagemax; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
 							LoadBNRIcon(NULL);
 						}
 					}
@@ -4022,7 +4022,7 @@ int main(){
 					if (settings.twl.romtype == 1) {
 						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
-						pp2d_draw_texture_part_flip(bnricontex[20], 52, 36, bnriconframenumX[20]*32, bnriconframenumY[20]*32, 32, 32, bannerFlip[20]);
+						pp2d_draw_texture_part_flip(bnricontex[7], 52, 36, bnriconframenumX[20]*32, bnriconframenumY[20]*32, 32, 32, bannerFlip[20]);
 					}
 					
 					if (!bannertextloaded) {
@@ -4246,19 +4246,11 @@ int main(){
 							titleboxXpos += 80;
 
 							bnriconnum = filenum;
-							if (loadbnriconnum <= filenum) {
-								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos*1.25, 123, 0.50, 0.50);  // Dots moving in circles
-								} else {
-									pp2d_draw_texture_part_scale(dotcircletex, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, 0, 32, 32, 1.50, 1.50);
-								}
+							ChangeBNRIconNo();
+							if (settings.ui.theme != THEME_3DSMENU) {
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							} else {
-								ChangeBNRIconNo();
-								if (settings.ui.theme != THEME_3DSMENU) {
-									pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
-								} else {
-									pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
-								}
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							}
 							ndsiconXpos += 80;
 						} else {
@@ -4270,12 +4262,8 @@ int main(){
 							titleboxXpos += 64;
 
 							bnriconnum = filenum;
-							if (loadbnriconnum <= filenum) {
-								pp2d_draw_texture_scale(dotcircletex, ndsiconXpos+titleboxXmovepos, 129, 0.40, 0.40);  // Dots moving in circles
-							} else {
-								ChangeBNRIconNo();
-								pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
-							}
+							ChangeBNRIconNo();
+							pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							ndsiconXpos += 64;
 						}
 					} else {
