@@ -300,7 +300,7 @@ void* grabIcon(FILE* binFile);
  * @param binFile Banner file.
  * @return Version number. (NULL on error)
  */
-u32 grabBannerVersion(FILE* binFile);
+u16 grabBannerVersion(FILE* binFile);
 
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
 extern int bnriconframenumX[22];

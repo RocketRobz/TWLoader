@@ -1005,7 +1005,7 @@ static void LoadBNRIcon(void) {
 		off_t fsize = ftell(f_bnr);
 		fseek(f_bnr, 0, SEEK_SET);
 
-		u32 bannerVersion = grabBannerVersion(f_bnr);
+		u16 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
 		} else {
@@ -1019,9 +1019,7 @@ static void LoadBNRIcon(void) {
  * Load a banner icon at the current bnriconnum.
  * @param filename Banner filename, or NULL for notextbanner.
  */
-static void LoadBNRIcon_Menu(void) {
-	// Get the bnriconnum relative to the current page.
-	const int idx = settings.ui.cursorPosition;
+static void LoadBNRIcon_Menu(int idx) {
 	if (idx >= 0 && idx < 20) {
 		pp2d_free_texture(bnricontex[idx % 6]);
 		// Selected bnriconnum is on the current page.
@@ -1030,7 +1028,7 @@ static void LoadBNRIcon_Menu(void) {
 		off_t fsize = ftell(f_bnr);
 		fseek(f_bnr, 0, SEEK_SET);
 
-		u32 bannerVersion = grabBannerVersion(f_bnr);
+		u16 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIconDSi(f_bnr), 32, 256);
 		} else {
@@ -1054,7 +1052,7 @@ static void LoadBNRSeq(void) {
 		off_t fsize = ftell(f_bnr);
 		fseek(f_bnr, 0, SEEK_SET);
 
-		u32 bannerVersion = grabBannerVersion(f_bnr);
+		u16 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 			grabBannerSequence(f_bnr, idx);
 			bnriconisDSi[idx] = true;
@@ -1083,7 +1081,7 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 	off_t fsize = ftell(f_bnr);
 	fseek(f_bnr, 0, SEEK_SET);
 
-	u32 bannerVersion = grabBannerVersion(f_bnr);
+	u16 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIconDSi(f_bnr), 32, 256);
 		grabBannerSequence(f_bnr, 20);
@@ -4914,6 +4912,7 @@ int main(){
 					boxartpage--;
 					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
+					LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*20);
 				}
 				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
@@ -4990,11 +4989,14 @@ int main(){
 				}
 				storedcursorPosition = settings.ui.cursorPosition;
 				// Load the next box art
-				if ( settings.ui.cursorPosition >= 4+settings.ui.pagenum*20
+				if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*20
 				&& settings.ui.cursorPosition <= 19+settings.ui.pagenum*20 ) {
-					boxartpage++;
-					boxartnum = settings.ui.cursorPosition+2;
-					LoadBoxArt();
+					if (settings.ui.cursorPosition != 3) {
+						boxartpage++;
+						boxartnum = settings.ui.cursorPosition+2;
+						LoadBoxArt();
+					}
+					LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*20);
 				}
 				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
 				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||

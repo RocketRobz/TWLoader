@@ -550,7 +550,7 @@ void* grabIcon(FILE* binFile) {
  * @param binFile Banner file.
  * @return Version number. (NULL on error)
  */
-u32 grabBannerVersion(FILE* binFile) {
+u16 grabBannerVersion(FILE* binFile) {
 	sNDSBanner ndsBanner;
 	fseek(binFile, 0, SEEK_SET);
 	size_t read = fread(&ndsBanner, 1, sizeof(ndsBanner), binFile);
