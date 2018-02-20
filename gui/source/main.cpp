@@ -979,7 +979,7 @@ static void StoreBoxArtPath(const char *path) {
 static void LoadBNRIcon(const char *filename) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = loadbnriconnum;
-	if (idx >= 0 && idx < 20) {
+	if (idx >= 0 && idx < 6) {
 		pp2d_free_texture(bnricontex[idx]);
 		// Selected bnriconnum is on the current page.
 		if (!filename) {
@@ -996,11 +996,40 @@ static void LoadBNRIcon(const char *filename) {
 
 		u32 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIconDSi(f_bnr), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
+		} else {
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 32, 64);
+		}
+		fclose(f_bnr);
+	}
+}
+
+/**
+ * Load a banner icon at the current bnriconnum.
+ * @param filename Banner filename, or NULL for notextbanner.
+ */
+static void LoadBNRSeq(const char *filename) {
+	// Get the bnriconnum relative to the current page.
+	const int idx = loadbnriconnum;
+	if (idx >= 0 && idx < 20) {
+		// Selected bnriconnum is on the current page.
+		if (!filename) {
+			filename = "romfs:/notextbanner";
+		}
+		FILE *f_bnr = fopen(filename, "rb");
+		if (!f_bnr) {
+			filename = "romfs:/notextbanner";
+			f_bnr = fopen(filename, "rb");
+		}
+		fseek(f_bnr, 0, SEEK_END);
+		off_t fsize = ftell(f_bnr);
+		fseek(f_bnr, 0, SEEK_SET);
+
+		u32 bannerVersion = grabBannerVersion(f_bnr);
+		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 			grabBannerSequence(f_bnr, idx);
 			bnriconisDSi[idx] = true;
 		} else {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIcon(f_bnr), 32, 64);
 			bnriconisDSi[idx] = false;
 		}
 		fclose(f_bnr);
@@ -3258,66 +3287,78 @@ int main(){
 					if (!settings.twl.forwarder) {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 								if (loadbnriconnum < (int)files.size()+settings.ui.pagenum*20) {
 									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									LoadBNRIcon(path);
+									LoadBNRSeq(path);
 								} else {
 									LoadBNRIcon(NULL);
+									LoadBNRSeq(NULL);
 								}
 							}
 						}else{
-							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
 									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									LoadBNRIcon(path);
+									LoadBNRSeq(path);
 								} else {
 									LoadBNRIcon(NULL);
+									LoadBNRSeq(NULL);
 								}
 							}
 						}
 					} else {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 								if (loadbnriconnum < (int)fcfiles.size()+settings.ui.pagenum*20) {
 									const char *tempfile = fcfiles.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										LoadBNRIcon(path);
+										LoadBNRSeq(path);
 									} else {
 										LoadBNRIcon(NULL);
+										LoadBNRSeq(NULL);
 									}
 								} else {
 									LoadBNRIcon(NULL);
+									LoadBNRSeq(NULL);
 								}
 							}
 						}else{
-							for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
 									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										LoadBNRIcon(path);
+										LoadBNRSeq(path);
 									} else {
 										LoadBNRIcon(NULL);
+										LoadBNRSeq(NULL);
 									}
 								} else {
 									LoadBNRIcon(NULL);
+									LoadBNRSeq(NULL);
 								}
 							}
 						}
 					}
 				} else {
 					if(matching_files.size() == 0){
-						for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 							LoadBNRIcon(NULL);
+							LoadBNRSeq(NULL);
 						}
 					}else{
-						for (loadbnriconnum = 0; loadbnriconnum < 6; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
 							LoadBNRIcon(NULL);
+							LoadBNRSeq(NULL);
 						}
 					}
 				}
