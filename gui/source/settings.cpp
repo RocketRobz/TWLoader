@@ -2070,6 +2070,7 @@ void LoadSettings(void) {
 	settings.ui.subtheme = settingsini.GetInt("FRONTEND", "SUB_THEME", 0);
 	settings.ui.color = settingsini.GetInt("FRONTEND", "COLOR", 0);
 	settings.ui.menucolor = settingsini.GetInt("FRONTEND", "MENU_COLOR", 0);
+	settings.ui.woodIconScaleEffect = settingsini.GetInt("FRONTEND", "WOOD_ICONSCALEEFFECT", 1);
 	settings.ui.filename = settingsini.GetInt("FRONTEND", "SHOW_FILENAME", 0);
 	settings.ui.topborder = settingsini.GetInt("FRONTEND", "TOP_BORDER", 1);
 	settings.ui.iconsize = settingsini.GetInt("FRONTEND", "ICON_SIZE", 0);
@@ -2135,6 +2136,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("FRONTEND", "SUB_THEME", settings.ui.subtheme);
 	settingsini.SetInt("FRONTEND", "COLOR", settings.ui.color);
 	settingsini.SetInt("FRONTEND", "MENU_COLOR", settings.ui.menucolor);
+	settingsini.SetInt("FRONTEND", "WOOD_ICONSCALEEFFECT", settings.ui.woodIconScaleEffect);
 	settingsini.SetInt("FRONTEND", "SHOW_FILENAME", settings.ui.filename);
 	settingsini.SetInt("FRONTEND", "TOP_BORDER", settings.ui.topborder);
 	settingsini.SetInt("FRONTEND", "ICON_SIZE", settings.ui.iconsize);

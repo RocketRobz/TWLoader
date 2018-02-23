@@ -55,6 +55,7 @@ typedef struct _Settings_t {
 		int subtheme;
 		int color;
 		int menucolor;
+		bool woodIconScaleEffect;
 		bool filename;
 		bool locswitch;
 		bool topborder;

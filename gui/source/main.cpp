@@ -3835,31 +3835,38 @@ int main(){
 
 			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 			if (settings.ui.theme == THEME_AKMENU) {
-				if (wood_ndsiconscaletimer == 60) {
-					// Scale icon at 30fps
-					if (wood_ndsiconscalelag == 1) {
-						if (wood_ndsiconscaledown) {
-							wood_ndsiconscalemovepos -= 1;
-							wood_ndsiconscalesize -= 0.06f;
-							if (wood_ndsiconscalemovepos == 0)
-								wood_ndsiconscaledown = false;
+				if (settings.ui.woodIconScaleEffect) {
+					if (wood_ndsiconscaletimer == 60) {
+						// Scale icon at 30fps
+						if (wood_ndsiconscalelag == 1) {
+							if (wood_ndsiconscaledown) {
+								wood_ndsiconscalemovepos -= 1;
+								wood_ndsiconscalesize -= 0.06f;
+								if (wood_ndsiconscalemovepos == 0)
+									wood_ndsiconscaledown = false;
+							} else {
+								wood_ndsiconscalemovepos += 1;
+								wood_ndsiconscalesize += 0.06f;
+								if (wood_ndsiconscalemovepos == 4)
+									wood_ndsiconscaledown = true;
+							}
+							wood_ndsiconscalelag = 0;
 						} else {
-							wood_ndsiconscalemovepos += 1;
-							wood_ndsiconscalesize += 0.06f;
-							if (wood_ndsiconscalemovepos == 4)
-								wood_ndsiconscaledown = true;
+							wood_ndsiconscalelag = 1;
 						}
-						wood_ndsiconscalelag = 0;
 					} else {
-						wood_ndsiconscalelag = 1;
+						wood_ndsiconscaletimer += 1;
+						wood_ndsiconscalemovepos = 0;
+						wood_ndsiconscalesize = 0.00f;
+						wood_ndsiconscaledown = false;
 					}
 				} else {
-					wood_ndsiconscaletimer += 1;
+					wood_ndsiconscaletimer = 60;
 					wood_ndsiconscalemovepos = 0;
 					wood_ndsiconscalesize = 0.00f;
 					wood_ndsiconscaledown = false;
 				}
-			
+
 				pp2d_draw_texture(bottomtex, 320/2 - 320/2, 240/2 - 240/2);
 				if (menu_ctrlset == CTRL_SET_MENU) {
 					// Poll for Slot-1 changes.
@@ -5180,6 +5187,8 @@ int main(){
 							woodmenu_cursorPosition = 0;
 						}
 						wood_ndsiconscaletimer = 0;
+					} else if(hDown & KEY_SELECT){
+						settings.ui.woodIconScaleEffect = !settings.ui.woodIconScaleEffect;
 					}
 				} else if (menu_ctrlset == CTRL_SET_ROMTYPE) {
 					if (hDown & KEY_A) {
@@ -5262,6 +5271,8 @@ int main(){
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
 						wood_ndsiconscaletimer = 0;
+					} else if(hDown & KEY_SELECT){
+						settings.ui.woodIconScaleEffect = !settings.ui.woodIconScaleEffect;
 					}
 				} else {
 					if(settings.ui.cursorPosition < 0) {
@@ -5404,6 +5415,8 @@ int main(){
 					} else if (hDown & KEY_B) {
 						menu_ctrlset = CTRL_SET_MENU;
 						wood_ndsiconscaletimer = 0;
+					} else if(hDown & KEY_SELECT){
+						settings.ui.woodIconScaleEffect = !settings.ui.woodIconScaleEffect;
 					}
 					if (filenum+settings.ui.pagenum*gamesPerPage > 4) {
 						if (settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage > 2)
@@ -5453,7 +5466,7 @@ int main(){
 						if (r4menu_cursorPosition < 0) {
 							r4menu_cursorPosition = 0;
 						}
-					} else if (hDown & KEY_SELECT) {
+					} else if (hDown & KEY_START) {
 						pp2d_set_3D(1);
 						screenmode = SCREEN_MODE_SETTINGS;
 						settingsResetSubScreenMode();
