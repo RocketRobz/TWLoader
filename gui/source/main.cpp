@@ -4186,11 +4186,7 @@ int main(){
 					}
 				}
 
-				if (settings.ui.theme != THEME_3DSMENU) {
-					pp2d_draw_texture(scrollbartex, 0, 240-28);
-					pp2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
-					pp2d_draw_texture_rotate_flip_blend(buttonarrowtex, 320-25, 240-28, 180.0f, VERTICAL, SET_ALPHA(color_data->color, 255));
-				}
+				if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture(scrollbartex, 0, 240-28);
 				
 				if(!isDemo) {
 					if (settings.ui.theme != THEME_3DSMENU) {
@@ -4306,14 +4302,14 @@ int main(){
 				}
 
 				if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
-					pp2d_draw_texture(scrollwindowtex, 25+scrollwindowXmovepos, 240-28);
+					pp2d_draw_texture(scrollwindowtex, 23+scrollwindowXmovepos, 240-28);
 				}
 
-				float bipxPos = 37.0;
+				float bipxPos = 33.0;
 				for (filenum = settings.ui.pagenum*gamesPerPage; filenum < gamesPerPage+settings.ui.pagenum*gamesPerPage; filenum++) {
 					if (filenum < pagemax) {
 						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
-						bipxPos += 12.5;
+						bipxPos += 6.26;
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
 								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos*1.25, 108, 0, 0, 64, 64, 1.25, 1.25);
@@ -4345,7 +4341,7 @@ int main(){
 						}
 					} else {
 						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 11, 11, 11);
-						bipxPos += 12.5;
+						bipxPos += 6.26;
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
 								pp2d_draw_texture_part_scale(boxtex, titleboxXpos+titleboxXmovepos*1.25, 108, 0, 64, 64, 64, 1.25, 1.25);
@@ -4366,17 +4362,22 @@ int main(){
 					}
 				}
 				if (settings.ui.cursorPosition >= 0 && settings.ui.theme != THEME_3DSMENU) {
-					pp2d_draw_texture_blend(scrollwindowfronttex, 25+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
+					pp2d_draw_texture_blend(scrollwindowfronttex, 23+scrollwindowXmovepos, 240-28, SET_ALPHA(color_data->color, 255));
+				}
+
+				if (settings.ui.theme != THEME_3DSMENU) {
+					pp2d_draw_texture_blend(buttonarrowtex, 0, 240-28, SET_ALPHA(color_data->color, 255));
+					pp2d_draw_texture_rotate_flip_blend(buttonarrowtex, 320-25, 240-28, 180.0f, VERTICAL, SET_ALPHA(color_data->color, 255));
 				}
 
 				if (settings.ui.iconsize) {
 					if (settings.ui.theme != THEME_3DSMENU) {
-						pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 104, -1.25, 1.25);
+						pp2d_draw_texture_scale_flip(bracetex, ndsiconXpos+titleboxXmovepos*1.25, 104, 1.25, 1.25, HORIZONTAL);
 					} else {
-						pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos*1.25, 112, -1.25, 1.25);
+						pp2d_draw_texture_scale_flip(bracetex, ndsiconXpos+titleboxXmovepos*1.25, 112, 1.25, 1.25, HORIZONTAL);
 					}
 				} else {
-					pp2d_draw_texture_scale(bracetex, 15+ndsiconXpos+titleboxXmovepos, 112, -1, 1);
+					pp2d_draw_texture_flip(bracetex, ndsiconXpos+titleboxXmovepos, 112, HORIZONTAL);
 				}
 				if (!applaunchprep) {
 					if (titleboxXmovetimer == 0) {
@@ -4885,7 +4886,7 @@ int main(){
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
 			} else if (titleboxXmovetimer == 8) {
-				scrollwindowXmovepos -= 1.53;
+				scrollwindowXmovepos -= 0.75;
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				startbordermovepos = 1;
@@ -4897,7 +4898,7 @@ int main(){
 					sfx_select->stop();
 					sfx_select->play();
 				}
-				scrollwindowXmovepos -= 1.53;
+				scrollwindowXmovepos -= 0.75;
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				// Load the previous box art
@@ -4924,7 +4925,7 @@ int main(){
 				}
 				if (settings.ui.pagenum == 0) {
 					if (settings.ui.cursorPosition != -3) {
-						scrollwindowXmovepos -= 1.53;
+						scrollwindowXmovepos -= 0.75;
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
@@ -4942,7 +4943,7 @@ int main(){
 					}
 				} else {
 					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*gamesPerPage) {
-						scrollwindowXmovepos -= 1.53;
+						scrollwindowXmovepos -= 0.75;
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
 					} else {
@@ -5007,7 +5008,7 @@ int main(){
 				startbordermovepos = 0;
 				startborderscalesize = 1.0;
 			} else if (titleboxXmovetimer == 8) {
-				scrollwindowXmovepos += 1.53;
+				scrollwindowXmovepos += 0.75;
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
 				startbordermovepos = 1;
@@ -5019,7 +5020,7 @@ int main(){
 					sfx_select->stop();
 					sfx_select->play();
 				}
-				scrollwindowXmovepos += 1.53;
+				scrollwindowXmovepos += 0.75;
 				titleboxXmovepos -= 8;
 				boxartXmovepos -= 18;
 			} else {
@@ -5028,7 +5029,7 @@ int main(){
 					cursorPositionset = true;
 				}
 				if (settings.ui.cursorPosition != filenum) {
-					scrollwindowXmovepos += 1.53;
+					scrollwindowXmovepos += 0.75;
 					titleboxXmovepos -= 8;
 					boxartXmovepos -= 18;
 				} else {

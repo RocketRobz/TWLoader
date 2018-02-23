@@ -102,6 +102,7 @@ extern size_t _3dsshouldertex;
 #define DSSPLASH RGBA8(61, 161, 191, 255)
 
 void pp2d_draw_texture_scale_blend(size_t id, int x, int y, float scaleX, float scaleY, u32 color);
+void pp2d_draw_texture_scale_flip(size_t id, int x, int y, float scaleX, float scaleY, flipType fliptype);
 void pp2d_draw_texture_flip_blend(size_t id, int x, int y, flipType fliptype, u32 color);
 void pp2d_draw_texture_part_blend(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, u32 color);
 void pp2d_draw_texture_part_flip(size_t id, int x, int y, int xbegin, int ybegin, int width, int height, flipType fliptype);

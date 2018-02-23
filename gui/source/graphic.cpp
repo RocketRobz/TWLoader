@@ -8,6 +8,14 @@ void pp2d_draw_texture_scale_blend(size_t id, int x, int y, float scaleX, float 
 	pp2d_texture_draw();		
 }
 
+void pp2d_draw_texture_scale_flip(size_t id, int x, int y, float scaleX, float scaleY, flipType fliptype)
+{
+	pp2d_texture_select(id, x, y);
+	pp2d_texture_scale(scaleX, scaleY);
+	pp2d_texture_flip(fliptype);
+	pp2d_texture_draw();		
+}
+
 void pp2d_draw_texture_flip_blend(size_t id, int x, int y, flipType fliptype, u32 color)
 {
 	pp2d_texture_select(id, x, y);
