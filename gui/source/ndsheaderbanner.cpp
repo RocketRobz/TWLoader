@@ -1,5 +1,4 @@
 #include "ndsheaderbanner.h"
-#include "main.h"
 #include "log.h"
 #include "textfns.h"
 
@@ -562,15 +561,15 @@ u16 grabBannerVersion(FILE* binFile) {
 }
 
 // bnriconframeseq[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-static u16 bnriconframeseq[22][64] = {0x0000};
+static u16 bnriconframeseq[gamesPerPage+2][64] = {0x0000};
 
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-int bnriconPalLine[22] = {0};
-int bnriconframenumY[22] = {0};
-flipType bannerFlip[22] = {NONE};
+int bnriconPalLine[gamesPerPage+2] = {0};
+int bnriconframenumY[gamesPerPage+2] = {0};
+flipType bannerFlip[gamesPerPage+2] = {NONE};
 
 // bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-bool bnriconisDSi[22] = {false};
+bool bnriconisDSi[gamesPerPage+2] = {false};
 
 /**
  * Get banner sequence from banner file.
@@ -604,8 +603,8 @@ void clearBannerSequence(int iconnum) {
 	}
 }
 
-static u16 bannerDelayNum[22] = {0x0000};
-int currentbnriconframeseq[22] = {0};
+static u16 bannerDelayNum[gamesPerPage+2] = {0x0000};
+int currentbnriconframeseq[gamesPerPage+2] = {0};
 
 /**
  * Play banner sequence.

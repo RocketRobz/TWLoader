@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <string>
+#include "main.h"
 #include "graphic.h"
 #include "pp2d/pp2d.h"
 

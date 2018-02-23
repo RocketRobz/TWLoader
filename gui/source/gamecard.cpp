@@ -109,11 +109,11 @@ static void gamecardCacheTWL(void)
 		for (int i = 0; i < 8; i++) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[8+i*8], grabIconDSi(&ndsBanner, i), 32, 256);
 		}
-		grabBannerSequence(&ndsBanner, 21);
-		bnriconisDSi[21] = true;
+		grabBannerSequence(&ndsBanner, gamesPerPage+1);
+		bnriconisDSi[gamesPerPage+1] = true;
 	} else {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[8], grabIcon(&ndsBanner), 32, 64);
-		bnriconisDSi[21] = false;
+		bnriconisDSi[gamesPerPage+1] = false;
 	}
 	card_text = grabText(&ndsBanner, language);
 }
@@ -371,7 +371,7 @@ std::uint64_t gamecardGetTitleID(void)
  */
 size_t gamecardGetIcon(void)
 {
-	return bnricontex[8+bnriconPalLine[21]*8];
+	return bnricontex[8+bnriconPalLine[gamesPerPage+1]*8];
 }
 
 /**

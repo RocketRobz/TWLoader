@@ -126,8 +126,8 @@ sound *sfx_back = NULL;
 //Banners and boxart. (formerly bannerandboxart.h)
 // bnricontex[]: 0-19; 20 is for R4 theme only
 // boxartpath[]: 0-19; 20 is for blank boxart only
-static char* bnriconpath[21] = { };
-static char* boxartpath[21] = { };
+static char* bnriconpath[gamesPerPage+1] = { };
+static char* boxartpath[gamesPerPage+1] = { };
 
 // Title box animation.
 static int titleboxXpos = 0;
@@ -938,8 +938,8 @@ static int dsGreenLed(void) {
 
 static void ChangeBNRIconNo(void) {
 	// Get the bnriconnum relative to the current page.
-	const int idx = bnriconnum - (settings.ui.pagenum * 20);
-	if (idx >= 0 && idx < 20) {
+	const int idx = bnriconnum - (settings.ui.pagenum * gamesPerPage);
+	if (idx >= 0 && idx < gamesPerPage) {
 		// Selected banner icon is on the current page.
 		bnricontexnum = bnricontex[(idx % 6)+bnriconPalLine[idx]*8];
 	}
@@ -948,8 +948,8 @@ static void ChangeBNRIconNo(void) {
 
 static void ChangeBoxArtNo(void) {
 	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (settings.ui.pagenum * 20);
-	if (idx >= 0 && idx < 20) {
+	const int idx = boxartnum - (settings.ui.pagenum * gamesPerPage);
+	if (idx >= 0 && idx < gamesPerPage) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		boxarttexnum = boxarttex[idx % 6];
@@ -963,7 +963,7 @@ static void ChangeBoxArtNo(void) {
 static void StoreBnrIconPath(const char *path) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = loadbnriconnum;
-	if (idx >= 0 && idx < 20) {
+	if (idx >= 0 && idx < gamesPerPage) {
 		if (!path) {
 			path = "romfs:/notextbanner";
 		}
@@ -979,14 +979,14 @@ static void StoreBnrIconPath(const char *path) {
  */
 static void StoreBoxArtPath(const char *path) {
 	// Get the boxartnum relative to the current page.
-	const int idx = loadboxartnum - (settings.ui.pagenum * 20);
-	if (idx >= 0 && idx < 20) {
+	const int idx = loadboxartnum - (settings.ui.pagenum * gamesPerPage);
+	if (idx >= 0 && idx < gamesPerPage) {
 		// Selected boxart is on the current page.
 		free(boxartpath[idx]);
 		boxartpath[idx] = strdup(path);
 	} else {
-		free(boxartpath[20]);
-		boxartpath[20] = strdup("romfs:/graphics/blank_128x115.png");
+		free(boxartpath[gamesPerPage]);
+		boxartpath[gamesPerPage] = strdup("romfs:/graphics/blank_128x115.png");
 	}
 }
 
@@ -1024,7 +1024,7 @@ static void LoadBNRIcon(void) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_Menu(int idx) {
-	if (idx >= 0 && idx < 20) {
+	if (idx >= 0 && idx < gamesPerPage) {
 		for (int i = 0; i < 8; i++) {
 			pp2d_free_texture(bnricontex[(idx % 6)+i*8]);
 		}
@@ -1053,7 +1053,7 @@ static void LoadBNRIcon_Menu(int idx) {
 static void LoadBNRSeq(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = loadbnriconnum;
-	if (idx >= 0 && idx < 20) {
+	if (idx >= 0 && idx < gamesPerPage) {
 		// Selected bnriconnum is on the current page.
 		FILE *f_bnr = fopen(bnriconpath[idx], "rb");
 		fseek(f_bnr, 0, SEEK_END);
@@ -1096,19 +1096,19 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 		for (int i = 0; i < 8; i++) {
 			pp2d_load_texture_memory_RGBA5551(bnricontex[7+i*8], grabIconDSi(f_bnr, i), 32, 256);
 		}
-		grabBannerSequence(f_bnr, 20);
-		bnriconisDSi[20] = true;
+		grabBannerSequence(f_bnr, gamesPerPage);
+		bnriconisDSi[gamesPerPage] = true;
 	} else {
 		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIcon(f_bnr), 32, 64);
-		bnriconisDSi[20] = false;
+		bnriconisDSi[gamesPerPage] = false;
 	}
 	fclose(f_bnr);
 }
 
 static void LoadBoxArt(void) {
 	// Get the boxartnum relative to the current page.
-	const int idx = boxartnum - (settings.ui.pagenum * 20);
-	if (idx >= 0 && idx < 21) {
+	const int idx = boxartnum - (settings.ui.pagenum * gamesPerPage);
+	if (idx >= 0 && idx < gamesPerPage+1) {
 		// Selected boxart is on the current page.
 		// NOTE: Only 6 slots for boxart.
 		pp2d_free_texture(boxarttex[idx % 6]);
@@ -1770,7 +1770,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1816,7 +1816,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1865,7 +1865,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1915,7 +1915,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			if (settings.twl.romtype == 1) {
@@ -2633,13 +2633,13 @@ void menuLoadBoxArt() {
 		loadboxartnum++;
 		if (loadboxartnum == pagemax_ba) {
 			// Load up to 6 boxarts.
-			for (int i = 0+settings.ui.pagenum*20; i < 6+settings.ui.pagenum*20; i++) {
+			for (int i = 0+settings.ui.pagenum*gamesPerPage; i < 6+settings.ui.pagenum*gamesPerPage; i++) {
 				boxartnum = i+boxartpage*3;
 				LoadBoxArt();
 			}
 			boxarttexloaded = true;
 		}
-		boxartnum = 0+settings.ui.pagenum*20;
+		boxartnum = 0+settings.ui.pagenum*gamesPerPage;
 	}
 }
 
@@ -3096,7 +3096,7 @@ int main(){
 		pp2d_set_3D(1);
 	}
 
-	settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+	settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 	storedcursorPosition = settings.ui.cursorPosition;
 	
 	std::string donorpath;
@@ -3127,8 +3127,8 @@ int main(){
 		botscreenoff();
 	}
 	
-	loadboxartnum = settings.ui.pagenum*20;
-	loadbnriconnum = settings.ui.pagenum*20;
+	loadboxartnum = settings.ui.pagenum*gamesPerPage;
+	loadbnriconnum = settings.ui.pagenum*gamesPerPage;
 
 	// Loop as long as the status is not exit
 	const bool isTWLNANDInstalled = checkTWLNANDSide();
@@ -3219,8 +3219,8 @@ int main(){
 		if(matching_files.size() != 0) {
 			file_count = matching_files.size();
 		}
-		const int pagemax = std::min((20+settings.ui.pagenum*20), (int)file_count);
-		pagemax_ba = 21+settings.ui.pagenum*20;
+		const int pagemax = std::min((gamesPerPage+settings.ui.pagenum*gamesPerPage), (int)file_count);
+		pagemax_ba = (gamesPerPage+1)+settings.ui.pagenum*gamesPerPage;
 
 		if(screenmode == SCREEN_MODE_ROM_SELECT) {
 			if (!colortexloaded) {
@@ -3312,9 +3312,9 @@ int main(){
 					if (!settings.twl.forwarder) {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum+settings.ui.pagenum*20 < (int)files.size()) {
-									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
+								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)files.size()) {
+									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									StoreBnrIconPath(path);
 									LoadBNRIcon();
@@ -3326,9 +3326,9 @@ int main(){
 								}
 							}
 						}else{
-							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum+settings.ui.pagenum*20 < (int)matching_files.size()) {
-									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
+								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)matching_files.size()) {
+									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									StoreBnrIconPath(path);
 									LoadBNRIcon();
@@ -3343,9 +3343,9 @@ int main(){
 					} else {
 						char path[256];
 						if(matching_files.size() == 0){
-							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum+settings.ui.pagenum*20 < (int)fcfiles.size()) {
-									const char *tempfile = fcfiles.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
+								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)fcfiles.size()) {
+									const char *tempfile = fcfiles.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
@@ -3363,9 +3363,9 @@ int main(){
 								}
 							}
 						}else{
-							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum+settings.ui.pagenum*20 < (int)matching_files.size()) {
-									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
+							for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
+								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)matching_files.size()) {
+									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
@@ -3386,13 +3386,13 @@ int main(){
 					}
 				} else {
 					if(matching_files.size() == 0){
-						for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
 							StoreBnrIconPath(NULL);
 							LoadBNRIcon();
 							LoadBNRSeq();
 						}
 					}else{
-						for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
+						for (loadbnriconnum = 0; loadbnriconnum < gamesPerPage; loadbnriconnum++) {						
 							StoreBnrIconPath(NULL);
 							LoadBNRIcon();
 							LoadBNRSeq();
@@ -3401,7 +3401,7 @@ int main(){
 				}
 
 				bnricontexloaded = true;
-				bnriconnum = 0+settings.ui.pagenum*20;
+				bnriconnum = 0+settings.ui.pagenum*gamesPerPage;
 			}
 			menuLoadBoxArt();
 
@@ -3467,7 +3467,7 @@ int main(){
 							}
 						}
 						if (!settings.romselect.toplayout) {
-							boxartnum = settings.ui.cursorPosition-settings.ui.pagenum*20;
+							boxartnum = settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage;
 							if (!bannertextloaded) {
 								LoadBoxArt_WoodTheme();
 								bannertextloaded = true;
@@ -3621,8 +3621,8 @@ int main(){
 										if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_flip_blend(slot1boxarttex, offset3D[topfb].boxart+boxartXpos-144+boxartXmovepos, 178, VERTICAL, SET_ALPHA(color_data->color, 255)); // Draw box art's reflection
 									}
 								}
-								for (boxartnum = settings.ui.pagenum*20; boxartnum < pagemax; boxartnum++) {
-									if (boxartnum < 9+settings.ui.pagenum*20) {
+								for (boxartnum = settings.ui.pagenum*gamesPerPage; boxartnum < pagemax; boxartnum++) {
+									if (boxartnum < 9+settings.ui.pagenum*gamesPerPage) {
 										ChangeBoxArtNo();
 										// Draw box art
 										pp2d_draw_texture(boxarttexnum, offset3D[topfb].boxart+boxartXpos+boxartXmovepos, 240/2 - 115/2);
@@ -3711,12 +3711,12 @@ int main(){
 						pp2d_draw_texture_part(shouldertex, 328, RshoulderYpos, 0, 20, 73, 20);
 
 						// Draw the "Previous" and "Next" text for L/R.
-						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
+						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*gamesPerPage)
 								? BLACK
 								: GRAY;
 						pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, lr_color, "Previous");
 
-						lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
+						lr_color = (file_count > (size_t)gamesPerPage+settings.ui.pagenum*gamesPerPage)
 								? BLACK
 								: GRAY;
 						pp2d_draw_text(332, RshoulderYpos+4, 0.50, 0.50, lr_color, "Next");
@@ -3725,12 +3725,12 @@ int main(){
 						pp2d_draw_texture_flip(_3dsshouldertex, 312, RshoulderYpos-5, HORIZONTAL);
 
 						// Draw the "Previous" and "Next" text for L/R.
-						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
+						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*gamesPerPage)
 								? BLACK
 								: GRAY;
 						pp2d_draw_text(4, LshoulderYpos+1, 0.55, 0.55, lr_color, " Previous");
 
-						lr_color = (file_count > (size_t)20+settings.ui.pagenum*20)
+						lr_color = (file_count > (size_t)gamesPerPage+settings.ui.pagenum*gamesPerPage)
 								? BLACK
 								: GRAY;
 						pp2d_draw_text(346, RshoulderYpos+1, 0.55, 0.55, lr_color, "Next ");
@@ -3978,8 +3978,8 @@ int main(){
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Select ROM type");
 				} else {
 					int Ypos = 26;
-					for (filenum = (settings.ui.pagenum*20)+filenameYmovepos; filenum < pagemax; filenum++) {
-						if (filenum < 5+(settings.ui.pagenum*20)+filenameYmovepos) {
+					for (filenum = (settings.ui.pagenum*gamesPerPage)+filenameYmovepos; filenum < pagemax; filenum++) {
+						if (filenum < 5+(settings.ui.pagenum*gamesPerPage)+filenameYmovepos) {
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
 							if (settings.ui.cursorPosition == filenum) {
@@ -3999,9 +3999,9 @@ int main(){
 							pp2d_draw_wtext(46, Ypos+10, 0.45f, 0.45f, WHITE, wstr.c_str());
 
 							if (settings.ui.cursorPosition == filenum)
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 							else
-								pp2d_draw_texture_part_flip(bnricontexnum, 8, Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_flip(bnricontexnum, 8, Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 							Ypos += 39;
 						}
 					}
@@ -4037,18 +4037,18 @@ int main(){
 					}
 				}
 				// Playback animated icons
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < gamesPerPage; i++) {
 					if(bnriconisDSi[i]==true) {
 						playBannerSequence(i);
 					}
 				}
 				// Playback animated icon on Slot-1
-				if(bnriconisDSi[21]==true) {
-					playBannerSequence(21);
+				if(bnriconisDSi[gamesPerPage+1]==true) {
+					playBannerSequence(gamesPerPage+1);
 				} else {
-					bnriconPalLine[21] = 0;
-					bnriconframenumY[21] = 0;
-					bannerFlip[21] = NONE;
+					bnriconPalLine[gamesPerPage+1] = 0;
+					bnriconframenumY[gamesPerPage+1] = 0;
+					bannerFlip[gamesPerPage+1] = NONE;
 				}
 			} else if (settings.ui.theme == THEME_R4) {
 				if (menu_ctrlset == CTRL_SET_MENU) {
@@ -4100,7 +4100,7 @@ int main(){
 					if (settings.twl.romtype == 1) {
 						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
-						pp2d_draw_texture_part_flip(bnricontex[7+bnriconPalLine[20]*8], 52, 36, 0, bnriconframenumY[20]*32, 32, 32, bannerFlip[20]);
+						pp2d_draw_texture_part_flip(bnricontex[7+bnriconPalLine[gamesPerPage]*8], 52, 36, 0, bnriconframenumY[gamesPerPage]*32, 32, 32, bannerFlip[gamesPerPage]);
 					}
 					
 					if (!bannertextloaded) {
@@ -4168,12 +4168,12 @@ int main(){
 					}
 				}
 				// Playback animated icon
-				if(bnriconisDSi[20]==true) {
-					playBannerSequence(20);
+				if(bnriconisDSi[gamesPerPage]==true) {
+					playBannerSequence(gamesPerPage);
 				} else {
-					bnriconPalLine[20] = 0;
-					bnriconframenumY[20] = 0;
-					bannerFlip[20] = NONE;
+					bnriconPalLine[gamesPerPage] = 0;
+					bnriconframenumY[gamesPerPage] = 0;
+					bannerFlip[gamesPerPage] = NONE;
 				}
 			} else {
 				if (settings.ui.custombot == 1) {
@@ -4267,12 +4267,12 @@ int main(){
 						}
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
+								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[gamesPerPage+1]*32, 32, 32, 1.25, 1.25, bannerFlip[gamesPerPage+1]);
 							} else {
-								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
+								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[gamesPerPage+1]*32, 32, 32, 1.25, 1.25, bannerFlip[gamesPerPage+1]);
 							}
 						} else {
-							pp2d_draw_texture_part_flip(cardicontex, 16+cartXpos+titleboxXmovepos, 129, 0, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
+							pp2d_draw_texture_part_flip(cardicontex, 16+cartXpos+titleboxXmovepos, 129, 0, bnriconframenumY[gamesPerPage+1]*32, 32, 32, bannerFlip[gamesPerPage+1]);
 						}
 					} else {
 						// Get flash cart games.
@@ -4311,7 +4311,7 @@ int main(){
 				}
 
 				float bipxPos = 37.0;
-				for (filenum = settings.ui.pagenum*20; filenum < 20+settings.ui.pagenum*20; filenum++) {
+				for (filenum = settings.ui.pagenum*gamesPerPage; filenum < 20+settings.ui.pagenum*gamesPerPage; filenum++) {
 					if (filenum < pagemax) {
 						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
 						bipxPos += 12.5;
@@ -4326,9 +4326,9 @@ int main(){
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 							} else {
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 							}
 							ndsiconXpos += 80;
 						} else {
@@ -4341,7 +4341,7 @@ int main(){
 
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
-							pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+							pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 							ndsiconXpos += 64;
 						}
 					} else {
@@ -4449,7 +4449,7 @@ int main(){
 							bnricontexlaunch = bnricontexnum;
 							applaunchicon = true;
 						}
-						pp2d_draw_texture_part_flip(bnricontexlaunch, 144, ndsiconYmovepos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+						pp2d_draw_texture_part_flip(bnricontexlaunch, 144, ndsiconYmovepos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 					}
 					pp2d_draw_texture_rotate(dotcircletex, 120, 104, rad);  // Dots moving in circles
 				}
@@ -4692,18 +4692,18 @@ int main(){
 				}
 
 				// Playback animated icons on SD/flash card
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < gamesPerPage; i++) {
 					if(bnriconisDSi[i]==true) {
 						playBannerSequence(i);
 					}
 				}
 				// Playback animated icon on Slot-1
-				if(bnriconisDSi[21]==true) {
-					playBannerSequence(21);
+				if(bnriconisDSi[gamesPerPage+1]==true) {
+					playBannerSequence(gamesPerPage+1);
 				} else {
-					bnriconPalLine[21] = 0;
-					bnriconframenumY[21] = 0;
-					bannerFlip[21] = NONE;
+					bnriconPalLine[gamesPerPage+1] = 0;
+					bnriconframenumY[gamesPerPage+1] = 0;
+					bannerFlip[gamesPerPage+1] = NONE;
 				}
 			}
 		} else if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -4803,7 +4803,7 @@ int main(){
 					} else {
 						pp2d_set_3D(1);
 						titleboxXmovepos = 0;
-						settings.ui.cursorPosition = 0 + settings.ui.pagenum * 20; // This is to reset cursor position after switching from R4 theme.
+						settings.ui.cursorPosition = 0 + settings.ui.pagenum * gamesPerPage; // This is to reset cursor position after switching from R4 theme.
 						if (settings.twl.forwarder) {
 							if (fcfiles.size() <= 0) {
 								startbordermovepos = 0;
@@ -4825,7 +4825,7 @@ int main(){
 						}							
 						storedcursorPosition = settings.ui.cursorPosition; // This is to reset cursor position after switching from R4 theme.
 						boxartXmovepos = 0;
-						loadboxartnum = settings.ui.pagenum*20;
+						loadboxartnum = settings.ui.pagenum*gamesPerPage;
 						boxarttexloaded = false;
 						bnricontexloaded = false;
 						menu_ctrlset = CTRL_SET_GAMESEL;
@@ -4906,16 +4906,16 @@ int main(){
 				titleboxXmovepos += 8;
 				boxartXmovepos += 18;
 				// Load the previous box art
-				if ( settings.ui.cursorPosition >= 1+settings.ui.pagenum*20
-				&& settings.ui.cursorPosition <= 18+settings.ui.pagenum*20 ) {
+				if ( settings.ui.cursorPosition >= 1+settings.ui.pagenum*gamesPerPage
+				&& settings.ui.cursorPosition <= 18+settings.ui.pagenum*gamesPerPage ) {
 					boxartpage--;
 					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
-					LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*20);
+					LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
 				}
-				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 12+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 18+settings.ui.pagenum*20 ) {
+				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 12+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 18+settings.ui.pagenum*gamesPerPage ) {
 					boxartXmovepos = -144*7;
 					boxartXmovepos += 18*2;
 				}
@@ -4943,7 +4943,7 @@ int main(){
 						}
 					}
 				} else {
-					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*20) {
+					if (settings.ui.cursorPosition != -1+settings.ui.pagenum*gamesPerPage) {
 						scrollwindowXmovepos -= 1.53;
 						titleboxXmovepos += 8;
 						boxartXmovepos += 18;
@@ -4988,18 +4988,18 @@ int main(){
 				}
 				storedcursorPosition = settings.ui.cursorPosition;
 				// Load the next box art
-				if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*20
-				&& settings.ui.cursorPosition <= 19+settings.ui.pagenum*20 ) {
+				if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*gamesPerPage
+				&& settings.ui.cursorPosition <= 19+settings.ui.pagenum*gamesPerPage ) {
 					if (settings.ui.cursorPosition != 3) {
 						boxartpage++;
 						boxartnum = settings.ui.cursorPosition+2;
 						LoadBoxArt();
 					}
-					LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*20);
+					LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
 				}
-				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 13+settings.ui.pagenum*20 ||
-				settings.ui.cursorPosition == 19+settings.ui.pagenum*20 ) {
+				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 13+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 19+settings.ui.pagenum*gamesPerPage ) {
 					boxartXmovepos = -144;
 				}
 			} else if (titleboxXmovetimer == 9) {
@@ -5100,9 +5100,9 @@ int main(){
 										colortexloaded = false; // Reload top textures
 										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
-										loadboxartnum = 0+settings.ui.pagenum*20;
-										loadbnriconnum = 0+settings.ui.pagenum*20;
-										for (int i = 0; i < 20; i++) {
+										loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+										loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+										for (int i = 0; i < gamesPerPage; i++) {
 											// Reset banner icon frames
 											bnriconPalLine[i] = 0;
 											bnriconframenumY[i] = 0;
@@ -5125,9 +5125,9 @@ int main(){
 										colortexloaded = false; // Reload top textures
 										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
-										loadboxartnum = 0+settings.ui.pagenum*20;
-										loadbnriconnum = 0+settings.ui.pagenum*20;
-										for (int i = 0; i < 20; i++) {
+										loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+										loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+										for (int i = 0; i < gamesPerPage; i++) {
 											// Reset banner icon frames
 											bnriconPalLine[i] = 0;
 											bnriconframenumY[i] = 0;
@@ -5196,9 +5196,9 @@ int main(){
 									colortexloaded = false; // Reload top textures
 									colortexloaded_bot = false; // Reload bottom textures
 									boxartpage = 0;
-									loadboxartnum = 0+settings.ui.pagenum*20;
-									loadbnriconnum = 0+settings.ui.pagenum*20;
-									for (int i = 0; i < 20; i++) {
+									loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+									loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+									for (int i = 0; i < gamesPerPage; i++) {
 										// Reset banner icon frames
 										bnriconPalLine[i] = 0;
 										bnriconframenumY[i] = 0;
@@ -5231,9 +5231,9 @@ int main(){
 									colortexloaded = false; // Reload top textures
 									colortexloaded_bot = false; // Reload bottom textures
 									boxartpage = 0;
-									loadboxartnum = 0+settings.ui.pagenum*20;
-									loadbnriconnum = 0+settings.ui.pagenum*20;
-									for (int i = 0; i < 20; i++) {
+									loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+									loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+									for (int i = 0; i < gamesPerPage; i++) {
 										// Reset banner icon frames
 										bnriconPalLine[i] = 0;
 										bnriconframenumY[i] = 0;
@@ -5334,16 +5334,16 @@ int main(){
 						if (logEnabled)	LogFM("Main", "Switching to NTR/TWL-mode");
 						applaunchon = true;
 					} else if(hDown & KEY_L){
-						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*20) {
+						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*gamesPerPage) {
 							settings.ui.pagenum--;
 							bannertextloaded = false;
-							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 							boxartpage = 0;
-							loadboxartnum = 0+settings.ui.pagenum*20;
-							loadbnriconnum = 0+settings.ui.pagenum*20;
-							for (int i = 0; i < 20; i++) {
+							loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+							loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+							for (int i = 0; i < gamesPerPage; i++) {
 								// Reset banner icon frames
 								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
@@ -5355,13 +5355,13 @@ int main(){
 						if (file_count > (size_t)pagemax) {
 							settings.ui.pagenum++;
 							bannertextloaded = false;
-							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 							boxartpage = 0;
-							loadboxartnum = 0+settings.ui.pagenum*20;
-							loadbnriconnum = 0+settings.ui.pagenum*20;
-							for (int i = 0; i < 20; i++) {
+							loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+							loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+							for (int i = 0; i < gamesPerPage; i++) {
 								// Reset banner icon frames
 								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
@@ -5372,14 +5372,14 @@ int main(){
 					} else if(hDown & KEY_DOWN){
 						settings.ui.cursorPosition++;
 						if (settings.ui.cursorPosition >= pagemax) {
-							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 						}
 						wood_downpressed = true;
 						wood_ndsiconscaletimer = 0;
 						bannertextloaded = false;
 					} else if((hDown & KEY_UP) && (filenum > 1)){
 						settings.ui.cursorPosition--;
-						if (settings.ui.cursorPosition < 0+settings.ui.pagenum*20) {
+						if (settings.ui.cursorPosition < 0+settings.ui.pagenum*gamesPerPage) {
 							settings.ui.cursorPosition = pagemax-1;
 						}
 						wood_uppressed = true;
@@ -5389,9 +5389,9 @@ int main(){
 						menu_ctrlset = CTRL_SET_MENU;
 						wood_ndsiconscaletimer = 0;
 					}
-					if (filenum+settings.ui.pagenum*20 > 4) {
-						if (settings.ui.cursorPosition-settings.ui.pagenum*20 > 2)
-							filenameYmovepos = settings.ui.cursorPosition-(settings.ui.pagenum*20)-2;
+					if (filenum+settings.ui.pagenum*gamesPerPage > 4) {
+						if (settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage > 2)
+							filenameYmovepos = settings.ui.cursorPosition-(settings.ui.pagenum*gamesPerPage)-2;
 						else
 							filenameYmovepos = 0;
 					}
@@ -5460,9 +5460,9 @@ int main(){
 						colortexloaded = false; // Reload top textures
 						colortexloaded_bot = false; // Reload bottom textures
 						boxartpage = 0;
-						loadboxartnum = 0+settings.ui.pagenum*20;
-						loadbnriconnum = 0+settings.ui.pagenum*20;
-						for (int i = 0; i < 20; i++) {
+						loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+						loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+						for (int i = 0; i < gamesPerPage; i++) {
 							// Reset banner icon frames
 							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
@@ -5710,10 +5710,10 @@ int main(){
 						if (!titleboxXmoveright) {
 							titleboxXmoveleft = true;
 						}
-					/* } else if((hDown & KEY_DOWN) && (bnriconisDSi[settings.ui.cursorPosition-settings.ui.pagenum*20]==true)) {
-						bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20]++;
-						if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] == 8) {
-							bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*20] = 0;
+					/* } else if((hDown & KEY_DOWN) && (bnriconisDSi[settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage]==true)) {
+						bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage]++;
+						if(bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage] == 8) {
+							bnriconframenum[settings.ui.cursorPosition-settings.ui.pagenum*gamesPerPage] = 0;
 						} */
 					} else if (hDown & KEY_START) {
 						// Switch to the "Start" menu.
@@ -5820,7 +5820,7 @@ int main(){
 						if (file_count > (size_t)pagemax) {
 							settings.ui.pagenum++;
 							bannertextloaded = false;
-							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 							storedcursorPosition = settings.ui.cursorPosition;
 							scrollwindowXmovepos = 0;
 							titleboxXmovepos = 0;
@@ -5828,9 +5828,9 @@ int main(){
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 							boxartpage = 0;
-							loadboxartnum = 0+settings.ui.pagenum*20;
-							loadbnriconnum = 0+settings.ui.pagenum*20;
-							for (int i = 0; i < 20; i++) {
+							loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+							loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+							for (int i = 0; i < gamesPerPage; i++) {
 								// Reset banner icon frames
 								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
@@ -5845,10 +5845,10 @@ int main(){
 					} else if (menuaction_prevpage) {
 						// Don't run the action again 'til L is pressed again
 						menuaction_prevpage = false;
-						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*20) {
+						if ((size_t)settings.ui.pagenum != 0 && file_count <= (size_t)0-settings.ui.pagenum*gamesPerPage) {
 							settings.ui.pagenum--;
 							bannertextloaded = false;
-							settings.ui.cursorPosition = 0+settings.ui.pagenum*20;
+							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 							storedcursorPosition = settings.ui.cursorPosition;
 							scrollwindowXmovepos = 0;
 							titleboxXmovepos = 0;
@@ -5857,9 +5857,9 @@ int main(){
 							bnricontexloaded = false;
 							boxarttexloaded = false;
 							boxartpage = 0;
-							loadboxartnum = 0+settings.ui.pagenum*20;
-							loadbnriconnum = 0+settings.ui.pagenum*20;
-							for (int i = 0; i < 20; i++) {
+							loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+							loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+							for (int i = 0; i < gamesPerPage; i++) {
 								// Reset banner icon frames
 								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
@@ -6206,8 +6206,8 @@ int main(){
 									colortexloaded = false; // Reload top textures
 									colortexloaded_bot = false; // Reload bottom textures
 									boxartpage = 0;
-									loadboxartnum = 0+settings.ui.pagenum*20;
-									loadbnriconnum = 0+settings.ui.pagenum*20;
+									loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+									loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
 								}
 								pp2d_draw_texture(dboxtex_button, 161, menudbox_Ypos + 111); // Light the button to print it always
 								showdialogbox_menu = false;
@@ -6308,8 +6308,8 @@ int main(){
 										colortexloaded = false; // Reload top textures
 										colortexloaded_bot = false; // Reload bottom textures
 										boxartpage = 0;
-										loadboxartnum = 0+settings.ui.pagenum*20;
-										loadbnriconnum = 0+settings.ui.pagenum*20;
+										loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+										loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
 									}
 									showdialogbox_menu = false;
 									menudbox_movespeed = 1;
@@ -6679,9 +6679,9 @@ int main(){
 						bnricontexloaded = false;
 						boxarttexloaded = false;
 						boxartpage = 0;
-						loadboxartnum = 0+settings.ui.pagenum*20;
-						loadbnriconnum = 0+settings.ui.pagenum*20;
-						for (int i = 0; i < 20; i++) {
+						loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+						loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+						for (int i = 0; i < gamesPerPage; i++) {
 							// Reset banner icon frames
 							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
@@ -6724,9 +6724,9 @@ int main(){
 						bnricontexloaded = false;
 						boxarttexloaded = false;
 						boxartpage = 0;
-						loadboxartnum = 0+settings.ui.pagenum*20;
-						loadbnriconnum = 0+settings.ui.pagenum*20;
-						for (int i = 0; i < 20; i++) {
+						loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+						loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+						for (int i = 0; i < gamesPerPage; i++) {
 							// Reset banner icon frames
 							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
@@ -6834,9 +6834,9 @@ int main(){
 						colortexloaded = false; // Reload top textures
 						colortexloaded_bot = false; // Reload bottom textures
 						boxartpage = 0;
-						loadboxartnum = 0+settings.ui.pagenum*20;
-						loadbnriconnum = 0+settings.ui.pagenum*20;
-						for (int i = 0; i < 20; i++) {
+						loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+						loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+						for (int i = 0; i < gamesPerPage; i++) {
 							// Reset banner icon frames
 							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
@@ -7103,12 +7103,12 @@ int main(){
 
 	// Free the arrays.
 	if (boxarttexloaded) {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < gamesPerPage; i++) {
 			free(boxartpath[i]);
 		}
 	}
 	if (bnricontexloaded) {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < gamesPerPage; i++) {
 			free(bnriconpath[i]);
 		}
 	}

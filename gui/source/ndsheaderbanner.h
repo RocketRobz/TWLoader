@@ -32,6 +32,7 @@
 #ifndef NDS_HEADER
 #define NDS_HEADER
 
+#include "main.h"
 #include "graphic.h"
 #include "pp2d/pp2d.h"
 #include <stdio.h>
@@ -303,12 +304,12 @@ void* grabIcon(FILE* binFile);
 u16 grabBannerVersion(FILE* binFile);
 
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-extern int bnriconPalLine[22];
-extern int bnriconframenumY[22];
-extern flipType bannerFlip[22];
+extern int bnriconPalLine[gamesPerPage+2];
+extern int bnriconframenumY[gamesPerPage+2];
+extern flipType bannerFlip[gamesPerPage+2];
 
 // bnriconisDSi[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-extern bool bnriconisDSi[22];
+extern bool bnriconisDSi[gamesPerPage+2];
 
 /**
  * Get banner sequence from banner file.
