@@ -4827,6 +4827,7 @@ int main(){
 						boxartXmovepos = 0;
 						loadboxartnum = settings.ui.pagenum*20;
 						boxarttexloaded = false;
+						bnricontexloaded = false;
 						menu_ctrlset = CTRL_SET_GAMESEL;
 					}
 					colortexloaded = false; // Reload top textures
@@ -7101,9 +7102,14 @@ int main(){
 	if (settings.ui.theme <= THEME_3DSMENU) gamecardClearCache();
 
 	// Free the arrays.
-	if (bnricontexloaded) {
+	if (boxarttexloaded) {
 		for (int i = 0; i < 20; i++) {
 			free(boxartpath[i]);
+		}
+	}
+	if (bnricontexloaded) {
+		for (int i = 0; i < 20; i++) {
+			free(bnriconpath[i]);
 		}
 	}
 
