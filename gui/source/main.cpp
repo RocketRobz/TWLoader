@@ -4439,7 +4439,7 @@ int main(){
 							// Draw selected Slot-1 game that moves up
 							pp2d_draw_texture(carttex(), 128, titleboxYmovepos);
 							size_t cardicontex = gamecardGetIcon();
-							if (cardicontex != card_icon)
+							if (cardicontex != bnricontex[8])
 								cardicontex = iconnulltex;
 							pp2d_draw_texture_part_flip(cardicontex, 144, ndsiconYmovepos, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
 						}
