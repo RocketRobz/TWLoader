@@ -5375,6 +5375,13 @@ int main(){
 						settings.ui.cursorPosition++;
 						if (settings.ui.cursorPosition >= pagemax) {
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
+							for (int i = 0; i < 6; i++) {
+								LoadBNRIcon_Menu(i);
+							}
+						} else if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*gamesPerPage
+								&& settings.ui.cursorPosition <= 36+settings.ui.pagenum*gamesPerPage )
+						{
+							LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
 						}
 						wood_downpressed = true;
 						wood_ndsiconscaletimer = 0;
@@ -5383,6 +5390,13 @@ int main(){
 						settings.ui.cursorPosition--;
 						if (settings.ui.cursorPosition < 0+settings.ui.pagenum*gamesPerPage) {
 							settings.ui.cursorPosition = pagemax-1;
+							for (int i = settings.ui.cursorPosition; i < settings.ui.cursorPosition+6; i++) {
+								LoadBNRIcon_Menu((i-5)-settings.ui.pagenum*gamesPerPage);
+							}
+						} else if ( settings.ui.cursorPosition >= 2+settings.ui.pagenum*gamesPerPage
+								&& settings.ui.cursorPosition <= 35+settings.ui.pagenum*gamesPerPage )
+						{
+							LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
 						}
 						wood_uppressed = true;
 						wood_ndsiconscaletimer = 0;
