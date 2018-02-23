@@ -272,7 +272,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
  * @param binFile NDS banner.
  * @return Icon texture. (NULL on error)
  */
-void* grabIconDSi(const sNDSBanner* ndsBanner);
+void* grabIconDSi(const sNDSBanner* ndsBanner, int palnum);
 
 /**
  * Get the icon from an NDS banner.
@@ -286,7 +286,7 @@ void* grabIcon(const sNDSBanner* ndsBanner);
  * @param binFile Banner file.
  * @return Icon texture. (NULL on error)
  */
-void* grabIconDSi(FILE* binFile);
+void* grabIconDSi(FILE* binFile, int palnum);
 
 /**
  * Get the icon from a cached NDS banner.
@@ -303,7 +303,7 @@ void* grabIcon(FILE* binFile);
 u16 grabBannerVersion(FILE* binFile);
 
 // bnriconframenum[]: 0-19; 20 is for R4 theme only, 21 is for game cart
-extern int bnriconframenumX[22];
+extern int bnriconPalLine[22];
 extern int bnriconframenumY[22];
 extern flipType bannerFlip[22];
 

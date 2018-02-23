@@ -39,8 +39,9 @@ extern int LshoulderYpos;
 extern int RshoulderYpos;
 
 // Status bar functions.
-void draw_volume_slider(size_t texarray[]);
-void update_battery_level(size_t texchrg, size_t texarray[]);
+void draw_volume_slider(size_t texnum);
+extern int batteryFrame;
+void update_battery_level(size_t texnum);
 
 extern bool showAnniversaryText;
 

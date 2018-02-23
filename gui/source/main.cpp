@@ -998,7 +998,9 @@ static void LoadBNRIcon(void) {
 	// Get the bnriconnum relative to the current page.
 	const int idx = loadbnriconnum;
 	if (idx >= 0 && idx < 6) {
-		pp2d_free_texture(bnricontex[idx]);
+		//for (int i = 0; i < 8; i++) {
+			pp2d_free_texture(bnricontex[idx+0*8]);
+		//}
 		// Selected bnriconnum is on the current page.
 		FILE *f_bnr = fopen(bnriconpath[idx], "rb");
 		fseek(f_bnr, 0, SEEK_END);
@@ -1007,9 +1009,9 @@ static void LoadBNRIcon(void) {
 
 		u16 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIconDSi(f_bnr), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx+0*8], grabIconDSi(f_bnr, 0), 32, 256);
 		} else {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx], grabIcon(f_bnr), 32, 64);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[idx+0*8], grabIcon(f_bnr), 32, 64);
 		}
 		fclose(f_bnr);
 	}
@@ -1021,7 +1023,9 @@ static void LoadBNRIcon(void) {
  */
 static void LoadBNRIcon_Menu(int idx) {
 	if (idx >= 0 && idx < 20) {
-		pp2d_free_texture(bnricontex[idx % 6]);
+		//for (int i = 0; i < 8; i++) {
+			pp2d_free_texture(bnricontex[(idx % 6)+0*8]);
+		//}
 		// Selected bnriconnum is on the current page.
 		FILE *f_bnr = fopen(bnriconpath[idx], "rb");
 		fseek(f_bnr, 0, SEEK_END);
@@ -1030,9 +1034,9 @@ static void LoadBNRIcon_Menu(int idx) {
 
 		u16 bannerVersion = grabBannerVersion(f_bnr);
 		if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIconDSi(f_bnr), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[(idx % 6)+0*8], grabIconDSi(f_bnr, 0), 32, 256);
 		} else {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[idx % 6], grabIcon(f_bnr), 32, 64);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[(idx % 6)+0*8], grabIcon(f_bnr), 32, 64);
 		}
 		fclose(f_bnr);
 	}
@@ -1068,7 +1072,9 @@ static void LoadBNRSeq(void) {
  * @param filename Banner filename, or NULL for notextbanner.
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
-	pp2d_free_texture(bnricontex[7]);
+	for (int i = 0; i < 8; i++) {
+		pp2d_free_texture(bnricontex[7+i*8]);
+	}
 	if (!filename) {
 		filename = "romfs:/notextbanner";
 	}
@@ -1083,11 +1089,15 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 
 	u16 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIconDSi(f_bnr), 32, 256);
+		for (int i = 0; i < 8; i++) {
+			pp2d_load_texture_memory_RGBA5551(bnricontex[7+i*8], grabIconDSi(f_bnr, i), 32, 256);
+		}
 		grabBannerSequence(f_bnr, 20);
 		bnriconisDSi[20] = true;
 	} else {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIcon(f_bnr), 32, 64);
+		for (int i = 0; i < 8; i++) {
+			pp2d_load_texture_memory_RGBA5551(bnricontex[7+i*8], grabIcon(f_bnr), 32, 64);
+		}
 		bnriconisDSi[20] = false;
 	}
 	fclose(f_bnr);
@@ -1300,12 +1310,12 @@ bool dspfirmfound = false;
  * The Dsi has 8 positions for volume and the 3ds has 64
  * Remap volume to simulate the 8 positions
  */
-void draw_volume_slider(size_t texarray[])
+void draw_volume_slider(size_t texnum)
 {
 	u8 volumeLevel = 0;
 	if (!dspfirmfound) {
 		// No DSP Firm.
-		pp2d_draw_texture(texarray[5], 5, 2);
+		pp2d_draw_texture_part(texnum, 5, 2, 0, 80, 32, 16);
 	} else if (R_SUCCEEDED(HIDUSER_GetSoundVolume(&volumeLevel))) {
 		u8 voltex_id = 0;
 		if (volumeLevel == 0) {
@@ -1319,9 +1329,11 @@ void draw_volume_slider(size_t texarray[])
 		} else if (volumeLevel == 63) {
 			voltex_id = 4;	// 3ds 63, dsi 8  = volume4 texture
 		}
-		pp2d_draw_texture(texarray[voltex_id], 5, 2);
+		pp2d_draw_texture_part(texnum, 5, 2, 0, voltex_id*16, 32, 16);
 	}
 }
+
+int batteryFrame = 0;
 
 /**
  * Update the battery level icon.
@@ -1329,12 +1341,13 @@ void draw_volume_slider(size_t texarray[])
  * @param texarray Texture array for other levels. (batterytex or setbatterytex)
  * The global variable batteryIcon will be updated.
  */
-void update_battery_level(size_t texchrg, size_t texarray[])
+void update_battery_level(size_t texnum)
 {
 	u8 batteryChargeState = 0;
 	u8 batteryLevel = 0;
+	batteryIcon = texnum;
 	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
-		batteryIcon = texchrg;
+		batteryFrame = 6;
 	} else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
 		switch (batteryLevel) {
 			case 5: {
@@ -1342,31 +1355,31 @@ void update_battery_level(size_t texchrg, size_t texarray[])
 				// ctrulib without the 'X' prefix.
 				u8 acAdapter = 0;
 				if (R_SUCCEEDED(PTMUX_GetAdapterState(&acAdapter)) && acAdapter) {
-					batteryIcon = texarray[5];
+					batteryFrame = 5;
 				} else {
-					batteryIcon = texarray[4];
+					batteryFrame = 4;
 				}
 				break;
 			}
 			case 4:
-				batteryIcon = texarray[4];
+				batteryFrame = 4;
 				break;
 			case 3:
-				batteryIcon = texarray[3];
+				batteryFrame = 3;
 				break;
 			case 2:
-				batteryIcon = texarray[2];
+				batteryFrame = 2;
 				break;
 			case 1:
 			default:
-				batteryIcon = texarray[1];
+				batteryFrame = 1;
 				break;
 		}
 	}
 
 	if (!batteryIcon) {
 		// No battery icon...
-		batteryIcon = texarray[0];
+		batteryFrame = 0;
 	}
 }
 
@@ -1755,7 +1768,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1801,7 +1814,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1850,7 +1863,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			int y = 16, dy = 19;
@@ -1900,7 +1913,7 @@ static void drawMenuDialogBox(void)
 		bnriconnum = settings.ui.cursorPosition;
 		ChangeBNRIconNo();
 		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
-		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 		
 		if (settings.ui.cursorPosition >= 0) {
 			if (settings.twl.romtype == 1) {
@@ -2837,31 +2850,14 @@ int main(){
 	pp2d_load_texture_png(toptex, "romfs:/graphics/top.png"); // Top DSi-Menu border
 
 	// Volume slider textures.
-	pp2d_load_texture_png(voltex[0], "romfs:/graphics/volume0.png"); // Show no volume
-	pp2d_load_texture_png(voltex[1], "romfs:/graphics/volume1.png"); // Volume low above 0
-	pp2d_load_texture_png(voltex[2], "romfs:/graphics/volume2.png"); // Volume medium
-	pp2d_load_texture_png(voltex[3], "romfs:/graphics/volume3.png"); // Hight volume
-	pp2d_load_texture_png(voltex[4], "romfs:/graphics/volume4.png"); // 100%
-	pp2d_load_texture_png(voltex[5], "romfs:/graphics/volume5.png"); // No DSP firm found
-	pp2d_load_texture_png(setvoltex[0], "romfs:/graphics/settings/volume0.png"); // Show no volume (white)
-	pp2d_load_texture_png(setvoltex[1], "romfs:/graphics/settings/volume1.png"); // Volume low above 0 (white)
-	pp2d_load_texture_png(setvoltex[2], "romfs:/graphics/settings/volume2.png"); // Volume medium (white)
-	pp2d_load_texture_png(setvoltex[3], "romfs:/graphics/settings/volume3.png"); // Hight volume (white)	
-	pp2d_load_texture_png(setvoltex[4], "romfs:/graphics/settings/volume4.png"); // 100% (white)
-	pp2d_load_texture_png(setvoltex[5], "romfs:/graphics/settings/volume5.png"); // No DSP firm found (white)
+	pp2d_load_texture_png(voltex, "romfs:/graphics/volume.png");
+	pp2d_load_texture_png(setvoltex, "romfs:/graphics/settings/volume.png");
 
-	pp2d_load_texture_png(shoulderLtex, "romfs:/graphics/shoulder_L.png"); // L shoulder
-	pp2d_load_texture_png(shoulderRtex, "romfs:/graphics/shoulder_R.png"); // R shoulder
+	pp2d_load_texture_png(shouldertex, "romfs:/graphics/shoulder.png"); // Shoulder button
 	pp2d_load_texture_png(_3dsshouldertex, "romfs:/graphics/3ds/shoulder.png"); // 3DS HOME Menu shoulder
 
 	// Battery level textures.
-	pp2d_load_texture_png(batterychrgtex, "romfs:/graphics/battery_charging.png");
-	pp2d_load_texture_png(batterytex[0], "romfs:/graphics/battery0.png");
-	pp2d_load_texture_png(batterytex[1], "romfs:/graphics/battery1.png");
-	pp2d_load_texture_png(batterytex[2], "romfs:/graphics/battery2.png");
-	pp2d_load_texture_png(batterytex[3], "romfs:/graphics/battery3.png");
-	pp2d_load_texture_png(batterytex[4], "romfs:/graphics/battery4.png");
-	pp2d_load_texture_png(batterytex[5], "romfs:/graphics/battery5.png");
+	pp2d_load_texture_png(batterytex, "romfs:/graphics/battery.png");
 
 	if(!isDemo) {
 		pp2d_load_texture_png(settingslogotex, "romfs:/graphics/settings/logo.png"); // TWLoader logo in settings screen.
@@ -3602,7 +3598,7 @@ int main(){
 					noromtext2 = " ";
 				}
 
-				update_battery_level(batterychrgtex, batterytex);
+				update_battery_level(batterytex);
 				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
 //					pp2d_begin_draw(GFX_TOP);
 					pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
@@ -3704,13 +3700,13 @@ int main(){
 					} else {
 						draw_volume_slider(voltex);
 					}
-					pp2d_draw_texture(batteryIcon, 371, 2);
+					pp2d_draw_texture_part(batteryIcon, 371, 2, 0, batteryFrame*16, 27, 16);
 					if (!settings.ui.name.empty()) {
 						pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 					}
 					if (settings.ui.theme != THEME_3DSMENU) {
-						pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-						pp2d_draw_texture(shoulderRtex, 328, RshoulderYpos);
+						pp2d_draw_texture_part(shouldertex, 0, LshoulderYpos, 0, 0, 72, 20);
+						pp2d_draw_texture_part(shouldertex, 328, RshoulderYpos, 0, 20, 73, 20);
 
 						// Draw the "Previous" and "Next" text for L/R.
 						u32 lr_color = (settings.ui.pagenum != 0 && file_count <= (size_t)-settings.ui.pagenum*20)
@@ -3928,9 +3924,9 @@ int main(){
 					filenameYpos += 39;
 					if (woodmenu_cursorPosition == 2) {
 						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
-						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+						pp2d_draw_texture_part_scale(cardicontex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, bnriconframenumY[21]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
 					} else
-						pp2d_draw_texture_part(cardicontex, 8, Ypos, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32);
+						pp2d_draw_texture_part(cardicontex, 8, Ypos, 0, bnriconframenumY[21]*32, 32, 32);
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Launch Slot-1 card");
 					Ypos += 39;
 					filenameYpos += 39;
@@ -4001,9 +3997,9 @@ int main(){
 							pp2d_draw_wtext(46, Ypos+10, 0.45f, 0.45f, WHITE, wstr.c_str());
 
 							if (settings.ui.cursorPosition == filenum)
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							else
-								pp2d_draw_texture_part_flip(bnricontexnum, 8, Ypos, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_flip(bnricontexnum, 8, Ypos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							Ypos += 39;
 						}
 					}
@@ -4048,7 +4044,7 @@ int main(){
 				if(bnriconisDSi[21]==true) {
 					playBannerSequence(21);
 				} else {
-					bnriconframenumX[21] = 0;
+					bnriconPalLine[21] = 0;
 					bnriconframenumY[21] = 0;
 					bannerFlip[21] = NONE;
 				}
@@ -4102,7 +4098,7 @@ int main(){
 					if (settings.twl.romtype == 1) {
 						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
-						pp2d_draw_texture_part_flip(bnricontex[7], 52, 36, bnriconframenumX[20]*32, bnriconframenumY[20]*32, 32, 32, bannerFlip[20]);
+						pp2d_draw_texture_part_flip(bnricontex[7+bnriconPalLine[20]*8], 52, 36, 0, bnriconframenumY[20]*32, 32, 32, bannerFlip[20]);
 					}
 					
 					if (!bannertextloaded) {
@@ -4173,7 +4169,7 @@ int main(){
 				if(bnriconisDSi[20]==true) {
 					playBannerSequence(20);
 				} else {
-					bnriconframenumX[20] = 0;
+					bnriconPalLine[20] = 0;
 					bnriconframenumY[20] = 0;
 					bannerFlip[20] = NONE;
 				}
@@ -4269,12 +4265,12 @@ int main(){
 						}
 						if (settings.ui.iconsize) {
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
+								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
 							} else {
-								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
+								pp2d_draw_texture_part_scale_flip(cardicontex, -4+cartXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[21]*32, 32, 32, 1.25, 1.25, bannerFlip[21]);
 							}
 						} else {
-							pp2d_draw_texture_part_flip(cardicontex, 16+cartXpos+titleboxXmovepos, 129, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
+							pp2d_draw_texture_part_flip(cardicontex, 16+cartXpos+titleboxXmovepos, 129, 0, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
 						}
 					} else {
 						// Get flash cart games.
@@ -4328,9 +4324,9 @@ int main(){
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
 							if (settings.ui.theme != THEME_3DSMENU) {
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos*1.25, 123, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.25, 1.25, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							} else {
-								pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+								pp2d_draw_texture_part_scale_flip(bnricontexnum, -4+ndsiconXpos+titleboxXmovepos*1.25, 131, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, 1.50, 1.50, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							}
 							ndsiconXpos += 80;
 						} else {
@@ -4343,7 +4339,7 @@ int main(){
 
 							bnriconnum = filenum;
 							ChangeBNRIconNo();
-							pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+							pp2d_draw_texture_part_flip(bnricontexnum, ndsiconXpos+titleboxXmovepos, 129, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 							ndsiconXpos += 64;
 						}
 					} else {
@@ -4439,9 +4435,9 @@ int main(){
 							// Draw selected Slot-1 game that moves up
 							pp2d_draw_texture(carttex(), 128, titleboxYmovepos);
 							size_t cardicontex = gamecardGetIcon();
-							if (cardicontex != bnricontex[8])
+							if (cardicontex != bnricontex[8+bnriconPalLine[21]*8])
 								cardicontex = iconnulltex;
-							pp2d_draw_texture_part_flip(cardicontex, 144, ndsiconYmovepos, bnriconframenumX[21]*32, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
+							pp2d_draw_texture_part_flip(cardicontex, 144, ndsiconYmovepos, 0, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
 						}
 					} else {
 						pp2d_draw_texture_part(boxtex, 128, titleboxYmovepos, 0, 0, 64, 64); // Draw selected game/app that moves up
@@ -4451,7 +4447,7 @@ int main(){
 							bnricontexlaunch = bnricontexnum;
 							applaunchicon = true;
 						}
-						pp2d_draw_texture_part_flip(bnricontexlaunch, 144, ndsiconYmovepos, bnriconframenumX[bnriconnum-settings.ui.pagenum*20]*32, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
+						pp2d_draw_texture_part_flip(bnricontexlaunch, 144, ndsiconYmovepos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*20]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*20]);
 					}
 					pp2d_draw_texture_rotate(dotcircletex, 120, 104, rad);  // Dots moving in circles
 				}
@@ -4703,7 +4699,7 @@ int main(){
 				if(bnriconisDSi[21]==true) {
 					playBannerSequence(21);
 				} else {
-					bnriconframenumX[21] = 0;
+					bnriconPalLine[21] = 0;
 					bnriconframenumY[21] = 0;
 					bannerFlip[21] = NONE;
 				}
@@ -5105,7 +5101,7 @@ int main(){
 										loadbnriconnum = 0+settings.ui.pagenum*20;
 										for (int i = 0; i < 20; i++) {
 											// Reset banner icon frames
-											bnriconframenumX[i] = 0;
+											bnriconPalLine[i] = 0;
 											bnriconframenumY[i] = 0;
 											bannerFlip[i] = NONE;
 											clearBannerSequence(i);
@@ -5130,7 +5126,7 @@ int main(){
 										loadbnriconnum = 0+settings.ui.pagenum*20;
 										for (int i = 0; i < 20; i++) {
 											// Reset banner icon frames
-											bnriconframenumX[i] = 0;
+											bnriconPalLine[i] = 0;
 											bnriconframenumY[i] = 0;
 											bannerFlip[i] = NONE;
 											clearBannerSequence(i);
@@ -5201,7 +5197,7 @@ int main(){
 									loadbnriconnum = 0+settings.ui.pagenum*20;
 									for (int i = 0; i < 20; i++) {
 										// Reset banner icon frames
-										bnriconframenumX[i] = 0;
+										bnriconPalLine[i] = 0;
 										bnriconframenumY[i] = 0;
 										bannerFlip[i] = NONE;
 										clearBannerSequence(i);
@@ -5236,7 +5232,7 @@ int main(){
 									loadbnriconnum = 0+settings.ui.pagenum*20;
 									for (int i = 0; i < 20; i++) {
 										// Reset banner icon frames
-										bnriconframenumX[i] = 0;
+										bnriconPalLine[i] = 0;
 										bnriconframenumY[i] = 0;
 										bannerFlip[i] = NONE;
 										clearBannerSequence(i);
@@ -5346,7 +5342,7 @@ int main(){
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							for (int i = 0; i < 20; i++) {
 								// Reset banner icon frames
-								bnriconframenumX[i] = 0;
+								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
 								bannerFlip[i] = NONE;
 								clearBannerSequence(i);
@@ -5364,7 +5360,7 @@ int main(){
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							for (int i = 0; i < 20; i++) {
 								// Reset banner icon frames
-								bnriconframenumX[i] = 0;
+								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
 								bannerFlip[i] = NONE;
 								clearBannerSequence(i);
@@ -5465,7 +5461,7 @@ int main(){
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						for (int i = 0; i < 20; i++) {
 							// Reset banner icon frames
-							bnriconframenumX[i] = 0;
+							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
 							bannerFlip[i] = NONE;
 							clearBannerSequence(i);
@@ -5833,7 +5829,7 @@ int main(){
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							for (int i = 0; i < 20; i++) {
 								// Reset banner icon frames
-								bnriconframenumX[i] = 0;
+								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
 								bannerFlip[i] = NONE;
 								clearBannerSequence(i);
@@ -5862,7 +5858,7 @@ int main(){
 							loadbnriconnum = 0+settings.ui.pagenum*20;
 							for (int i = 0; i < 20; i++) {
 								// Reset banner icon frames
-								bnriconframenumX[i] = 0;
+								bnriconPalLine[i] = 0;
 								bnriconframenumY[i] = 0;
 								bannerFlip[i] = NONE;
 								clearBannerSequence(i);
@@ -6684,7 +6680,7 @@ int main(){
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						for (int i = 0; i < 20; i++) {
 							// Reset banner icon frames
-							bnriconframenumX[i] = 0;
+							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
 							bannerFlip[i] = NONE;
 							clearBannerSequence(i);
@@ -6729,7 +6725,7 @@ int main(){
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						for (int i = 0; i < 20; i++) {
 							// Reset banner icon frames
-							bnriconframenumX[i] = 0;
+							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
 							bannerFlip[i] = NONE;
 							clearBannerSequence(i);
@@ -6839,7 +6835,7 @@ int main(){
 						loadbnriconnum = 0+settings.ui.pagenum*20;
 						for (int i = 0; i < 20; i++) {
 							// Reset banner icon frames
-							bnriconframenumX[i] = 0;
+							bnriconPalLine[i] = 0;
 							bnriconframenumY[i] = 0;
 							bannerFlip[i] = NONE;
 							clearBannerSequence(i);

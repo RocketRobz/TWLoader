@@ -94,13 +94,7 @@ void settingsLoadTextures(void)
 	pp2d_free_texture(boxtex);
 
 	/** Top screen **/
-	pp2d_load_texture_png(setbatterychrgtex, "romfs:/graphics/settings/battery_charging.png");
-	pp2d_load_texture_png(setbatterytex[0], "romfs:/graphics/settings/battery0.png");
-	pp2d_load_texture_png(setbatterytex[1], "romfs:/graphics/settings/battery1.png");
-	pp2d_load_texture_png(setbatterytex[2], "romfs:/graphics/settings/battery2.png");
-	pp2d_load_texture_png(setbatterytex[3], "romfs:/graphics/settings/battery3.png");
-	pp2d_load_texture_png(setbatterytex[4], "romfs:/graphics/settings/battery4.png");
-	pp2d_load_texture_png(setbatterytex[5], "romfs:/graphics/settings/battery5.png");
+	pp2d_load_texture_png(setbatterytex, "romfs:/graphics/settings/battery.png");
 
 	pp2d_load_texture_png(dsboottex, "romfs:/graphics/settings/dsboot.png"); // DS boot screen in settings
 	pp2d_load_texture_png(dsiboottex, "romfs:/graphics/settings/dsiboot.png"); // DSi boot screen in settings
@@ -181,11 +175,7 @@ void settingsUnloadTextures(void)
 		return;
 
 	/** Top screen **/
-	pp2d_free_texture(setbatterychrgtex);
-
-	for (int i = 0; i < 6; i++) {
-		pp2d_free_texture(setbatterytex[i]);
-	}
+	pp2d_free_texture(setbatterytex);
 
 	pp2d_free_texture(dsboottex);
 	pp2d_free_texture(dsiboottex);
@@ -224,7 +214,7 @@ void settingsDrawTopScreen(void)
 	if (!settings_tex_loaded) {
 		settingsLoadTextures();
 	}
-	update_battery_level(setbatterychrgtex, setbatterytex);
+	update_battery_level(setbatterytex);
 
 	// Draw twice; once per 3D framebuffer.
 	for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
@@ -341,7 +331,7 @@ void settingsDrawTopScreen(void)
 		}
 
 		draw_volume_slider(setvoltex);
-		pp2d_draw_texture(batteryIcon, 371, 2);
+		pp2d_draw_texture_part(batteryIcon, 371, 2, 0, batteryFrame*16, 27, 16);
 		if (!settings.ui.name.empty()) {
 			pp2d_draw_text(34.0f, 1.0f, 0.58, 0.58f, SET_ALPHA(color_data->color, 255), settings.ui.name.c_str());
 		}
@@ -453,8 +443,8 @@ void settingsDrawBottomScreen(void)
 	const wchar_t *title = L"";
 
 	if (subscreenmode == SUBSCREEN_MODE_FRONTEND) {
-		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_texture_part(shouldertex, 0, LshoulderYpos, 0, 0, 72, 20);
+		pp2d_draw_texture_part(shouldertex, 248, RshoulderYpos, 0, 20, 73, 20);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
@@ -639,8 +629,8 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_COUNTER_2));
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND2) {
-		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_texture_part(shouldertex, 0, LshoulderYpos, 0, 0, 72, 20);
+		pp2d_draw_texture_part(shouldertex, 248, RshoulderYpos, 0, 20, 73, 20);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
@@ -758,8 +748,8 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(8, 198, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_SAFETY_MESSAGE_2));
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_FRONTEND3) {
-		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_texture_part(shouldertex, 0, LshoulderYpos, 0, 0, 72, 20);
+		pp2d_draw_texture_part(shouldertex, 248, RshoulderYpos, 0, 20, 73, 20);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
@@ -854,8 +844,8 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "welcome screen.");
 		}
 	} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
-		pp2d_draw_texture(shoulderLtex, 0, LshoulderYpos);
-		pp2d_draw_texture(shoulderRtex, 248, RshoulderYpos);
+		pp2d_draw_texture_part(shouldertex, 0, LshoulderYpos, 0, 0, 72, 20);
+		pp2d_draw_texture_part(shouldertex, 248, RshoulderYpos, 0, 20, 73, 20);
 		pp2d_draw_text(17, LshoulderYpos+4, 0.50, 0.50, BLACK, Lshouldertext);
 		pp2d_draw_text(252, RshoulderYpos+4, 0.50, 0.50, BLACK, Rshouldertext);
 
