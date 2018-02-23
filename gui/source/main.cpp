@@ -2710,7 +2710,6 @@ int main(){
 
 	bool updatetopscreen = true;
 	bool screenmodeswitch = false;
-	bool applaunchicon = false;
 	
 	float rad = 0.0f;
 	
@@ -4443,13 +4442,9 @@ int main(){
 						}
 					} else {
 						pp2d_draw_texture_part(boxtex, 128, titleboxYmovepos, 0, 0, 64, 64); // Draw selected game/app that moves up
-						if (!applaunchicon) {
-							bnriconnum = settings.ui.cursorPosition;
-							ChangeBNRIconNo();
-							bnricontexlaunch = bnricontexnum;
-							applaunchicon = true;
-						}
-						pp2d_draw_texture_part_flip(bnricontexlaunch, 144, ndsiconYmovepos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
+						bnriconnum = settings.ui.cursorPosition;
+						ChangeBNRIconNo();
+						pp2d_draw_texture_part_flip(bnricontexnum, 144, ndsiconYmovepos, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 					}
 					pp2d_draw_texture_rotate(dotcircletex, 120, 104, rad);  // Dots moving in circles
 				}

@@ -73,8 +73,7 @@ size_t settingslogotwltex = 8;
 size_t settingslogoloadertex = 9; 
 size_t settingslogodemotex = 10; 
 size_t slot1boxarttex = 11; 
-size_t bnricontexnum = 12; 
-size_t bnricontexlaunch = 13; 
+size_t bnricontexnum = 12;
 size_t boxarttexnum = 14; 
 size_t bnricontex[64] = {15, 16, 17, 18, 19, 20, 21, 22,
 			23, 24, 25, 26, 27, 28, 29, 30,
