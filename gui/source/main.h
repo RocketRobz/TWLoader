@@ -17,7 +17,7 @@
 #define THEME_R4 2		// R4
 #define THEME_AKMENU 3	// Wood/akMenu
 
-#define gamesPerPage 20
+#define gamesPerPage 40
 
 
 extern bool isDemo;	// Is the program running as demo version?

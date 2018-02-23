@@ -4437,9 +4437,9 @@ int main(){
 							// Draw selected Slot-1 game that moves up
 							pp2d_draw_texture(carttex(), 128, titleboxYmovepos);
 							size_t cardicontex = gamecardGetIcon();
-							if (cardicontex != bnricontex[8+bnriconPalLine[21]*8])
+							if (cardicontex != bnricontex[8+bnriconPalLine[gamesPerPage+1]*8])
 								cardicontex = iconnulltex;
-							pp2d_draw_texture_part_flip(cardicontex, 144, ndsiconYmovepos, 0, bnriconframenumY[21]*32, 32, 32, bannerFlip[21]);
+							pp2d_draw_texture_part_flip(cardicontex, 144, ndsiconYmovepos, 0, bnriconframenumY[gamesPerPage+1]*32, 32, 32, bannerFlip[gamesPerPage+1]);
 						}
 					} else {
 						pp2d_draw_texture_part(boxtex, 128, titleboxYmovepos, 0, 0, 64, 64); // Draw selected game/app that moves up
@@ -4907,7 +4907,7 @@ int main(){
 				boxartXmovepos += 18;
 				// Load the previous box art
 				if ( settings.ui.cursorPosition >= 1+settings.ui.pagenum*gamesPerPage
-				&& settings.ui.cursorPosition <= 18+settings.ui.pagenum*gamesPerPage ) {
+				&& settings.ui.cursorPosition <= 36+settings.ui.pagenum*gamesPerPage ) {
 					boxartpage--;
 					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
@@ -4915,7 +4915,10 @@ int main(){
 				}
 				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*gamesPerPage ||
 				settings.ui.cursorPosition == 12+settings.ui.pagenum*gamesPerPage ||
-				settings.ui.cursorPosition == 18+settings.ui.pagenum*gamesPerPage ) {
+				settings.ui.cursorPosition == 18+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 24+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 30+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 36+settings.ui.pagenum*gamesPerPage ) {
 					boxartXmovepos = -144*7;
 					boxartXmovepos += 18*2;
 				}
@@ -4989,7 +4992,7 @@ int main(){
 				storedcursorPosition = settings.ui.cursorPosition;
 				// Load the next box art
 				if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*gamesPerPage
-				&& settings.ui.cursorPosition <= 19+settings.ui.pagenum*gamesPerPage ) {
+				&& settings.ui.cursorPosition <= 39+settings.ui.pagenum*gamesPerPage ) {
 					if (settings.ui.cursorPosition != 3) {
 						boxartpage++;
 						boxartnum = settings.ui.cursorPosition+2;
@@ -4999,7 +5002,10 @@ int main(){
 				}
 				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*gamesPerPage ||
 				settings.ui.cursorPosition == 13+settings.ui.pagenum*gamesPerPage ||
-				settings.ui.cursorPosition == 19+settings.ui.pagenum*gamesPerPage ) {
+				settings.ui.cursorPosition == 19+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 25+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 31+settings.ui.pagenum*gamesPerPage ||
+				settings.ui.cursorPosition == 37+settings.ui.pagenum*gamesPerPage ) {
 					boxartXmovepos = -144;
 				}
 			} else if (titleboxXmovetimer == 9) {
