@@ -4311,7 +4311,7 @@ int main(){
 				}
 
 				float bipxPos = 37.0;
-				for (filenum = settings.ui.pagenum*gamesPerPage; filenum < 20+settings.ui.pagenum*gamesPerPage; filenum++) {
+				for (filenum = settings.ui.pagenum*gamesPerPage; filenum < gamesPerPage+settings.ui.pagenum*gamesPerPage; filenum++) {
 					if (filenum < pagemax) {
 						if (settings.ui.theme != THEME_3DSMENU) pp2d_draw_texture_part(bipstex, bipxPos, 222, 0, 0, 11, 11);
 						bipxPos += 12.5;
