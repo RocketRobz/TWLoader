@@ -3311,7 +3311,7 @@ int main(){
 						char path[256];
 						if(matching_files.size() == 0){
 							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)files.size()+settings.ui.pagenum*20) {
+								if (loadbnriconnum+settings.ui.pagenum*20 < (int)files.size()) {
 									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									StoreBnrIconPath(path);
@@ -3325,7 +3325,7 @@ int main(){
 							}
 						}else{
 							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
+								if (loadbnriconnum+settings.ui.pagenum*20 < (int)matching_files.size()) {
 									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									StoreBnrIconPath(path);
@@ -3342,7 +3342,7 @@ int main(){
 						char path[256];
 						if(matching_files.size() == 0){
 							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)fcfiles.size()+settings.ui.pagenum*20) {
+								if (loadbnriconnum+settings.ui.pagenum*20 < (int)fcfiles.size()) {
 									const char *tempfile = fcfiles.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
@@ -3362,7 +3362,7 @@ int main(){
 							}
 						}else{
 							for (loadbnriconnum = 0; loadbnriconnum < 20; loadbnriconnum++) {						
-								if (loadbnriconnum < (int)matching_files.size()+settings.ui.pagenum*20) {
+								if (loadbnriconnum+settings.ui.pagenum*20 < (int)matching_files.size()) {
 									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*20).c_str();
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
