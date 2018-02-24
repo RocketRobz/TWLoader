@@ -122,6 +122,7 @@ int main(int argc, char **argv) {
 	bool TriggerExit = false;
 	std::string gamesettingsPath = "";
 	std::string gbromfolder = "";
+	std::string nesromfolder = "";
 	std::string homebrew_arg = "";
 
 	bool consoleOn = false;
@@ -162,6 +163,7 @@ int main(int argc, char **argv) {
 		gbarunnervalue = twloaderini.GetInt( "TWL-MODE", "GBARUNNER", 0);
 		romtype = twloaderini.GetInt( "TWL-MODE", "ROM_TYPE", 0);
 		gbromfolder = twloaderini.GetString("FRONTEND", "GBROM_FOLDER", "roms/gb");
+		nesromfolder = twloaderini.GetString("FRONTEND", "NESROM_FOLDER", "roms/nes");
 
 		gamesettingsPath = twloaderini.GetString( "TWL-MODE", "GAMESETTINGS_PATH", "");
 
@@ -236,7 +238,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if(romtype==1 && gbarunnervalue==0) {
+		if(romtype > 0 && gbarunnervalue == 0) {
 			// Tell Arm7 to apply changes.
 			fifoSendValue32(FIFO_USER_07, 1);
 
@@ -248,14 +250,29 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 			argarray.push_back(strdup(homebrew_arg.c_str()));
 
-			char gbROMpath[256];
-			snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), homebrew_arg.c_str());
-			argarray.push_back(gbROMpath);
-			argarray.at(0) = "sd:/_nds/twloader/emulators/gameyob.nds";
-			int err = runNdsFile ("sd:/_nds/twloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
-			iprintf("Start failed. Error %i\n", err);
+			if (romtype == 1) {
+				char gbROMpath[256];
+				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), homebrew_arg.c_str());
+				argarray.push_back(gbROMpath);
+				argarray.at(0) = "sd:/_nds/twloader/emulators/gameyob.nds";
+				int err = runNdsFile ("sd:/_nds/twloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				if (consoleOn == false) {
+					consoleDemoInit(); }
+				iprintf("Start failed. Error %i\n", err);
 
-			iprintf ("GameYob not found.\n");		
+				iprintf ("GameYob not found.\n");
+			} else if (romtype == 2) {
+				char nesROMpath[256];
+				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", nesromfolder.c_str(), homebrew_arg.c_str());
+				argarray.push_back(nesROMpath);
+				argarray.at(0) = "sd:/_nds/twloader/emulators/nestwl.nds";
+				int err = runNdsFile ("sd:/_nds/twloader/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to nesDS as argument
+				if (consoleOn == false) {
+					consoleDemoInit(); }
+				iprintf("Start failed. Error %i\n", err);
+
+				iprintf ("nesDS not found.\n");
+			}
 			iprintf ("\n");		
 			iprintf ("Press B to return to\n");		
 			iprintf ("HOME Menu.\n");
