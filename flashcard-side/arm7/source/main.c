@@ -54,8 +54,8 @@ int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
 	
-	REG_SCFG_ROM = 0x703;
-	REG_SCFG_CLK = 0x0187;
+	//REG_SCFG_ROM = 0x703;
+	//REG_SCFG_CLK = 0x0187;
 	// REG_SCFG_EXT = 0x93A40000;
 
 	// SCFG_CLK
@@ -65,7 +65,7 @@ int main() {
 	// REG_SCFG_CLK = 0x0181;
 	
 	readUserSettings();
-	ledBlink(0);
+	//ledBlink(0);
 
 	irqInit();
 	// Start the RTC tracking IRQ
@@ -80,7 +80,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
 	

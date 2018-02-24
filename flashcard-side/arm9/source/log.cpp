@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "log.h"
 
-bool LogCreated = true; // It's already done by the GUI
+bool LogCreated = false;
 
 int createLog(void) {
 	if (!LogCreated){

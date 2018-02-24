@@ -129,7 +129,7 @@ void iconTitleInit (void) {
 
 	// everything's ready :)
 	writeRow (0,"...initializing...");
-	writeRow (1,"===>>> HBMenu+ <<<===");
+	writeRow (1,"===>>> Add Games <<<===");
 	writeRow (2,"(this text should disappear...");
 	writeRow (3,"...otherwise, trouble!)");
 }

@@ -42,6 +42,9 @@
 #include "inifile.h"
 #include "log.h"
 
+sNDSHeaderExt ndsHeader;
+sNDSBannerExt ndsBanner;
+
 using namespace std;
 
 bool logEnabled = false;
@@ -126,38 +129,52 @@ void RemoveTrailingSlashes(string& path)
 	}
 }
 
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
-	// REG_SCFG_CLK = 0x80;
-	REG_SCFG_CLK = 0x85;
-
 	bool TriggerExit = false;
 	std::string fcromfolder;
 	char fcfolder_path[256];
 	
+	iconTitleInit();
+
+	// Subscreen as a console
+	videoSetModeSub(MODE_0_2D);
+	vramSetBankH(VRAM_H_SUB_BG);
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+
 	/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
-	struct stat logBuf;
-	logEnabled = stat("sd:/_nds/twloader/log", &logBuf) == 0;
+	//struct stat logBuf;
+	//logEnabled = stat("sd:/_nds/twloader/log", &logBuf) == 0;
 	/* Log configuration file end */
 	
-	if (fatInitDefault()) {
+	if(fatInitDefault()) {
+		printf ("Reading TWLoader settings\n");
 		CIniFile twloaderini( "sd:/_nds/twloader/settings.ini" );
-		if (logEnabled)	LogFM("Flashcard.Main", "Fat inited");
+		printf ("TWLoader settings read\n");
+		// if (logEnabled)	LogFM("Flashcard.Main", "Fat inited");
 
 		// overwrite reboot stub identifier
 		// extern u64 *fake_heap_end;
 		// *fake_heap_end = 0;
 
 		// defaultExceptionHandler();
-		
+
+		printf ("Reading flashcard ini folder\n");
 		fcromfolder = twloaderini.GetString( "FRONTEND", "FCROM_FOLDER", "");
+		printf ("Removing trailing slashes\n");
 		RemoveTrailingSlashes(fcromfolder);
+		printf ("Done!\n");
 		if (fcromfolder.empty()) {
 			fcromfolder = "roms/flashcard/nds";
 		}
 		snprintf(fcfolder_path, sizeof(fcfolder_path), "sd:/%s", fcromfolder.c_str());
+	} else {
+		iprintf ("fatInitDefault failed!\n");		
+			
+		doPause();
+		
+		TriggerExit = true;
 	}
 
 	int pathLen;
@@ -166,21 +183,6 @@ int main(int argc, char **argv) {
 	std::string bannerfilepathfixed;
 	char inifilepath[256];
 	std::string inifilepathfixed;
-
-	iconTitleInit();
-
-	// Subscreen as a console
-	videoSetModeSub(MODE_0_2D);
-	vramSetBankH(VRAM_H_SUB_BG);
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);	
-	
-	if (!fatInitDefault()) {
-		iprintf ("fatinitDefault failed!\n");		
-			
-		doPause();
-		
-		TriggerExit = true;
-	}
 
 	chdir ("fat:/");	// Change directory to flashcard root
 	
@@ -217,50 +219,55 @@ int main(int argc, char **argv) {
 			iprintf (filePath);
 			iprintf (" \n");
 
-			TWLDsNDSHeader NDSHeader;
-
-			if (logEnabled)	LogFMA("Flashcard.Main", "Reading .NDS file:", filePath);
+			// if (logEnabled)	LogFMA("Flashcard.Main", "Reading .NDS file:", filePath);
 			fseek ( ndsFile , 0 , SEEK_SET );
-			fread(&NDSHeader,1,sizeof(NDSHeader),ndsFile);
-			if (logEnabled)	LogFMA("Flashcard.Main", ".NDS file read:", filePath);
+			fread(&ndsHeader,1,sizeof(ndsHeader),ndsFile);
+			// if (logEnabled)	LogFMA("Flashcard.Main", ".NDS file read:", filePath);
 						
 			// Set banner path
-			free(bannerfilepath);
 			snprintf(bannerfilepath, sizeof(bannerfilepath), "sd:/_nds/twloader/bnricons/flashcard/%s.bin", filename.c_str());
 			bannerfilepathfixed = ReplaceAll(bannerfilepath, ".nds", ".ini");
 
 			// Set .ini path
-			free(inifilepath);
 			snprintf(inifilepath, sizeof(inifilepath), "%s/%s", fcfolder_path, filename.c_str());
 			inifilepathfixed = ReplaceAll(inifilepath, ".nds", ".ini");
 			
 			if( access( bannerfilepathfixed.c_str(), F_OK ) == -1 ) {
 				FILE* filetosave = fopen(bannerfilepathfixed.c_str(), "wb");
-				
-				TWLDsNDSBannersize1 myBannersize1;
-				TWLDsNDSBannersize2 myBannersize2;
-				TWLDsNDSBannersize3 myBannersize3;
-				TWLDsNDSBannersize4 myBanner;
-				
-				if (NDSHeader.bannerOffset != 0x00000000) {
-					fseek ( ndsFile , NDSHeader.bannerOffset , SEEK_SET );
-					
-					fread(&myBanner,1,sizeof(myBanner),ndsFile);
-					
-					iprintf ("Now caching banner data.\n");
-					if (logEnabled)	LogFMA("Flashcard.Main", "Caching banner data:", NDSHeader.gameCode);
-					if (myBanner.version == 0x0103) {
-						fwrite(&myBanner,1,sizeof(myBanner),filetosave);
-					} else if (myBanner.version == 0x0003) {
-						fwrite(&myBanner,1,sizeof(myBannersize3),filetosave);
-					} else if (myBanner.version == 0x0002) {
-						fwrite(&myBanner,1,sizeof(myBannersize2),filetosave);
-					} else {
-						fwrite(&myBanner,1,sizeof(myBannersize1),filetosave);
+
+				if (ndsHeader.bannerOffset != 0x00000000) {
+					int ret;
+
+					ret = fseek (ndsFile, ndsHeader.bannerOffset, SEEK_SET);
+					if (ret == 0)
+						ret = fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile); // read if seek succeed
+					else
+						ret = 0; // if seek fails set to !=1
+
+					if (ret != 1)
+					{
+						// try again, but using regular banner size
+						ret = fseek (ndsFile, ndsHeader.bannerOffset, SEEK_SET);
+						if (ret == 0)
+							ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, ndsFile); // read if seek succeed
+						else
+							ret = 0; // if seek fails set to !=1
 					}
 
-					if (logEnabled)	iprintf ("Banner data cached.\n");
-					if (logEnabled)	LogFMA("Flashcard.Main", "Banner data cached:", NDSHeader.gameCode);
+					iprintf ("Now caching banner data.\n");
+					// if (logEnabled)	LogFMA("Flashcard.Main", "Caching banner data:", NDSHeader.gameCode);
+					if (ndsBanner.version == 0x0103) {
+						fwrite(&ndsBanner,1,NDS_BANNER_SIZE_DSi,filetosave);
+					} else if (ndsBanner.version == 0x0003) {
+						fwrite(&ndsBanner,1,NDS_BANNER_SIZE_ZH_KO,filetosave);
+					} else if (ndsBanner.version == 0x0002) {
+						fwrite(&ndsBanner,1,NDS_BANNER_SIZE_ZH,filetosave);
+					} else {
+						fwrite(&ndsBanner,1,NDS_BANNER_SIZE_ORIGINAL,filetosave);
+					}
+
+					// if (logEnabled)	iprintf ("Banner data cached.\n");
+					// if (logEnabled)	LogFMA("Flashcard.Main", "Banner data cached:", NDSHeader.gameCode);
 					for (int i = 0; i < 60; i++) { swiWaitForVBlank(); }
 				} else {
 					iprintf ("Banner data doesn't exist.\n");
@@ -275,9 +282,9 @@ int main(int argc, char **argv) {
 			if( access( inifilepathfixed.c_str(), F_OK ) == -1 ) {
 				CIniFile rominini( inifilepathfixed );
 				rominini.SetString("FLASHCARD-ROM", "NDS_PATH", filePath+5);
-				rominini.SetString("FLASHCARD-ROM", "TID", NDSHeader.gameCode);
+				rominini.SetString("FLASHCARD-ROM", "TID", ndsHeader.gameCode);
 				iprintf (".ini file created.\n");
-				if (logEnabled)	LogFMA("Flashcard.Main", ".ini file created:", NDSHeader.gameCode);
+				// if (logEnabled)	LogFMA("Flashcard.Main", ".ini file created:", NDSHeader.gameCode);
 				rominini.SaveIniFile( inifilepathfixed );
 				for (int i = 0; i < 60; i++) { swiWaitForVBlank(); }
 			} else {

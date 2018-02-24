@@ -32,9 +32,46 @@
 #ifndef NDS_HEADER2
 #define NDS_HEADER2
 
+#include <nds.h>
+
+typedef struct 
+{
+	u32 auto_load_list_offset;
+	u32 auto_load_list_end;
+	u32 auto_load_start;
+	u32 static_bss_start;
+	u32 static_bss_end;
+	u32 compressed_static_end;
+	u32 sdk_version;
+	u32 nitro_code_be;
+	u32 nitro_code_le;
+} module_params_t;
+
 /*!
-	\brief the NDS banner format.
-	See gbatek for more information.
+	\brief the GBA file header format.
+	See gbatek for more info.
+*/
+typedef struct {
+	u32 entryPoint;		//!< 32 bits arm opcode to jump to executable code.
+	u8 logo[156];		//!< nintendo logo needed for booting the game.
+	char title[0xC];	//!< 12 characters for the game title.
+	char gamecode[0x4];	//!< 4 characters for the game code. first character is usally A or B, next 2 characters is a short title
+						//!< and last character is for destination/language.
+	u16 makercode;		//!< identifies the (commercial) developer.
+	u8 is96h;			//!< fixed value that is always 96h.
+	u8 unitcode;		//!< identifies the required hardware.
+	u8 devicecode;		//!< used by nintedo's hardware debuggers. normally 0.
+	u8 unused[7];
+	u8 version;			//!< the version of the game.
+	u8 complement;		//!< complement checksum of the gba header.
+	u16 checksum;		//!< a 16 bit checksum? (gbatek says its unused/reserved).
+} sGBAHeader2;
+
+//#define GBA_HEADER (*(tGBAHeader *)0x08000000)
+
+/*!
+	\brief the NDS file header format
+	See gbatek for more info.
 */
 typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
@@ -94,43 +131,25 @@ typedef struct {
 	u32 offset_0x16C;			//reserved?
 
 	u8 zero[0x90];
-} TWLDsNDSHeader;
+
+	// 0x200
+	// TODO: More DSi-specific fields.
+	u8 dsi1[0x30];
+	u32 dsi_tid;
+	u8 dsi2[0x180];
+} sNDSHeaderExt;
 
 typedef struct {
-  u16 version;			//!< version of the banner.
-	u16 crc[4];		//!< CRC-16s of the banner.
-  u8 reserved[22];
-  u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
-  u16 palette[16];		//!< the pallete of the icon.
-  u16 titles[8][128];	//!< title of the game in 8 different languages.
-} TWLDsNDSBanner;
+	char gameTitle[12];			//!< 12 characters for the game title.
+	char gameCode[4];			//!< 4 characters for the game code.
+} sNDSHeadertitlecodeonly;
 
-typedef struct {
-	u16 version;		//!< version of the banner.
-	u16 crc[4];		//!< CRC-16s of the banner.
-	u8 reserved[22];
-	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
-	u16 palette[16];	//!< the palette of the icon.
-	u16 titles[6][128];	//!< title of the game in 6 different languages.
-} TWLDsNDSBannersize1;
 
-typedef struct {
-	u16 version;		//!< version of the banner.
-	u16 crc[4];		//!< CRC-16s of the banner.
-	u8 reserved[22];
-	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
-	u16 palette[16];	//!< the palette of the icon.
-	u16 titles[7][128];	//!< title of the game in 7 different languages.
-} TWLDsNDSBannersize2;
+//#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
-typedef struct {
-	u16 version;		//!< version of the banner.
-	u16 crc[4];		//!< CRC-16s of the banner.
-	u8 reserved[22];
-	u8 icon[512];		//!< 32*32 icon of the game with 4 bit per pixel.
-	u16 palette[16];	//!< the palette of the icon.
-	u16 titles[8][128];	//!< title of the game in 8 different languages.
-} TWLDsNDSBannersize3;
+// Make sure the banner size is correct.
+static_assert(sizeof(sNDSHeaderExt) == 0x3B4, "sizeof(sNDSHeaderExt) is not 0x3B4 bytes");
+
 
 /*!
 	\brief the NDS banner format.
@@ -151,7 +170,45 @@ typedef struct {
 	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
 	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
 	u16 dsi_seq[64];	//!< DSi animated icon sequence.
-} TWLDsNDSBannersize4;
+} sNDSBannerExt;
 
+// sNDSBanner version.
+typedef enum {
+	NDS_BANNER_VER_ORIGINAL	= 0x0001,
+	NDS_BANNER_VER_ZH	= 0x0002,
+	NDS_BANNER_VER_ZH_KO	= 0x0003,
+	NDS_BANNER_VER_DSi	= 0x0103,
+} sNDSBannerVersion;
+
+// sNDSBanner sizes.
+typedef enum {
+	NDS_BANNER_SIZE_ORIGINAL	= 0x0840,
+	NDS_BANNER_SIZE_ZH		= 0x0940,
+	NDS_BANNER_SIZE_ZH_KO		= 0x0A40,
+	NDS_BANNER_SIZE_DSi		= 0x23C0,
+} sNDSBannerSize;
+
+// Make sure the banner size is correct.
+static_assert(sizeof(sNDSBannerExt) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBannerExt) is not 0x23C0 bytes");
+
+// Language indexes.
+typedef enum {
+	// DS and 3DS
+	NDS_LANG_JAPANESE	= 0,
+	NDS_LANG_ENGLISH	= 1,
+	NDS_LANG_FRENCH		= 2,
+	NDS_LANG_GERMAN		= 3,
+	NDS_LANG_ITALIAN	= 4,
+	NDS_LANG_SPANISH	= 5,
+	NDS_LANG_CHINESE	= 6,
+	NDS_LANG_KOREAN		= 7,
+
+	// 3DS only
+	N3DS_LANG_CHINESE_SIMPLIFIED	= 6,
+	N3DS_LANG_DUTCH			= 8,
+	N3DS_LANG_PORTUGUESE		= 9,
+	N3DS_LANG_RUSSIAN		= 10,
+	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
+} sNDSLanguage;
 
 #endif // NDS_HEADER2
