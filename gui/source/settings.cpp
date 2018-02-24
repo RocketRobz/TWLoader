@@ -271,8 +271,8 @@ void settingsDrawTopScreen(void)
 				pp2d_draw_texture(disabledtex, offset3D[topfb].disabled+136, 124); // Draw disabled texture	
 			}
 		} else if (subscreenmode == SUBSCREEN_MODE_NTR) {
-			pp2d_draw_wtext(offset3D[topfb].disabled+72, 30, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
-			pp2d_draw_wtext(offset3D[topfb].disabled+72, 46, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
+			//pp2d_draw_wtext(offset3D[topfb].disabled+72, 30, 0.60, 0.60, BLUE, TR(STR_SETTINGS_XBUTTON_RELEASE));
+			//pp2d_draw_wtext(offset3D[topfb].disabled+72, 46, 0.60, 0.60, GREEN, TR(STR_SETTINGS_YBUTTON_UNOFFICIAL));
 			if (settings.twl.loadingscreen == 3) {
 				pp2d_draw_texture(tictactoeloadtex, offset3D[topfb].boxart+120, 72); // Draw Tic-Tac-Toe loading screen
 			} else if (settings.twl.loadingscreen == 2) {
@@ -737,7 +737,8 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_text(8, 198, 0.60, 0.60f, WHITE, "you're using.");
 		}
 		if (cursor_pos[1] == 3) {
-			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to update TWLoader.");
+			//pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "Press  to update TWLoader.");
+			pp2d_draw_text(8, 184, 0.60, 0.60f, WHITE, "This feature cannot be used at this time.");
 		}
 		if (cursor_pos[1] == 4) {
 			pp2d_draw_wtext(8, 184, 0.60, 0.60f, WHITE, TR(STR_SETTINGS_DESCRIPTION_DS_DSi_BOOT_SCREEN_1));
@@ -1487,7 +1488,7 @@ bool settingsMoveCursor(u32 hDown)
 			subscreenmode = SUBSCREEN_MODE_FRONTEND;
 			sfx = sfx_switch;
 		} else if (hDown & KEY_X) {
-			if (checkWifiStatus()) {
+			/*if (checkWifiStatus()) {
 				// Play the sound now instead of waiting.
 				if (dspfirmfound && sfx_select) {
 					sfx_select->stop();	// Prevent freezing
@@ -1497,9 +1498,9 @@ bool settingsMoveCursor(u32 hDown)
 			} else {
 				// Wi-Fi is not connected.
 				sfx = sfx_wrong;
-			}
+			}*/
 		} else if (hDown & KEY_Y) {
-			if (checkWifiStatus()) {
+			/*if (checkWifiStatus()) {
 				// Play the sound now instead of waiting.
 				if (dspfirmfound && sfx_select) {
 					sfx_select->stop();	// Prevent freezing
@@ -1509,7 +1510,7 @@ bool settingsMoveCursor(u32 hDown)
 			} else {
 				// Wi-Fi is not connected.
 				sfx = sfx_wrong;
-			}
+			}*/
 		} else if (hDown & KEY_B) {
 			titleboxXmovetimer = 1;
 			fadeout = true;
@@ -1627,7 +1628,7 @@ bool settingsMoveCursor(u32 hDown)
 					}
 					break;
 				case 3:
-					if (checkWifiStatus()) {
+					/*if (checkWifiStatus()) {
 						if (checkUpdate() == 0) {
 							// Play the sound now instead of waiting.
 							if (dspfirmfound && sfx_select) {
@@ -1636,7 +1637,10 @@ bool settingsMoveCursor(u32 hDown)
 							}
 							DownloadTWLoaderCIAs();
 						}
-					}
+					} else {*/
+						// Wi-Fi is not connected.
+						sfx = sfx_wrong;
+					//}
 					break;
 				case 4:	// Boot screen
 					if (hDown & KEY_A) {
@@ -1655,7 +1659,7 @@ bool settingsMoveCursor(u32 hDown)
 					settings.ui.healthsafety = !settings.ui.healthsafety;
 					break;
 			}
-			sfx = sfx_select;
+			if (cursor_pos[SUBSCREEN_MODE_FRONTEND2] != 3) sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 6) {
 			cursor_pos[1] += 2;
 			if (cursor_pos[1] > 5) cursor_pos[1] -= 2;
@@ -2061,6 +2065,8 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(settings.ui.fcromfolder);
 	settings.ui.gbromfolder = settingsini.GetString("FRONTEND", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(settings.ui.gbromfolder);
+	settings.ui.nesromfolder = settingsini.GetString("FRONTEND", "NESROM_FOLDER", "");
+	RemoveTrailingSlashes(settings.ui.nesromfolder);
 	settings.ui.pagenum = settingsini.GetInt("FRONTEND", "PAGE_NUMBER", 0);
 
 	// Customizable UI settings.
@@ -2096,7 +2102,7 @@ void LoadSettings(void) {
 	settings.twl.forwarder = settingsini.GetInt("TWL-MODE", "FORWARDER", 0);
 	settings.twl.flashcard = settingsini.GetInt("TWL-MODE", "FLASHCARD", 0);
 	settings.twl.bootstrapfile = settingsini.GetInt("TWL-MODE", "BOOTSTRAP_FILE", 0);
-	if (settings.twl.bootstrapfile > 1) {
+	if (settings.twl.bootstrapfile < 0 || settings.twl.bootstrapfile > 1) {
 		settings.twl.bootstrapfile = 0;
 	}
 
@@ -2129,6 +2135,7 @@ void SaveSettings(void) {
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "ROM_FOLDER", settings.ui.romfolder);
 	if (!gbarunnervalue) settingsini.SetString("FRONTEND", "FCROM_FOLDER", settings.ui.fcromfolder);
 	settingsini.SetString("FRONTEND", "GBROM_FOLDER", settings.ui.gbromfolder);
+	settingsini.SetString("FRONTEND", "NESROM_FOLDER", settings.ui.nesromfolder);
 	settingsini.SetInt("FRONTEND", "PAGE_NUMBER", settings.ui.pagenum);
 	settingsini.SetInt("FRONTEND", "QUICK_START", settings.ui.quickStart);
 	settingsini.SetInt("FRONTEND", "LANGUAGE", settings.ui.language);
@@ -2186,13 +2193,13 @@ void SaveSettings(void) {
 		// Save some settings to SRLoader as well.
 		CIniFile srldrsettingsini( srldrsettingsinipath );
 
-		srldrsettingsini.SetInt("SRLOADER", "IS_3DS", 1);	// In case if older version is used
+		srldrsettingsini.SetInt("SRLOADER", "IS_3DS", 1);
 		srldrsettingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", settings.twl.bootstrapfile);
 		srldrsettingsini.SetInt("SRLOADER", "ROM_TYPE", settings.twl.romtype);
-		if(settings.ui.theme <= THEME_3DSMENU) {
-			srldrsettingsini.SetInt("SRLOADER", "THEME", 0);
-		} else {
+		if(settings.ui.theme == THEME_3DSMENU) {
 			srldrsettingsini.SetInt("SRLOADER", "THEME", 1);
+		} else {
+			srldrsettingsini.SetInt("SRLOADER", "THEME", 0);
 		}
 		srldrsettingsini.SaveIniFile(srldrsettingsinipath);
 	}
