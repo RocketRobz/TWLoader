@@ -107,12 +107,12 @@ static void gamecardCacheTWL(void)
 	// Store the icon and banner text.
 	if(ndsBanner.version == NDS_BANNER_VER_DSi) {
 		for (int i = 0; i < 8; i++) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[8+i*8], grabIconDSi(&ndsBanner, i), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[7+i*8], grabIconDSi(&ndsBanner, i), 32, 256);
 		}
 		grabBannerSequence(&ndsBanner, gamesPerPage+1);
 		bnriconisDSi[gamesPerPage+1] = true;
 	} else {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[8], grabIcon(&ndsBanner), 32, 64);
+		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIcon(&ndsBanner), 32, 64);
 		bnriconisDSi[gamesPerPage+1] = false;
 	}
 	card_text = grabText(&ndsBanner, language);
@@ -371,7 +371,7 @@ std::uint64_t gamecardGetTitleID(void)
  */
 size_t gamecardGetIcon(void)
 {
-	return bnricontex[8+bnriconPalLine[gamesPerPage+1]*8];
+	return bnricontex[7+bnriconPalLine[gamesPerPage+1]*8];
 }
 
 /**

@@ -1079,7 +1079,7 @@ static void LoadBNRSeq(void) {
  */
 static void LoadBNRIcon_R4Theme(const char *filename) {
 	for (int i = 0; i < 8; i++) {
-		pp2d_free_texture(bnricontex[7+i*8]);
+		pp2d_free_texture(bnricontex[6+i*8]);
 	}
 	if (!filename) {
 		filename = "romfs:/notextbanner";
@@ -1096,12 +1096,12 @@ static void LoadBNRIcon_R4Theme(const char *filename) {
 	u16 bannerVersion = grabBannerVersion(f_bnr);
 	if(bannerVersion == NDS_BANNER_VER_DSi && fsize >= NDS_BANNER_SIZE_DSi) {
 		for (int i = 0; i < 8; i++) {
-			pp2d_load_texture_memory_RGBA5551(bnricontex[7+i*8], grabIconDSi(f_bnr, i), 32, 256);
+			pp2d_load_texture_memory_RGBA5551(bnricontex[6+i*8], grabIconDSi(f_bnr, i), 32, 256);
 		}
 		grabBannerSequence(f_bnr, gamesPerPage);
 		bnriconisDSi[gamesPerPage] = true;
 	} else {
-		pp2d_load_texture_memory_RGBA5551(bnricontex[7], grabIcon(f_bnr), 32, 64);
+		pp2d_load_texture_memory_RGBA5551(bnricontex[6], grabIcon(f_bnr), 32, 64);
 		bnriconisDSi[gamesPerPage] = false;
 	}
 	fclose(f_bnr);
@@ -4223,7 +4223,7 @@ int main(){
 					} else if (settings.twl.romtype == 1) {
 						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
-						pp2d_draw_texture_part_flip(bnricontex[7+bnriconPalLine[gamesPerPage]*8], 52, 36, 0, bnriconframenumY[gamesPerPage]*32, 32, 32, bannerFlip[gamesPerPage]);
+						pp2d_draw_texture_part_flip(bnricontex[6+bnriconPalLine[gamesPerPage]*8], 52, 36, 0, bnriconframenumY[gamesPerPage]*32, 32, 32, bannerFlip[gamesPerPage]);
 					}
 					
 					if (!bannertextloaded) {
