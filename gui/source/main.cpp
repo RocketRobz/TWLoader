@@ -2244,6 +2244,7 @@ static void drawMenuDialogBox(void)
 			{ 23,  31, "Nintendo DS/DSi", NULL},
 			{161,  31, "GameBoy Advance", TR(STR_START_START_GBARUNNER2)},
 			{ 23,  71, "GameBoy/SGB/GBC", NULL},
+			{161,  71, "NES", NULL},
 		};
 
 		for (int i = (int)(sizeof(buttons)/sizeof(buttons[0])) - 1; i >= 0; i--) {
@@ -4713,7 +4714,7 @@ int main(){
 										}
 									} else if (settings.twl.romtype == 2) {
 										if (nesfiles.size() != 0) {
-											romsel_filename = gbfiles.at(storedcursorPosition).c_str();
+											romsel_filename = nesfiles.at(storedcursorPosition).c_str();
 											romsel_filename_w = utf8_to_wstring(romsel_filename);
 										} else {
 											romsel_filename = " ";
@@ -6553,7 +6554,7 @@ int main(){
 					} else if (menudboxmode == DBOX_MODE_ROMTYPE) {
 						if (hDown & KEY_RIGHT) {
 							if (setromtype_cursorPosition % 2 != 1 &&
-							    setromtype_cursorPosition != 2)
+							    setromtype_cursorPosition != 3)
 							{
 								// Move right.
 								setromtype_cursorPosition++;
@@ -6564,7 +6565,7 @@ int main(){
 								setromtype_cursorPosition--;
 							}
 						} else if (hDown & KEY_DOWN) {
-							if (setromtype_cursorPosition < 1) {
+							if (setromtype_cursorPosition < 2) {
 								setromtype_cursorPosition += 2;
 							}
 	
