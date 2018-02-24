@@ -50,7 +50,7 @@ script:
   - cd ..
   - echo "Compiling TWLoader GUI (cia)"
   - cd gui
-  - make -j8 COMPILE_3DSX=0
+  - make -j8 COMPILE_3DSX=0 IS_NIGHTLY=1
   - cd ..
   - echo "Creating release ZIP"
   - mkdir "Nightly"
