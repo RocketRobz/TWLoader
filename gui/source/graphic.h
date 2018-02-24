@@ -80,6 +80,7 @@ extern size_t settingstex;
 extern size_t settingslogooadertex;
 extern size_t new_tex;
 extern size_t gbctex;
+extern size_t nestex;
 extern size_t anniversarytex;
 extern size_t _3dsbotbotbartex;
 extern size_t _3dsbotbotbarbuttex;

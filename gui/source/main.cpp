@@ -218,6 +218,7 @@ static const char fcbnriconfolder[] = "sdmc:/_nds/twloader/bnricons/flashcard";
 static const char boxartfolder[] = "sdmc:/_nds/twloader/boxart";
 static const char fcboxartfolder[] = "sdmc:/_nds/twloader/boxart/flashcard";
 static const char gbboxartfolder[] = "sdmc:/_nds/twloader/boxart/gb";
+static const char nesboxartfolder[] = "sdmc:/_nds/twloader/boxart/nes";
 static const char slot1boxartfolder[] = "sdmc:/_nds/twloader/boxart/slot1";
 // End
 	
@@ -944,6 +945,7 @@ static void ChangeBNRIconNo(void) {
 		bnricontexnum = bnricontex[(idx % 6)+bnriconPalLine[idx]*8];
 	}
 	if (settings.twl.romtype == 1) bnricontexnum = gbctex;
+	else if (settings.twl.romtype == 2) bnricontexnum = nestex;
 }
 
 static void ChangeBoxArtNo(void) {
@@ -1252,10 +1254,13 @@ static void SavePerGameSettings(void)
 		if (settings.twl.romtype == 0) {
 			inifilename = ReplaceAll(rom, ".nds", ".ini");
 			inifilename = ReplaceAll(rom, ".cia", ".ini");
-		} else {
+		} else if (settings.twl.romtype == 1) {
 			inifilename = ReplaceAll(rom, ".gb", ".ini");
 			inifilename = ReplaceAll(rom, ".gbc", ".ini");
 			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		} else if (settings.twl.romtype == 2) {
+			inifilename = ReplaceAll(rom, ".nes", ".ini");
+			inifilename = ReplaceAll(rom, ".fds", ".ini");
 		}
 	} else {
 		char path[256];
@@ -1284,10 +1289,13 @@ static void SetPerGameSettings(void)
 		if (settings.twl.romtype == 0) {
 			inifilename = ReplaceAll(rom, ".nds", ".ini");
 			inifilename = ReplaceAll(rom, ".cia", ".ini");
-		} else {
+		} else if (settings.twl.romtype == 1) {
 			inifilename = ReplaceAll(rom, ".gb", ".ini");
 			inifilename = ReplaceAll(rom, ".gbc", ".ini");
 			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		} else if (settings.twl.romtype == 2) {
+			inifilename = ReplaceAll(rom, ".nes", ".ini");
+			inifilename = ReplaceAll(rom, ".fds", ".ini");
 		}
 		char path[256];
 		snprintf(path, sizeof(path), "%s/%s", "sd:/_nds/twloader/gamesettings", inifilename.c_str());
@@ -1613,6 +1621,7 @@ static int scan_dir_for_files3(const char *path, const char *ext, const char *ex
 vector<string> files;
 vector<string> fcfiles;
 vector<string> gbfiles;
+vector<string> nesfiles;
 
 // Vector with found roms
 vector<string> matching_files;
@@ -1744,6 +1753,17 @@ static void scanRomDirectories(void)
 
 	// Scan the GB ROMs directory for ".gb", ".gbc", and ".sgb" files.
 	scan_dir_for_files3(path, ".gb", ".gbc", ".sgb", gbfiles);
+
+	// Use default directory if none is specified
+	if (settings.ui.nesromfolder.empty()) {
+		settings.ui.nesromfolder = "roms/nes";
+	}
+	snprintf(path, sizeof(path), "sdmc:/%s", settings.ui.nesromfolder.c_str());
+	// Make sure the directory exists.
+	rmkdir(path, 0777);
+
+	// Scan the NES ROMs directory for ".nes" and ".fds" files.
+	scan_dir_for_files2(path, ".nes", ".fds", nesfiles);
 }
 
 // Cursor position.
@@ -1868,6 +1888,28 @@ static void drawMenuDialogBox(void)
 		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
 		
 		if (settings.ui.cursorPosition >= 0) {
+			if (settings.twl.romtype == 1) {
+				romsel_gameline.clear();
+				romsel_gameline.push_back(latin1_to_wstring(""));
+				std::string std_romsel_filename = romsel_filename;
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb") {
+					romsel_gameline.push_back(latin1_to_wstring("GameBoy ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+					romsel_gameline.push_back(latin1_to_wstring("GameBoy Color ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb") {
+					romsel_gameline.push_back(latin1_to_wstring("Super GameBoy ROM"));
+				}
+			} else if (settings.twl.romtype == 2) {
+				romsel_gameline.clear();
+				romsel_gameline.push_back(latin1_to_wstring(""));
+				std::string std_romsel_filename = romsel_filename;
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes") {
+					romsel_gameline.push_back(latin1_to_wstring("Nintendo Entertainment System ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds") {
+					romsel_gameline.push_back(latin1_to_wstring("Famicom Disk System ROM"));
+				}
+			}
+
 			int y = 16, dy = 19;
 			// Print the banner text, center-aligned.
 			const size_t banner_lines = std::min(3U, romsel_gameline.size());
@@ -1929,6 +1971,15 @@ static void drawMenuDialogBox(void)
 				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb") {
 					romsel_gameline.push_back(latin1_to_wstring("Super GameBoy ROM"));
 				}
+			} else if (settings.twl.romtype == 2) {
+				romsel_gameline.clear();
+				romsel_gameline.push_back(latin1_to_wstring(""));
+				std::string std_romsel_filename = romsel_filename;
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes") {
+					romsel_gameline.push_back(latin1_to_wstring("Nintendo Entertainment System ROM"));
+				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds") {
+					romsel_gameline.push_back(latin1_to_wstring("Famicom Disk System ROM"));
+				}
 			}
 
 			int y = 16, dy = 19;
@@ -1942,10 +1993,12 @@ static void drawMenuDialogBox(void)
 		}
 
 		size_t file_count = 0;
-		if (settings.twl.romtype == 1) {
-			file_count = (gbfiles.size());
-		} else {
+		if (settings.twl.romtype == 0) {
 			file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+		} else if (settings.twl.romtype == 1) {
+			file_count = (gbfiles.size());
+		} else if (settings.twl.romtype == 2) {
+			file_count = (nesfiles.size());
 		}
 
 		char romsel_counter1[16];
@@ -2591,7 +2644,7 @@ void menuLoadBoxArt() {
 					}
 				}
 			}
-		} else {
+		} else if (settings.twl.romtype == 1) {
 			char path[256];
 			if(matching_files.size() == 0){
 				if (loadboxartnum < pagemax_ba) {
@@ -2618,6 +2671,43 @@ void menuLoadBoxArt() {
 
 						// example: SuperMarioLand.gb.png
 						snprintf(path, sizeof(path), "%s/%s.png", gbboxartfolder, tempfile);
+						if (access(path, F_OK ) != -1 ) {
+							StoreBoxArtPath(path);
+						} else {
+							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+						}
+					} else {
+						StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+					}
+				}
+			}
+		} else if (settings.twl.romtype == 2) {
+			char path[256];
+			if(matching_files.size() == 0){
+				if (loadboxartnum < pagemax_ba) {
+					if (loadboxartnum < (int)nesfiles.size()) {
+						const char *tempfile = nesfiles.at(loadboxartnum).c_str();
+						snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.nesromfolder.c_str(), tempfile);
+
+						// example: SuperMarioBros.nes.png
+						snprintf(path, sizeof(path), "%s/%s.png", nesboxartfolder, tempfile);
+						if (access(path, F_OK ) != -1 ) {
+							StoreBoxArtPath(path);
+						} else {
+							StoreBoxArtPath("romfs:/graphics/boxart_unknown.png");
+						}
+					} else {
+						StoreBoxArtPath("romfs:/graphics/blank_128x115.png");
+					}
+				}
+			}else{
+				if (loadboxartnum < pagemax_ba) {
+					if (loadboxartnum < (int)matching_files.size()) {
+						const char *tempfile = matching_files.at(loadboxartnum).c_str();
+						snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.nesromfolder.c_str(), tempfile);
+
+						// example: SuperMarioBros.nes.png
+						snprintf(path, sizeof(path), "%s/%s.png", nesboxartfolder, tempfile);
 						if (access(path, F_OK ) != -1 ) {
 							StoreBoxArtPath(path);
 						} else {
@@ -2893,6 +2983,7 @@ int main(){
 	pp2d_load_texture_png(_3dsbotbotbarbuttex, "romfs:/graphics/3ds/bot_botbarbut.png");
 	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
 	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
+	pp2d_load_texture_png(nestex, "romfs:/graphics/icon_nes.png"); // NES icon (from SRLoader)
 
 	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
 
@@ -2988,6 +3079,10 @@ int main(){
 	char romsel_counter2gb[16];	// Number of GB ROMs on the SD card.
 	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
+	
+	char romsel_counter2nes[16];	// Number of NES ROMs on the SD card.
+	snprintf(romsel_counter2nes, sizeof(romsel_counter2nes), "%zu", nesfiles.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of NES ROMs on the SD card detected", romsel_counter2nes);
 	
 	botscreenon();
 
@@ -3208,12 +3303,15 @@ int main(){
 		size_t file_count = 0;
 		if (settings.twl.romtype == 0) {
 			file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-		} else {
+		} else if (settings.twl.romtype == 1) {
 			file_count = (gbfiles.size());
+		} else if (settings.twl.romtype == 2) {
+			file_count = (nesfiles.size());
 		}
 		size_t sdfile_count = (files.size());
 		size_t fcfile_count = (fcfiles.size());
 		size_t gbfile_count = (gbfiles.size());
+		size_t nesfile_count = (nesfiles.size());
 
 		if(matching_files.size() != 0) {
 			file_count = matching_files.size();
@@ -3525,8 +3623,10 @@ int main(){
 						filenameYpos = 15;
 						if (settings.twl.romtype == 0) {
 							file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-						} else {
+						} else if (settings.twl.romtype == 1) {
 							file_count = (gbfiles.size());
+						} else if (settings.twl.romtype == 2) {
+							file_count = (nesfiles.size());
 						}
 						for (filenum = filenameYmovepos; filenum < (int)file_count; filenum++) {
 							if (filenum < 15+filenameYmovepos) {
@@ -3543,8 +3643,10 @@ int main(){
 									filename = (settings.twl.forwarder
 											? fcfiles.at(filenum).c_str()
 											: files.at(filenum).c_str());
-								} else {
+								} else if (settings.twl.romtype == 1) {
 									filename = (gbfiles.at(filenum).c_str());
+								} else if (settings.twl.romtype == 2) {
+									filename = (nesfiles.at(filenum).c_str());
 								}
 								wstring wstr = utf8_to_wstring(filename);
 								pp2d_draw_wtext(42, filenameYpos, 0.50, 0.50, color, wstr.c_str());
@@ -3981,6 +4083,14 @@ int main(){
 					} else
 						pp2d_draw_texture_part(gbctex, 8, Ypos, 0, 0, 32, 32);
 					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "GameBoy/Super GB/GB Color");
+					Ypos += 39;
+					filenameYpos += 39;
+					if (setromtype_cursorPosition == 3) {
+						pp2d_draw_rectangle(0, Ypos-4, 320, 40, SET_ALPHA(color_data->color, 127));
+						pp2d_draw_texture_part_scale(nestex, 8-wood_ndsiconscalemovepos, -wood_ndsiconscalemovepos+Ypos, 0, 0, 32, 32, 1.00+wood_ndsiconscalesize, 1.00+wood_ndsiconscalesize);
+					} else
+						pp2d_draw_texture_part(nestex, 8, Ypos, 0, 0, 32, 32);
+					pp2d_draw_text(46, filenameYpos, 0.45f, 0.45f, WHITE, "Nintendo Entertainment System");
 					pp2d_draw_text(2, 2, 0.50, 0.50, WHITE, "Select ROM type");
 				} else {
 					int Ypos = 26;
@@ -3998,8 +4108,10 @@ int main(){
 								filename = (settings.twl.forwarder
 										? fcfiles.at(filenum).c_str()
 										: files.at(filenum).c_str());
-							} else {
+							} else if (settings.twl.romtype == 1) {
 								filename = (gbfiles.at(filenum).c_str());
+							} else if (settings.twl.romtype == 2) {
+								filename = (nesfiles.at(filenum).c_str());
 							}
 							wstring wstr = utf8_to_wstring(filename);
 							pp2d_draw_wtext(46, Ypos+10, 0.45f, 0.45f, WHITE, wstr.c_str());
@@ -4021,8 +4133,10 @@ int main(){
 					size_t file_count = 0;
 					if (settings.twl.romtype == 0) {
 						file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
-					} else {
+					} else if (settings.twl.romtype == 1) {
 						file_count = (gbfiles.size());
+					} else if (settings.twl.romtype == 2) {
+						file_count = (nesfiles.size());
 					}
 
 					char romsel_counter1[16];
@@ -4103,7 +4217,9 @@ int main(){
 					}
 					pp2d_draw_rectangle(80, 31, 192, 42, RGBA8(255, 255, 255, 255));
 					pp2d_draw_texture(dboxtex_iconbox, 47, 31);
-					if (settings.twl.romtype == 1) {
+					if (settings.twl.romtype == 2) {
+						pp2d_draw_texture_part(nestex, 52, 36, 0, 0, 32, 32);
+					} else if (settings.twl.romtype == 1) {
 						pp2d_draw_texture_part(gbctex, 52, 36, 0, 0, 32, 32);
 					} else {
 						pp2d_draw_texture_part_flip(bnricontex[7+bnriconPalLine[gamesPerPage]*8], 52, 36, 0, bnriconframenumY[gamesPerPage]*32, 32, 32, bannerFlip[gamesPerPage]);
@@ -4147,7 +4263,7 @@ int main(){
 								romsel_gameline.push_back(latin1_to_wstring("ERROR:"));
 								romsel_gameline.push_back(latin1_to_wstring("Unable to open the cached banner."));
 							}
-						} else {
+						} else if (settings.twl.romtype == 1) {
 							romsel_filename = gbfiles.at(settings.ui.cursorPosition).c_str();
 
 							romsel_gameline.clear();
@@ -4159,6 +4275,17 @@ int main(){
 								romsel_gameline.push_back(latin1_to_wstring("GameBoy Color ROM"));
 							} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb") {
 								romsel_gameline.push_back(latin1_to_wstring("Super GameBoy ROM"));
+							}
+						} else if (settings.twl.romtype == 2) {
+							romsel_filename = nesfiles.at(settings.ui.cursorPosition).c_str();
+
+							romsel_gameline.clear();
+							romsel_gameline.push_back(latin1_to_wstring(""));
+							std::string std_romsel_filename = romsel_filename;
+							if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes") {
+								romsel_gameline.push_back(latin1_to_wstring("Nintendo Entertainment System ROM"));
+							} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds") {
+								romsel_gameline.push_back(latin1_to_wstring("Famicom Disk System ROM"));
 							}
 						}
 						bannertextloaded = true;
@@ -4576,12 +4703,22 @@ int main(){
 								}
 							} else {
 								if(matching_files.size() == 0){
-									if (gbfiles.size() != 0) {
-										romsel_filename = gbfiles.at(storedcursorPosition).c_str();
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
-									} else {
-										romsel_filename = " ";
-										romsel_filename_w = utf8_to_wstring(romsel_filename);
+									if (settings.twl.romtype == 1) {
+										if (gbfiles.size() != 0) {
+											romsel_filename = gbfiles.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
+									} else if (settings.twl.romtype == 2) {
+										if (nesfiles.size() != 0) {
+											romsel_filename = gbfiles.at(storedcursorPosition).c_str();
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										} else {
+											romsel_filename = " ";
+											romsel_filename_w = utf8_to_wstring(romsel_filename);
+										}
 									}
 									snprintf(path, sizeof(path), "%s/%s.bin", bnriconfolder, romsel_filename);
 								}else {
@@ -4597,7 +4734,7 @@ int main(){
 					if (drawBannerText) {
 						int y, dy;
 						//top dialog = 100px tall
-						if (settings.twl.romtype == 1) {
+						if (settings.twl.romtype != 0) {
 							if (settings.ui.theme != THEME_3DSMENU) {
 								pp2d_draw_wtext(10, 40, 0.75, 0.75, BLACK, romsel_filename_w.c_str());
 							} else {
@@ -4642,14 +4779,16 @@ int main(){
 							char romsel_counter1[16];
 							snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);
 							const char *p_romsel_counter;
-							if (settings.twl.romtype == 1) {
-								p_romsel_counter = romsel_counter2gb;
-							} else {
+							if (settings.twl.romtype == 0) {
 								if (settings.twl.forwarder) {
 									p_romsel_counter = romsel_counter2fc;
 								} else {
 									p_romsel_counter = romsel_counter2sd;
 								}
+							} else if (settings.twl.romtype == 1) {
+								p_romsel_counter = romsel_counter2gb;
+							} else if (settings.twl.romtype == 2) {
+								p_romsel_counter = romsel_counter2nes;
 							}
 							if (settings.ui.theme != THEME_3DSMENU) {
 								if (file_count < 100) {
@@ -4914,7 +5053,7 @@ int main(){
 					boxartpage--;
 					boxartnum = settings.ui.cursorPosition-1;
 					LoadBoxArt();
-					LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
+					if (settings.twl.romtype == 0) LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
 				}
 				if ( settings.ui.cursorPosition == 6+settings.ui.pagenum*gamesPerPage ||
 				settings.ui.cursorPosition == 12+settings.ui.pagenum*gamesPerPage ||
@@ -5001,7 +5140,7 @@ int main(){
 						boxartnum = settings.ui.cursorPosition+2;
 						LoadBoxArt();
 					}
-					LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
+					if (settings.twl.romtype == 0) LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
 				}
 				if ( settings.ui.cursorPosition == 7+settings.ui.pagenum*gamesPerPage ||
 				settings.ui.cursorPosition == 13+settings.ui.pagenum*gamesPerPage ||
@@ -5098,7 +5237,7 @@ int main(){
 						switch (woodmenu_cursorPosition) {
 							case 0:
 							default:
-								if (sdfile_count != 0 || gbfile_count != 0) {
+								if (sdfile_count != 0 || gbfile_count != 0 || nesfile_count != 0) {
 									menu_ctrlset = CTRL_SET_GAMESEL;
 									if (settings.twl.forwarder) {
 										settings.twl.forwarder = false;
@@ -5159,6 +5298,7 @@ int main(){
 								menu_ctrlset = CTRL_SET_ROMTYPE;
 								setromtype_cursorPosition = settings.twl.romtype;
 								if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
+								else if(settings.twl.romtype == 2) setromtype_cursorPosition = 3;
 								break;
 							case 4:
 								pp2d_set_3D(1);
@@ -5254,12 +5394,36 @@ int main(){
 									bannertextloaded = false;
 								}
 								break;
+							case 3:
+								if (nesfile_count != 0) {
+									settings.twl.romtype = 2;
+									menu_ctrlset = CTRL_SET_MENU;
+									settings.twl.forwarder = false;
+									settings.ui.cursorPosition = 0;
+									settings.ui.pagenum = 0;
+									boxarttexloaded = false; // Reload boxarts
+									bnricontexloaded = false; // Reload banner icons
+									colortexloaded = false; // Reload top textures
+									colortexloaded_bot = false; // Reload bottom textures
+									boxartpage = 0;
+									loadboxartnum = 0+settings.ui.pagenum*gamesPerPage;
+									loadbnriconnum = 0+settings.ui.pagenum*gamesPerPage;
+									for (int i = 0; i < gamesPerPage; i++) {
+										// Reset banner icon frames
+										bnriconPalLine[i] = 0;
+										bnriconframenumY[i] = 0;
+										bannerFlip[i] = NONE;
+										clearBannerSequence(i);
+									}
+									bannertextloaded = false;
+								}
+								break;
 						}
 						wood_ndsiconscaletimer = 0;
 					} else if(hDown & KEY_DOWN){
 						setromtype_cursorPosition++;
-						if (setromtype_cursorPosition > 2) {
-							setromtype_cursorPosition = 2;
+						if (setromtype_cursorPosition > 3) {
+							setromtype_cursorPosition = 3;
 						}
 						wood_ndsiconscaletimer = 0;
 					} else if(hDown & KEY_UP){
@@ -5327,8 +5491,10 @@ int main(){
 											}
 										}
 									}
-								} else {
+								} else if (settings.twl.romtype == 1) {
 									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
+								} else if (settings.twl.romtype == 2) {
+									homebrew_arg = nesfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
 								if(!overlaysIncluded && donorFound) {
@@ -5387,12 +5553,12 @@ int main(){
 						if (settings.ui.cursorPosition >= pagemax) {
 							settings.ui.cursorPosition = 0+settings.ui.pagenum*gamesPerPage;
 							for (int i = 0; i < 6; i++) {
-								LoadBNRIcon_Menu(i);
+								if (settings.twl.romtype == 0) LoadBNRIcon_Menu(i);
 							}
 						} else if ( settings.ui.cursorPosition >= 3+settings.ui.pagenum*gamesPerPage
 								&& settings.ui.cursorPosition <= 36+settings.ui.pagenum*gamesPerPage )
 						{
-							LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
+							if (settings.twl.romtype == 0) LoadBNRIcon_Menu((settings.ui.cursorPosition+3)-settings.ui.pagenum*gamesPerPage);
 						}
 						wood_downpressed = true;
 						wood_ndsiconscaletimer = 0;
@@ -5402,12 +5568,12 @@ int main(){
 						if (settings.ui.cursorPosition < 0+settings.ui.pagenum*gamesPerPage) {
 							settings.ui.cursorPosition = pagemax-1;
 							for (int i = settings.ui.cursorPosition; i < settings.ui.cursorPosition+6; i++) {
-								LoadBNRIcon_Menu((i-5)-settings.ui.pagenum*gamesPerPage);
+								if (settings.twl.romtype == 0) LoadBNRIcon_Menu((i-5)-settings.ui.pagenum*gamesPerPage);
 							}
 						} else if ( settings.ui.cursorPosition >= 2+settings.ui.pagenum*gamesPerPage
 								&& settings.ui.cursorPosition <= 35+settings.ui.pagenum*gamesPerPage )
 						{
-							LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
+							if (settings.twl.romtype == 0) LoadBNRIcon_Menu((settings.ui.cursorPosition-2)-settings.ui.pagenum*gamesPerPage);
 						}
 						wood_uppressed = true;
 						wood_ndsiconscaletimer = 0;
@@ -5547,8 +5713,10 @@ int main(){
 											}
 										}
 									}
-								} else {
+								} else if (settings.twl.romtype == 1) {
 									homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
+								} else if (settings.twl.romtype == 2) {
+									homebrew_arg = nesfiles.at(settings.ui.cursorPosition).c_str();
 								}
 
 								if(!overlaysIncluded && donorFound) {
@@ -5662,9 +5830,15 @@ int main(){
 								} else {
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
-							} else {
+							} else if (settings.twl.romtype == 1) {
 								if(matching_files.size() == 0){
 									rom = gbfiles.at(settings.ui.cursorPosition).c_str();
+								} else {
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
+							} else if (settings.twl.romtype == 2) {
+								if(matching_files.size() == 0){
+									rom = nesfiles.at(settings.ui.cursorPosition).c_str();
 								} else {
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
@@ -5825,9 +5999,15 @@ int main(){
 										} else {
 											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
-									} else {
+									} else if (settings.twl.romtype == 1) {
 										if(matching_files.size() == 0){
 											rom = gbfiles.at(settings.ui.cursorPosition).c_str();
+										} else {
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
+									} else if (settings.twl.romtype == 2) {
+										if(matching_files.size() == 0){
+											rom = nesfiles.at(settings.ui.cursorPosition).c_str();
 										} else {
 											rom = matching_files.at(settings.ui.cursorPosition).c_str();
 										}
@@ -6009,9 +6189,15 @@ int main(){
 													rom = matching_files.at(settings.ui.cursorPosition).c_str();
 												}
 												sav = ReplaceAll(rom, ".nds", ".sav");
-											} else {
+											} else if (settings.twl.romtype == 1) {
 												if(matching_files.size() == 0){
 													homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
+												} else {
+													homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
+												}
+											} else if (settings.twl.romtype == 2) {
+												if(matching_files.size() == 0){
+													homebrew_arg = nesfiles.at(settings.ui.cursorPosition).c_str();
 												} else {
 													homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
 												}
@@ -6170,6 +6356,7 @@ int main(){
 								menudboxmode = DBOX_MODE_ROMTYPE;
 								setromtype_cursorPosition = settings.twl.romtype;
 								if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
+								if(settings.twl.romtype == 2) setromtype_cursorPosition = 3;
 							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Top border button
 								startmenu_cursorPosition = 3;
 								settings.ui.topborder = !settings.ui.topborder;
@@ -6286,6 +6473,7 @@ int main(){
 									menudboxmode = DBOX_MODE_ROMTYPE;
 									setromtype_cursorPosition = settings.twl.romtype;
 									if(settings.twl.romtype == 1) setromtype_cursorPosition = 2;
+									if(settings.twl.romtype == 2) setromtype_cursorPosition = 3;
 									break;
 								case 3:
 									settings.ui.topborder = !settings.ui.topborder;
@@ -6385,14 +6573,14 @@ int main(){
 								setromtype_cursorPosition -= 2;
 							}
 						} else if(hDown & KEY_TOUCH){
-							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)) { // Game location button
+							if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)) { // Nintendo DSi/DSi button
 								setromtype_cursorPosition = 0;
 								settings.twl.romtype = 0;
 								menudboxaction_changeromtype = true;
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)){ // Box art button
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 31) && touch.py <= (menudbox_Ypos + 65)){ // GameBoy Advance button
 								setromtype_cursorPosition = 1;
 								if (!isDemo) {
 									gbarunnervalue = 1;
@@ -6418,9 +6606,16 @@ int main(){
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
-							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // Start GBARunner2 button
+							}else if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // GameBoy/Color button
 								setromtype_cursorPosition = 2;
 								settings.twl.romtype = 1;
+								menudboxaction_changeromtype = true;
+								showdialogbox_menu = false;
+								menudbox_movespeed = 1;
+								menu_ctrlset = CTRL_SET_GAMESEL;
+							}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 71) && touch.py <= (menudbox_Ypos + 105)){ // NES button
+								setromtype_cursorPosition = 3;
+								settings.twl.romtype = 2;
 								menudboxaction_changeromtype = true;
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
@@ -6462,6 +6657,10 @@ int main(){
 									settings.twl.romtype = 1;
 									menudboxaction_changeromtype = true;
 									break;
+								case 3:
+									settings.twl.romtype = 2;
+									menudboxaction_changeromtype = true;
+									break;
 							}
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
@@ -6480,15 +6679,21 @@ int main(){
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
+							} else if (settings.twl.romtype == 0) {
+								if(matching_files.size() == 0){
+									rom = files.at(settings.ui.cursorPosition).c_str();
+								}else{
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
 							} else if (settings.twl.romtype == 1) {
 								if(matching_files.size() == 0){
 									rom = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
-							} else if (settings.twl.romtype == 0) {
+							} else if (settings.twl.romtype == 2) {
 								if(matching_files.size() == 0){
-									rom = files.at(settings.ui.cursorPosition).c_str();
+									rom = nesfiles.at(settings.ui.cursorPosition).c_str();
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
@@ -6669,15 +6874,21 @@ int main(){
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
+							} else if (settings.twl.romtype == 0) {
+								if(matching_files.size() == 0){
+									rom = files.at(settings.ui.cursorPosition).c_str();
+								}else{
+									rom = matching_files.at(settings.ui.cursorPosition).c_str();
+								}
 							} else if (settings.twl.romtype == 1) {
 								if(matching_files.size() == 0){
 									rom = gbfiles.at(settings.ui.cursorPosition).c_str();
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
-							} else if (settings.twl.romtype == 0) {
+							} else if (settings.twl.romtype == 2) {
 								if(matching_files.size() == 0){
-									rom = files.at(settings.ui.cursorPosition).c_str();
+									rom = nesfiles.at(settings.ui.cursorPosition).c_str();
 								}else{
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
@@ -6989,7 +7200,7 @@ int main(){
 
 			// Prepare for the app launch.
 			u64 tid;
-			if (settings.twl.romtype == 1 && isTWLNAND1Installed) {
+			if (settings.twl.romtype > 0 && isTWLNAND1Installed) {
 				tid = TWLNANDTWLTOUCH_TID;
 			} else {
 				tid = TWLNAND_TID;
