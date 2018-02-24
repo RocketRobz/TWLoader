@@ -2,7 +2,6 @@ language: cpp
 os: linux
 dist: trusty
 sudo: required
-group: deprecated-2017Q3
 
 python:
     - "2.7"
@@ -78,8 +77,8 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-7.1.0
-    - g++-7.1.0
+    - gcc-6
+    - g++-6
     - libstdc++6
     - lftp
 env:
