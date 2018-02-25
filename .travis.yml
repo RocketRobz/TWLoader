@@ -8,7 +8,7 @@ python:
     - "3.6"
 before_install:
   - pyenv global system 3.6
-  - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
+  - wget https://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl/download
   - export DEVKITPRO=/home/travis/devkitPro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
 
