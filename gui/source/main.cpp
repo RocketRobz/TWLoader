@@ -3097,7 +3097,7 @@ int main(){
 	"If the issue persists, reboot, then do the same,\n"
 	"and also hold  to turn on quick start.";
 
-	/*if(!(hHeld & KEY_Y)) {
+	if(!(hHeld & KEY_Y)) {
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
 		pp2d_end_draw();
@@ -3106,7 +3106,7 @@ int main(){
 		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 			// Nothing
 		}
-	}*/
+	}
 
 	if(!settings.ui.quickStart) {
 		wifiStuckMsg =
@@ -3155,7 +3155,7 @@ int main(){
 			fclose(f_nds_file);
 		}
 	
-		/*pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
 		pp2d_end_draw();
 
@@ -3175,7 +3175,7 @@ int main(){
 					UpdateBootstrapUnofficial();
 					break;
 			}
-		}*/
+		}
 	}
 
 	botscreenoff();
