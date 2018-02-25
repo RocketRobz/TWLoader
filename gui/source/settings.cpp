@@ -1658,7 +1658,7 @@ bool settingsMoveCursor(u32 hDown)
 					settings.ui.healthsafety = !settings.ui.healthsafety;
 					break;
 			}
-			sfx = sfx_select;
+			if (cursor_pos[SUBSCREEN_MODE_FRONTEND2] != 3) sfx = sfx_select;
 		} else if ((hDown & KEY_DOWN) && cursor_pos[1] < 6) {
 			cursor_pos[1] += 2;
 			if (cursor_pos[1] > 5) cursor_pos[1] -= 2;
