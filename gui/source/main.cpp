@@ -1212,10 +1212,13 @@ static void LoadPerGameSettings(void)
 		if (settings.twl.romtype == 0) {
 			inifilename = ReplaceAll(rom, ".nds", ".ini");
 			inifilename = ReplaceAll(rom, ".cia", ".ini");
-		} else {
+		} else if (settings.twl.romtype == 1) {
 			inifilename = ReplaceAll(rom, ".gb", ".ini");
 			inifilename = ReplaceAll(rom, ".gbc", ".ini");
 			inifilename = ReplaceAll(rom, ".sgb", ".ini");
+		} else if (settings.twl.romtype == 2) {
+			inifilename = ReplaceAll(rom, ".nes", ".ini");
+			inifilename = ReplaceAll(rom, ".fds", ".ini");
 		}
 	} else {
 		char path[256];
@@ -7280,9 +7283,15 @@ int main(){
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							}
-						} else {
+						} else if (settings.twl.romtype == 1) {
 							if(matching_files.size() == 0){
 								rom = gbfiles.at(settings.ui.cursorPosition).c_str();
+							} else {
+								rom = matching_files.at(settings.ui.cursorPosition).c_str();
+							}
+						} else if (settings.twl.romtype == 2) {
+							if(matching_files.size() == 0){
+								rom = nesfiles.at(settings.ui.cursorPosition).c_str();
 							} else {
 								rom = matching_files.at(settings.ui.cursorPosition).c_str();
 							}
