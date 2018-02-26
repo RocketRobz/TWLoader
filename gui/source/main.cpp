@@ -3416,13 +3416,11 @@ int main(){
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									} else {
 										StoreBnrIconPath(NULL);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									}
+									LoadBNRIcon();
+									LoadBNRSeq();
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
@@ -3436,13 +3434,11 @@ int main(){
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									} else {
 										StoreBnrIconPath(NULL);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									}
+									LoadBNRIcon();
+									LoadBNRSeq();
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
@@ -3459,13 +3455,11 @@ int main(){
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									} else {
 										StoreBnrIconPath(NULL);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									}
+									LoadBNRIcon();
+									LoadBNRSeq();
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
@@ -3479,13 +3473,11 @@ int main(){
 									snprintf(path, sizeof(path), "%s/%s.bin", fcbnriconfolder, tempfile);
 									if (access(path, F_OK) != -1) {
 										StoreBnrIconPath(path);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									} else {
 										StoreBnrIconPath(NULL);
-										LoadBNRIcon();
-										LoadBNRSeq();
 									}
+									LoadBNRIcon();
+									LoadBNRSeq();
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
