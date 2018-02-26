@@ -3414,9 +3414,15 @@ int main(){
 								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)files.size()) {
 									const char *tempfile = files.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-									StoreBnrIconPath(path);
-									LoadBNRIcon();
-									LoadBNRSeq();
+									if (access(path, F_OK) != -1) {
+										StoreBnrIconPath(path);
+										LoadBNRIcon();
+										LoadBNRSeq();
+									} else {
+										StoreBnrIconPath(NULL);
+										LoadBNRIcon();
+										LoadBNRSeq();
+									}
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
@@ -3428,9 +3434,15 @@ int main(){
 								if (loadbnriconnum+settings.ui.pagenum*gamesPerPage < (int)matching_files.size()) {
 									const char *tempfile = matching_files.at(loadbnriconnum+settings.ui.pagenum*gamesPerPage).c_str();
 									snprintf(path, sizeof(path), "sdmc:/_nds/twloader/bnricons/%s.bin", tempfile);
-									StoreBnrIconPath(path);
-									LoadBNRIcon();
-									LoadBNRSeq();
+									if (access(path, F_OK) != -1) {
+										StoreBnrIconPath(path);
+										LoadBNRIcon();
+										LoadBNRSeq();
+									} else {
+										StoreBnrIconPath(NULL);
+										LoadBNRIcon();
+										LoadBNRSeq();
+									}
 								} else {
 									StoreBnrIconPath(NULL);
 									LoadBNRIcon();
