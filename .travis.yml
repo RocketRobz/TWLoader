@@ -26,8 +26,8 @@ install:
   - wget https://raw.githubusercontent.com/Steveice10/buildtools/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/makerom-linux64
   - chmod 777 makerom-linux64
   - sudo cp makerom-linux64 /usr/bin/makerom
-  - python3.6 -m pip requests
-  - python3.6 -m pip gitpython
+  - python3.6 -m pip install requests
+  - python3.6 -m pip install gitpython
 script:
   - echo "Starting compilation"
   - echo "Patching Nightly"
