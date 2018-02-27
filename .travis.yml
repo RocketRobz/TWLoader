@@ -26,12 +26,12 @@ install:
   - wget https://raw.githubusercontent.com/Steveice10/buildtools/1ea00aaa369d80a825002e5d514dddff2305f88b/3ds/makerom-linux64
   - chmod 777 makerom-linux64
   - sudo cp makerom-linux64 /usr/bin/makerom
-  - pip3 install requests
-  - pip3 install gitpython
+  - python3.6 -m pip requests
+  - python3.6 -m pip gitpython
 script:
   - echo "Starting compilation"
   - echo "Patching Nightly"
-  - python3 Nightlies/patch-nightly.py
+  - python3.6 Nightlies/patch-nightly.py
   - cd twlnand-stage1
   - echo "Compiling TWLoader NAND Side Stage 1 (part 1)"
   - make
@@ -73,7 +73,7 @@ script:
   - cd ..
   - echo "Compilation ended"
 after_success:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 Nightlies/upload-nightly.py; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3.6 Nightlies/upload-nightly.py; fi'
 addons:
   apt:
     sources:
