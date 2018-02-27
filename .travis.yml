@@ -9,7 +9,7 @@ python:
 before_install:
   - sudo apt-get update --option Acquire::Retries=100 --option Acquire::http::Timeout="300"
   - pyenv global system 3.6
-  - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
+  - wget https://github.com/devkitPro/installer/releases/download/v2.1.0/devkitARMupdate.pl
   - export DEVKITPRO=/home/travis/devkitPro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
 
