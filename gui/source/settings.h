@@ -44,6 +44,7 @@ typedef struct _Settings_t {
 		std::string romfolder;
 		std::string fcromfolder;
  		std::string gbromfolder;
+ 		std::string nesromfolder;
 
 		bool firstTimeMsgViewed;
 
