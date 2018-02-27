@@ -13,7 +13,7 @@ _Tell us where have you tested it._
 
 *** 
 #### Pull Request status
-- [ ]  This PR has been tested using latest DEVKITPRO, DEVKITARM, SFILLIB, SF2DLIB, LIBNDS and Citro3DS.  
+- [ ]  This PR has been tested using latest devkitPro, devkitARM, PP2D and Citro3DS.  
 
 _(Do not edit after this point)_
 - [ ]  This PR is fully documented.
