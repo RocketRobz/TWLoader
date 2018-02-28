@@ -24,7 +24,7 @@ Before you submit a pull request from your forked repo, check that it meets thes
 
 ## Setting up your environment
 
-If you want to collaborate with us, you will need to install DEVKITPRO and DEVKITARM. You will also need xerpi's sfillib, sf2dlib, citro3ds and ahezard's libnds. You also need makerom on your devkitpro environment.
+If you want to collaborate with us, you will need to install DEVKITPRO and DEVKITARM. You will also need pp2d and citro3ds. You also need bannertool and makerom on your devkitpro environment.
 
 ## Style
 
