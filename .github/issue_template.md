@@ -6,6 +6,7 @@
 ###### Issues that don't attach any log file or any reproducible method will be closed.
 ###### Issues without replies in 15 days will be closed too.
 ###### If you want to create a request, please, delete all text after this message.
+###### Issues about asking for support for piracy will be closed.
 -->
 ### Your 3DS
 
