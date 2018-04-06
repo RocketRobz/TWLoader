@@ -1202,11 +1202,14 @@ static void SaveBootstrapConfig(void)
 	bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
 }
 
+static bool gamesettingsChanged = false;
+
 /**
  * Load per-game settings.
  */
 static void LoadPerGameSettings(void)
 {
+	gamesettingsChanged = false;
 	std::string inifilename;
 	if (!settings.twl.forwarder) {
 		if (settings.twl.romtype == 0) {
@@ -6719,7 +6722,7 @@ int main(){
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							}
-							SavePerGameSettings();
+							if (gamesettingsChanged) SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
 						} else if (hDown & KEY_RIGHT) {
 							if (gamesettings_cursorPosition == 1) {
@@ -6756,6 +6759,7 @@ int main(){
 						} else if(hDown & KEY_TOUCH){
 							if(gamesettings_isCia) {
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set LED Color
+									gamesettingsChanged = true;
 									gamesettings_cursorPosition = 3;								
 
 									RGB[0] = keyboardInputInt("Red color: max is 255");
@@ -6768,6 +6772,7 @@ int main(){
 								}
 							} else {
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 89) && touch.py <= (menudbox_Ypos + 123)) { // ARM9 CPU Speed
+									gamesettingsChanged = true;
 									gamesettings_cursorPosition = 0;
 									settings.pergame.cpuspeed++;
 									if(settings.pergame.cpuspeed == 2)
@@ -6779,6 +6784,7 @@ int main(){
 								}
 								if((SDKVersion > 0x5000000 && SDKVersion < 0x6000000) || settings.twl.forwarder) {} else {
 									if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
+										gamesettingsChanged = true;
 										gamesettings_cursorPosition = 1;
 										settings.pergame.usedonor++;
 										if(settings.pergame.usedonor == 3)
@@ -6802,6 +6808,7 @@ int main(){
 									}
 								}
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
+									gamesettingsChanged = true;
 									gamesettings_cursorPosition = 3;								
 
 									RGB[0] = keyboardInputInt("Red color: max is 255");
@@ -6827,12 +6834,13 @@ int main(){
 										rom = matching_files.at(settings.ui.cursorPosition).c_str();
 									}
 								}
-								SavePerGameSettings();
+								if (gamesettingsChanged) SavePerGameSettings();
 								showdialogbox_menu = false;
 								menudbox_movespeed = 1;
 								menu_ctrlset = CTRL_SET_GAMESEL;
 							}
 						}else if (hDown & KEY_A) {
+							if (gamesettings_cursorPosition != 2) gamesettingsChanged = true;
 							switch (gamesettings_cursorPosition) {
 								case 0:
 								default:
@@ -6914,7 +6922,7 @@ int main(){
 									rom = matching_files.at(settings.ui.cursorPosition).c_str();
 								}
 							}
-							SavePerGameSettings();
+							if (gamesettingsChanged) SavePerGameSettings();
 							showdialogbox_menu = false;
 							menudbox_movespeed = 1;
 							menu_ctrlset = CTRL_SET_GAMESEL;
