@@ -2473,11 +2473,18 @@ void dsiMenuTheme_loadingScreen() {
 	pp2d_end_draw();
 }
 
+static bool boxarttexloading = false;
 static bool boxarttexloaded = false;
 static int pagemax_ba = 0;
 
-void menuLoadBoxArt() {
-	if (!boxarttexloaded && !settings.romselect.toplayout && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
+Handle threadRequest;
+
+volatile bool runThreads = true;
+
+void threadLoadBoxArt(void) {
+	while (runThreads) {
+		svcWaitSynchronization(threadRequest, U64_MAX);
+		boxarttexloading = true;
 		if (settings.twl.romtype == 0) {
 			if (!settings.twl.forwarder) {
 				char path[256];
@@ -2723,8 +2730,8 @@ void menuLoadBoxArt() {
 				}
 			}
 		}
-
 		loadboxartnum++;
+
 		if (loadboxartnum == pagemax_ba) {
 			// Load up to 6 boxarts.
 			for (int i = 0+settings.ui.pagenum*gamesPerPage; i < 6+settings.ui.pagenum*gamesPerPage; i++) {
@@ -2734,6 +2741,9 @@ void menuLoadBoxArt() {
 			boxarttexloaded = true;
 		}
 		boxartnum = 0+settings.ui.pagenum*gamesPerPage;
+
+		boxarttexloading = false;
+		svcClearEvent(threadRequest);
 	}
 }
 
@@ -3255,7 +3265,8 @@ int main(){
 		settingsResetSubScreenMode();
 	}
 
-	//createThread((ThreadFunc)threadLoadBoxArt);
+	svcCreateEvent(&threadRequest,(ResetType)0);
+	createThread((ThreadFunc)threadLoadBoxArt);
 
 	if (logEnabled && aptMainLoop()) LogFM("Main.aptMainLoop", "TWLoader loaded.");
 	while(run && aptMainLoop()) {
@@ -3508,7 +3519,9 @@ int main(){
 				bnricontexloaded = true;
 				bnriconnum = 0+settings.ui.pagenum*gamesPerPage;
 			}
-			menuLoadBoxArt();
+			if (!boxarttexloading && !boxarttexloaded && !settings.romselect.toplayout && TWLNANDnotfound_msg == 2 && fadealpha == 0) {
+				svcSignalEvent(threadRequest);	// Load box art on a seperate thread
+			}
 
 			if (settings.ui.theme == THEME_AKMENU) {	// akMenu/Wood theme
 //				for (int topfb = GFX_LEFT; topfb <= GFX_RIGHT; topfb++) {
@@ -7389,7 +7402,15 @@ int main(){
 	screenon();
 	if (logEnabled) LogFM("Main", "All services are closing and returning to HOME Menu");
 
+	runThreads = false;
+
+	// signal the thread and wait for it to exit
+	svcSignalEvent(threadRequest);
 	destroyThreads();
+
+	// close event handle
+	svcCloseHandle(threadRequest);
+
 	acExit();
 	hidExit();
 	srvExit();
