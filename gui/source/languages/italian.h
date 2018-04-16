@@ -24,41 +24,41 @@ static const char *const lang_IT[STR_MAX] = {
 	"Nessuna scheda",                                      	 	// "No cartridge"
 	"Scheda sconosciuta",                                   	// "Unknown Cartridge"
 	"Impostazioni",                                         	// "Settings"
-	"：Chiudi",                                             	// "B: Back"  
-	": Add Games",												// "Y: Add Games"
+	": Chiudi",                                             	// "B: Back"  
+	": Aggiungi giochi",												// "Y: Add Games"
 
 	/** Settings: GUI **/
 	"Lingua",                                               	// "Language"
 	"Tema",                                                	 	// "Theme"
 	"Colore",                                               	// "Color"
 	"Colore del menu",                                      	// "Menu Color"
-	"Visualizza il nome dei file",                          	// "Show filename"
+	"Visualizza nome file",                          	// "Show filename"
 	"Contatore giochi",                                    		// "Game counter"
-	"Sfondo inferiore personalizzato",                    		// "Custom bottom image"
-	"Aggiorna automaticamente TWLoader",             	       	// "Auto-update TWLoader"
-	"TWLoader filetype",										// "TWLoader filetype"
-	"Aggiorna il TWLoader",										// "Update TWLoader"
-	"Schermata di avvio DS/DSi",                                // "DS/DSi Boot Screen"
-	"Messaggio Salute e Sicurezza",                             // "Health and Safety message"
-	"Show Boot Screen",											// "Show Boot Screen"
-	"ROM path",													// "ROM path"
-	"Quick start",												// "Quick start"
+	"Sfondo inf. personalizz.",                    		// "Custom bottom image"
+	"Auto-aggiorna TWLoader",             	       	// "Auto-update TWLoader"
+	"Tipo file TWLoader",										// "TWLoader filetype"
+	"Aggiorna TWLoader",										// "Update TWLoader"
+	"Schermata avvio DS/DSi",                                // "DS/DSi Boot Screen"
+	"Messaggio S&S",                             // "Health and Safety message"
+	"Mostra scherm. avvio",											// "Show Boot Screen"
+	"Cartella ROM",													// "ROM path"
+	"Avvio rapido",												// "Quick start"
 
 	/** Settings: NTR_mode **/
-	"Seleziona la Flashcard",                                   // "Flashcard(s) select"
-	"Notification LED color",									// "Notification LED color"
+	"Seleziona la flashcard",                                   // "Flashcard(s) select"
+	"Colore LED di notifica",									// "Notification LED color"
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
-	"Sound/Microphone frequency",								// "Sound/Microphone frequency"
-	"SD card access for Slot-1",								// "SD card access for Slot-1"
+	"Frequenza suono/microfono",								// "Sound/Microphone frequency"
+	"Accesso SD per Slot-1",								// "SD card access for Slot-1"
 	"Resetta lo Slot-1",                                       	// "Reset Slot-1"
-	"Bootstrap loading screen",									// "Bootstrap loading screen"
+	"Scherm. caric. bootstrap",									// "Bootstrap loading screen"
 	"Console output",                                           // "Console output"
-	"Aggiorna automaticamente bootstrap",             		    // "Auto-update bootstrap"
-	"Bootstrap",                                               	// "Bootstrap"
+	"Auto-aggiorna bootstrap",             		    // "Auto-update bootstrap"
+	"Versione bootstrap",                                               	// "Bootstrap"
 
 	/** Settings: Top Screen **/
-	": Aggiorna il bootstrap (Versione ufficiale)",           	// "X: Update bootstrap (Official release)"
-	": Aggiorna il bootstrap (Versione non ufficiale)",       	// "Y: Update bootstrap (Unofficial release)"
+	": Aggiorna bootstrap (ufficiale)",           	// "X: Update bootstrap (Official release)"
+	": Aggiorna bootstrap (non ufficiale)",       	// "Y: Update bootstrap (Unofficial release)"
 
 	/** Settings: GUI values **/
 	
@@ -67,7 +67,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Marrone",                                                 	// "Brown"
 	"Rosso",                                                   	// "Red"
 	"Rosa",                                                    	// "Pink"
-	"Orange",                                                   // "Orange"
+	"Arancio",                                                   // "Orange"
 	"Giallo",                                                   // "Yellow"
 	"Giallo-verde",                                             // "Yellow-Green"
 	"Verde 1",                                                  // "Green 1"
@@ -81,7 +81,7 @@ static const char *const lang_IT[STR_MAX] = {
 	"Fucsia",                                                   // "Fuchsia"
 	"Rosso e blu",                                              // "Red and blue"
 	"Verde e giallo",                                           // "Green and yellow"
-	"Natale",                                                   // "Christmas"
+	"Natalizio",                                                   // "Christmas"
 
 	// Menu Color
 	"Bianco",                                                   // "White"
@@ -95,47 +95,47 @@ static const char *const lang_IT[STR_MAX] = {
 	"Premi START per i sotto-temi.",                            // "Press START for sub-themes."
 
 	"Il colore dello sfondo superiore, del bordo",              // "The color of the top background,"
-	"dello START, e dei punti di contorno.",           			// "the START border, and the circling dots."
+	"dello START e dei punti di contorno.",           			// "the START border, and the circling dots."
 
-	"Il colore del bordo superiore,",                           // "The color of the top border,"
+	"Il colore del bordo superiore",                           // "The color of the top border,"
 	"e dello sfondo inferiore.",                               	// "and the bottom background."
 
-	"Mosta il nome dei giochi in cima al banner.",              // "Shows game filename at the top of the bubble."
-	"",                                                         // (empty)
+	"Mostra il nome dei giochi in cima",              // "Shows game filename at the top of the bubble."
+	"al banner.",                                                         // (empty)
 
 	"Il numero dei giochi selezionati/elencati ",               // "A number of selected game and listed games"
 	"è mostrato sotto il testo del banner.",                   	// "is shown below the text bubble."
 
-	"Carica una immagine personalizzata per il ",               // "Loads a custom bottom screen image"
-	"menu dei DSi.",                                 	        // "for the DSi Menu theme."
+	"Carica una immagine personalizzata per il",               // "Loads a custom bottom screen image"
+	"menu del DSi.",                                 	        // "for the DSi Menu theme."
 
 	"Scarica automaticamente l'ultima",                         // "Auto-download the CIA of the latest"
-	"versione del CIA TWLoader  all'avvio.",                    // "TWLoader version at launch."
+	"versione di TWLoader all'avvio.",                    // "TWLoader version at launch."
 
-	"Where do you want to see the",								// "Where do you want to see the"
-	"DS/DSi boot screen?",										// "DS/DSi boot screen?"
+	"Dove vuoi vedere la schermata di",								// "Where do you want to see the"
+	"avvio DS/DSi?",										// "DS/DSi boot screen?"
 
-	"On startup, WiFi features and",							// "On startup, WiFi features and"
-	"banner caching will be skipped.",							// "banner caching will be skipped."
+	"All'avvio, saranno saltate le funzioni",							// "On startup, WiFi features and"
+	"Wi-Fi e di cache dei banner.",							// "banner caching will be skipped."
 
 	/** Settings: NTR/TWL_mode descriptions **/
 	"Seleziona una flashcard da usare",                         // "Pick a flashcard to use to"
 	"per avviare le ROM.",                                      // "run ROMs from it."
 
-	"Mosta luci arcobaleno sul",                               	// "See rainbow colors glowing in"
-	"LED di notifica.",                                         // "the Notification LED."
+	"Seleziona il colore da mostrare",                               	// "See rainbow colors glowing in"
+	"sul LED di notifica.",                                         // "the Notification LED."
 
 	"Imposta su TWL per eliminare",                       		// "Set to TWL to get rid of lags in some games."
 	"il lag in alcuni giochi.",                                 // (empty)
 
-	"32.73 kHz: Original quality",								// "32.73 kHz: Original quality"
-	"47.61 kHz: High quality",									// "47.61 kHz: High quality"
+	"32.73 kHz: Qualità originale",								// "32.73 kHz: Original quality"
+	"47.61 kHz: Alta qualità",									// "47.61 kHz: High quality"
 
 	// "Abilita la scrittura della VRAM a 8 bit",                  // "Allows 8 bit VRAM writes"
 	// "ed espande il bus a 32 bit.",                              // "and expands the bus to 32 bit."
 
-	"Enables SD card access for",								// "Enables SD card access for"
-	"Slot-1 cards.",											// "Slot-1 cards."
+	"Abilita l'accesso alla SD per",								// "Enables SD card access for"
+	"le schede Slot-1.",											// "Slot-1 cards."
 
 	"Mostra la schermata di avvio del DS/DSi",                  // "Displays the DS/DSi boot animation"
 	"prima di avviare un gioco.",                               // "before launched game."
@@ -146,35 +146,35 @@ static const char *const lang_IT[STR_MAX] = {
 	"Abilita questa opzione se le schede slot-1",               // "Enable this if Slot-1 carts are stuck"
 	"sono bloccate con schermata bianca.",                      // "on white screens."
 
-	"Shows a loading screen before ROM",						// "Shows a loading screen before ROM"
-	"is started in nds-bootstrap.",								// "is started in nds-bootstrap."
+	"Aggiunge una schermata di caricamento",						// "Shows a loading screen before ROM"
+	"della ROM in nds-bootstrap.",								// "is started in nds-bootstrap."
 
-	"Mosta del testo prima del gioco avviato.",                 // "Displays some text before launched game."
-	"",                                                         // (empty)
+	"Mostra del testo durante l'avvio del",                 // "Displays some text before launched game."
+	"gioco.",                                                         // (empty)
 
 	// "Blocca il SCFG_EXT ARM9,",                                 // "Locks the ARM9 SCFG_EXT,"
 	// "evitando conflitti con le recenti libnds.",               	// "avoiding conflict with recent libnds."
 
-	"Aggiorna automaticamente nds-bootstrap ",                  // "Auto-update nds-bootstrap at launch."
+	"Aggiorna automaticamente nds-bootstrap",                  // "Auto-update nds-bootstrap at launch."
 	"all'avvio.",                                               // (empty)
 
-	"Cabia tra versione ufficiale e",                           // "Change between release and"
+	"Scegli tra versione ufficiale (Release) e",                           // "Change between release and"
 	"non ufficiale del file di bootstrap.",                     // "unofficial bootstrap file."
 
 	/** Start menu **/
 	// Options
 	"Cartella giochi",                                          // "Game location"
-	"Box Art: On",                                              // "Box Art: On"
-	"Box Art: Off",                                             // "Box Art: OFF"
-	"Select ROM type",											// "Select ROM type"
+	"Copertina: On",                                              // "Box Art: On"
+	"Copertina: Off",                                             // "Box Art: OFF"
+	"Seleziona tipo ROM",											// "Select ROM type"
 	"Bordo superiore: On",                                      // "Top border: On"
 	"Bordo superiore: Off",                                     // "Top border: Off"
-	"Non usare ROM donore",                                     // "Unset donor rom"
+	"Resetta ROM donor",                                     // "Unset donor rom"
 	"Cerca",                                                   	// "Search"
 	// Values
 	"Scheda SD",                                               	// "SD Card"
 	"Flashcard",                                               	// "Flashcard"
-	"Usa la tastiera per trovare le rom",                       // "Use the keyboard to find roms"
+	"Cerca una ROM...",                       // "Use the keyboard to find roms"
 
 	/** Select ROM type **/
 	"Avvia GBARunner2",                                         // "Start GBARunner2"
@@ -182,10 +182,10 @@ static const char *const lang_IT[STR_MAX] = {
 	/** Select menu **/
 	// Options
 	"Velocità CPU ARM9",                                       	// "ARM9 CPU Speed"
-	"SD access",												// "SD access"
-	"Use set donor ROM",                                     	// "Use set donor ROM"
-	"Imposta come ROM donor",                               	// "Set as donor ROM"
-	"Imposta colore del LED",                                   // "Set LED color"
+	"Accesso SD",												// "SD access"
+	"Usa ROM donor",                                     	// "Use set donor ROM"
+	"Imposta come donor",                               	// "Set as donor ROM"
+	"Imposta colore LED",                                   // "Set LED color"
 	// Values
 	"Predefinito",                                              // "Default"
 
