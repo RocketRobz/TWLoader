@@ -7334,51 +7334,9 @@ int main(){
 			}
 
 			if (settings.ui.showbootscreen == 2 && settings.twl.romtype == 0 && gbarunnervalue == 0 && switchToTwl) {
-				botscreenon();
-
-				const char* blackScreenStuckMsg =
-				"If you're stuck on powered-off black screens\n"
-				"for a while, after the following screen,\n"
-				"please visit this site on your internet\n"
-				"browser:\n"
-				"\n"
-				"https://3ds.hacks.guide/troubleshooting.html\n"
-				"\n"
-				"Go to: DSi / DS functionality is broken\n"
-				"after completing the guide\n";
-
-				for (int i = 0; i < 60*6; i++) {
-					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, blackScreenStuckMsg);
-					pp2d_end_draw();
-				}
-
-				botscreenoff();
-
 				bootSplash();
 				if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played");
 				if(aptMainLoop()) fade_whiteToBlack();
-			} else {
-				botscreenon();
-
-				const char* blackScreenStuckMsg =
-				"If you're stuck on powered-off black screens\n"
-				"for a while,\n"
-				"please visit this site on your internet\n"
-				"browser:\n"
-				"\n"
-				"https://3ds.hacks.guide/troubleshooting.html\n"
-				"\n"
-				"Go to: DSi / DS functionality is broken\n"
-				"after completing the guide\n";
-
-				for (int i = 0; i < 60*6; i++) {
-					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, blackScreenStuckMsg);
-					pp2d_end_draw();
-				}
-
-				botscreenoff();
 			}
 
 			if(aptMainLoop()) {

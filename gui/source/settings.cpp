@@ -1261,7 +1261,7 @@ void settingsDrawBottomScreen(void)
 			pp2d_draw_wtext(home_x+20, 222, 0.50, 0.50, WHITE, home_text);
 		}
 		if(FirstTime_selectedmsg != 0) pp2d_draw_text(8, 196, 0.50, 0.50, WHITE, ": Previous");
-		if(FirstTime_selectedmsg != 4) pp2d_draw_text(248, 196, 0.50, 0.50, WHITE, ": Next");
+		if(FirstTime_selectedmsg != 5) pp2d_draw_text(248, 196, 0.50, 0.50, WHITE, ": Next");
 
 		title = L"Welcome to TWLoader!";
 
@@ -1291,6 +1291,17 @@ void settingsDrawBottomScreen(void)
 				"(Do not use the LED feature on 3DS firmware 8.1\n"
 				"or below.)";
 		} else if(FirstTime_selectedmsg == 4) {
+			FirstTime_msg =
+				"If you're stuck on powered-off black screens\n"
+				"for a while after launching a game,\n"
+				"please visit this site on your internet\n"
+				"browser:\n"
+				"\n"
+				"https://3ds.hacks.guide/troubleshooting.html\n"
+				"\n"
+				"Go to: DSi / DS functionality is broken\n"
+				"after completing the guide\n";
+		} else if(FirstTime_selectedmsg == 5) {
 			FirstTime_msg =
 				"Enjoy using TWLoader to launch your games\n"
 				"from the SD card or a flashcard!\n"
@@ -1330,7 +1341,7 @@ bool settingsMoveCursor(u32 hDown)
 
 	if (subscreenmode == SUBSCREEN_MODE_FIRST_TIME) {
 		if (hDown & KEY_A) {
-			if(FirstTime_selectedmsg == 4) {
+			if(FirstTime_selectedmsg == 5) {
 				titleboxXmovetimer = 1;
 				fadeout = true;
 				sfx = sfx_launch;
