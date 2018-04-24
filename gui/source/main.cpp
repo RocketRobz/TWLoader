@@ -48,8 +48,10 @@ bool isNightly = IS_NIGHTLY;
 
 static touchPosition touch;
 
+bool menulaunch_isCia = false;
 bool menuaction_nextpage = false;
 bool menuaction_prevpage = false;
+bool menuaction_launchprep = false;
 bool menuaction_launch = false;
 bool menudboxaction_switchloc = false;
 bool menudboxaction_changeromtype = false;
@@ -82,6 +84,7 @@ enum MenuDBox_Mode {
 	DBOX_MODE_DELETED = 4,			// Title deleted message
 	DBOX_MODE_OVERLAYS = 5,			// Overlays included message
 	DBOX_MODE_DONOR_NOT_SET = 6,	// Donor ROM not set message
+	DBOX_MODE_CART_DONOR_NOT_SET = 7,	// Donor cart not set message
 };
 MenuDBox_Mode menudboxmode = DBOX_MODE_OPTIONS;
 
@@ -1790,7 +1793,56 @@ static void drawMenuDialogBox(void)
 	pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, menudbox_bgalpha)); // Fade in/out effect
 	pp2d_draw_texture(dialogboxtex, 0, menudbox_Ypos);
 	pp2d_draw_texture(dboxtex_buttonback, 233, menudbox_Ypos+193);
-	if (menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
+	if (menudboxmode == DBOX_MODE_CART_DONOR_NOT_SET) {
+		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": No");
+
+		pp2d_draw_texture(dboxtex_buttonback, 143, menudbox_Ypos+193);
+		pp2d_draw_text(152, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": Yes");
+
+		bnriconnum = settings.ui.cursorPosition;
+		ChangeBNRIconNo();
+		pp2d_draw_texture(dboxtex_iconbox, 23, menudbox_Ypos+23);
+		pp2d_draw_texture_part_flip(bnricontexnum, 28, menudbox_Ypos+28, 0, bnriconframenumY[bnriconnum-settings.ui.pagenum*gamesPerPage]*32, 32, 32, bannerFlip[bnriconnum-settings.ui.pagenum*gamesPerPage]);
+		
+		if (settings.ui.cursorPosition >= 0) {
+			int y = 16, dy = 19;
+			// Print the banner text, center-aligned.
+			const size_t banner_lines = std::min(3U, romsel_gameline.size());
+			for (size_t i = 0; i < banner_lines; i++, y += dy) {
+				const int text_width = pp2d_get_wtext_width(romsel_gameline[i].c_str(), 0.60, 0.60);
+				pp2d_draw_wtext(72+(240-text_width)/2, y+menudbox_Ypos, 0.60, 0.60, BLACK, romsel_gameline[i].c_str());
+			}
+			pp2d_draw_wtext(16, 72+menudbox_Ypos, 0.50, 0.50, GRAY, romsel_filename_w.c_str());
+		}
+		
+		const size_t file_count = (settings.twl.forwarder ? fcfiles.size() : files.size());
+
+		char romsel_counter1[16];
+		char romsel_counter2[16];
+		snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", storedcursorPosition+1);		
+		if(matching_files.size() == 0){
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", file_count);
+		}else{
+			snprintf(romsel_counter2, sizeof(romsel_counter2), "%zu", matching_files.size());
+		}
+		
+		if (file_count < 100) {
+			pp2d_draw_text(16, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter1);
+			pp2d_draw_text(35, 204+menudbox_Ypos, 0.50, 0.50, BLACK, "/");
+			pp2d_draw_text(40, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
+		} else {
+			pp2d_draw_text(16, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter1);
+			pp2d_draw_text(43, 204+menudbox_Ypos, 0.50, 0.50, BLACK, "/");
+			pp2d_draw_text(48, 204+menudbox_Ypos, 0.50, 0.50, BLACK, romsel_counter2);
+		}
+
+		pp2d_draw_text(20, 100+menudbox_Ypos, 0.50, 0.50, BLACK,
+		"This game may not work, if there is no DS/DSi\n"
+		"cart inserted into the card slot to use as\n"
+		"donor for saving.\n"
+		"\n"
+		"Continue anyway?");
+	} else if (menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
 		pp2d_draw_text(244, menudbox_Ypos+199, 0.50, 0.50, BLACK, ": OK");
 
 		bnriconnum = settings.ui.cursorPosition;
@@ -5887,7 +5939,7 @@ int main(){
 					hidTouchRead(&touch);
 					if(hDown & KEY_TOUCH){
 						if (touch.px >= 128 && touch.px <= 192 && touch.py >= 112 && touch.py <= 192) {
-							if (showbubble) menuaction_launch = true;
+							if (showbubble) menuaction_launchprep = true;
 						} else if ((touch.px < 128 && touch.py >= 118 && touch.py <= 180 && menudbox_Ypos == -240)
 								|| (touch.px <= 25 && touch.py >= 212 && menudbox_Ypos == -240)) {
 							if (!titleboxXmoveright) {
@@ -5914,7 +5966,7 @@ int main(){
 							}
 						}
 					} else if((hDown & KEY_A) && showbubble){
-						menuaction_launch = true;
+						menuaction_launchprep = true;
 					} else if(hHeld & KEY_RIGHT && menudbox_Ypos == -240) {
 						if (!titleboxXmoveleft) {
 							if (settings.ui.cursorPosition == -1) {
@@ -6104,10 +6156,10 @@ int main(){
 								sfx_switch->play();
 							}
 						}
-					} else if (menuaction_launch) { menuaction_launch = false;	// Don't run the action again 'til A is pressed again
-						bool isCia = false;
+					} else if (menuaction_launchprep) { menuaction_launchprep = false;	// Don't run the action again 'til A is pressed again
+						menulaunch_isCia = false;
 						bool overlaysIncluded = false;
-						bool donorFound = true;
+						int donorMsgType = 0;
 						if(!settings.twl.forwarder && settings.ui.cursorPosition >= 0 && settings.twl.romtype == 0) {
 							char path[256];
 							const char *rom_filename;
@@ -6123,38 +6175,70 @@ int main(){
 								snprintf(path, sizeof(path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), rom_filename);
 							}									
 							std::string fn = rom_filename;
-							if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+							if(fn.substr(fn.find_last_of(".") + 1) == "cia") menulaunch_isCia = true;
 
-							if(isCia) {
+							if(menulaunch_isCia) {
 								FILE *f_nds_file = fopen(path, "rb");
 								if (f_nds_file) {
-									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, isCia);
+									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, menulaunch_isCia);
 									fclose(f_nds_file);
 								}
 							} else {
+								FILE *f_nds_file;
+								SDKVersion = 0;
 								donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
 								// Show "Donor ROM not set" message, if game is SDK3-4, but not MKDS, and donor path is blank
 								if (donorpath.compare("") == 0) {
-									FILE *f_nds_file = fopen(path, "rb");
+									f_nds_file = fopen(path, "rb");
 									char game_TID[5];
 									grabTID(f_nds_file, game_TID, false);
 									game_TID[4] = 0;
 									game_TID[3] = 0;
-									SDKVersion = 0;
-									if(strcmp(game_TID, "###") != 0) {
+									if (strcmp(game_TID, "###") != 0) {
 										SDKVersion = getSDKVersion(f_nds_file, rom_filename);
-										if((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
-											donorFound = false;
+										if ((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
+											donorMsgType = 1;	// Set to show "Donor ROM not set" message
 										}
 									}
-									fclose(f_nds_file);
 								}
+								if (donorMsgType != 1) {
+									// Poll for Slot-1 changes.
+									bool forcePoll = false;
+									bool doSlot1Update = false;
+									if ((gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_UNKNOWN))
+									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_CTR))) {
+										// Card is inserted, but we don't know its type.
+										// Force an update.
+										forcePoll = true;
+									}
+									bool s1chg = gamecardPoll(forcePoll);
+									if (s1chg) {
+										// Update Slot-1 if:
+										// - forcePoll is false
+										// - forcePoll is true, and card is no longer unknown.
+										doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
+									}
+									if(!gamecardIsInserted()
+									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_UNKNOWN))
+									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_CTR))) {
+										if (!f_nds_file) f_nds_file = fopen(path, "rb");
+										if (SDKVersion == 0) SDKVersion = getSDKVersion(f_nds_file, rom_filename);
+										if (SDKVersion > 0x5000000) {
+											donorMsgType = 2;	// Set to show "Donor cart not inserted" message
+										}
+									}
+								}
+								fclose(f_nds_file);
 							}
 						} else {
 							SDKVersion = 0;
 						}
 
-						if(!donorFound) {
+						if(donorMsgType == 2) {
+							showdialogbox_menu = true;
+							menu_ctrlset = CTRL_SET_DBOX;
+							menudboxmode = DBOX_MODE_CART_DONOR_NOT_SET;
+						} else if(donorMsgType == 1) {
 							if (!playwrongsounddone) {
 								if (dspfirmfound) {
 									sfx_wrong->stop();
@@ -6165,86 +6249,8 @@ int main(){
 							showdialogbox_menu = true;
 							menu_ctrlset = CTRL_SET_DBOX;
 							menudboxmode = DBOX_MODE_DONOR_NOT_SET;
-						} else if(!overlaysIncluded) {
-							if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
-							if (!isDemo || settings.ui.cursorPosition == -2) {
-								bool playlaunchsound = true;
-								if (titleboxXmovetimer == 0) {
-									if(settings.ui.cursorPosition == -2) {
-										titleboxXmovetimer = 1;
-										screenmodeswitch = true;
-										applaunchprep = true;
-									} else if(settings.ui.cursorPosition == -1) {
-										if (!settings.twl.forwarder && !gamecardIsInserted()) {
-											// Slot-1 is selected, but no
-											// cartridge is present.
-											if (!playwrongsounddone) {
-												if (dspfirmfound) {
-													sfx_wrong->stop();
-													sfx_wrong->play();
-												}
-												playwrongsounddone = true;
-											}
-											playlaunchsound = false;
-										} else {
-											titleboxXmovetimer = 1;
-											settings.twl.launchslot1 = true;
-											if (settings.twl.forwarder) {
-												keepsdvalue = true;
-												rom = "_nds/twloader.nds";
-											}
-											applaunchprep = true;
-										}
-									} else {
-										titleboxXmovetimer = 1;
-										if (settings.twl.forwarder) {
-											settings.twl.launchslot1 = true;
-											if(matching_files.size() == 0){
-												rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-											} else {
-												rom = matching_files.at(settings.ui.cursorPosition).c_str();
-											}
-										} else {
-											settings.twl.launchslot1 = false;
-											if (settings.twl.romtype == 0) {
-												if(matching_files.size() == 0){
-													rom = files.at(settings.ui.cursorPosition).c_str();
-												} else {
-													rom = matching_files.at(settings.ui.cursorPosition).c_str();
-												}
-												sav = ReplaceAll(rom, ".nds", ".sav");
-											} else if (settings.twl.romtype == 1) {
-												if(matching_files.size() == 0){
-													homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
-												} else {
-													homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
-												}
-											} else if (settings.twl.romtype == 2) {
-												if(matching_files.size() == 0){
-													homebrew_arg = nesfiles.at(settings.ui.cursorPosition).c_str();
-												} else {
-													homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
-												}
-											}
-										}
-										applaunchprep = true;
-										if(isCia) launchCia = true;
-									}
-								}
-								if (playlaunchsound && dspfirmfound) {
-									bgm_menu->stop();
-									sfx_launch->play();
-								}
-							} else {
-								if (!playwrongsounddone) {
-									if (dspfirmfound) {
-										sfx_wrong->stop();
-										sfx_wrong->play();
-									}
-									playwrongsounddone = true;
-								}
-							}
-						} else {
+						}
+						if (overlaysIncluded) {
 							if (!playwrongsounddone) {
 								if (dspfirmfound) {
 									sfx_wrong->stop();
@@ -6255,13 +6261,105 @@ int main(){
 							showdialogbox_menu = true;
 							menu_ctrlset = CTRL_SET_DBOX;
 							menudboxmode = DBOX_MODE_OVERLAYS;
+						} else if(donorMsgType == 0) {
+							menuaction_launch = true;
+						}
+					} else if (menuaction_launch) { menuaction_launch = false;
+						if (settings.ui.theme != THEME_3DSMENU) showbubble = false;
+						if (!isDemo || settings.ui.cursorPosition == -2) {
+							bool playlaunchsound = true;
+							if (titleboxXmovetimer == 0) {
+								if(settings.ui.cursorPosition == -2) {
+									titleboxXmovetimer = 1;
+									screenmodeswitch = true;
+									applaunchprep = true;
+								} else if(settings.ui.cursorPosition == -1) {
+									if (!settings.twl.forwarder && !gamecardIsInserted()) {
+										// Slot-1 is selected, but no
+										// cartridge is present.
+										if (!playwrongsounddone) {
+											if (dspfirmfound) {
+												sfx_wrong->stop();
+												sfx_wrong->play();
+											}
+											playwrongsounddone = true;
+										}
+										playlaunchsound = false;
+									} else {
+										titleboxXmovetimer = 1;
+										settings.twl.launchslot1 = true;
+										if (settings.twl.forwarder) {
+											keepsdvalue = true;
+											rom = "_nds/twloader.nds";
+										}
+										applaunchprep = true;
+									}
+								} else {
+									titleboxXmovetimer = 1;
+									if (settings.twl.forwarder) {
+										settings.twl.launchslot1 = true;
+										if(matching_files.size() == 0){
+											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
+										} else {
+											rom = matching_files.at(settings.ui.cursorPosition).c_str();
+										}
+									} else {
+										settings.twl.launchslot1 = false;
+										if (settings.twl.romtype == 0) {
+											if(matching_files.size() == 0){
+												rom = files.at(settings.ui.cursorPosition).c_str();
+											} else {
+												rom = matching_files.at(settings.ui.cursorPosition).c_str();
+											}
+											sav = ReplaceAll(rom, ".nds", ".sav");
+										} else if (settings.twl.romtype == 1) {
+											if(matching_files.size() == 0){
+												homebrew_arg = gbfiles.at(settings.ui.cursorPosition).c_str();
+											} else {
+												homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
+											}
+										} else if (settings.twl.romtype == 2) {
+											if(matching_files.size() == 0){
+												homebrew_arg = nesfiles.at(settings.ui.cursorPosition).c_str();
+											} else {
+												homebrew_arg = matching_files.at(settings.ui.cursorPosition).c_str();
+											}
+										}
+									}
+									applaunchprep = true;
+									if(menulaunch_isCia) launchCia = true;
+								}
+							}
+							if (playlaunchsound && dspfirmfound) {
+								bgm_menu->stop();
+								sfx_launch->play();
+							}
+						} else {
+							if (!playwrongsounddone) {
+								if (dspfirmfound) {
+									sfx_wrong->stop();
+									sfx_wrong->play();
+								}
+								playwrongsounddone = true;
+							}
 						}
 					}
-					
+
 				} else if(menu_ctrlset == CTRL_SET_DBOX) {
 					hidTouchRead(&touch);
 					
-					if (menudboxmode == DBOX_MODE_DELETED
+					if (menudboxmode == DBOX_MODE_CART_DONOR_NOT_SET) {
+						if (hDown & KEY_A) {
+							menuaction_launch = true;
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						} else if (hDown & KEY_B) {
+							showdialogbox_menu = false;
+							menudbox_movespeed = 1;
+							menu_ctrlset = CTRL_SET_GAMESEL;
+						}
+					} else if (menudboxmode == DBOX_MODE_DELETED
 					|| menudboxmode == DBOX_MODE_OVERLAYS
 					|| menudboxmode == DBOX_MODE_DONOR_NOT_SET) {
 						if (hDown & (KEY_A | KEY_B)) {
