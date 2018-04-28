@@ -2,8 +2,8 @@
 #define _GNU_SOURCE 1
 #include "main.h"
 
+#include "init.h"
 #include "thread.h"
-#include "dumpdsp.h"
 #include "dsbootsplash.h"
 #include "download.h"
 #include "settings.h"
@@ -1132,7 +1132,7 @@ static void LoadBoxArt_WoodTheme(void) {
 /**
  * Load nds-bootstrap's configuration.
  */
-static void LoadBootstrapConfig(void)
+void LoadBootstrapConfig(void)
 {
 	settings.twl.loadingscreen = bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_loadingscreen, 1);
 	switch (bootstrapini.GetInt(bootstrapini_ndsbootstrap, bootstrapini_debug, -1)) {
@@ -1153,7 +1153,7 @@ static void LoadBootstrapConfig(void)
 /**
  * Update nds-bootstrap's configuration.
  */
-static void SaveBootstrapConfig(void)
+void SaveBootstrapConfig(void)
 {
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
@@ -1639,8 +1639,8 @@ vector<string> matching_files;
 vector<string> delete_queue;
 
 // APT hook for "returned from HOME menu".
-static aptHookCookie rfhm_cookie;
-static void rfhm_callback(APT_HookType hook, void *param)
+aptHookCookie rfhm_cookie;
+void rfhm_callback(APT_HookType hook, void *param)
 {
 	if (hook == APTHOOK_ONRESTORE) {
 		// param == pointer to bannertextloaded
@@ -2804,6 +2804,45 @@ void threadLoadBoxArt(void) {
 
 bool showAnniversaryText = false;
 
+int filenum = 0;
+bool noromsfound = false;
+	
+bool cursorPositionset = false;
+	
+int soundwaittimer = 0;
+bool playwrongsounddone = false;
+
+bool colortexloaded = false;
+bool colortexloaded_bot = false;
+bool bnricontexloaded = false;
+
+bool updatetopscreen = true;
+bool screenmodeswitch = false;
+	
+float rad = 0.0f;
+	
+int boxartXpos;
+int boxartXmovepos = 0;
+
+int filenameYpos;
+int filenameYmovepos = 0;
+int setsboxXpos = 0;
+int cartXpos = 64;
+int boxartYmovepos = 63;
+int boxartreflYmovepos = 178;
+int ndsiconXpos;
+int ndsiconYmovepos = 129;
+int wood_ndsiconscaletimer = 0;
+int wood_ndsiconscalelag = 0;
+int wood_ndsiconscalemovepos = 0;
+float wood_ndsiconscalesize = 0.00f;
+bool wood_ndsiconscaledown = false;
+
+int startbordermovepos = 0;
+float startborderscalesize = 1.0f;
+
+bool bannertextloaded = false;	
+
 int main(){
 	botscreenoff();
 
@@ -2811,8 +2850,6 @@ int main(){
 	
 	pp2d_set_screen_color(GFX_TOP, TRANSPARENT);
 	pp2d_set_3D(0);
-	
-	Result res = 0;
 
 	aptInit();
 	cfguInit();
@@ -2825,275 +2862,9 @@ int main(){
 	hidInit();
 	acInit();
 	
-	int aninumfadealpha = 0;
-	int showAnniversaryTextYPos = 100;
-
-	if(isDemo)
-		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo_demo.png"); // TWLoader (3DSX demo version) logo on top screen
-	else
-		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo.png"); // TWLoader logo on top screen
-	pp2d_load_texture_png(anniversarytex, "romfs:/graphics/anniversary/text.png"); // TWLoader logo on top screen
-	if(showAnniversaryText) {
-		for(int i = 0; i < 64; i++) {
-			pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
-			pp2d_draw_texture_part_blend(anniversarytex, 0, 40, 0, 0, 160, 40, RGBA8(255, 255, 255, aninumfadealpha));
-			pp2d_draw_texture_part(anniversarytex, 160, showAnniversaryTextYPos, 160, 0, 240, 40);
-			pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-			pp2d_end_draw();
-			aninumfadealpha += 4;
-			if(aninumfadealpha > 255) aninumfadealpha = 255;
-			showAnniversaryTextYPos--;
-			if(showAnniversaryTextYPos < 40) showAnniversaryTextYPos = 40;
-		}
-	}
-
-	pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
-	if(showAnniversaryText) {
-		pp2d_draw_texture(anniversarytex, 0, 40);
-		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-	} else {
-		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-	}
+	initStuff();
 	
-	int filenum = 0;
-	bool noromsfound = false;
 	
-	bool cursorPositionset = false;
-	
-	int soundwaittimer = 0;
-	bool playwrongsounddone = false;
-
-	bool colortexloaded = false;
-	bool colortexloaded_bot = false;
-	bool bnricontexloaded = false;
-
-	bool updatetopscreen = true;
-	bool screenmodeswitch = false;
-	
-	float rad = 0.0f;
-	
-	int boxartXpos;
-	int boxartXmovepos = 0;
-
-	int filenameYpos;
-	int filenameYmovepos = 0;
-	int setsboxXpos = 0;
-	int cartXpos = 64;
-	int boxartYmovepos = 63;
-	int boxartreflYmovepos = 178;
-	int ndsiconXpos;
-	int ndsiconYmovepos = 129;
-	int wood_ndsiconscaletimer = 0;
-	int wood_ndsiconscalelag = 0;
-	int wood_ndsiconscalemovepos = 0;
-	float wood_ndsiconscalesize = 0.00f;
-	bool wood_ndsiconscaledown = false;
-
-	int startbordermovepos = 0;
-	float startborderscalesize = 1.0f;
-
-	bool bannertextloaded = false;	
-	// Register a handler for "returned from HOME Menu".
-	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
-	
-	if(isNightly){
-		logEnabled = true;
-		char nightlyhash[16];
-		snprintf(nightlyhash, 16, "%s", NIGHTLY);
-		LogFMA("Welcome to nightly channel!", "Version:", nightlyhash);
-		Log("********************************************************\n");	
-	} else {
-		/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
-		struct stat logBuf;
-		logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
-		/* Log configuration file end */
-		if (logEnabled)	createLog();
-	}		
-
-	// make folders if they don't exist
-	mkdir("sdmc:/3ds", 0777);	// For DSP dump
-	mkdir("sdmc:/_nds", 0777);
-	mkdir("sdmc:/_nds/twloader", 0777);
-	mkdir("sdmc:/_nds/twloader/bnricons", 0777);
-	mkdir("sdmc:/_nds/twloader/bnricons/flashcard", 0777);
-	mkdir("sdmc:/_nds/twloader/boxart", 0777);
-	mkdir("sdmc:/_nds/twloader/boxart/flashcard", 0777);
-	mkdir("sdmc:/_nds/twloader/boxart/slot1", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
-	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
-	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
-	
-	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
-	std::string version = settings_vertext;	
-	int vertext_xPos;
-	if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
-		vertext_xPos = 324;
-	}else{
-		vertext_xPos = 336;
-	}
-	
-	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
-	pp2d_end_draw();
-	
-	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
-	
-	aninumfadealpha = 255;
-	bool botscreenon_ran = false;
-
-	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/pseudoHDRlogo.png");
-
-	for(int i = 0; i < 60*3; i++) {
-		if(i <= 30) {
-			aninumfadealpha -= 25;
-			if(aninumfadealpha < 0) aninumfadealpha = 0;
-		} else if(i >= 160) {
-			aninumfadealpha += 25;
-			if(aninumfadealpha > 255) aninumfadealpha = 255;
-		}
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
-		pp2d_draw_texture(bottomlogotex, 0, 0);
-		pp2d_draw_text(32, 48, 0.60, 0.60f, WHITE, "Enhanced with");
-		pp2d_draw_text(32, 192, 0.50, 0.50f, WHITE, "*Games not enhanced with pseudo-HDR");
-		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, aninumfadealpha));
-		pp2d_end_draw();
-		if(!botscreenon_ran) {
-			botscreenon();
-			botscreenon_ran = true;
-		}
-	}
-	botscreenoff();
-	
-	pp2d_free_texture(bottomlogotex);
-
-	/** Speed up New 3DS only. **/
-	bool isNew = 0;
-	res = 0; // prev. result
-	if(R_SUCCEEDED(res = APT_CheckNew3DS(&isNew))) {
-		if (isNew) osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
-	}
-	/** Speedup set up correctly. **/
-	
-	LoadSettings();	
-	if (settings.twl.bootstrapfile == 1) {
-		bootstrapPath = "sd:/_nds/unofficial-bootstrap.nds";
-	} else {
-		bootstrapPath = "sd:/_nds/release-bootstrap.nds";
-	}
-	if (logEnabled) LogFMA("Main.bootstrapPath", "Using bootstrap:", bootstrapPath.c_str());
-	LoadBootstrapConfig();
-
-	// Store bootstrap version
-	checkBootstrapVersion();
-	
-	// Initialize translations.
-	langInit();	
-	
-	LoadColor();
-	LoadMenuColor();
-	LoadBottomImage();
-	
-	pp2d_set_texture_filter(GPU_LINEAR, GPU_NEAREST);
-
-	/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading textures...");
-	pp2d_end_draw(); */
-	
-	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
-
-	// Dialog box textures.
-	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
-	pp2d_load_texture_png(dboxtex_iconbox, "romfs:/graphics/dbox/iconbox.png"); // Icon box
-	pp2d_load_texture_png(dboxtex_button, "romfs:/graphics/dbox/button.png"); // Icon box
-	pp2d_load_texture_png(dboxtex_buttonback, "romfs:/graphics/dbox/button_back.png"); // Icon box
-
-	pp2d_load_texture_png(r4loadingtex, "romfs:/graphics/r4/loading.png");		// R4 "Loading..." screen
-	pp2d_load_texture_png(toptex, "romfs:/graphics/top.png"); // Top DSi-Menu border
-
-	// Volume slider textures.
-	pp2d_load_texture_png(voltex, "romfs:/graphics/volume.png");
-	pp2d_load_texture_png(setvoltex, "romfs:/graphics/settings/volume.png");
-
-	pp2d_load_texture_png(shouldertex, "romfs:/graphics/shoulder.png"); // Shoulder button
-	pp2d_load_texture_png(_3dsshouldertex, "romfs:/graphics/3ds/shoulder.png"); // 3DS HOME Menu shoulder
-
-	// Battery level textures.
-	pp2d_load_texture_png(batterytex, "romfs:/graphics/battery.png");
-
-	if(!isDemo) {
-		pp2d_load_texture_png(settingslogotex, "romfs:/graphics/settings/logo.png"); // TWLoader logo in settings screen.
-		pp2d_load_texture_png(settingslogotwltex, "romfs:/graphics/settings/logo_twl.png");
-	} else {
-		pp2d_load_texture_png(settingslogotex, "romfs:/graphics/settings/logo_demo.png"); // TWLoader logo in settings screen.
-		pp2d_load_texture_png(settingslogotwltex, "romfs:/graphics/settings/logo_demo_twl.png");
-		pp2d_load_texture_png(settingslogodemotex, "romfs:/graphics/settings/logo_demo_demo.png");
-	}
-	pp2d_load_texture_png(settingslogooadertex, "romfs:/graphics/settings/logo_oader.png");
-
-	pp2d_load_texture_png(sdicontex, "romfs:/graphics/wood/sd.png");
-	pp2d_load_texture_png(flashcardicontex, "romfs:/graphics/wood/flashcard.png");
-	pp2d_load_texture_png(gbaicontex, "romfs:/graphics/wood/gba.png");
-	pp2d_load_texture_png(smallsettingsicontex, "romfs:/graphics/wood/settings.png");
-	pp2d_load_texture_png(iconnulltex, "romfs:/graphics/icon_null.png"); // Slot-1 cart icon if no cart is present
-	pp2d_load_texture_png(homeicontex, "romfs:/graphics/homeicon.png"); // HOME icon
-	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/bottom_logo.png"); // TWLoader logo on bottom screen
-	pp2d_load_texture_png(scrollbartex, "romfs:/graphics/scrollbar.png"); // Scroll bar on bottom screen
-	pp2d_load_texture_png(buttonarrowtex, "romfs:/graphics/button_arrow.png"); // Arrow button for scroll bar
-	pp2d_load_texture_png(bipstex, "romfs:/graphics/bips.png"); // Little dots of scroll bar
-	pp2d_load_texture_png(scrollwindowtex, "romfs:/graphics/scroll_window.png"); // Window behind dots of scroll bar
-	pp2d_load_texture_png(scrollwindowfronttex, "romfs:/graphics/scroll_windowfront.png"); // Front of window for scroll bar
-	pp2d_load_texture_png(settingsicontex, "romfs:/graphics/settingsbox.png"); // Settings box on bottom screen
-	pp2d_load_texture_png(getfcgameboxtex, "romfs:/graphics/getfcgamebox.png");
-	pp2d_load_texture_png(cartnulltex, "romfs:/graphics/cart_null.png"); // NTR cartridge
-	pp2d_load_texture_png(cartntrtex, "romfs:/graphics/cart_ntr.png"); // NTR cartridge
-	pp2d_load_texture_png(carttwltex, "romfs:/graphics/cart_twl.png"); // TWL cartridge
-	pp2d_load_texture_png(cartctrtex, "romfs:/graphics/cart_ctr.png"); // CTR cartridge
-	pp2d_load_texture_png(_3dsbottopbartex, "romfs:/graphics/3ds/bot_topbar.png");
-	pp2d_load_texture_png(_3dsbotbotbartex, "romfs:/graphics/3ds/bot_botbar.png");
-	pp2d_load_texture_png(_3dsbotbotbarbuttex, "romfs:/graphics/3ds/bot_botbarbut.png");
-	pp2d_load_texture_png(bracetex, "romfs:/graphics/brace.png"); // Brace (C-shaped thingy)
-	pp2d_load_texture_png(gbctex, "romfs:/graphics/icon_gbc.png"); // GBC icon (from SRLoader)
-	pp2d_load_texture_png(nestex, "romfs:/graphics/icon_nes.png"); // NES icon (from SRLoader)
-
-	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
-
-	dspfirmfound = false;
- 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-		ndspInit();
-		dspfirmfound = true;
-		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
-		pp2d_end_draw(); */
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
-	}else{
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
-		pp2d_end_draw();
-		botscreenon();
-		dumpDsp();
-		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-			ndspInit();
-			dspfirmfound = true;
-		} else {
-			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
-			settings.ui.showbootscreen = 0;
-			
-			for (int i = 0; i < 90; i++) {
-				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-				if (!isDemo) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.\n"
-						"(NTR/TWL mode will still have sound.)");
-				} else {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.");
-				}
-				pp2d_end_draw();
-			}
-		}
-		botscreenoff();
-	}
-
 	bool musicbool = false;
 	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
 		musicpath = "sdmc:/_nds/twloader/music.wav";

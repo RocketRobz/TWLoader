@@ -24,6 +24,8 @@ extern bool isDemo;	// Is the program running as demo version?
 extern bool run;	// Set to false to exit to the Home Menu.
 extern bool isNightly;
 
+extern std::string	bootstrapPath;
+
 
 extern std::string homebrew_arg;
 
@@ -33,6 +35,14 @@ extern std::string fat;
 extern void DialogBoxAppear(int x, int y, const char *text);
 extern void DialogBoxDisappear(int x, int y, const char *text);
 extern bool showdialogbox;
+
+// Bootstrap
+extern void LoadBootstrapConfig();
+extern void SaveBootstrapConfig();
+
+// rfhm
+extern aptHookCookie rfhm_cookie;
+extern void rfhm_callback(APT_HookType hook, void *param);
 
 // Shoulder button images.
 extern const char* Lshouldertext;
@@ -53,8 +63,12 @@ extern bool fadein;
 extern bool fadeout;
 extern void screenoff(void);
 extern void screenon(void);
+extern void botscreenoff(void);
+extern void botscreenon(void);
 
 extern int titleboxXmovetimer; // Set to 1 for fade-in effect to run
+
+extern bool bannertextloaded;
 
 // Settings
 extern std::string settings_releasebootstrapver;

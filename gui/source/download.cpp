@@ -58,6 +58,8 @@ std::string release_SDK5BS_ver;
 std::string unofficial_SDK5BS_ver;
 std::string release_SDK5BS_url;
 std::string unofficial_SDK5BS_url;
+std::string release_hbBS_url;
+std::string unofficial_hbBS_url;
 
 std::string nightly_url = "";
 std::string nightly_commit = "";
