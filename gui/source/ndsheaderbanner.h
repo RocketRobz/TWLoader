@@ -266,7 +266,7 @@ u32 getSDKVersion(FILE* ndsFile, const char* filename);
  * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia);
+int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const char* counter2, bool isCia);
 
 /**
  * Get the icon from an NDS banner.

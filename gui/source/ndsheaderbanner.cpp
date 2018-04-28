@@ -1,3 +1,4 @@
+#include "init.h"
 #include "ndsheaderbanner.h"
 #include "log.h"
 #include "textfns.h"
@@ -251,7 +252,7 @@ u32 getSDKVersion(FILE* ndsFile, const char* filename) {
  * @param isCIA Is the game a CIA?
  * @return 0 on success; non-zero on error.
  */
-int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const char* counter1, const char* counter2, bool isCia) {
+int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const char* counter2, bool isCia) {
 	char bannerpath[256];
 	snprintf(bannerpath, sizeof(bannerpath), "sdmc:/_nds/twloader/bnricons/%s.bin", filename);
 
@@ -260,11 +261,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		// TODO: If it's 0 bytes, re-cache it?
 		return 0;
 	}
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, title);
-	pp2d_draw_text(12, 48, 0.5f, 0.5f, WHITE, counter1);
-	pp2d_draw_text(39, 48, 0.5f, 0.5f, WHITE, "/");
-	pp2d_draw_text(44, 48, 0.5f, 0.5f, WHITE, counter2);
+	//snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Now checking banner data (SD Card)...\n%s/%s", counter1, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
@@ -282,8 +279,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
-		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
-		pp2d_end_draw();
+		init_textOnScreen = "Now caching banner data (SD Card)...";
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
@@ -368,8 +364,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
-		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Now caching banner data (SD Card)...");
-		pp2d_end_draw();
+		init_textOnScreen = "Now caching banner data (SD Card)...";
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
@@ -380,9 +375,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Invalid banner loaded; not caching.");
-		pp2d_end_draw();
+		init_textOnScreen = "Invalid banner loaded; not caching.";
 		return -1;
 	}
 
@@ -391,9 +384,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* title, const ch
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 32, 0.5f, 0.5f, WHITE, "Error writing the banner cache file.");
-		pp2d_end_draw();
+		init_textOnScreen = "Error writing the banner cache file.";
 		return -2;
 	}
 	fwrite(&ndsBanner, 1, bannersize, filetosave);

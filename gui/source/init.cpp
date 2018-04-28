@@ -1,4 +1,5 @@
 #include "main.h"
+#include "thread.h"
 #include "dumpdsp.h"
 #include "download.h"
 #include "gamecard.h"
@@ -30,97 +31,22 @@ using std::wstring;
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 const char* musicpath = "romfs:/null.wav";
+const char* init_textOnScreen = " ";
 
-/**
- * Play DS boot splash.
- */
-void initStuff() {
-	dspfirmfound = false;
- 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-		ndspInit();
-		dspfirmfound = true;
-		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
-		pp2d_end_draw(); */
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
-	}else{
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
-		pp2d_end_draw();
-		botscreenon();
-		dumpDsp();
-		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-			ndspInit();
-			dspfirmfound = true;
-		} else {
-			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
-			settings.ui.showbootscreen = 0;
-			
-			for (int i = 0; i < 90; i++) {
-				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-				if (!isDemo) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.\n"
-						"(NTR/TWL mode will still have sound.)");
-				} else {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.");
-				}
-				pp2d_end_draw();
-			}
-		}
-		botscreenoff();
-	}
+bool showdialogbox_init = true;
+int initdbox_movespeed = 22;
+int initdbox_Ypos = -240;
+int initdbox_bgalpha = 0;
 
+Handle initThreadRequest;
+
+bool initDone = false;
+
+void initStuffThread() {
 	Result res = 0;
-
-	int aninumfadealpha = 0;
-	int showAnniversaryTextYPos = 100;
-
-	if(isDemo)
-		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo_demo.png"); // TWLoader (3DSX demo version) logo on top screen
-	else
-		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo.png"); // TWLoader logo on top screen
-	pp2d_load_texture_png(anniversarytex, "romfs:/graphics/anniversary/text.png"); // TWLoader logo on top screen
-	if(showAnniversaryText) {
-		for(int i = 0; i < 64; i++) {
-			pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
-			pp2d_draw_texture_part_blend(anniversarytex, 0, 40, 0, 0, 160, 40, RGBA8(255, 255, 255, aninumfadealpha));
-			pp2d_draw_texture_part(anniversarytex, 160, showAnniversaryTextYPos, 160, 0, 240, 40);
-			pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-			pp2d_end_draw();
-			aninumfadealpha += 4;
-			if(aninumfadealpha > 255) aninumfadealpha = 255;
-			showAnniversaryTextYPos--;
-			if(showAnniversaryTextYPos < 40) showAnniversaryTextYPos = 40;
-		}
-	}
-
-	pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
-	if(showAnniversaryText) {
-		pp2d_draw_texture(anniversarytex, 0, 40);
-		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-	} else {
-		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
-	}
 
 	// Register a handler for "returned from HOME Menu".
 	aptHook(&rfhm_cookie, rfhm_callback, &bannertextloaded);
-	
-	if(isNightly){
-		logEnabled = true;
-		char nightlyhash[16];
-		snprintf(nightlyhash, 16, "%s", NIGHTLY);
-		LogFMA("Welcome to nightly channel!", "Version:", nightlyhash);
-		Log("********************************************************\n");	
-	} else {
-		/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
-		struct stat logBuf;
-		logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
-		/* Log configuration file end */
-		if (logEnabled)	createLog();
-	}		
 
 	// make folders if they don't exist
 	mkdir("sdmc:/3ds", 0777);	// For DSP dump
@@ -134,48 +60,6 @@ void initStuff() {
 	mkdir("sdmc:/_nds/twloader/gamesettings", 0777);
 	mkdir("sdmc:/_nds/twloader/gamesettings/flashcard", 0777);
 	mkdir("sdmc:/_nds/twloader/loadflashcard", 0777);
-	
-	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
-	std::string version = settings_vertext;	
-	int vertext_xPos;
-	if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
-		vertext_xPos = 324;
-	}else{
-		vertext_xPos = 336;
-	}
-	
-	pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, WHITE, settings_vertext);
-	pp2d_end_draw();
-	
-	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
-	
-	aninumfadealpha = 255;
-	bool botscreenon_ran = false;
-
-	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/pseudoHDRlogo.png");
-
-	for(int i = 0; i < 60*3; i++) {
-		if(i <= 30) {
-			aninumfadealpha -= 25;
-			if(aninumfadealpha < 0) aninumfadealpha = 0;
-		} else if(i >= 160) {
-			aninumfadealpha += 25;
-			if(aninumfadealpha > 255) aninumfadealpha = 255;
-		}
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
-		pp2d_draw_texture(bottomlogotex, 0, 0);
-		pp2d_draw_text(32, 48, 0.60, 0.60f, WHITE, "Enhanced with");
-		pp2d_draw_text(32, 192, 0.50, 0.50f, WHITE, "*Games not enhanced with pseudo-HDR");
-		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, aninumfadealpha));
-		pp2d_end_draw();
-		if(!botscreenon_ran) {
-			botscreenon();
-			botscreenon_ran = true;
-		}
-	}
-	botscreenoff();
-	
-	pp2d_free_texture(bottomlogotex);
 
 	/** Speed up New 3DS only. **/
 	bool isNew = 0;
@@ -211,12 +95,6 @@ void initStuff() {
 	pp2d_end_draw(); */
 	
 	if (logEnabled)	LogFM("Main.Textures", "Textures loading.");
-
-	// Dialog box textures.
-	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
-	pp2d_load_texture_png(dboxtex_iconbox, "romfs:/graphics/dbox/iconbox.png"); // Icon box
-	pp2d_load_texture_png(dboxtex_button, "romfs:/graphics/dbox/button.png"); // Icon box
-	pp2d_load_texture_png(dboxtex_buttonback, "romfs:/graphics/dbox/button_back.png"); // Icon box
 
 	pp2d_load_texture_png(r4loadingtex, "romfs:/graphics/r4/loading.png");		// R4 "Loading..." screen
 	pp2d_load_texture_png(toptex, "romfs:/graphics/top.png"); // Top DSi-Menu border
@@ -322,9 +200,7 @@ void initStuff() {
 	snprintf(romsel_counter2nes, sizeof(romsel_counter2nes), "%zu", nesfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of NES ROMs on the SD card detected", romsel_counter2nes);
 	
-	botscreenon();
-
-	const char* wifiStuckMsg =
+	init_textOnScreen =
 	"Checking WiFi status...\n"
 	"\n"
 	"If you see this for more than 25 seconds,\n"
@@ -335,10 +211,6 @@ void initStuff() {
 	"and also hold ? to turn on quick start.";
 
 	if(!(hHeld & KEY_Y)) {
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-		pp2d_end_draw();
-			
 		// Download missing files
 		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
 			// Nothing
@@ -346,30 +218,24 @@ void initStuff() {
 	}
 
 	if(!settings.ui.quickStart) {
-		wifiStuckMsg =
+		init_textOnScreen =
 		"Checking WiFi status...\n"
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
 		"hold ? to turn on quick start.";
-	
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-		pp2d_end_draw();
 
 		// Download box art
 		if (checkWifiStatus()) {
 			downloadBoxArt();
 		}
 	
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Now checking banner data (SD Card)...");
-		pp2d_end_draw();
+		init_textOnScreen = "Now checking banner data (SD Card)...";
 
 		// Cache banner data for ROMs on the SD card.
 		// TODO: Re-cache if it's 0 bytes?
 		for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
-			static const char title[] = "Now checking banner data (SD Card)...";
+			init_textOnScreen = "Now checking banner data (SD Card)...";
 			char romsel_counter1[16];
 			snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 			bool isCia = false;
@@ -385,16 +251,19 @@ void initStuff() {
 			if (!f_nds_file)
 				continue;
 			
-			if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd, isCia) != 0) {
+			if(cacheBanner(f_nds_file, tempfile, romsel_counter1, romsel_counter2sd, isCia) != 0) {
 				if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
 			}
 			
 			fclose(f_nds_file);
 		}
 	
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
-		pp2d_end_draw();
+		init_textOnScreen =
+		"Checking WiFi status...\n"
+		"\n"
+		"If you see this for more than 25 seconds,\n"
+		"try rebooting, then after launching TWLoader,\n"
+		"hold ? to turn on quick start.";
 
 		if (checkWifiStatus()) {
 			if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -415,10 +284,211 @@ void initStuff() {
 		}
 	}
 
-	botscreenoff();
 	showdialogbox = false;
-	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
-	pp2d_end_draw();
+	init_textOnScreen = " ";
 	
+	initDone = true;
+}
+
+/**
+ * Play DS boot splash.
+ */
+void initStuff() {
+	dspfirmfound = false;
+ 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+		ndspInit();
+		dspfirmfound = true;
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
+		pp2d_end_draw(); */
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
+	}else{
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
+		pp2d_end_draw();
+		botscreenon();
+		dumpDsp();
+		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+			ndspInit();
+			dspfirmfound = true;
+		} else {
+			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
+			settings.ui.showbootscreen = 0;
+			
+			for (int i = 0; i < 90; i++) {
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+				if (!isDemo) {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
+						"Running without sound.\n"
+						"(NTR/TWL mode will still have sound.)");
+				} else {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
+						"Running without sound.");
+				}
+				pp2d_end_draw();
+			}
+		}
+		botscreenoff();
+	}
+
+	if(isNightly){
+		logEnabled = true;
+		char nightlyhash[16];
+		snprintf(nightlyhash, 16, "%s", NIGHTLY);
+		LogFMA("Welcome to nightly channel!", "Version:", nightlyhash);
+		Log("********************************************************\n");	
+	} else {
+		/* Log file is dissabled by default. If _nds/twloader/log exist, we turn log file on, else, log is dissabled */
+		struct stat logBuf;
+		logEnabled = stat("sdmc:/_nds/twloader/log", &logBuf) == 0;
+		/* Log configuration file end */
+		if (logEnabled)	createLog();
+	}		
+
+	snprintf(settings_vertext, 13, "Ver. %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+	std::string version = settings_vertext;	
+	int vertext_xPos;
+	if (version.substr(version.find_first_not_of(' '), (version.find_last_not_of(' ') - version.find_first_not_of(' ') + 1)).size() > 8) {
+		vertext_xPos = 324;
+	}else{
+		vertext_xPos = 336;
+	}
+
+	if (logEnabled)	LogFMA("Main.GUI version", "GUI version", settings_vertext);
+
+	pp2d_load_texture_png(dsboottex, "romfs:/graphics/init/bg.png"); // Init background
+
+	int aninumfadealpha = 0;
+	int showAnniversaryTextYPos = 100;
+
+	float initBG_pos = 0.0;
+
+	if(isDemo)
+		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo_demo.png"); // TWLoader (3DSX demo version) logo on top screen
+	else
+		pp2d_load_texture_png(twloaderlogotex, "romfs:/graphics/logo/logo.png"); // TWLoader logo on top screen
+
+	// Dialog box textures.
+	pp2d_load_texture_png(dialogboxtex, "romfs:/graphics/dialogbox.png"); // Dialog box
+	pp2d_load_texture_png(dboxtex_iconbox, "romfs:/graphics/dbox/iconbox.png"); // Icon box
+	pp2d_load_texture_png(dboxtex_button, "romfs:/graphics/dbox/button.png"); // Icon box
+	pp2d_load_texture_png(dboxtex_buttonback, "romfs:/graphics/dbox/button_back.png"); // Icon box
+
+	svcCreateEvent(&initThreadRequest,(ResetType)0);
+	createThread((ThreadFunc)initStuffThread);
+
+	while(aptMainLoop()) {
+		if (showdialogbox_init) {
+			if (initdbox_movespeed <= 1) {
+				if (initdbox_Ypos >= 0) {
+					initdbox_movespeed = 0;
+					initdbox_Ypos = 0;
+				} else
+					initdbox_movespeed = 1;
+			} else {
+				initdbox_movespeed -= 0.2;
+				initdbox_bgalpha += 5;
+			}
+			initdbox_Ypos += initdbox_movespeed;
+		} else {
+			if (initdbox_Ypos <= -240 || initdbox_Ypos >= 240) {
+				initdbox_movespeed = 22;
+				initdbox_Ypos = -240;
+			} else {
+				initdbox_movespeed += 1;
+				initdbox_bgalpha -= 5;
+				if (initdbox_bgalpha <= 0) {
+					initdbox_bgalpha = 0;
+				}
+				initdbox_Ypos += initdbox_movespeed;
+			}
+		}
+
+		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
+		for (int h = 0; h < 10; h++) {
+			for (int v = 0; v < 6; v++) {
+				pp2d_draw_texture(dsboottex, -48+initBG_pos+(h*48), -initBG_pos+(v*48));
+			}
+		}
+		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+		pp2d_draw_text(vertext_xPos, 222, 0.60, 0.60f, BLACK, settings_vertext);
+		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
+		for (int h = 0; h < 9; h++) {
+			for (int v = 0; v < 6; v++) {
+				pp2d_draw_texture(dsboottex, -88+initBG_pos+(h*48), -initBG_pos+(v*48));
+			}
+		}
+		if (initdbox_Ypos != -240) {
+			// Draw the dialog box.
+			pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, initdbox_bgalpha)); // Fade in/out effect
+			pp2d_draw_texture(dialogboxtex, 0, initdbox_Ypos);
+			pp2d_draw_text(20, 20+initdbox_Ypos, 0.50, 0.50, BLACK, init_textOnScreen);
+		}
+		pp2d_end_draw();
+		
+		initBG_pos += 0.50f;
+		if(initBG_pos == 48.0) initBG_pos = 0.0;
+
+		screenon();
+		
+		if (initDone) {
+			showdialogbox_init = false;
+			if (initdbox_Ypos == -240) break;
+		}
+	}
+
+	/*pp2d_load_texture_png(anniversarytex, "romfs:/graphics/anniversary/text.png"); // TWLoader logo on top screen
+	if(showAnniversaryText) {
+		for(int i = 0; i < 64; i++) {
+			pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
+			pp2d_draw_texture_part_blend(anniversarytex, 0, 40, 0, 0, 160, 40, RGBA8(255, 255, 255, aninumfadealpha));
+			pp2d_draw_texture_part(anniversarytex, 160, showAnniversaryTextYPos, 160, 0, 240, 40);
+			pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+			pp2d_end_draw();
+			aninumfadealpha += 4;
+			if(aninumfadealpha > 255) aninumfadealpha = 255;
+			showAnniversaryTextYPos--;
+			if(showAnniversaryTextYPos < 40) showAnniversaryTextYPos = 40;
+		}
+	}
+
+	pp2d_begin_draw(GFX_TOP, GFX_LEFT);		
+	if(showAnniversaryText) {
+		pp2d_draw_texture(anniversarytex, 0, 40);
+		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	} else {
+		pp2d_draw_texture(twloaderlogotex, 400/2 - 256/2, 240/2 - 128/2); // 400/2 - height/2, 240/2 - width/2
+	}
+	
+	aninumfadealpha = 255;
+	bool botscreenon_ran = false;
+
+	pp2d_load_texture_png(bottomlogotex, "romfs:/graphics/pseudoHDRlogo.png");
+
+	for(int i = 0; i < 60*3; i++) {
+		if(i <= 30) {
+			aninumfadealpha -= 25;
+			if(aninumfadealpha < 0) aninumfadealpha = 0;
+		} else if(i >= 160) {
+			aninumfadealpha += 25;
+			if(aninumfadealpha > 255) aninumfadealpha = 255;
+		}
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);	
+		pp2d_draw_texture(bottomlogotex, 0, 0);
+		pp2d_draw_text(32, 48, 0.60, 0.60f, WHITE, "Enhanced with");
+		pp2d_draw_text(32, 192, 0.50, 0.50f, WHITE, "*Games not enhanced with pseudo-HDR");
+		pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, aninumfadealpha));
+		pp2d_end_draw();
+		if(!botscreenon_ran) {
+			botscreenon();
+			botscreenon_ran = true;
+		}
+	}
+	botscreenoff();
+	
+	pp2d_free_texture(bottomlogotex);
+
+	*/
+
 }

@@ -2850,7 +2850,7 @@ char romsel_counter2gb[16];	// Number of GB ROMs on the SD card.
 char romsel_counter2nes[16];	// Number of NES ROMs on the SD card.
 
 int main(){
-	botscreenoff();
+	screenoff();
 
 	pp2d_init();
 	
@@ -2883,7 +2883,6 @@ int main(){
 	std::string donorpath;
 
 	if (settings.ui.showbootscreen == 1) {
-		botscreenon();
 		bootSplash();
 		if (logEnabled)	LogFM("Main.bootSplash", "Boot splash played.");
 		if (settings.ui.theme >= THEME_R4) {
@@ -2902,10 +2901,7 @@ int main(){
 			pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
 			pp2d_end_draw();
-			botscreenon();
 		}
-	} else {
-		botscreenoff();
 	}
 	
 	loadboxartnum = settings.ui.pagenum*gamesPerPage;
