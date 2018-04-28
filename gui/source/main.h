@@ -94,14 +94,20 @@ extern int TWLNANDnotfound_msg;
 // Files
 extern std::vector<std::string> files;
 extern std::vector<std::string> fcfiles;
+extern std::vector<std::string> gbfiles;
+extern std::vector<std::string> nesfiles;
 
 // Logging
 extern bool logEnabled;
 
+extern int bnriconnum;
+
 // Sound effects
 extern bool dspfirmfound;
+extern sound *bgm_menu;
 extern sound *sfx_launch;
 extern sound *sfx_select;
+extern sound *sfx_stop;
 extern sound *sfx_switch;
 extern sound *sfx_wrong;
 extern sound *sfx_back;
@@ -109,5 +115,15 @@ extern sound *sfx_back;
 // Game start configuration.
 extern bool keepsdvalue;
 extern int gbarunnervalue;
+
+extern void scanRomDirectories();
+
+extern bool musicbool;
+
+extern char romsel_counter2sd[16];	// Number of ROMs on the SD card.
+extern char romsel_counter2fc[16];	// Number of ROMs on the flash card.
+extern char romsel_counter2gb[16];	// Number of GB ROMs on the SD card.
+extern char romsel_counter2nes[16];	// Number of NES ROMs on the SD card.
+
 
 #endif /* TWLOADER_MAIN_H */

@@ -2,9 +2,11 @@
 #include "dumpdsp.h"
 #include "download.h"
 #include "gamecard.h"
+#include "ndsheaderbanner.h"
 #include "language.h"
 #include "log.h"
 #include "settings.h"
+#include "textfns.h"
 
 #include <cstdio>
 #include <malloc.h>
@@ -18,6 +20,7 @@
 using std::string;
 using std::unordered_set;
 using std::vector;
+using std::wstring;
 
 #include <3ds.h>
 #include <3ds/types.h>
@@ -26,10 +29,50 @@ using std::vector;
 
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
+const char* musicpath = "romfs:/null.wav";
+
 /**
  * Play DS boot splash.
  */
 void initStuff() {
+	dspfirmfound = false;
+ 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+		ndspInit();
+		dspfirmfound = true;
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
+		pp2d_end_draw(); */
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
+	}else{
+		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
+		pp2d_end_draw();
+		botscreenon();
+		dumpDsp();
+		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+			ndspInit();
+			dspfirmfound = true;
+		} else {
+			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
+			settings.ui.showbootscreen = 0;
+			
+			for (int i = 0; i < 90; i++) {
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+				if (!isDemo) {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
+						"Running without sound.\n"
+						"(NTR/TWL mode will still have sound.)");
+				} else {
+					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
+						"Running without sound.");
+				}
+				pp2d_end_draw();
+			}
+		}
+		botscreenoff();
+	}
+
 	Result res = 0;
 
 	int aninumfadealpha = 0;
@@ -225,42 +268,157 @@ void initStuff() {
 
 	if (logEnabled)	LogFM("Main.Textures", "Textures loaded.");
 
-	dspfirmfound = false;
- 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-		ndspInit();
-		dspfirmfound = true;
+	if( access( "sdmc:/_nds/twloader/music.wav", F_OK ) != -1 ) {
+		musicpath = "sdmc:/_nds/twloader/music.wav";
 		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP Firm found!");
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Custom music file found!");
 		pp2d_end_draw(); */
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm found!");
-	}else{
-		if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm not found. Dumping DSP...");
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Dumping DSP firm...");
-		pp2d_end_draw();
-		botscreenon();
-		dumpDsp();
-		if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-			ndspInit();
-			dspfirmfound = true;
-		} else {
-			if (logEnabled)	LogFM("Main.dspfirm", "DSP Firm dumping failed.");
-			settings.ui.showbootscreen = 0;
-			
-			for (int i = 0; i < 90; i++) {
-				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-				if (!isDemo) {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.\n"
-						"(NTR/TWL mode will still have sound.)");
-				} else {
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "DSP firm dumping failed.\n"
-						"Running without sound.");
-				}
-				pp2d_end_draw();
-			}
-		}
-		botscreenoff();
+		if (logEnabled)	LogFM("Main.music", "Custom music file found!");
+	}else {
+		if (logEnabled)	LogFM("Main.dspfirm", "No music file found.");
 	}
 
+	// Load the sound effects if DSP is available.
+	if (dspfirmfound) {
+		/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Loading .wav files...");
+		pp2d_end_draw(); */
+		
+		bgm_menu = new sound(musicpath);
+		sfx_launch = new sound("romfs:/sounds/launch.wav", 2, false);
+		sfx_select = new sound("romfs:/sounds/select.wav", 2, false);
+		sfx_stop = new sound("romfs:/sounds/stop.wav", 2, false);
+		sfx_switch = new sound("romfs:/sounds/switch.wav", 2, false);
+		sfx_wrong = new sound("romfs:/sounds/wrong.wav", 2, false);
+		sfx_back = new sound("romfs:/sounds/back.wav", 2, false);
+	}
+
+	// Scan hid shared memory for input events
+	hidScanInput();
+
+	const u32 hDown = hidKeysDown();
+	const u32 hHeld = hidKeysHeld();
+
+	if(hHeld & KEY_A) {
+		settings.ui.quickStart = true;
+	}
+
+	/* pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Scanning ROM directories...");
+	pp2d_end_draw(); */
+	
+	// Scan the ROM directories.
+	scanRomDirectories();
+
+	snprintf(romsel_counter2sd, sizeof(romsel_counter2sd), "%zu", files.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of ROMs on the SD card detected", romsel_counter2sd);
+	
+	snprintf(romsel_counter2fc, sizeof(romsel_counter2fc), "%zu", fcfiles.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of ROMs on the flashcard detected", romsel_counter2fc);
+	
+	snprintf(romsel_counter2gb, sizeof(romsel_counter2gb), "%zu", gbfiles.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of GB ROMs on the SD card detected", romsel_counter2gb);
+	
+	snprintf(romsel_counter2nes, sizeof(romsel_counter2nes), "%zu", nesfiles.size());
+	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of NES ROMs on the SD card detected", romsel_counter2nes);
+	
+	botscreenon();
+
+	const char* wifiStuckMsg =
+	"Checking WiFi status...\n"
+	"\n"
+	"If you see this for more than 25 seconds,\n"
+	"try rebooting, then after launching TWLoader,\n"
+	"hold ? to skip downloading missing files.\n"
+	"\n"
+	"If the issue persists, reboot, then do the same,\n"
+	"and also hold ? to turn on quick start.";
+
+	if(!(hHeld & KEY_Y)) {
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
+			
+		// Download missing files
+		if (checkWifiStatus() && (DownloadMissingFiles() == 0)) {
+			// Nothing
+		}
+	}
+
+	if(!settings.ui.quickStart) {
+		wifiStuckMsg =
+		"Checking WiFi status...\n"
+		"\n"
+		"If you see this for more than 25 seconds,\n"
+		"try rebooting, then after launching TWLoader,\n"
+		"hold ? to turn on quick start.";
+	
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
+
+		// Download box art
+		if (checkWifiStatus()) {
+			downloadBoxArt();
+		}
+	
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, "Now checking banner data (SD Card)...");
+		pp2d_end_draw();
+
+		// Cache banner data for ROMs on the SD card.
+		// TODO: Re-cache if it's 0 bytes?
+		for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
+			static const char title[] = "Now checking banner data (SD Card)...";
+			char romsel_counter1[16];
+			snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
+			bool isCia = false;
+			const char *tempfile = files.at(bnriconnum).c_str();
+			std::string fn = tempfile;
+			if(fn.substr(fn.find_last_of(".") + 1) == "cia") isCia = true;
+
+			wstring tempfile_w = utf8_to_wstring(tempfile);
+
+			char nds_path[256];
+			snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str(), tempfile);
+			FILE *f_nds_file = fopen(nds_path, "rb");
+			if (!f_nds_file)
+				continue;
+			
+			if(cacheBanner(f_nds_file, tempfile, title, romsel_counter1, romsel_counter2sd, isCia) != 0) {
+				if (logEnabled)	LogFMA("Main.Banner scanning", "Error reading banner from file", nds_path);
+			}
+			
+			fclose(f_nds_file);
+		}
+	
+		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+		pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, wifiStuckMsg);
+		pp2d_end_draw();
+
+		if (checkWifiStatus()) {
+			if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
+				DownloadTWLoaderCIAs();
+			}
+
+			switch (settings.ui.autoupdate) {
+				case 0:
+				default:
+					break;
+				case 1:
+					UpdateBootstrapRelease();
+					break;
+				case 2:
+					UpdateBootstrapUnofficial();
+					break;
+			}
+		}
+	}
+
+	botscreenoff();
+	showdialogbox = false;
+	pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
+	pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, " ");
+	pp2d_end_draw();
+	
 }
