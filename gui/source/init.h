@@ -3,6 +3,10 @@
 
 extern const char* init_textOnScreen;
 
+extern int initdbox_setWaitTime;
+
+extern bool initDone;
+
 /**
  * Play DS boot splash.
  */

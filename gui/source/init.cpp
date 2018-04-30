@@ -34,6 +34,8 @@ const char* musicpath = "romfs:/null.wav";
 const char* init_textOnScreen = " ";
 
 bool showdialogbox_init = true;
+int initdbox_waitTime = 0;
+int initdbox_setWaitTime = 0;
 int initdbox_movespeed = 22;
 int initdbox_Ypos = -240;
 int initdbox_bgalpha = 0;
@@ -423,10 +425,19 @@ void initStuff() {
 			// Draw the dialog box.
 			pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, initdbox_bgalpha)); // Fade in/out effect
 			pp2d_draw_texture(dialogboxtex, 0, initdbox_Ypos);
-			pp2d_draw_text(20, 20+initdbox_Ypos, 0.50, 0.50, BLACK, init_textOnScreen);
+			pp2d_draw_text(12, 16+initdbox_Ypos, 0.50, 0.50, BLACK, init_textOnScreen);
 		}
 		pp2d_end_draw();
-		
+
+		if(initdbox_setWaitTime != 0) {
+			initdbox_waitTime++;
+			if (initdbox_waitTime == initdbox_setWaitTime) {
+				initdbox_setWaitTime = 0;
+			}
+		} else {
+			initdbox_waitTime = 0;
+		}
+
 		initBG_pos += 0.50f;
 		if(initBG_pos == 48.0) initBG_pos = 0.0;
 
