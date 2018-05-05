@@ -762,9 +762,11 @@ void SetDonorSDK() {
 }
 
 /**
- * Set compatibility check for a specific game.
+ * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
  */
-void SetCompatibilityCheck() {
+void SetGameSoftReset() {
+	const u32 hHeld = hidKeysHeld();
+
 	char nds_path[256];
 	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
 	FILE *f_nds_file = fopen(nds_path, "rb");
@@ -775,24 +777,33 @@ void SetCompatibilityCheck() {
 	game_TID[3] = 0;
 	fclose(f_nds_file);
 	
-	settings.twl.run_timeout = true;
+	settings.twl.gameSoftReset = false;
 
-	// Check for games that don't need compatibility checks.
+	// Check for games that have it's own reset function (OS_Reset not used).
 	static const char list[][4] = {
-		"###",	// Homebrew
 		"NTR",	// Download Play ROMs
-		"ADM",	// Animal Crossing: Wild World
-		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
+		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"AMC",	// Mario Kart DS
+		"EKD",	// Ermii Kart DS
 		"A2D",	// New Super Mario Bros.
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 	
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
 		if (!memcmp(game_TID, list[i], 3)) {
 			// Found a match.
-			settings.twl.run_timeout = false;
+			settings.twl.gameSoftReset = true;
 			break;
 		}
+	}
+
+	if(hHeld & KEY_ZR){
+		settings.twl.gameSoftReset = true;
 	}
 }
 
@@ -1159,11 +1170,11 @@ void SaveBootstrapConfig(void)
 		if (!settings.twl.launchslot1 && gbarunnervalue == 0 && settings.twl.romtype == 0) {
 			SetHomebrewBootstrap();
 			SetDonorSDK();
-			SetCompatibilityCheck();
+			SetGameSoftReset();
 			SetMPUSettings();
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, fat+settings.ui.romfolder+slashchar+rom);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "DONOR_SDK_VER", settings.twl.donorSdkVer);
-			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "CHECK_COMPATIBILITY", settings.twl.run_timeout);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "GAME_SOFT_RESET", settings.twl.gameSoftReset);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);

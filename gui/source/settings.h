@@ -103,7 +103,7 @@ typedef struct _Settings_t {
 		
 		int donorSdkVer;
 		
-		bool run_timeout;
+		bool gameSoftReset;
 		
 		int mpuregion; // Region 0, 1, 2, 3
 		int mpusize; // Size 0, 1, 3145728
