@@ -1167,7 +1167,7 @@ void SaveBootstrapConfig(void)
 {
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
-		if (!settings.twl.launchslot1 && gbarunnervalue == 0 && settings.twl.romtype == 0) {
+		if (!launchCia && !settings.twl.launchslot1 && gbarunnervalue == 0 && settings.twl.romtype == 0) {
 			SetHomebrewBootstrap();
 			SetDonorSDK();
 			SetGameSoftReset();
