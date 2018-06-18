@@ -1168,6 +1168,12 @@ void SaveBootstrapConfig(void)
 	if (applaunchon) {
 		// Set ROM path if ROM is selected
 		if (!launchCia && !settings.twl.launchslot1 && gbarunnervalue == 0 && settings.twl.romtype == 0) {
+			int consoleModel = 2;
+			bool isNew = 0;
+			APT_CheckNew3DS(&isNew);
+			if (isNew) {
+				consoleModel = 3;
+			}
 			SetHomebrewBootstrap();
 			SetDonorSDK();
 			SetGameSoftReset();
@@ -1177,6 +1183,7 @@ void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "GAME_SOFT_RESET", settings.twl.gameSoftReset);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "CONSOLE_MODEL", consoleModel);
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 			char path[256];
 			std::u16string u16_path;
