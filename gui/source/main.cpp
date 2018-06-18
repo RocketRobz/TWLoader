@@ -501,7 +501,8 @@ static int CreateGameSave(const char *filename) {
 		}
 
 		// Set save size to 1MB for the following games
-		if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+		if (strcmp(game_TID, "AZL") == 0 	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+		|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
 		{
 			savesize = 1048576;
 		}
@@ -525,96 +526,6 @@ static int CreateGameSave(const char *filename) {
 	}
 	return 0;
 }
-
-/**
- * Write selected game's .sav to donor cart.
- * @param filename Filename.
- * @return 0 on success; non-zero on error.
- */
-/*static int WriteGameSaveToDonor(std::u16string filename) {
-	Result res = 0;
-
-	Title title;
-
-	char nds_path[256];
-	snprintf(nds_path, sizeof(nds_path), "sdmc:/%s/%s", settings.ui.romfolder.c_str() , rom);
-	FILE *f_nds_file = fopen(nds_path, "rb");
-	if (!f_nds_file) {
-		screenon();
-		DialogBoxAppear(12, 16, "fopen(nds_path) failed, continuing anyway.");
-		DialogBoxDisappear(12, 16, "fopen(nds_path) failed, continuing anyway.");
-		screenoff();
-		return -1;
-	}
-	
-	// Poll for Slot-1 changes.
-	bool forcePoll = false;
-	bool doSlot1Update = false;
-	if (gamecardIsInserted() && gamecardGetType() == CARD_TYPE_UNKNOWN) {
-		// Card is inserted, but we don't know its type.
-		// Force an update.
-		forcePoll = true;
-	}
-	bool s1chg = gamecardPoll(forcePoll);
-	if (s1chg) {
-		// Update Slot-1 if:
-		// - forcePoll is false
-		// - forcePoll is true, and card is no longer unknown.
-		doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
-	}
-
-	if (gamecardGetType() == CARD_TYPE_NTR || gamecardGetType() == CARD_TYPE_TWL_ENH) {
-		screenon();
-		DialogBoxAppear(12, 72, "Writing save file to game cart...");
-		pxiDevInit();
-
-		CardType cardType = title.getSPICardType();
-		u32 saveSize = SPIGetCapacity(cardType);
-		u32 pageSize = SPIGetPageSize(cardType);
-
-		u8* saveFile = new u8[saveSize];
-		FSStream stream(getArchiveSDMC(), filename, FS_OPEN_READ);
-
-		if (stream.getLoaded())
-		{
-			stream.read(saveFile, saveSize);
-		}
-		res = stream.getResult();
-		stream.close();
-
-		if (R_FAILED(res))
-		{
-			delete[] saveFile;
-			DialogBoxDisappear(12, 72, "Failed to read .sav file.");
-			screenoff();
-			pxiDevExit();
-			return -1;
-		}
-
-		for (u32 i = 0; i < saveSize/pageSize; ++i)
-		{
-			res = SPIWriteSaveData(cardType, pageSize*i, saveFile + pageSize*i, pageSize);
-			if (R_FAILED(res))
-			{
-				break;
-			}
-		}
-
-		if (R_FAILED(res))
-		{
-			delete[] saveFile;
-			DialogBoxDisappear(12, 72, "Failed to write save to game cart.");
-			screenoff();
-			pxiDevExit();
-			return -1;
-		}		
-
-		DialogBoxDisappear(12, 72, "Done!");
-		screenoff();
-		pxiDevExit();
-	}
-	return 0;
-}*/
 
 /**
  * Set homebrew version of nds-bootstrap for homebrew ROMs.
@@ -1184,6 +1095,7 @@ void SaveBootstrapConfig(void)
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpuregion, settings.twl.mpuregion);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, bootstrapini_mpusize, settings.twl.mpusize);
 			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "CONSOLE_MODEL", consoleModel);
+			bootstrapini.SetInt(bootstrapini_ndsbootstrap, "NTR_TOUCH", 0);
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_savpath, fat+settings.ui.romfolder+slashchar+sav);
 			char path[256];
 			std::u16string u16_path;
@@ -1194,7 +1106,6 @@ void SaveBootstrapConfig(void)
 				// Create a save file if it doesn't exist
 				CreateGameSave(path);
 			}
-			//if(SDKVersion > 0x5000000) WriteGameSaveToDonor(u16_path);
 		} else {
 			bootstrapPath = "sd:/_nds/hb-bootstrap.nds";
 			bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_ndspath, "sd:/_nds/GBARunner2.nds");
