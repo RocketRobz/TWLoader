@@ -425,7 +425,7 @@ void initStuff() {
 			// Draw the dialog box.
 			pp2d_draw_rectangle(0, 0, 320, 240, RGBA8(0, 0, 0, initdbox_bgalpha)); // Fade in/out effect
 			pp2d_draw_texture(dialogboxtex, 0, initdbox_Ypos);
-			pp2d_draw_text(12, 16+initdbox_Ypos, 0.50, 0.50, BLACK, init_textOnScreen);
+			pp2d_draw_text(16, 16+initdbox_Ypos, 0.50, 0.50, BLACK, init_textOnScreen);
 		}
 		pp2d_end_draw();
 
