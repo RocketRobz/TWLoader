@@ -2113,39 +2113,8 @@ static void drawMenuDialogBox(void)
 			{ 23, 169, NULL, TR(STR_START_SET_LED), {L"", L"", L""}},
 		};
 
-		if(gamesettings_isCia) {
-			pp2d_draw_texture(dboxtex_button, buttons[3].x, menudbox_Ypos+129);
-
-			const wchar_t *title = buttons[3].title;
-
-			// Determine the text height.
-			// NOTE: Button texture size is 132x34.
-			const int h = 32;
-
-			// Draw the title.
-			int y = menudbox_Ypos + 129 + ((34 - h) / 2);
-			int w = 0;
-			int x = ((2 - w) / 2) + buttons[3].x;
-			pp2d_draw_wtext(x, y, 0.50, 0.50, BLACK, title);
-			y += 16;
-
-			// Draw the value.
-			// Show the RGB value.
-			char rgb_str[32];
-			snprintf(rgb_str, sizeof(rgb_str), "%d, %d, %d",
-				settings.pergame.red,
-				settings.pergame.green,
-				settings.pergame.blue);
-			w = 0;
-			x = ((2 - w) / 2) + buttons[3].x;
-
-			// Print the RGB value using its color.
-			const u32 color = RGBA8(settings.pergame.red,
-				settings.pergame.green,
-				settings.pergame.blue, 255);
-			pp2d_draw_text(x, y, 0.50, 0.50, color, rgb_str);
-		} else if ((SDKVersion > 0x5000000 && SDKVersion < 0x6000000) || settings.twl.forwarder) {
-			if(settings.ui.cursorPosition >= 0 && (SDKVersion > 0x5000000 && SDKVersion < 0x6000000)) {
+		if (!gamesettings_isCia) {
+			if(settings.ui.cursorPosition >= 0) {
 				pp2d_draw_text(162, menudbox_Ypos + 169, 0.50, 0.50, BLACK, SDKnumbertext);
 			}
 
@@ -5808,73 +5777,9 @@ int main(){
 									overlaysIncluded = getOverlaySize(f_nds_file, rom_filename, menulaunch_isCia);
 									fclose(f_nds_file);
 								}
-							} else {
-								FILE *f_nds_file;
-								SDKVersion = 0;
-								donorpath = bootstrapini.GetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, "");
-								// Show "Donor ROM not set" message, if game is SDK3-4, but not MKDS, and donor path is blank
-								if (donorpath.compare("") == 0) {
-									f_nds_file = fopen(path, "rb");
-									char game_TID[5];
-									grabTID(f_nds_file, game_TID, false);
-									game_TID[4] = 0;
-									game_TID[3] = 0;
-									if (strcmp(game_TID, "###") != 0) {
-										SDKVersion = getSDKVersion(f_nds_file, rom_filename);
-										if ((SDKVersion > 0x3000000) && (SDKVersion < 0x5000000) && (strcmp(game_TID, "AMC") != 0)) {
-											donorMsgType = 1;	// Set to show "Donor ROM not set" message
-										}
-									}
-								}
-								if (donorMsgType != 1) {
-									// Poll for Slot-1 changes.
-									bool forcePoll = false;
-									bool doSlot1Update = false;
-									if ((gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_UNKNOWN))
-									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_CTR))) {
-										// Card is inserted, but we don't know its type.
-										// Force an update.
-										forcePoll = true;
-									}
-									bool s1chg = gamecardPoll(forcePoll);
-									if (s1chg) {
-										// Update Slot-1 if:
-										// - forcePoll is false
-										// - forcePoll is true, and card is no longer unknown.
-										doSlot1Update = (!forcePoll || gamecardGetType() != CARD_TYPE_UNKNOWN);
-									}
-									if(!gamecardIsInserted()
-									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_UNKNOWN))
-									|| (gamecardIsInserted() && (gamecardGetType() == CARD_TYPE_CTR))) {
-										if (!f_nds_file) f_nds_file = fopen(path, "rb");
-										if (SDKVersion == 0) SDKVersion = getSDKVersion(f_nds_file, rom_filename);
-										if (SDKVersion > 0x5000000) {
-											donorMsgType = 2;	// Set to show "Donor cart not inserted" message
-										}
-									}
-								}
-								fclose(f_nds_file);
 							}
-						} else {
-							SDKVersion = 0;
 						}
 
-						if(donorMsgType == 2) {
-							showdialogbox_menu = true;
-							menu_ctrlset = CTRL_SET_DBOX;
-							menudboxmode = DBOX_MODE_CART_DONOR_NOT_SET;
-						} else if(donorMsgType == 1) {
-							if (!playwrongsounddone) {
-								if (dspfirmfound) {
-									sfx_wrong->stop();
-									sfx_wrong->play();
-								}
-								playwrongsounddone = true;
-							}
-							showdialogbox_menu = true;
-							menu_ctrlset = CTRL_SET_DBOX;
-							menudboxmode = DBOX_MODE_DONOR_NOT_SET;
-						}
 						if (overlaysIncluded) {
 							if (!playwrongsounddone) {
 								if (dspfirmfound) {
@@ -6447,37 +6352,13 @@ int main(){
 							}
 							if (gamesettingsChanged) SavePerGameSettings();
 							menudboxmode = DBOX_MODE_OPTIONS;
-						} else if (hDown & KEY_RIGHT) {
-							if (gamesettings_cursorPosition == 1) {
-								gamesettings_cursorPosition = 2;
-							}
-						} else if (hDown & KEY_LEFT) {
-							if (gamesettings_cursorPosition == 2) {
-								gamesettings_cursorPosition = 1;
-							}
 						} else if (hDown & KEY_DOWN) {
-							if((SDKVersion > 0x5000000 && SDKVersion < 0x6000000) || settings.twl.forwarder) {
-								gamesettings_cursorPosition = 3;
-							} else {
 								if (gamesettings_cursorPosition == 0) {
-									gamesettings_cursorPosition = 1;
-								} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
 									gamesettings_cursorPosition = 3;
-								} else if (gamesettings_cursorPosition == 3) {
-									gamesettings_cursorPosition = 0;
 								}
-							}
 						} else if (hDown & KEY_UP) {
-							if((SDKVersion > 0x5000000 && SDKVersion < 0x6000000) || settings.twl.forwarder) {
+							if (gamesettings_cursorPosition == 3) {
 								gamesettings_cursorPosition = 0;
-							} else {
-								if (gamesettings_cursorPosition == 0) {
-									gamesettings_cursorPosition = 3;
-								} else if (gamesettings_cursorPosition == 1 || gamesettings_cursorPosition == 2) {
-									gamesettings_cursorPosition = 0;
-								} else if (gamesettings_cursorPosition == 3) {
-									gamesettings_cursorPosition = 1;
-								}
 							}
 						} else if(hDown & KEY_TOUCH){
 							if(gamesettings_isCia) {
@@ -6503,31 +6384,6 @@ int main(){
 									if (dspfirmfound) {
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
-									}
-								}
-								if((SDKVersion > 0x5000000 && SDKVersion < 0x6000000) || settings.twl.forwarder) {} else {
-									if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Use set donor ROM
-										gamesettingsChanged = true;
-										gamesettings_cursorPosition = 1;
-										settings.pergame.usedonor++;
-										if(settings.pergame.usedonor == 3)
-											settings.pergame.usedonor = 0;
-										if (dspfirmfound) {
-											sfx_select->stop();	// Prevent freezing
-											sfx_select->play();
-										}
-									}else if (touch.px >= 161 && touch.px <= 293 && touch.py >= (menudbox_Ypos + 129) && touch.py <= (menudbox_Ypos + 163)){ // Set as donor ROM
-										gamesettings_cursorPosition = 2;
-										if(matching_files.size() == 0){
-											rom = files.at(settings.ui.cursorPosition).c_str();
-										}else{
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-										bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
-										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
-										showdialogbox_menu = false;
-										menudbox_movespeed = 1;
-										menu_ctrlset = CTRL_SET_GAMESEL;
 									}
 								}
 								if (touch.px >= 23 && touch.px <= 155 && touch.py >= (menudbox_Ypos + 169) && touch.py <= (menudbox_Ypos + 203)){ // Set LED Color
@@ -6574,35 +6430,6 @@ int main(){
 										sfx_select->stop();	// Prevent freezing
 										sfx_select->play();
 									}
-									break;
-								case 1:
-									settings.pergame.usedonor++;
-									if(settings.pergame.usedonor == 3)
-										settings.pergame.usedonor = 0;
-									if (dspfirmfound) {
-										sfx_select->stop();	// Prevent freezing
-										sfx_select->play();
-									}
-									break;
-								case 2:
-									if (settings.twl.forwarder) {
-										if(matching_files.size() == 0){
-											rom = fcfiles.at(settings.ui.cursorPosition).c_str();
-										}else{
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}										
-									} else {
-										if(matching_files.size() == 0){
-											rom = files.at(settings.ui.cursorPosition).c_str();
-										}else{
-											rom = matching_files.at(settings.ui.cursorPosition).c_str();
-										}
-										bootstrapini.SetString(bootstrapini_ndsbootstrap, bootstrapini_arm7donorpath, fat+settings.ui.romfolder+slashchar+rom);
-										bootstrapini.SaveIniFile("sdmc:/_nds/nds-bootstrap.ini");
-									}
-									showdialogbox_menu = false;
-									menudbox_movespeed = 1;
-									menu_ctrlset = CTRL_SET_GAMESEL;
 									break;
 								case 3:
 									RGB[0] = keyboardInputInt("Red color: max is 255");
