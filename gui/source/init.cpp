@@ -210,7 +210,7 @@ void initStuffThread() {
 	"hold ? to skip downloading missing files.\n"
 	"\n"
 	"If the issue persists, reboot, then do the same,\n"
-	"and also hold ? to turn on quick start.";
+	"and also hold  to turn on quick start.";
 
 	if(!(hHeld & KEY_Y)) {
 		// Download missing files
@@ -225,7 +225,7 @@ void initStuffThread() {
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
-		"hold ? to turn on quick start.";
+		"hold  to turn on quick start.";
 
 		// Download box art
 		if (checkWifiStatus()) {
@@ -265,7 +265,7 @@ void initStuffThread() {
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
-		"hold ? to turn on quick start.";
+		"hold  to turn on quick start.";
 
 		if (checkWifiStatus()) {
 			if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
