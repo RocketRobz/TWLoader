@@ -1,7 +1,7 @@
 #ifndef INITIALIZE_H
 #define INITIALIZE_H
 
-extern const char* init_textOnScreen;
+extern char init_textOnScreen[256];
 
 extern int initdbox_setWaitTime;
 

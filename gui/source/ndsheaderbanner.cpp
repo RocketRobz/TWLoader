@@ -261,7 +261,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const
 		// TODO: If it's 0 bytes, re-cache it?
 		return 0;
 	}
-	//snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Now checking banner data (SD Card)...\n%s/%s", counter1, counter2);
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Now checking banner data (SD Card)...\n%s/%s", counter1, counter2);
 
 	if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Reading .NDS file:", filename);
 	sNDSHeader NDSHeader;
@@ -279,7 +279,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const
 		fseek(ndsFile , NDSHeader.bannerOffset, SEEK_SET);
 		fread(&ndsBanner, 1, sizeof(ndsBanner), ndsFile);
 
-		init_textOnScreen = "Now caching banner data (SD Card)...";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Now caching banner data (SD Card)...\n%s/%s", counter1, counter2);
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data:", bannerpath);
 
 		switch (ndsBanner.version) {
@@ -364,7 +364,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const
 	} else {
 		// No banner. Use the generic version.
 		FILE* nobannerFile = fopen("romfs:/notextbanner", "rb");
-		init_textOnScreen = "Now caching banner data (SD Card)...";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Now caching banner data (SD Card)...\n%s/%s", counter1, counter2);
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Caching banner data (empty):", bannerpath);
 		// notextbanner is v0003 (ZH/KO)
 		bannersize = NDS_BANNER_SIZE_ZH_KO;
@@ -375,7 +375,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const
 	if (bannersize == 0) {
 		// Invalid banner.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to open NDS source file:", filename);
-		init_textOnScreen = "Invalid banner loaded; not caching.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Invalid banner loaded; not caching.\n%s/%s", counter1, counter2);
 		return -1;
 	}
 
@@ -384,7 +384,7 @@ int cacheBanner(FILE* ndsFile, const char* filename, const char* counter1, const
 	if (!filetosave) {
 		// Error opening the banner cache file.
 		if (logEnabled)	LogFMA("NDSBannerHeader.cacheBanner", "Failed to write banner cache file:", bannerpath);
-		init_textOnScreen = "Error writing the banner cache file.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "Error writing the banner cache file.\n%s/%s", counter1, counter2);
 		return -2;
 	}
 	fwrite(&ndsBanner, 1, bannersize, filetosave);

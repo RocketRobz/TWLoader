@@ -31,7 +31,7 @@ using std::wstring;
 #define CONFIG_3D_SLIDERSTATE (*(float *)0x1FF81080)
 
 const char* musicpath = "romfs:/null.wav";
-const char* init_textOnScreen = " ";
+char init_textOnScreen[256];
 
 bool showdialogbox_init = true;
 int initdbox_waitTime = 0;
@@ -202,15 +202,15 @@ void initStuffThread() {
 	snprintf(romsel_counter2nes, sizeof(romsel_counter2nes), "%zu", nesfiles.size());
 	if (logEnabled)	LogFMA("Main.ROM scanning", "Number of NES ROMs on the SD card detected", romsel_counter2nes);
 	
-	init_textOnScreen =
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 	"Checking WiFi status...\n"
 	"\n"
 	"If you see this for more than 25 seconds,\n"
 	"try rebooting, then after launching TWLoader,\n"
-	"hold ? to skip downloading missing files.\n"
+	"hold  to skip downloading missing files.\n"
 	"\n"
 	"If the issue persists, reboot, then do the same,\n"
-	"and also hold  to turn on quick start.";
+	"and also hold  to turn on quick start.");
 
 	if(!(hHeld & KEY_Y)) {
 		// Download missing files
@@ -220,24 +220,26 @@ void initStuffThread() {
 	}
 
 	if(!settings.ui.quickStart) {
-		init_textOnScreen =
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 		"Checking WiFi status...\n"
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
-		"hold  to turn on quick start.";
+		"hold  to turn on quick start.");
 
 		// Download box art
 		if (checkWifiStatus()) {
 			downloadBoxArt();
 		}
 	
-		init_textOnScreen = "Now checking banner data (SD Card)...";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+		"Now checking banner data (SD Card)...");
 
 		// Cache banner data for ROMs on the SD card.
 		// TODO: Re-cache if it's 0 bytes?
 		for (bnriconnum = 0; bnriconnum < (int)files.size(); bnriconnum++) {
-			init_textOnScreen = "Now checking banner data (SD Card)...";
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"Now checking banner data (SD Card)...");
 			char romsel_counter1[16];
 			snprintf(romsel_counter1, sizeof(romsel_counter1), "%d", bnriconnum+1);
 			bool isCia = false;
@@ -260,12 +262,12 @@ void initStuffThread() {
 			fclose(f_nds_file);
 		}
 	
-		init_textOnScreen =
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 		"Checking WiFi status...\n"
 		"\n"
 		"If you see this for more than 25 seconds,\n"
 		"try rebooting, then after launching TWLoader,\n"
-		"hold  to turn on quick start.";
+		"hold  to turn on quick start.");
 
 		if (checkWifiStatus()) {
 			if (settings.ui.autoupdate_twldr && (checkUpdate() == 0) && !isDemo) {
@@ -287,7 +289,7 @@ void initStuffThread() {
 	}
 
 	showdialogbox = false;
-	init_textOnScreen = " ";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s", " ");
 	
 	initDone = true;
 }

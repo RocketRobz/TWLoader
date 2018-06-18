@@ -250,7 +250,8 @@ std::vector<std::string> internal_json_reader(json_value* json, json_value* val,
  */
 int checkUpdate(void) {
 	if (logEnabled)	LogFM("checkUpdate", "Checking updates...");
-	init_textOnScreen = "Now checking TWLoader version...";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+	"Now checking TWLoader version...");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_begin_draw(GFX_TOP, GFX_LEFT);
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
@@ -581,7 +582,8 @@ int checkUpdate(void) {
 							}
 						}
 					} else {
-						init_textOnScreen = "TWLoader is up-to-date.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+						"TWLoader is up-to-date.");
 						initdbox_setWaitTime = 60;
 						while (initdbox_setWaitTime == 60);
 					}
@@ -695,7 +697,7 @@ void DownloadTWLoaderCIAs(void) {
 	bool checkanswer = true;
 	bool yestoupdate = false;
 	
-	init_textOnScreen =
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 		"An update for TWLoader is available.\n"
 		"Do you want to update?\n"
 		"\n"
@@ -709,7 +711,7 @@ void DownloadTWLoaderCIAs(void) {
 		"\n"
 		"\n"
 		": Yes\n"
-		": No";
+		": No");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		pp2d_draw_texture(settingstex, 0, 0);
@@ -741,11 +743,11 @@ void DownloadTWLoaderCIAs(void) {
 		struct stat st;
 		if (updateGUI) {
 			if (settings.ui.filetype == 0 || settings.ui.filetype == 2) {
-				init_textOnScreen =
+				snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, CIA)\n"
 					"\n"
-					"Do not turn off the power.\n";
+					"Do not turn off the power.\n");
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					pp2d_draw_texture(settingstex, 0, 0);
@@ -775,11 +777,11 @@ void DownloadTWLoaderCIAs(void) {
 				}
 			}
 			if (settings.ui.filetype == 1 || settings.ui.filetype == 2) {
-				init_textOnScreen =
+				snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 					"Now downloading latest TWLoader version...\n"
 					"(GUI, 3DSX)\n"
 					"\n"
-					"Do not turn off the power.\n";
+					"Do not turn off the power.\n");
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 					pp2d_draw_texture(settingstex, 0, 0);
@@ -800,11 +802,11 @@ void DownloadTWLoaderCIAs(void) {
 			}
 		}
 		if (resGUI == 0 && updateNAND) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 1))\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -828,11 +830,11 @@ void DownloadTWLoaderCIAs(void) {
 			}
 		}
 		if (resNAND == 0 && updateNAND_STG2) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest TWLoader version...\n"
 				"(SD stage of (part 1 of) TWLNAND side)\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -845,11 +847,11 @@ void DownloadTWLoaderCIAs(void) {
 			
 		}
 		if (resNAND_STG2 == 0 && updateNAND_part2) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest TWLoader version...\n"
 				"(TWLNAND side CIA (part 2))\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -881,7 +883,8 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else {
-					init_textOnScreen = "Update failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Update failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
@@ -891,18 +894,19 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Update failed.");
 				} else {
-					init_textOnScreen = "Update failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Update failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
 			}
 		}
 		if(resGUI == 0 && updateACE_RPG) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest Ace_RPG version...\n"
 				"(ace_rpg.nds)\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -916,18 +920,19 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else {
-					init_textOnScreen = "Download failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Download failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
 			}
 		}
 		if (resGUI == 0 && updateGBARUNNER_2) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest GBARunner2 version...\n"
 				"(GBARunner2.nds)\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -941,18 +946,19 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else {
-					init_textOnScreen = "Download failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Download failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
 			}
 		}
 		if (resGUI == 0 && updateLOADCARD_DSTT) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest loadcard_dstt version...\n"
 				"(loadcard_dstt.nds)\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -966,18 +972,19 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else {
-					init_textOnScreen = "Download failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Download failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
 			}
 		}
 		if (resGUI == 0 && updateR4) {
-			init_textOnScreen =
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 				"Now downloading latest R4 version...\n"
 				"(r4.nds)\n"
 				"\n"
-				"Do not turn off the power.\n";
+				"Do not turn off the power.\n");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -991,15 +998,16 @@ void DownloadTWLoaderCIAs(void) {
 				if (screenmode == SCREEN_MODE_SETTINGS) {
 					DialogBoxDisappear(12, 16, "Download failed.");
 				} else {
-					init_textOnScreen = "Download failed.";
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+					"Download failed.");
 					initdbox_setWaitTime = 30;
 					while (initdbox_setWaitTime == 30);
 				}
 			}
 		}
 		if (resGUI == 0) {
-			init_textOnScreen =
-				"Now returning to HOME Menu...";
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+				"Now returning to HOME Menu...");
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(settingstex, 0, 0);
@@ -1019,7 +1027,8 @@ void DownloadTWLoaderCIAs(void) {
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxDisappear(12, 16, "Update cancelled.");
 		} else {
-			init_textOnScreen = "Update cancelled.";
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+				"Update cancelled.");
 			initdbox_setWaitTime = 30;
 			while (initdbox_setWaitTime == 30);
 		}
@@ -1181,11 +1190,11 @@ int DownloadMissingFiles(void) {
 				struct stat st;
 
 				if (!checkTWLNANDSide()) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now installing missing CIA...\n"
 						"(TWLNAND side CIA (part 1))\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
 						// Use root/cia folder instead
@@ -1194,17 +1203,18 @@ int DownloadMissingFiles(void) {
 						res = downloadFile(nand_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side.cia", MEDIA_NAND_CIA);
 					}
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (!checkTWLNANDSide2()) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading latest TWLoader version...\n"
 						"(TWLNAND side CIA (part 2))\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res;
 					if(stat("sdmc:/cia",&st) == 0){		
@@ -1214,80 +1224,83 @@ int DownloadMissingFiles(void) {
 						res = downloadFile(nand_part2_url.c_str(),"/_nds/twloader/cia/TWLoader - TWLNAND side (part 2).cia", MEDIA_NAND_CIA);
 					}
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/twloader/TWLD.twldr", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading missing file...\n"
 						"(SD stage of (part 1 of) TWLNAND side)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(nand_twld_url.c_str(),"/_nds/twloader/TWLD.twldr", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/ace_rpg.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading missing file...\n"
 						"(ace_rpg.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(ace_rpg_url.c_str(),"/_nds/twloader/loadflashcard/ace_rpg.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/GBARunner2.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading missing file...\n"
 						"(GBARunner2.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(gbarunner2_url.c_str(),"/_nds/GBARunner2.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/loadcard_dstt.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading missing file...\n"
 						"(loadcard_dstt.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(loadcard_dstt_url.c_str(),"/_nds/loadcard_dstt.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/twloader/loadflashcard/r4.nds", F_OK) == -1) {
-					pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
-					static const char msg[] =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading missing file...\n"
 						"(r4.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
-					pp2d_draw_text(12, 16, 0.5f, 0.5f, WHITE, msg);
-					pp2d_end_draw();
-					
+						"Do not turn off the power.\n");
+
 					int res = downloadFile(r4_url.c_str(),"/_nds/twloader/loadflashcard/r4.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1295,15 +1308,16 @@ int DownloadMissingFiles(void) {
 
 				// Download nds-bootstrap version data
 				if (access("sdmc:/_nds/twloader/release-bootstrap", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK1-4 release-bootstrap...\n"
 						"(Version data)"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap", "w");
 					if(!ver) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1311,15 +1325,16 @@ int DownloadMissingFiles(void) {
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/release-bootstrap-sdk5", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK5 release-bootstrap...\n"
 						"(Version data)"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					FILE* ver = fopen("sdmc:/_nds/twloader/release-bootstrap-sdk5", "w");
 					if(!ver) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1327,15 +1342,16 @@ int DownloadMissingFiles(void) {
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK1-4 unofficial-bootstrap...\n"
 						"(Version data)"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap", "w");
 					if(!ver) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1343,15 +1359,16 @@ int DownloadMissingFiles(void) {
 					fclose(ver);
 				}
 				if (access("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK5 unofficial-bootstrap...\n"
 						"(Version data)"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					FILE* ver = fopen("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5", "w");
 					if(!ver) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1361,57 +1378,61 @@ int DownloadMissingFiles(void) {
 
 				// Download nds-bootstrap .nds files
 				if (access("sdmc:/_nds/release-bootstrap.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK1-4 release-bootstrap...\n"
 						"(release-bootstrap.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(release_BS_url.c_str(),"/_nds/release-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/release-bootstrap-sdk5.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK5 release-bootstrap...\n"
 						"(release-bootstrap-sdk5.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(release_SDK5BS_url.c_str(),"/_nds/release-bootstrap-sdk5.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/unofficial-bootstrap.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK1-4 unofficial-bootstrap...\n"
 						"(unofficial-bootstrap.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(unofficial_BS_url.c_str(),"/_nds/unofficial-bootstrap.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
 				}
 				if (access("sdmc:/_nds/unofficial-bootstrap-sdk5.nds", F_OK) == -1) {
-					init_textOnScreen =
+					snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
 						"Now downloading SDK5 unofficial-bootstrap...\n"
 						"(unofficial-bootstrap-sdk5.nds)\n"
 						"\n"
-						"Do not turn off the power.\n";
+						"Do not turn off the power.\n");
 
 					int res = downloadFile(unofficial_SDK5BS_url.c_str(),"/_nds/unofficial-bootstrap-sdk5.nds", MEDIA_SD_FILE);
 					if (res != 0) {
-						init_textOnScreen = "Download failed.";
+						snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+							"Download failed.");
 						initdbox_setWaitTime = 30;
 						while (initdbox_setWaitTime == 30);
 					}
@@ -1434,7 +1455,8 @@ void UpdateSDK1BootstrapUnofficial(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	init_textOnScreen = "Now updating SDK1-4 bootstrap (Unofficial)...";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+		"Now updating SDK1-4 bootstrap (Unofficial)...");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, init_textOnScreen);
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1452,7 +1474,8 @@ void UpdateSDK1BootstrapUnofficial(void) {
 		remove("sdmc:/_nds/twloader/unofficial-bootstrap");
 		downloadBootstrapVersion(false, false);
 		checkBootstrapVersion();
-		init_textOnScreen = "Done!";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"Done!");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1466,7 +1489,8 @@ void UpdateSDK1BootstrapUnofficial(void) {
 			while (initdbox_setWaitTime == 60);
 		}
 	} else {
-		init_textOnScreen = "An error occurred! Check log for details.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"An error occurred! Check log for details.");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1489,7 +1513,8 @@ void UpdateSDK5BootstrapUnofficial(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	init_textOnScreen = "Now updating SDK5 bootstrap (Unofficial)...";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+		"Now updating SDK5 bootstrap (Unofficial)...");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, init_textOnScreen);
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1507,7 +1532,8 @@ void UpdateSDK5BootstrapUnofficial(void) {
 		remove("sdmc:/_nds/twloader/unofficial-bootstrap-sdk5");
 		downloadBootstrapVersion(false, true);
 		checkBootstrapVersion();
-		init_textOnScreen = "Done!";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"Done!");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1521,7 +1547,8 @@ void UpdateSDK5BootstrapUnofficial(void) {
 			while (initdbox_setWaitTime == 60);
 		}
 	} else {
-		init_textOnScreen = "An error occurred! Check log for details.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"An error occurred! Check log for details.");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1553,7 +1580,8 @@ void UpdateSDK1BootstrapRelease(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	init_textOnScreen = "Now updating SDK1-4 bootstrap (Release)...";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+		"Now updating SDK1-4 bootstrap (Release)...");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, init_textOnScreen);
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1571,7 +1599,8 @@ void UpdateSDK1BootstrapRelease(void) {
 		remove("sdmc:/_nds/twloader/release-bootstrap");
 		downloadBootstrapVersion(true, false);
 		checkBootstrapVersion();
-		init_textOnScreen = "Done!";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"Done!");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1585,7 +1614,8 @@ void UpdateSDK1BootstrapRelease(void) {
 			while (initdbox_setWaitTime == 60);
 		}
 	} else {
-		init_textOnScreen = "An error occurred! Check log for details.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"An error occurred! Check log for details.");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1608,7 +1638,8 @@ void UpdateSDK5BootstrapRelease(void) {
 		pp2d_draw_texture_scale(settingstex, 0, 0, 1.32, 1);
 		pp2d_end_draw();
 	}
-	init_textOnScreen = "Now updating SDK5 bootstrap (Release)...";
+	snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+		"Now updating SDK5 bootstrap (Release)...");
 	if (screenmode == SCREEN_MODE_SETTINGS) {
 		DialogBoxAppear(12, 16, init_textOnScreen);
 		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1626,7 +1657,8 @@ void UpdateSDK5BootstrapRelease(void) {
 		remove("sdmc:/_nds/twloader/release-bootstrap-sdk5");
 		downloadBootstrapVersion(true, true);
 		checkBootstrapVersion();
-		init_textOnScreen = "Done!";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"Done!");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -1640,7 +1672,8 @@ void UpdateSDK5BootstrapRelease(void) {
 			while (initdbox_setWaitTime == 60);
 		}
 	} else {
-		init_textOnScreen = "An error occurred! Check log for details.";
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s",
+			"An error occurred! Check log for details.");
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			for (int i = 0; i < 60; i++) {
 				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
@@ -2273,8 +2306,6 @@ void downloadBoxArt(void)
 		std::sort(boxart_dl_tids.begin(), boxart_dl_tids.end());
 
 		// Download the boxart.
-		char s_boxart_total[12];
-		snprintf(s_boxart_total, sizeof(s_boxart_total), "%zu", boxart_dl_tids.size());
 		if (logEnabled)	LogFM("DownloadBoxArt.downloading_process", "Downloading missing boxart (SD side)");
 		for (size_t boxartnum = 0; boxartnum < boxart_dl_tids.size(); boxartnum++) {
 			static const char title[] = "Downloading missing boxart (SD side)...";
@@ -2285,28 +2316,26 @@ void downloadBoxArt(void)
 			memcpy(ba_TID, &tid, 4);
 			ba_TID[4] = 0;
 			
-			char str[256] = "";
-			snprintf(str, sizeof(str), "%zu", boxartnum);
-			
 			// Show the dialog.
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
 			
-			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			u32 color = WHITE;
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s\n%zu/%zu\n%s %s",
+				title,
+				boxartnum,
+				boxart_dl_tids.size(),
+				"Downloading:",
+				ba_TID);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
 				color = BLACK;			
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, color, init_textOnScreen);
+				pp2d_end_draw();
 			}
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
-			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
-			pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
-			pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
-			pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
-			pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
-			pp2d_end_draw();
-			
+
 			downloadBoxArt_internal(ba_TID, ROM_SD);
 		}
 		if (screenmode == SCREEN_MODE_SETTINGS) {
@@ -2391,19 +2420,20 @@ void downloadBoxArt(void)
 			if (screenmode == SCREEN_MODE_SETTINGS) {
 				DialogBoxAppear(12, 16, title);
 			}
-			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			u32 color = WHITE;
+			snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s\n%zu/%zu\n%s %s",
+				title,
+				boxartnum,
+				boxart_dl_tids.size(),
+				"Downloading:",
+				ba_TID);
 			if (screenmode == SCREEN_MODE_SETTINGS) {
+				pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 				pp2d_draw_texture(dialogboxtex, 0, 0);
-				color = BLACK;
+				color = BLACK;			
+				pp2d_draw_text(12, 16, 0.5f, 0.5f, color, init_textOnScreen);
+				pp2d_end_draw();
 			}
-			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
-			pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
-			pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
-			pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
-			pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
-			pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
-			pp2d_end_draw();
 
 			downloadBoxArt_internal(ba_TID, ROM_FLASHCARD);
 		}
@@ -2465,19 +2495,20 @@ void downloadBoxArt(void)
 		if (screenmode == SCREEN_MODE_SETTINGS) {
 			DialogBoxAppear(12, 16, title);
 		}
-		pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 		u32 color = WHITE;
+		snprintf(init_textOnScreen, sizeof(init_textOnScreen), "%s\n%zu/%zu\n%s %s",
+			title,
+			boxartnum,
+			boxart_dl_tids.size(),
+			"Downloading:",
+			ba_TID);
 		if (screenmode == SCREEN_MODE_SETTINGS) {
+			pp2d_begin_draw(GFX_BOTTOM, GFX_LEFT);
 			pp2d_draw_texture(dialogboxtex, 0, 0);
-			color = BLACK;
+			color = BLACK;			
+			pp2d_draw_text(12, 16, 0.5f, 0.5f, color, init_textOnScreen);
+			pp2d_end_draw();
 		}
-		pp2d_draw_text(12, 16, 0.5f, 0.5f, color, title);
-		pp2d_draw_text(12, 32, 0.5f, 0.5f, color, str);
-		pp2d_draw_text(39, 32, 0.5f, 0.5f, color, "/");
-		pp2d_draw_text(44, 32, 0.5f, 0.5f, color, s_boxart_total);
-		pp2d_draw_text(12, 64, 0.5f, 0.5f, color, "Downloading:");
-		pp2d_draw_text(108, 64, 0.5f, 0.5f, color, ba_TID);
-		pp2d_end_draw();
 
 		downloadBoxArt_internal(ba_TID, ROM_SLOT_1);
 	}
